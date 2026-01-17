@@ -1,0 +1,207 @@
+{{define "problem-title"}}{{.Title}} - LeetCode Clone{{end}}
+{{define "problem-content"}}
+<div class="container">
+    <div class="problem-header">
+        <h2>{{.Title}} <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span></h2>
+        <a href="/">← Back to Problems</a>
+    </div>
+    
+    <div class="problem-content">
+        <div class="description">
+            <h3>Description</h3>
+            <p>{{.Description}}</p>
+            <h3>Function Signature</h3>
+            <pre><code class="language-go">{{.Signature}}</code></pre>
+            <h3>Test Cases</h3>
+            <ul>
+                {{range .TestCases}}
+                <li>
+                    <strong>Input:</strong> {{.Input}}<br>
+                    <strong>Expected:</strong> {{.Expected}}
+                </li>
+                {{end}}
+            </ul>
+        </div>
+        
+        <div class="editor-section">
+            <form id="code-form" hx-post="/run/{{.ID}}" hx-target="#result" hx-swap="innerHTML">
+                <textarea id="code-editor" name="code" class="code-editor" placeholder="// Write your solution here&#10;{{.Signature}} {&#10;    &#10;}" required>{{.Signature}} {
+    
+}</textarea>
+                <div class="button-group">
+                    <button type="button" id="run-btn" name="action" value="test">Run</button>
+                    <button type="submit" name="action" value="submit">Submit</button>
+                    <button type="button" id="solution-btn" onclick="toggleSolution({{.ID}})" style="background: #5a5a5a;">Show Solution</button>
+                </div>
+            </form>
+            <div id="result"></div>
+        </div>
+        
+        <div id="solution" class="solution-panel"></div>
+        <script>
+            var solutionOpen = false;
+            var solutionProblemId = null;
+            
+            function toggleSolution(problemId) {
+                var solutionPanel = document.getElementById('solution');
+                var btn = document.getElementById('solution-btn');
+                var content = document.querySelector('.problem-content');
+                
+                if (solutionOpen && solutionProblemId === problemId) {
+                    // Close solution
+                    solutionPanel.innerHTML = '';
+                    content.classList.remove('solution-open');
+                    btn.textContent = 'Show Solution';
+                    solutionOpen = false;
+                    solutionProblemId = null;
+                } else {
+                    // Open solution
+                    fetch('/solution/' + problemId)
+                        .then(function(response) { return response.text(); })
+                        .then(function(html) {
+                            solutionPanel.innerHTML = html;
+                            content.classList.add('solution-open');
+                            btn.textContent = 'Hide Solution';
+                            solutionOpen = true;
+                            solutionProblemId = problemId;
+                            highlightCode();
+                        })
+                        .catch(function(error) {
+                            console.error('Error loading solution:', error);
+                        });
+                }
+            }
+            
+            var editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+                lineNumbers: true,
+                mode: 'go',
+                theme: 'monokai',
+                indentUnit: 4,
+                indentWithTabs: false,
+                lineWrapping: true,
+                autofocus: true
+            });
+            
+            document.getElementById('code-form').addEventListener('submit', function() {
+                var code = editor.getValue();
+                document.getElementById('code-editor').value = code;
+            });
+            
+            // Handle Run button with streaming
+            document.getElementById('run-btn').addEventListener('click', function() {
+                var code = editor.getValue();
+                var problemId = {{.ID}};
+                var resultDiv = document.getElementById('result');
+                var btn = this;
+                
+                // Disable button during execution
+                btn.disabled = true;
+                btn.textContent = 'Running...';
+                
+                // Clear previous results and show streaming output
+                resultDiv.innerHTML = '<div class="result"><div class="streaming-output"><h3>Running Tests...</h3><pre class="output-log code-output" id="stream-log"></pre></div></div>';
+                var logPre = document.getElementById('stream-log');
+                
+                // Create form data
+                var formData = new FormData();
+                formData.append('code', code);
+                formData.append('action', 'test');
+                
+                // Create abort controller for timeout
+                var controller = new AbortController();
+                var timeoutId = setTimeout(function() {
+                    controller.abort();
+                }, 60000); // 60 second timeout
+                
+                // Fetch with streaming
+                fetch('/run/' + problemId + '?stream=true', {
+                    method: 'POST',
+                    body: formData,
+                    signal: controller.signal
+                }).then(function(response) {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        return response.text().then(function(text) {
+                            throw new Error('Request failed: ' + response.status + ' - ' + text);
+                        });
+                    }
+                    
+                    var reader = response.body.getReader();
+                    var decoder = new TextDecoder();
+                    var buffer = '';
+                    var finalResult = null;
+                    
+                    function readStream() {
+                        reader.read().then(function(result) {
+                            if (result.done) {
+                                // Stream ended, show final result from finalResult variable
+                                if (finalResult) {
+                                    var summaryHtml = '<div class="summary">';
+                                    if (finalResult.success) {
+                                        summaryHtml += '<p style="color: green;">✓ Success! ' + finalResult.passed + '/' + finalResult.total + ' tests passed</p>';
+                                    } else {
+                                        summaryHtml += '<p style="color: red;">✗ Failed: ' + finalResult.passed + '/' + finalResult.total + ' tests passed</p>';
+                                    }
+                                    summaryHtml += '</div>';
+                                    logPre.insertAdjacentHTML('afterend', summaryHtml);
+                                }
+                                btn.disabled = false;
+                                btn.textContent = 'Run';
+                                return;
+                            }
+                            
+                            buffer += decoder.decode(result.value, {stream: true});
+                            var lines = buffer.split('\n');
+                            buffer = lines.pop() || '';
+                            
+                            lines.forEach(function(line) {
+                                if (line.startsWith('data: ')) {
+                                    var data = line.substring(6);
+                                    // Check if this is the final result JSON
+                                    if (data.trim().startsWith('{') && data.includes('success')) {
+                                        try {
+                                            finalResult = JSON.parse(data);
+                                        } catch (e) {
+                                            // Not JSON, treat as regular output
+                                            data = data.replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
+                                            logPre.textContent += data + '\n';
+                                        }
+                                    } else {
+                                        // Unescape SSE data
+                                        data = data.replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
+                                        logPre.textContent += data + '\n';
+                                    }
+                                    logPre.scrollTop = logPre.scrollHeight;
+                                } else if (line.startsWith('event: done')) {
+                                    // Execution complete marker
+                                }
+                            });
+                            
+                            readStream();
+                        }).catch(function(error) {
+                            logPre.textContent += '\n[Error reading stream: ' + error.message + ']';
+                            btn.disabled = false;
+                            btn.textContent = 'Run';
+                        });
+                    }
+                    
+                    readStream();
+                }).catch(function(error) {
+                    clearTimeout(timeoutId);
+                    var errorMsg = error.message;
+                    if (error.name === 'AbortError') {
+                        errorMsg = 'Request timed out after 60 seconds. The code may be taking too long to execute or there may be an infinite loop.';
+                    }
+                    resultDiv.innerHTML = '<div class="error"><h3>Error</h3><pre>' + errorMsg + '</pre></div>';
+                    btn.disabled = false;
+                    btn.textContent = 'Run';
+                    console.error('Run error:', error);
+                });
+            });
+        </script>
+    </div>
+</div>
+{{end}}
+{{define "title"}}{{template "problem-title" .}}{{end}}
+{{define "content"}}{{template "problem-content" .}}{{end}}
+{{template "layout.html" .}}

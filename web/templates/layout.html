@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{block "title" .}}LeetCode Clone{{end}}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/runmode/runmode.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Highlight code blocks on page load and after HTMX updates
+        function highlightCode() {
+            if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
+                var codeBlocks = document.querySelectorAll('code.language-go');
+                codeBlocks.forEach(function(block) {
+                    if (!block.hasAttribute('data-highlighted')) {
+                        var text = block.textContent;
+                        block.textContent = '';
+                        CodeMirror.runMode(text, 'go', block);
+                        block.setAttribute('data-highlighted', 'true');
+                    }
+                });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', highlightCode);
+        document.body.addEventListener('htmx:afterSwap', highlightCode);
+    </script>
+</head>
+<body>
+    <header>
+        <h1>LeetCode Clone</h1>
+    </header>
+    <main>
+        {{block "content" .}}{{end}}
+    </main>
+</body>
+</html>

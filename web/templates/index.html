@@ -1,0 +1,18 @@
+{{define "title"}}Problems - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <h2>Problems</h2>
+    <ul class="problem-list">
+        {{range .}}
+        <li>
+            <a href="/problem/{{.ID}}">
+                <span class="problem-id">#{{.ID}}</span>
+                <span class="problem-title">{{.Title}}</span>
+                <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span>
+            </a>
+        </li>
+        {{end}}
+    </ul>
+</div>
+{{end}}
+{{template "layout.html" .}}

@@ -1,0 +1,42 @@
+
+services:
+  # Main application
+  app:
+    image: lc:latest
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./.prod.env:/app/.prod.env:ro
+    environment:
+      - SANDBOX_CONTAINER=lc-sandbox
+    depends_on:
+      - sandbox
+    restart: unless-stopped
+    networks:
+      - lc-network
+
+  # Sandbox container for code execution
+  sandbox:
+    image: golang:1.23-alpine
+    container_name: lc-sandbox
+    command: sleep infinity
+    mem_limit: 512m
+    cpus: '0.5'
+    pids_limit: 100
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: false
+    tmpfs:
+      - /tmp:rw,exec,size=200m
+      - /go:rw,exec,size=300m
+    restart: unless-stopped
+    networks:
+      - lc-network
+
+networks:
+  lc-network:
+    driver: bridge

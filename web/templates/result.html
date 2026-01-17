@@ -1,0 +1,53 @@
+<div class="result">
+    {{if .Result.Error}}
+    <div class="error">
+        <h3>Error</h3>
+        <pre class="code-output">{{.Result.Error}}</pre>
+        {{if .Result.Output}}
+        <div class="output-section">
+            <h4>Full Output:</h4>
+            <pre class="output-log code-output">{{.Result.Output}}</pre>
+        </div>
+        {{end}}
+        {{if .Result.Stderr}}
+        <div class="output-section">
+            <h4>Error Details:</h4>
+            <pre class="output-log code-output">{{.Result.Stderr}}</pre>
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+    
+    {{if .Result.Results}}
+    <h3>{{if eq .Total 1}}Test Result{{else}}Test Results{{end}}</h3>
+    <div class="test-results">
+        {{range $r := .Result.Results}}
+        <div class="test-case {{if $r.Passed}}passed{{else}}failed{{end}}">
+            <span class="test-icon">{{if $r.Passed}}✓{{else}}✗{{end}}</span>
+            <span>{{$r.Input}}: {{if $r.Passed}}Passed{{else}}Failed{{end}}</span>
+            {{if not $r.Passed}}
+            <div class="test-details">{{$r.Error}}</div>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+    
+    {{if not .Result.Error}}
+    <div class="summary">
+        <p>Time: {{.Result.TimeTaken}}</p>
+        {{if eq .Total 1}}
+        <p class="test-mode">Running first test case only. Click "Submit" to run all test cases.</p>
+        {{else}}
+        <p>Passed: {{.Passed}}/{{.Total}}</p>
+        {{end}}
+    </div>
+    {{end}}
+    
+    {{if and .Result.Output (not .Result.Error)}}
+    <div class="output-section">
+        <h4>Execution Output:</h4>
+        <pre class="output-log code-output">{{.Result.Output}}</pre>
+    </div>
+    {{end}}
+</div>
