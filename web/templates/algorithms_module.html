@@ -1,9 +1,9 @@
-{{define "title"}}{{.Module.Title}} - Golang Course - LeetCode Clone{{end}}
+{{define "title"}}{{.Module.Title}} - Algorithms - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/golang" style="color: #00add8; text-decoration: none;">← Back to Golang Course</a>
+            <a href="/algorithms" style="color: #3b82f6; text-decoration: none;">← Back to Algorithms</a>
             <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
             <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
         </div>
@@ -22,7 +22,7 @@
                     <div class="lesson-text">{{printf "%s" $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
-                        <pre><code class="language-go">{{$lesson.CodeExamples}}</code></pre>
+                        <pre><code>{{$lesson.CodeExamples}}</code></pre>
                     </div>
                     {{end}}
                 </div>
@@ -32,7 +32,6 @@
 
         <div class="problems-section">
             <h3>Practice Problems</h3>
-            {{if .Problems}}
             <ul class="problem-list">
                 {{range .Problems}}
                 <li>
@@ -45,9 +44,6 @@
                 </li>
                 {{end}}
             </ul>
-            {{else}}
-            <p style="color: #888; font-style: italic;">No practice problems available yet.</p>
-            {{end}}
         </div>
     </div>
 </div>
@@ -96,7 +92,7 @@
 }
 
 .lesson-toggle {
-    color: #00add8;
+    color: #3b82f6;
     font-size: 0.9em;
     transition: transform 0.3s;
 }
@@ -133,7 +129,7 @@
 }
 
 .problem-topic {
-    background: #00add8;
+    background: #3b82f6;
     color: white;
     padding: 4px 8px;
     border-radius: 4px;
@@ -158,7 +154,7 @@ function toggleLesson(index) {
         toggle.textContent = '▲';
         // Highlight code when lesson is opened
         setTimeout(function() {
-            highlightGolangCode();
+            highlightAlgorithmsCode();
             if (window.highlightCode) {
                 window.highlightCode();
             }
@@ -170,20 +166,27 @@ function toggleLesson(index) {
 }
 
 // Highlight code blocks on page load and when lessons are toggled
-function highlightGolangCode() {
+function highlightAlgorithmsCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
         var codeBlocks = document.querySelectorAll('.lesson-code code');
         codeBlocks.forEach(function(block) {
             if (!block.hasAttribute('data-highlighted')) {
                 var text = block.textContent;
-                var lang = 'go'; // Default for Golang course
+                var lang = 'python'; // Default for algorithms (usually Python)
                 
                 // Check if code block has language class
                 if (block.className && block.className.includes('language-')) {
-                    if (block.className.includes('language-python')) {
-                        lang = 'python';
-                    } else if (block.className.includes('language-go')) {
+                    if (block.className.includes('language-go')) {
                         lang = 'go';
+                    } else if (block.className.includes('language-python')) {
+                        lang = 'python';
+                    }
+                } else {
+                    // Try to detect language from content
+                    if (text.includes('package ') || text.includes('func ') || text.includes('import "')) {
+                        lang = 'go';
+                    } else if (text.includes('def ') || text.includes('import ') || text.includes('print(')) {
+                        lang = 'python';
                     }
                 }
                 
@@ -200,7 +203,7 @@ function highlightGolangCode() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', highlightGolangCode);
+document.addEventListener('DOMContentLoaded', highlightAlgorithmsCode);
 // Also highlight when global highlightCode is called
 if (window.highlightCode) {
     window.highlightCode();

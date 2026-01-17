@@ -1,12 +1,12 @@
-{{define "title"}}Data Structures & Algorithms Course - LeetCode Clone{{end}}
+{{define "title"}}Data Structures & Algorithms - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
-    <h2>Data Structures & Algorithms Course</h2>
+    <h2>Data Structures & Algorithms</h2>
     <p style="color: #ccc; margin-bottom: 30px;">Learn fundamental data structures and algorithms through structured lessons and practice problems.</p>
     
     <div class="course-modules">
         {{range .}}
-        <div class="module-card" onclick="window.location.href='/course/{{.ID}}'">
+        <div class="module-card" onclick="window.location.href='/algorithms/{{.ID}}'">
             <div class="module-header">
                 <h3>{{.Title}}</h3>
                 <span class="module-order">Module {{.Order}}</span>

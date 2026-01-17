@@ -16,12 +16,14 @@ var (
 	templates                *template.Template
 	indexTemplate            *template.Template
 	problemTemplate          *template.Template
-	courseTemplate           *template.Template
-	courseModuleTemplate     *template.Template
+	algorithmsTemplate       *template.Template
+	algorithmsModuleTemplate *template.Template
 	systemsDesignTemplate    *template.Template
 	systemsDesignModuleTemplate *template.Template
 	golangTemplate           *template.Template
 	golangModuleTemplate     *template.Template
+	pythonTemplate           *template.Template
+	pythonModuleTemplate     *template.Template
 )
 
 const (
@@ -49,14 +51,14 @@ func InitTemplates(templateDir string) error {
 		return err
 	}
 
-	// Parse course template separately
-	courseTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/course.html")
+	// Parse algorithms template separately
+	algorithmsTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms.html")
 	if err != nil {
 		return err
 	}
 
-	// Parse course module template separately
-	courseModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/course_module.html")
+	// Parse algorithms module template separately
+	algorithmsModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms_module.html")
 	if err != nil {
 		return err
 	}
@@ -81,6 +83,18 @@ func InitTemplates(templateDir string) error {
 
 	// Parse Golang module template
 	golangModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/golang_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Python course template
+	pythonTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/python_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Python module template
+	pythonModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/python_module.html")
 	if err != nil {
 		return err
 	}
@@ -387,19 +401,19 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 </script>`, langSelector, codeLang, template.HTMLEscapeString(solution), explanationHTML, codeLang)
 }
 
-func HandleCourse(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/course" {
+func HandleAlgorithms(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/algorithms" {
 		http.NotFound(w, r)
 		return
 	}
 
 	modules := problems.GetCourseModules()
-	if err := courseTemplate.Execute(w, modules); err != nil {
+	if err := algorithmsTemplate.Execute(w, modules); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func HandleCourseModule(w http.ResponseWriter, r *http.Request) {
+func HandleAlgorithmsModule(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
 		http.NotFound(w, r)
@@ -435,7 +449,7 @@ func HandleCourseModule(w http.ResponseWriter, r *http.Request) {
 		Problems: moduleProblems,
 	}
 
-	if err := courseModuleTemplate.Execute(w, data); err != nil {
+	if err := algorithmsModuleTemplate.Execute(w, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -542,6 +556,59 @@ func HandleGolangModule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := golangModuleTemplate.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandlePythonCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/python" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetPythonModules()
+	if err := pythonTemplate.Execute(w, modules); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandlePythonModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetPythonModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := pythonModuleTemplate.Execute(w, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

@@ -10,25 +10,81 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/yaml/yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/json/json.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/runmode/runmode.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script>
         // Highlight code blocks on page load and after HTMX updates
         function highlightCode() {
             if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
-                var codeBlocks = document.querySelectorAll('code.language-go');
+                // Find all code blocks
+                var codeBlocks = document.querySelectorAll('.lesson-code code, code[class*="language-"]');
                 codeBlocks.forEach(function(block) {
                     if (!block.hasAttribute('data-highlighted')) {
                         var text = block.textContent;
+                        var lang = 'python'; // default
+                        
+                        // Detect language from class
+                        if (block.className) {
+                            if (block.className.includes('language-go') || block.className.includes('language-golang')) {
+                                lang = 'go';
+                            } else if (block.className.includes('language-python')) {
+                                lang = 'python';
+                            } else if (block.className.includes('language-javascript') || block.className.includes('language-js')) {
+                                lang = 'javascript';
+                            } else if (block.className.includes('language-java')) {
+                                lang = 'text/x-java';
+                            } else if (block.className.includes('language-cpp') || block.className.includes('language-c++')) {
+                                lang = 'text/x-c++src';
+                            } else if (block.className.includes('language-c')) {
+                                lang = 'text/x-csrc';
+                            } else if (block.className.includes('language-sql')) {
+                                lang = 'text/x-sql';
+                            } else if (block.className.includes('language-bash') || block.className.includes('language-sh')) {
+                                lang = 'text/x-sh';
+                            } else if (block.className.includes('language-yaml')) {
+                                lang = 'yaml';
+                            } else if (block.className.includes('language-json')) {
+                                lang = 'application/json';
+                            } else {
+                                // Try to detect from parent context or content
+                                var parent = block.closest('.lesson-code');
+                                if (parent) {
+                                    // Check if we're in a specific course module
+                                    var url = window.location.pathname;
+                                    if (url.includes('/golang')) {
+                                        lang = 'go';
+                                    } else if (url.includes('/python')) {
+                                        lang = 'python';
+                                    } else if (url.includes('/algorithms')) {
+                                        lang = 'python'; // Default for algorithms
+                                    }
+                                }
+                            }
+                        }
+                        
                         block.textContent = '';
-                        CodeMirror.runMode(text, 'go', block);
-                        block.setAttribute('data-highlighted', 'true');
+                        try {
+                            CodeMirror.runMode(text, lang, block);
+                            block.setAttribute('data-highlighted', 'true');
+                        } catch (e) {
+                            // If language not supported, just display as plain text
+                            block.textContent = text;
+                            block.setAttribute('data-highlighted', 'true');
+                        }
                     }
                 });
             }
         }
         document.addEventListener('DOMContentLoaded', highlightCode);
-        document.body.addEventListener('htmx:afterSwap', highlightCode);
+        if (document.body) {
+            document.body.addEventListener('htmx:afterSwap', highlightCode);
+        }
+        // Also highlight when lessons are toggled
+        window.highlightCode = highlightCode;
     </script>
 </head>
 <body>
@@ -37,9 +93,10 @@
             <h1>LeetCode Clone</h1>
             <nav style="display: flex; gap: 10px;">
                 <a href="/" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Problems</a>
-                <a href="/course" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Course</a>
+                <a href="/algorithms" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Algorithms</a>
                 <a href="/systems-design" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Systems Design</a>
                 <a href="/golang" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Golang</a>
+                <a href="/python" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Python</a>
             </nav>
         </div>
     </header>

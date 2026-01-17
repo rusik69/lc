@@ -156,31 +156,76 @@ function toggleLesson(index) {
     if (content.style.display === 'none') {
         content.style.display = 'block';
         toggle.textContent = '▲';
+        // Highlight code when lesson is opened
+        setTimeout(function() {
+            highlightSystemsDesignCode();
+            if (window.highlightCode) {
+                window.highlightCode();
+            }
+        }, 100);
     } else {
         content.style.display = 'none';
         toggle.textContent = '▼';
     }
 }
 
-// Highlight code blocks on page load
-document.addEventListener('DOMContentLoaded', function() {
+// Highlight code blocks on page load and when lessons are toggled
+function highlightSystemsDesignCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
         var codeBlocks = document.querySelectorAll('.lesson-code code');
         codeBlocks.forEach(function(block) {
             if (!block.hasAttribute('data-highlighted')) {
                 var text = block.textContent;
-                block.textContent = '';
-                // Try to detect language from content
-                var lang = 'go';
-                if (text.includes('def ') || text.includes('import ') && text.includes('List')) {
-                    lang = 'python';
+                var lang = 'python'; // Default for systems design
+                
+                // Check if code block has language class
+                if (block.className && block.className.includes('language-')) {
+                    if (block.className.includes('language-go')) {
+                        lang = 'go';
+                    } else if (block.className.includes('language-python')) {
+                        lang = 'python';
+                    } else if (block.className.includes('language-javascript') || block.className.includes('language-js')) {
+                        lang = 'javascript';
+                    } else if (block.className.includes('language-yaml')) {
+                        lang = 'yaml';
+                    } else if (block.className.includes('language-json')) {
+                        lang = 'application/json';
+                    } else if (block.className.includes('language-sql')) {
+                        lang = 'text/x-sql';
+                    }
+                } else {
+                    // Try to detect language from content
+                    if (text.includes('package ') || text.includes('func ') || text.includes('import "')) {
+                        lang = 'go';
+                    } else if (text.includes('def ') || text.includes('import ') || text.includes('print(')) {
+                        lang = 'python';
+                    } else if (text.includes('function ') || text.includes('const ') || text.includes('let ')) {
+                        lang = 'javascript';
+                    } else if (text.includes('apiVersion:') || text.includes('kind:') || text.trim().startsWith('---')) {
+                        lang = 'yaml';
+                    } else if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+                        lang = 'application/json';
+                    }
                 }
-                CodeMirror.runMode(text, lang, block);
-                block.setAttribute('data-highlighted', 'true');
+                
+                block.textContent = '';
+                try {
+                    CodeMirror.runMode(text, lang, block);
+                    block.setAttribute('data-highlighted', 'true');
+                } catch (e) {
+                    block.textContent = text;
+                    block.setAttribute('data-highlighted', 'true');
+                }
             }
         });
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', highlightSystemsDesignCode);
+// Also highlight when global highlightCode is called
+if (window.highlightCode) {
+    window.highlightCode();
+}
 </script>
 {{end}}
 {{template "layout.html" .}}

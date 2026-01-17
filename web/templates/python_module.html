@@ -1,9 +1,9 @@
-{{define "title"}}{{.Module.Title}} - Course - LeetCode Clone{{end}}
+{{define "title"}}{{.Module.Title}} - Python Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/course" style="color: #3b82f6; text-decoration: none;">← Back to Course</a>
+            <a href="/python" style="color: #3776ab; text-decoration: none;">← Back to Python Course</a>
             <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
             <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
         </div>
@@ -22,7 +22,7 @@
                     <div class="lesson-text">{{printf "%s" $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
-                        <pre><code>{{$lesson.CodeExamples}}</code></pre>
+                        <pre><code class="language-python">{{$lesson.CodeExamples}}</code></pre>
                     </div>
                     {{end}}
                 </div>
@@ -32,6 +32,7 @@
 
         <div class="problems-section">
             <h3>Practice Problems</h3>
+            {{if .Problems}}
             <ul class="problem-list">
                 {{range .Problems}}
                 <li>
@@ -44,6 +45,9 @@
                 </li>
                 {{end}}
             </ul>
+            {{else}}
+            <p style="color: #888; font-style: italic;">No practice problems available yet.</p>
+            {{end}}
         </div>
     </div>
 </div>
@@ -92,7 +96,7 @@
 }
 
 .lesson-toggle {
-    color: #3b82f6;
+    color: #3776ab;
     font-size: 0.9em;
     transition: transform 0.3s;
 }
@@ -129,7 +133,7 @@
 }
 
 .problem-topic {
-    background: #3b82f6;
+    background: #3776ab;
     color: white;
     padding: 4px 8px;
     border-radius: 4px;
@@ -152,31 +156,55 @@ function toggleLesson(index) {
     if (content.style.display === 'none') {
         content.style.display = 'block';
         toggle.textContent = '▲';
+        // Highlight code when lesson is opened
+        setTimeout(function() {
+            highlightPythonCode();
+            if (window.highlightCode) {
+                window.highlightCode();
+            }
+        }, 100);
     } else {
         content.style.display = 'none';
         toggle.textContent = '▼';
     }
 }
 
-// Highlight code blocks on page load
-document.addEventListener('DOMContentLoaded', function() {
+// Highlight code blocks on page load and when lessons are toggled
+function highlightPythonCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
         var codeBlocks = document.querySelectorAll('.lesson-code code');
         codeBlocks.forEach(function(block) {
             if (!block.hasAttribute('data-highlighted')) {
                 var text = block.textContent;
-                block.textContent = '';
-                // Try to detect language from content
-                var lang = 'go';
-                if (text.includes('def ') || text.includes('import ') && text.includes('List')) {
-                    lang = 'python';
+                var lang = 'python'; // Default for Python course
+                
+                // Check if code block has language class
+                if (block.className && block.className.includes('language-')) {
+                    if (block.className.includes('language-go')) {
+                        lang = 'go';
+                    } else if (block.className.includes('language-python')) {
+                        lang = 'python';
+                    }
                 }
-                CodeMirror.runMode(text, lang, block);
-                block.setAttribute('data-highlighted', 'true');
+                
+                block.textContent = '';
+                try {
+                    CodeMirror.runMode(text, lang, block);
+                    block.setAttribute('data-highlighted', 'true');
+                } catch (e) {
+                    block.textContent = text;
+                    block.setAttribute('data-highlighted', 'true');
+                }
             }
         });
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', highlightPythonCode);
+// Also highlight when global highlightCode is called
+if (window.highlightCode) {
+    window.highlightCode();
+}
 </script>
 {{end}}
 {{template "layout.html" .}}

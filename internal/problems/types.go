@@ -51,6 +51,8 @@ var (
 	systemsDesignMu        sync.RWMutex
 	allGolangModules       []CourseModule
 	golangMu               sync.RWMutex
+	allPythonModules       []CourseModule
+	pythonMu               sync.RWMutex
 )
 
 func init() {
@@ -289,6 +291,27 @@ func GetGolangModuleByID(id int) *CourseModule {
 	for i := range allGolangModules {
 		if allGolangModules[i].ID == id {
 			return &allGolangModules[i]
+		}
+	}
+	return nil
+}
+
+// GetPythonModules returns all Python course modules
+func GetPythonModules() []CourseModule {
+	pythonMu.RLock()
+	defer pythonMu.RUnlock()
+	result := make([]CourseModule, len(allPythonModules))
+	copy(result, allPythonModules)
+	return result
+}
+
+// GetPythonModuleByID returns a Python module by its ID
+func GetPythonModuleByID(id int) *CourseModule {
+	pythonMu.RLock()
+	defer pythonMu.RUnlock()
+	for i := range allPythonModules {
+		if allPythonModules[i].ID == id {
+			return &allPythonModules[i]
 		}
 	}
 	return nil
