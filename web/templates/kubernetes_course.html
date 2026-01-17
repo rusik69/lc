@@ -1,12 +1,12 @@
-{{define "title"}}Systems Design Course - LeetCode Clone{{end}}
+{{define "title"}}Kubernetes Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
-    <h2>Systems Design Course</h2>
-    <p style="color: #ccc; margin-bottom: 30px;">Learn to design scalable, reliable, and maintainable distributed systems through comprehensive lessons and real-world examples.</p>
+    <h2>Kubernetes Course</h2>
+    <p style="color: #ccc; margin-bottom: 30px;">Master container orchestration with Kubernetes. Learn to deploy, scale, and manage containerized applications in production environments.</p>
     
     <div class="course-modules">
         {{range .}}
-        <div class="module-card" onclick="window.location.href='/systems-design/{{.ID}}'">
+        <div class="module-card" onclick="window.location.href='/kubernetes/{{.ID}}'">
             <div class="module-header">
                 <h3>{{.Title}}</h3>
                 <span class="module-order">Module {{.Order}}</span>
@@ -40,9 +40,9 @@
 
 .module-card:hover {
     background: #353535;
-    border-color: #555;
+    border-color: #326ce5;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(50, 108, 229, 0.3);
 }
 
 .module-header {
@@ -59,7 +59,7 @@
 }
 
 .module-order {
-    background: #4a9eff;
+    background: #326ce5;
     color: white;
     padding: 4px 8px;
     border-radius: 4px;
@@ -89,7 +89,7 @@
 .module-stats span:before {
     content: "•";
     margin-right: 5px;
-    color: #4a9eff;
+    color: #326ce5;
 }
 </style>
 {{end}}

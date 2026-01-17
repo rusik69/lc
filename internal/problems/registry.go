@@ -29,3 +29,10 @@ func RegisterPythonModules(modules []CourseModule) {
 	defer pythonMu.Unlock()
 	allPythonModules = append(allPythonModules, modules...)
 }
+
+// RegisterKubernetesModules registers Kubernetes course modules
+func RegisterKubernetesModules(modules []CourseModule) {
+	kubernetesMu.Lock()
+	defer kubernetesMu.Unlock()
+	allKubernetesModules = append(allKubernetesModules, modules...)
+}

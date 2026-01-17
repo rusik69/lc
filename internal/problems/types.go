@@ -53,6 +53,8 @@ var (
 	golangMu               sync.RWMutex
 	allPythonModules       []CourseModule
 	pythonMu               sync.RWMutex
+	allKubernetesModules   []CourseModule
+	kubernetesMu            sync.RWMutex
 )
 
 func init() {
@@ -312,6 +314,27 @@ func GetPythonModuleByID(id int) *CourseModule {
 	for i := range allPythonModules {
 		if allPythonModules[i].ID == id {
 			return &allPythonModules[i]
+		}
+	}
+	return nil
+}
+
+// GetKubernetesModules returns all Kubernetes course modules
+func GetKubernetesModules() []CourseModule {
+	kubernetesMu.RLock()
+	defer kubernetesMu.RUnlock()
+	result := make([]CourseModule, len(allKubernetesModules))
+	copy(result, allKubernetesModules)
+	return result
+}
+
+// GetKubernetesModuleByID returns a Kubernetes module by its ID
+func GetKubernetesModuleByID(id int) *CourseModule {
+	kubernetesMu.RLock()
+	defer kubernetesMu.RUnlock()
+	for i := range allKubernetesModules {
+		if allKubernetesModules[i].ID == id {
+			return &allKubernetesModules[i]
 		}
 	}
 	return nil

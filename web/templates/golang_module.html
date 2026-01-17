@@ -19,7 +19,7 @@
                     <span class="lesson-toggle" id="toggle-{{$index}}">▼</span>
                 </div>
                 <div class="lesson-content" id="lesson-{{$index}}" style="display: none;">
-                    <div class="lesson-text">{{printf "%s" $lesson.Content}}</div>
+                    <div class="lesson-text">{{markdown $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
                         <pre><code class="language-go">{{$lesson.CodeExamples}}</code></pre>
@@ -109,8 +109,26 @@
 .lesson-text {
     color: #ccc;
     line-height: 1.8;
-    white-space: pre-wrap;
     margin-bottom: 15px;
+}
+
+.lesson-text ul,
+.lesson-text ol {
+    margin: 10px 0;
+    padding-left: 30px;
+}
+
+.lesson-text li {
+    margin: 5px 0;
+}
+
+.lesson-text p {
+    margin: 10px 0;
+}
+
+.lesson-text strong {
+    color: #f8f8f2;
+    font-weight: bold;
 }
 
 .lesson-code {

@@ -59,6 +59,8 @@
                                         lang = 'go';
                                     } else if (url.includes('/python')) {
                                         lang = 'python';
+                                    } else if (url.includes('/kubernetes')) {
+                                        lang = 'yaml'; // Default for Kubernetes (YAML manifests)
                                     } else if (url.includes('/algorithms')) {
                                         lang = 'python'; // Default for algorithms
                                     }
@@ -97,6 +99,7 @@
                 <a href="/systems-design" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Systems Design</a>
                 <a href="/golang" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Golang</a>
                 <a href="/python" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Python</a>
+                <a href="/kubernetes" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Kubernetes</a>
             </nav>
         </div>
     </header>

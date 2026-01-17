@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/rusik69/lc/internal/executor"
 	"github.com/rusik69/lc/internal/problems"
 )
@@ -24,6 +28,8 @@ var (
 	golangModuleTemplate     *template.Template
 	pythonTemplate           *template.Template
 	pythonModuleTemplate     *template.Template
+	kubernetesTemplate       *template.Template
+	kubernetesModuleTemplate *template.Template
 )
 
 const (
@@ -31,74 +37,110 @@ const (
 	maxRequestSize = 150 * 1024 // 150KB max request size
 )
 
+// markdownToHTML converts markdown text to HTML
+func markdownToHTML(md string) template.HTML {
+	// Create markdown parser
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	p := parser.NewWithExtensions(extensions)
+	
+	// Parse markdown
+	doc := p.Parse([]byte(md))
+	
+	// Create HTML renderer
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+	
+	// Render to HTML
+	htmlBytes := markdown.Render(doc, renderer)
+	return template.HTML(htmlBytes)
+}
+
 // InitTemplates initializes HTML templates
 func InitTemplates(templateDir string) error {
+	// Create template function map
+	funcMap := template.FuncMap{
+		"markdown": markdownToHTML,
+	}
+	
 	var err error
-	templates, err = template.ParseGlob(templateDir + "/*.html")
+	templates, err = template.New("").Funcs(funcMap).ParseGlob(templateDir + "/*.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse index template separately to avoid block conflicts
-	indexTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/index.html")
+	indexTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/index.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse problem template separately to avoid block conflicts
-	problemTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/problem.html")
+	problemTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/problem.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse algorithms template separately
-	algorithmsTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms.html")
+	algorithmsTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse algorithms module template separately
-	algorithmsModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms_module.html")
+	algorithmsModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse systems design course template
-	systemsDesignTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_course.html")
+	systemsDesignTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse systems design module template
-	systemsDesignModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_module.html")
+	systemsDesignModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Golang course template
-	golangTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/golang_course.html")
+	golangTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Golang module template
-	golangModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/golang_module.html")
+	golangModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Python course template
-	pythonTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/python_course.html")
+	pythonTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Python module template
-	pythonModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/python_module.html")
+	pythonModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_module.html")
 	if err != nil {
 		return err
 	}
-	
+
+	// Parse Kubernetes course template
+	kubernetesTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Kubernetes module template
+	kubernetesModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_module.html")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -408,7 +450,20 @@ func HandleAlgorithms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	modules := problems.GetCourseModules()
-	if err := algorithmsTemplate.Execute(w, modules); err != nil {
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := algorithmsTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -449,7 +504,7 @@ func HandleAlgorithmsModule(w http.ResponseWriter, r *http.Request) {
 		Problems: moduleProblems,
 	}
 
-	if err := algorithmsModuleTemplate.Execute(w, data); err != nil {
+	if err := algorithmsModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -461,7 +516,20 @@ func HandleSystemsDesignCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	modules := problems.GetSystemsDesignModules()
-	if err := systemsDesignTemplate.Execute(w, modules); err != nil {
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := systemsDesignTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -502,7 +570,7 @@ func HandleSystemsDesignModule(w http.ResponseWriter, r *http.Request) {
 		Problems: moduleProblems,
 	}
 
-	if err := systemsDesignModuleTemplate.Execute(w, data); err != nil {
+	if err := systemsDesignModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -514,7 +582,20 @@ func HandleGolangCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	modules := problems.GetGolangModules()
-	if err := golangTemplate.Execute(w, modules); err != nil {
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := golangTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -555,7 +636,7 @@ func HandleGolangModule(w http.ResponseWriter, r *http.Request) {
 		Problems: moduleProblems,
 	}
 
-	if err := golangModuleTemplate.Execute(w, data); err != nil {
+	if err := golangModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -567,7 +648,20 @@ func HandlePythonCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	modules := problems.GetPythonModules()
-	if err := pythonTemplate.Execute(w, modules); err != nil {
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := pythonTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -608,7 +702,73 @@ func HandlePythonModule(w http.ResponseWriter, r *http.Request) {
 		Problems: moduleProblems,
 	}
 
-	if err := pythonModuleTemplate.Execute(w, data); err != nil {
+	if err := pythonModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleKubernetesCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/kubernetes" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetKubernetesModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := kubernetesTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleKubernetesModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetKubernetesModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := kubernetesModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
