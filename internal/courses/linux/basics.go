@@ -238,6 +238,78 @@ clear
 exit
 # Or Ctrl+D`,
 				},
+				{
+					Title: "Linux History & Evolution",
+					Content: `Understanding Linux's history helps appreciate its design philosophy and current state.
+
+**Unix Origins:**
+- **1969**: Unix created at Bell Labs by Ken Thompson and Dennis Ritchie
+- **1970s**: Unix spread to universities and commercial systems
+- **1980s**: Commercial Unix variants (AIX, Solaris, HP-UX)
+- **1983**: GNU Project started by Richard Stallman (free Unix-like OS)
+
+**Linux Creation:**
+- **1991**: Linus Torvalds, a Finnish student, created Linux kernel
+- **1992**: Linux kernel released under GPL (GNU General Public License)
+- **1993**: First distributions (Slackware, Debian)
+- **1990s**: Rapid growth, adoption by developers and companies
+
+**Key Milestones:**
+- **1994**: Linux 1.0 released
+- **1996**: Linux mascot Tux created
+- **1998**: Major companies (IBM, Oracle) support Linux
+- **2000s**: Enterprise adoption, Android (Linux-based) launched
+- **2010s**: Cloud computing boom (Linux-powered)
+- **2020s**: Dominance in cloud, containers, supercomputers
+
+**GNU/Linux:**
+- Linux is just the kernel
+- GNU provides userland tools (bash, coreutils, etc.)
+- Together: GNU/Linux operating system
+- Often just called "Linux" (kernel name became OS name)
+
+**Linux Philosophy:**
+- **Open Source**: Source code freely available
+- **Community-Driven**: Developed by volunteers and companies
+- **Modular**: Kernel + userland tools
+- **Portable**: Runs on many architectures
+- **Free**: Free as in freedom (and often free as in cost)
+
+**Why Linux Succeeded:**
+- Free and open-source
+- Runs on commodity hardware
+- Strong community support
+- Corporate backing (Red Hat, Canonical, etc.)
+- Excellent for servers and development
+- Powers the internet and cloud`,
+					CodeExamples: `# Check kernel version and release date
+uname -r
+# Output: 5.15.0-generic
+
+# Kernel release info
+cat /proc/version
+# Output: Linux version 5.15.0-91-generic (buildd@...) #102-Ubuntu SMP ...
+
+# Distribution history
+cat /etc/os-release
+# Shows distribution name, version, release date
+
+# Check GNU tools version
+bash --version
+# Output: GNU bash, version 5.1.16(1)-release
+
+# Kernel compilation date
+dmesg | head -1
+# Shows kernel boot messages with timestamp
+
+# System uptime (shows when kernel was booted)
+uptime
+# Output: up X days, Y hours
+
+# Kernel modules (show kernel extensibility)
+lsmod | head
+# Lists loaded kernel modules`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -570,6 +642,132 @@ export PATH=$PATH:/new/directory
 echo "alias ll='ls -lah'" >> ~/.bashrc
 source ~/.bashrc`,
 				},
+				{
+					Title: "Command Aliases & Customization",
+					Content: `Customizing your shell environment makes Linux more efficient and personalized.
+
+**What are Aliases?**
+- Shortcuts for long commands
+- Save typing time
+- Make commands more memorable
+- Can include options and arguments
+
+**Creating Aliases:**
+- `alias name='command'`: Create alias
+- `alias`: List all aliases
+- `unalias name`: Remove alias
+- Temporary: Lost when session ends
+- Permanent: Add to shell config file
+
+**Common Aliases:**
+- `alias ll='ls -lah'`: Long listing with details
+- `alias la='ls -A'`: List all including hidden
+- `alias ..='cd ..'`: Go up one directory
+- `alias ...='cd ../..'`: Go up two directories
+- `alias grep='grep --color=auto'`: Colorized grep
+- `alias vi='vim'`: Use vim instead of vi
+
+**Shell Configuration Files:**
+- `~/.bashrc`: Bash config (runs for interactive shells)
+- `~/.bash_profile`: Login shell config
+- `~/.profile`: General profile (all shells)
+- `~/.bash_aliases`: Dedicated alias file (sourced by .bashrc)
+
+**Shell Customization:**
+- **Prompt (PS1)**: Customize command prompt
+- **Environment Variables**: PATH, EDITOR, etc.
+- **Functions**: More powerful than aliases
+- **Completion**: Tab completion customization
+
+**Best Practices:**
+- Use descriptive alias names
+- Don't override essential commands
+- Document aliases with comments
+- Keep aliases simple
+- Use functions for complex logic`,
+					CodeExamples: `# Create temporary alias
+alias ll='ls -lah'
+ll  # Executes: ls -lah
+
+# Create alias with options
+alias grep='grep --color=auto'
+grep "error" file.txt  # Now colorized
+
+# Create alias for directory navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Create alias for common operations
+alias rm='rm -i'  # Interactive delete (safer)
+alias cp='cp -i'  # Interactive copy
+alias mv='mv -i'  # Interactive move
+
+# List all aliases
+alias
+
+# Remove alias
+unalias ll
+
+# Make aliases permanent
+# Edit ~/.bashrc
+nano ~/.bashrc
+
+# Add aliases:
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+
+# Reload configuration
+source ~/.bashrc
+# or
+. ~/.bashrc
+
+# Custom prompt (PS1)
+export PS1='[\u@\h \W]\$ '
+# \u = username, \h = hostname, \W = current directory
+
+# More advanced prompt
+export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+# Green username@host, blue directory
+
+# Environment variables
+export EDITOR=vim
+export VISUAL=vim
+export PAGER=less
+
+# Add to PATH
+export PATH=$PATH:/usr/local/bin
+
+# Shell functions (more powerful than aliases)
+function mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+# Usage: mkcd newdir
+
+function extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2) tar xjf "$1" ;;
+            *.tar.gz) tar xzf "$1" ;;
+            *.bz2) bunzip2 "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.gz) gunzip "$1" ;;
+            *.tar) tar xf "$1" ;;
+            *.tbz2) tar xjf "$1" ;;
+            *.tgz) tar xzf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.Z) uncompress "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+# Usage: extract archive.tar.gz`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -876,6 +1074,113 @@ find /usr -type l
 
 # Find broken symbolic links
 find /usr -type l ! -exec test -e {} \;`,
+				},
+				{
+					Title: "Special File Types & Inodes",
+					Content: `Understanding special file types and inodes is crucial for advanced Linux administration.
+
+**Inodes (Index Nodes):**
+- Data structure storing file metadata
+- Each file/directory has unique inode number
+- Contains: permissions, owner, size, timestamps, location on disk
+- Limited number per filesystem (inode limit)
+- View with `ls -i` or `stat` command
+
+**Inode Information:**
+- **Inode Number**: Unique identifier
+- **File Type**: Regular, directory, link, device, etc.
+- **Permissions**: Read, write, execute
+- **Owner & Group**: User and group IDs
+- **Size**: File size in bytes
+- **Timestamps**: Access, modify, change times
+- **Links**: Number of hard links
+- **Blocks**: Disk blocks used
+
+**Special File Types:**
+
+**Device Files:**
+- Represent hardware devices
+- **Block devices** (`/dev/sda`): Storage devices (b in ls -l)
+- **Character devices** (`/dev/tty`): Serial devices (c in ls -l)
+- Created with `mknod` (usually automatic)
+
+**Sockets:**
+- Inter-process communication
+- Unix domain sockets (local)
+- Network sockets (TCP/UDP)
+- Created by applications
+- Shown as 's' in ls -l
+
+**Named Pipes (FIFOs):**
+- First In, First Out
+- One-way communication
+- Created with `mkfifo`
+- Shown as 'p' in ls -l
+
+**stat Command:**
+- Shows detailed inode information
+- More comprehensive than ls -l
+- Includes all metadata`,
+					CodeExamples: `# View inode numbers
+ls -i file.txt
+# Output: 1234567 file.txt
+
+# Detailed inode information
+stat file.txt
+# Output:
+#   File: file.txt
+#   Size: 1024        Blocks: 8          IO Block: 4096   regular file
+# Device: 803h/2051d  Inode: 1234567     Links: 1
+# Access: (0644/-rw-r--r--)  Uid: ( 1000/   user)   Gid: ( 1000/   user)
+# Access: 2024-01-15 10:30:00.000000000 +0000
+# Modify: 2024-01-15 10:25:00.000000000 +0000
+# Change: 2024-01-15 10:25:00.000000000 +0000
+
+# View inode for directory
+stat /home
+# Shows directory inode info
+
+# Check inode usage
+df -i
+# Shows inode usage per filesystem
+
+# Find files by inode number
+find / -inum 1234567 2>/dev/null
+
+# View device files
+ls -l /dev/sda*
+# Output shows 'b' for block device
+
+ls -l /dev/tty*
+# Output shows 'c' for character device
+
+# Create named pipe
+mkfifo mypipe
+ls -l mypipe
+# Output shows 'p' for pipe
+
+# Use pipe
+echo "Hello" > mypipe &
+cat < mypipe
+# Output: Hello
+
+# View socket files
+ls -l /var/run/*.sock
+# Shows 's' for socket
+
+# Check file type
+file /dev/sda1
+# Output: /dev/sda1: block special
+
+file /dev/tty1
+# Output: /dev/tty1: character special
+
+# Inode limits
+tune2fs -l /dev/sda1 | grep -i inode
+# Shows inode count and usage
+
+# Find files with same inode (hard links)
+find / -inum $(stat -c %i file.txt) 2>/dev/null`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -1287,6 +1592,100 @@ tr ' ' '_' < file.txt
 cat file.txt | grep "error" | sort | uniq -c
 # Find errors, sort, count unique`,
 				},
+				{
+					Title: "Combining Text Processing Tools",
+					Content: `The real power of Linux text tools comes from combining them with pipes. Mastering command chaining is essential.
+
+**Pipes (|):**
+- Connects output of one command to input of another
+- Left-to-right processing
+- Enables complex data transformations
+- Each command processes stream sequentially
+
+**Command Chaining:**
+- **Pipe (|)**: Pass output to next command
+- **Semicolon (;)**: Run commands sequentially (independent)
+- **Ampersand (&)**: Run command in background
+- **&&**: Run next command only if previous succeeds
+- **||**: Run next command only if previous fails
+
+**Common Patterns:**
+
+**Filter and Process:**
+- `command | grep | sort | uniq`
+- Filter, then organize results
+
+**Extract and Transform:**
+- `command | cut | sed | awk`
+- Extract fields, transform, process
+
+**Count and Summarize:**
+- `command | grep | wc`
+- Filter then count
+
+**Multi-step Processing:**
+- Chain multiple filters
+- Each step refines the data
+- Final output is processed result
+
+**Best Practices:**
+- Start with data source
+- Apply filters progressively
+- Use appropriate tools for each step
+- Test each step independently
+- Consider performance (some tools are faster)`,
+					CodeExamples: `# Basic pipe
+ls -l | grep "\.txt$"
+# List files, filter .txt files
+
+# Multiple pipes
+ps aux | grep python | awk '{print $2}' | xargs kill
+# Find Python processes, extract PIDs, kill them
+
+# Filter and count
+grep "error" /var/log/syslog | wc -l
+# Count error lines
+
+# Extract and process
+cat /etc/passwd | cut -d: -f1,7 | grep "/bin/bash"
+# Extract username and shell, filter bash users
+
+# Complex processing
+netstat -tuln | grep LISTEN | awk '{print $4}' | cut -d: -f2 | sort -n | uniq
+# List listening ports, extract port numbers, sort, remove duplicates
+
+# Process log file
+tail -f /var/log/apache2/access.log | grep "404" | awk '{print $1}' | sort | uniq -c | sort -rn
+# Monitor log, find 404 errors, extract IPs, count unique IPs, sort by count
+
+# Find large files
+find /home -type f -size +100M | xargs ls -lh | awk '{print $5, $9}' | sort -h
+# Find large files, list with sizes, extract size and name, sort by size
+
+# Process CSV data
+cat data.csv | cut -d, -f2,3 | sort | uniq | wc -l
+# Extract columns 2 and 3, sort, find unique, count
+
+# Multi-step text processing
+cat file.txt | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 ]//g' | tr -s ' ' | sort | uniq -c | sort -rn | head -10
+# Convert to lowercase, remove punctuation, squeeze spaces, sort, count, show top 10
+
+# Process system information
+ps aux | awk '{if($3>50) print $2, $3, $11}' | sort -k2 -rn | head -5
+# Find processes using >50% CPU, show PID/CPU/command, sort by CPU, show top 5
+
+# Command chaining with &&
+mkdir newdir && cd newdir && touch file.txt
+# Create directory, change to it, create file (only if each step succeeds)
+
+# Command chaining with ||
+command || echo "Command failed"
+# Run command, or print error message
+
+# Complex pipeline
+journalctl -u nginx --since "1 hour ago" | grep -i error | awk '{print $1, $2, $5}' | sort | uniq -c
+# Get nginx logs from last hour, find errors, extract time and message, count occurrences`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -1594,6 +1993,115 @@ nohup command &
 
 # Disown job (remove from shell's job table)
 disown %1`,
+				},
+				{
+					Title: "Process Priorities & Scheduling",
+					Content: `Linux uses priorities to determine which processes get CPU time. Understanding priorities helps manage system performance.
+
+**Nice Values:**
+- Range: -20 (highest priority) to +19 (lowest priority)
+- Default: 0
+- Lower nice = higher priority = more CPU time
+- Only root can set negative nice values
+
+**Priority Levels:**
+- **Real-time**: Highest priority (SCHED_FIFO, SCHED_RR)
+- **High priority**: Negative nice values (-20 to -1)
+- **Normal**: Nice 0 (default)
+- **Low priority**: Positive nice values (+1 to +19)
+
+**nice Command:**
+- Run command with specified nice value
+- `nice -n 10 command`: Run with nice +10
+- `nice -n -10 command`: Run with nice -10 (requires root)
+
+**renice Command:**
+- Change nice value of running process
+- `renice +10 PID`: Increase nice (lower priority)
+- `renice -10 PID`: Decrease nice (higher priority, requires root)
+
+**chrt Command:**
+- Set real-time scheduling policy
+- `chrt -f 50 command`: FIFO scheduling, priority 50
+- `chrt -r 50 command`: Round-robin scheduling
+
+**Scheduling Policies:**
+- **SCHED_NORMAL (CFS)**: Default, fair scheduling
+- **SCHED_FIFO**: First In First Out (real-time)
+- **SCHED_RR**: Round Robin (real-time)
+- **SCHED_BATCH**: Batch processing (lower priority)
+- **SCHED_IDLE**: Idle priority (lowest)
+
+**When to Adjust Priorities:**
+- **Increase priority**: Important processes, interactive apps
+- **Decrease priority**: Background tasks, batch jobs
+- **Real-time**: Time-critical applications (audio, video)`,
+					CodeExamples: `# Check current nice value
+nice
+# Output: 0
+
+# Run command with low priority
+nice -n 10 long_running_task.sh
+# Nice value: +10 (lower priority)
+
+# Run command with high priority (requires root)
+sudo nice -n -10 important_task.sh
+# Nice value: -10 (higher priority)
+
+# Change priority of running process
+renice +10 12345
+# Increase nice value (lower priority)
+
+# Change priority to high (requires root)
+sudo renice -10 12345
+# Decrease nice value (higher priority)
+
+# Change priority for all processes of a user
+sudo renice +5 -u username
+
+# Change priority for all processes of a group
+sudo renice +5 -g groupname
+
+# View process priorities
+ps -eo pid,ni,comm | head
+# Shows PID, nice value, command
+
+# Sort by priority
+ps -eo pid,ni,comm --sort=ni | head
+# Processes sorted by nice value
+
+# Set real-time scheduling (FIFO)
+sudo chrt -f 50 important_process
+# Priority 50, FIFO scheduling
+
+# Set real-time scheduling (Round Robin)
+sudo chrt -r 50 important_process
+# Priority 50, Round Robin scheduling
+
+# Check scheduling policy
+chrt -p 12345
+# Shows current scheduling policy and priority
+
+# Set batch scheduling
+chrt -b 0 batch_job.sh
+# Batch scheduling (lower priority)
+
+# Set idle scheduling
+chrt -i 0 background_task.sh
+# Idle scheduling (lowest priority)
+
+# taskset - CPU affinity
+taskset -c 0,1 process_name
+# Run process only on CPUs 0 and 1
+
+# Check CPU affinity
+taskset -p 12345
+# Shows which CPUs process can run on
+
+# Common use cases
+nice -n 19 backup.sh          # Low priority backup
+nice -n -5 compile.sh         # High priority compilation (root)
+renice +15 $(pgrep backup)    # Lower priority for all backup processes`,
 				},
 			},
 			ProblemIDs: []int{},
