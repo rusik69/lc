@@ -17,6 +17,25 @@ services:
     networks:
       - lc-network
 
+  # Test service
+  test:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app
+    environment:
+      - SANDBOX_CONTAINER=lc-sandbox
+    command: go test -v -race -coverprofile=coverage.out ./tests/... ./internal/...
+    networks:
+      - lc-network
+    depends_on:
+      - sandbox
+    # Service only runs when explicitly invoked with 'docker-compose run test'
+
   # Sandbox container for code execution
   sandbox:
     image: golang:1.23-alpine
@@ -36,6 +55,9 @@ services:
     restart: unless-stopped
     networks:
       - lc-network
+
+volumes:
+  go-mod-cache:
 
 networks:
   lc-network:

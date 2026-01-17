@@ -66,25 +66,52 @@ docker-sandbox:
 		echo "✓ Sandbox container already running"; \
 	fi
 
-# Run tests
+# Run tests in docker-compose
 test:
-	@echo "Running tests..."
-	@go test -v -race -coverprofile=coverage.out ./tests/... ./internal/...
+	@echo "Running tests in docker-compose..."
+	@if command -v docker-compose > /dev/null 2>&1; then \
+		docker-compose run --rm test; \
+	elif docker compose version > /dev/null 2>&1; then \
+		docker compose run --rm test; \
+	else \
+		echo "✗ Error: docker-compose not found"; \
+		exit 1; \
+	fi
 
-# Run only unit tests (fast)
+# Run only unit tests (fast) in docker-compose
 test-unit:
-	@echo "Running unit tests..."
-	@go test -v -short ./tests/... ./internal/...
+	@echo "Running unit tests in docker-compose..."
+	@if command -v docker-compose > /dev/null 2>&1; then \
+		docker-compose run --rm --profile test test go test -v -short ./tests/... ./internal/...; \
+	elif docker compose version > /dev/null 2>&1; then \
+		docker compose run --rm --profile test test go test -v -short ./tests/... ./internal/...; \
+	else \
+		echo "✗ Error: docker-compose not found"; \
+		exit 1; \
+	fi
 
-# Run e2e tests (requires Docker)
+# Run e2e tests (requires Docker) in docker-compose
 test-e2e:
-	@echo "Running e2e tests..."
-	@go test -v ./tests/... -run E2E
+	@echo "Running e2e tests in docker-compose..."
+	@if command -v docker-compose > /dev/null 2>&1; then \
+		docker-compose run --rm test go test -v ./tests/... -run E2E; \
+	elif docker compose version > /dev/null 2>&1; then \
+		docker compose run --rm test go test -v ./tests/... -run E2E; \
+	else \
+		echo "✗ Error: docker-compose not found"; \
+		exit 1; \
+	fi
 
 # Run tests with coverage report
 test-coverage: test
 	@echo "Generating coverage report..."
-	@go tool cover -html=coverage.out -o coverage.html
+	@if command -v docker-compose > /dev/null 2>&1; then \
+		docker-compose run --rm test go tool cover -html=coverage.out -o coverage.html; \
+	elif docker compose version > /dev/null 2>&1; then \
+		docker compose run --rm test go tool cover -html=coverage.out -o coverage.html; \
+	else \
+		go tool cover -html=coverage.out -o coverage.html; \
+	fi
 	@echo "Coverage report generated: coverage.html"
 
 # Clean build artifacts
