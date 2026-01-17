@@ -57,6 +57,8 @@ var (
 	kubernetesMu            sync.RWMutex
 	allMachineLearningModules []CourseModule
 	machineLearningMu        sync.RWMutex
+	allLinuxModules          []CourseModule
+	linuxMu                  sync.RWMutex
 )
 
 func init() {
@@ -358,6 +360,27 @@ func GetMachineLearningModuleByID(id int) *CourseModule {
 	for i := range allMachineLearningModules {
 		if allMachineLearningModules[i].ID == id {
 			return &allMachineLearningModules[i]
+		}
+	}
+	return nil
+}
+
+// GetLinuxModules returns all Linux course modules
+func GetLinuxModules() []CourseModule {
+	linuxMu.RLock()
+	defer linuxMu.RUnlock()
+	result := make([]CourseModule, len(allLinuxModules))
+	copy(result, allLinuxModules)
+	return result
+}
+
+// GetLinuxModuleByID returns a Linux module by its ID
+func GetLinuxModuleByID(id int) *CourseModule {
+	linuxMu.RLock()
+	defer linuxMu.RUnlock()
+	for i := range allLinuxModules {
+		if allLinuxModules[i].ID == id {
+			return &allLinuxModules[i]
 		}
 	}
 	return nil

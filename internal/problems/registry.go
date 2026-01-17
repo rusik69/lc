@@ -43,3 +43,10 @@ func RegisterMachineLearningModules(modules []CourseModule) {
 	defer machineLearningMu.Unlock()
 	allMachineLearningModules = append(allMachineLearningModules, modules...)
 }
+
+// RegisterLinuxModules registers Linux course modules
+func RegisterLinuxModules(modules []CourseModule) {
+	linuxMu.Lock()
+	defer linuxMu.Unlock()
+	allLinuxModules = append(allLinuxModules, modules...)
+}

@@ -1,0 +1,1602 @@
+package linux
+
+import "github.com/rusik69/lc/internal/problems"
+
+func init() {
+	problems.RegisterLinuxModules([]problems.CourseModule{
+		{
+			ID:          110,
+			Title:       "Introduction to Linux",
+			Description: "Learn what Linux is, its history, distributions, and why it's essential for modern computing.",
+			Order:       0,
+			Lessons: []problems.Lesson{
+				{
+					Title: "What is Linux?",
+					Content: `Linux is a free and open-source Unix-like operating system kernel originally created by Linus Torvalds in 1991. Today, Linux powers everything from smartphones to supercomputers.
+
+**Key Characteristics:**
+- **Open Source**: Source code is freely available and modifiable
+- **Unix-like**: Follows Unix design principles and POSIX standards
+- **Multi-user**: Supports multiple users simultaneously
+- **Multi-tasking**: Can run multiple processes concurrently
+- **Stable & Reliable**: Known for stability and uptime
+- **Secure**: Strong security model with user permissions
+
+**Linux vs Other Operating Systems:**
+
+**Linux:**
+- Free and open-source
+- Highly customizable
+- Excellent for servers and development
+- Command-line focused
+- Large community support
+
+**Windows:**
+- Proprietary, requires license
+- User-friendly GUI
+- Dominant on desktop
+- Commercial software ecosystem
+
+**macOS:**
+- Proprietary (based on Unix)
+- Premium hardware/software integration
+- Popular with developers
+- Unix-based (like Linux)
+
+**Why Linux Matters:**
+- **Servers**: Powers majority of web servers (Apache, Nginx)
+- **Cloud**: Foundation of cloud computing (AWS, Google Cloud, Azure)
+- **Containers**: Docker and Kubernetes run on Linux
+- **Embedded Systems**: Used in IoT devices, routers, smart TVs
+- **Supercomputers**: Powers top 500 supercomputers
+- **Android**: Based on Linux kernel
+- **Development**: Preferred by many developers
+
+**Linux Philosophy:**
+- "Everything is a file"
+- "Small, focused programs"
+- "Chain programs together"
+- "Avoid captive user interfaces"
+- "Store data in flat text files"`,
+					CodeExamples: `# Check Linux version
+uname -a
+# Output: Linux hostname 5.15.0-generic #1-Ubuntu SMP ...
+
+# Check distribution
+cat /etc/os-release
+# Output shows distribution name, version, etc.
+
+# Check kernel version
+uname -r
+# Output: 5.15.0-generic
+
+# System information
+hostnamectl
+# Shows hostname, OS, kernel, architecture
+
+# Check if running Linux
+uname -s
+# Output: Linux`,
+				},
+				{
+					Title: "Linux Distributions",
+					Content: `A Linux distribution (distro) is an operating system made from a software collection that includes the Linux kernel and supporting system software and libraries.
+
+**Major Distribution Families:**
+
+**Debian-based:**
+- **Debian**: Stable, community-driven, very reliable
+- **Ubuntu**: Most popular desktop Linux, user-friendly
+- **Linux Mint**: Ubuntu-based, even more user-friendly
+- **Kali Linux**: Security-focused, penetration testing
+
+**Red Hat-based:**
+- **Red Hat Enterprise Linux (RHEL)**: Commercial, enterprise-focused
+- **CentOS**: Free RHEL clone (now CentOS Stream)
+- **Fedora**: Cutting-edge, community-driven
+- **Rocky Linux**: RHEL-compatible, community-driven
+
+**Arch-based:**
+- **Arch Linux**: Rolling release, minimal, DIY
+- **Manjaro**: User-friendly Arch derivative
+
+**Other Notable:**
+- **openSUSE**: German-origin, enterprise and desktop
+- **Slackware**: Oldest surviving distribution
+- **Gentoo**: Source-based, highly customizable
+
+**Choosing a Distribution:**
+
+**For Beginners:**
+- Ubuntu: Easiest to start with
+- Linux Mint: Windows-like interface
+- Fedora: Modern, good documentation
+
+**For Servers:**
+- Ubuntu Server: Popular, well-supported
+- CentOS/Rocky Linux: Enterprise standard
+- Debian: Stable, reliable
+
+**For Advanced Users:**
+- Arch Linux: Learn everything
+- Gentoo: Maximum customization
+- Slackware: Traditional Unix feel
+
+**Package Managers:**
+- **apt**: Debian/Ubuntu (apt-get, apt install)
+- **yum/dnf**: Red Hat/Fedora
+- **pacman**: Arch Linux
+- **zypper**: openSUSE`,
+					CodeExamples: `# Ubuntu/Debian - Check distribution
+lsb_release -a
+# Output:
+# Distributor ID: Ubuntu
+# Description:    Ubuntu 22.04.3 LTS
+# Release:        22.04
+# Codename:       jammy
+
+# Red Hat/CentOS - Check distribution
+cat /etc/redhat-release
+# Output: CentOS Linux release 8.5.2111
+
+# Arch Linux - Check distribution
+cat /etc/arch-release
+# Output: Arch Linux
+
+# Package manager examples
+# Ubuntu/Debian
+apt update && apt upgrade
+apt install package-name
+
+# Red Hat/Fedora
+dnf update
+dnf install package-name
+
+# Arch
+pacman -Syu
+pacman -S package-name`,
+				},
+				{
+					Title: "Getting Started with Linux",
+					Content: `Starting your Linux journey requires understanding the basics of accessing and using the system.
+
+**Ways to Use Linux:**
+
+**1. Virtual Machine:**
+- Install VirtualBox or VMware
+- Download Linux ISO
+- Create VM and install Linux
+- Safe way to learn without affecting main OS
+
+**2. Dual Boot:**
+- Install Linux alongside Windows/macOS
+- Choose OS at boot time
+- Requires partitioning disk
+
+**3. WSL (Windows Subsystem for Linux):**
+- Run Linux on Windows
+- Good for development
+- Easy to set up
+
+**4. Cloud Instance:**
+- AWS EC2, Google Cloud, DigitalOcean
+- Access via SSH
+- Real Linux server experience
+
+**5. Live USB:**
+- Boot from USB without installing
+- Test Linux before installing
+- Portable Linux environment
+
+**First Steps:**
+1. **Open Terminal**: Access command line interface
+2. **Learn Basic Commands**: Start with ls, cd, pwd
+3. **Understand File System**: Navigate directories
+4. **Practice Regularly**: Hands-on experience is key
+
+**Terminal vs GUI:**
+- **Terminal**: Powerful, efficient, scriptable
+- **GUI**: Visual, intuitive, good for beginners
+- Most Linux work happens in terminal
+
+**Getting Help:**
+- **man pages**: Manual for commands (man ls)
+- **--help flag**: Quick help (ls --help)
+- **info**: Detailed documentation (info command)
+- **Online**: Stack Overflow, Arch Wiki, Ubuntu Forums`,
+					CodeExamples: `# Open terminal (usually Ctrl+Alt+T or search "Terminal")
+
+# Check current user
+whoami
+# Output: username
+
+# Check current directory
+pwd
+# Output: /home/username
+
+# List files
+ls
+
+# List files with details
+ls -l
+
+# List all files (including hidden)
+ls -la
+
+# Get help for a command
+man ls
+# Press 'q' to quit
+
+# Quick help
+ls --help
+
+# Clear terminal
+clear
+# Or Ctrl+L
+
+# Exit terminal
+exit
+# Or Ctrl+D`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          111,
+			Title:       "Command Line Fundamentals",
+			Description: "Master essential command line operations: navigation, file operations, and basic commands.",
+			Order:       1,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Terminal Basics",
+					Content: `The terminal (command line) is the most powerful way to interact with Linux. Understanding it is essential for Linux proficiency.
+
+**What is a Terminal?**
+- Text-based interface to the operating system
+- Also called: shell, command line, CLI (Command Line Interface)
+- More powerful than GUI for many tasks
+- Faster and more efficient for experienced users
+
+**Common Shells:**
+- **bash**: Most common default shell (Bourne Again Shell)
+- **zsh**: Enhanced shell, default on macOS
+- **fish**: User-friendly with syntax highlighting
+- **sh**: Basic shell (POSIX compliant)
+
+**Terminal Components:**
+- **Prompt**: Shows current directory and user (e.g., `user@host:~$`)
+- **Command**: What you type
+- **Arguments**: Options and parameters
+- **Output**: Results displayed
+
+**Command Structure:**
+\`\`\`
+command [options] [arguments]
+\`\`\`
+
+Example: `ls -l /home`
+- `ls`: command
+- `-l`: option (long format)
+- `/home`: argument (directory)`,
+					CodeExamples: `# Check current shell
+echo $SHELL
+# Output: /bin/bash
+
+# List available shells
+cat /etc/shells
+
+# Change shell (temporarily)
+zsh
+
+# Change shell (permanently)
+chsh -s /bin/zsh
+
+# Command structure examples
+ls                    # Command only
+ls -l                 # Command with option
+ls -l /home          # Command with option and argument
+ls -lah /home        # Multiple options combined
+
+# Understanding the prompt
+# user@hostname:~/directory$ 
+# user: current username
+# hostname: computer name
+# ~/directory: current directory (~ = home)
+# $: regular user prompt (# = root user)`,
+				},
+				{
+					Title: "Navigation Commands",
+					Content: `Navigating the file system is fundamental to using Linux. These commands help you move around directories.
+
+**Essential Navigation Commands:**
+
+**pwd (Print Working Directory):**
+- Shows current directory path
+- Always know where you are
+
+**cd (Change Directory):**
+- Move to different directories
+- `cd` or `cd ~`: Go to home directory
+- `cd ..`: Go up one level
+- `cd -`: Go to previous directory
+- `cd /`: Go to root directory
+
+**ls (List):**
+- List files and directories
+- `ls`: Basic listing
+- `ls -l`: Long format (detailed)
+- `ls -a`: Show hidden files
+- `ls -h`: Human-readable sizes
+- `ls -R`: Recursive (show subdirectories)
+
+**Path Types:**
+- **Absolute**: Full path from root (`/home/user/documents`)
+- **Relative**: Path relative to current directory (`./documents` or `../parent`)
+- **~**: Shortcut for home directory
+- **.**: Current directory
+- **..**: Parent directory`,
+					CodeExamples: `# Print current directory
+pwd
+# Output: /home/username
+
+# Navigate to home directory
+cd ~
+# or
+cd
+
+# Navigate to specific directory
+cd /home/username/documents
+
+# Go up one level
+cd ..
+
+# Go to root directory
+cd /
+
+# Go to previous directory
+cd -
+
+# List current directory contents
+ls
+
+# List with details
+ls -l
+# Output shows: permissions, owner, size, date, name
+
+# List all files (including hidden)
+ls -a
+# Hidden files start with '.'
+
+# List with human-readable sizes
+ls -lh
+
+# Combine options
+ls -lah
+# -l: long format
+# -a: all files
+# -h: human-readable
+
+# List specific directory
+ls /etc
+
+# List with pattern matching
+ls *.txt
+# Shows only .txt files
+
+# Navigate using relative paths
+cd ./documents      # Current directory's documents folder
+cd ../parent        # Parent directory's parent folder
+cd ~/documents      # Home directory's documents folder`,
+				},
+				{
+					Title: "File Operations",
+					Content: `Working with files is a core Linux skill. Learn to create, copy, move, rename, and delete files.
+
+**File Operations:**
+
+**cp (Copy):**
+- Copy files and directories
+- `cp source destination`
+- `cp -r`: Copy directories recursively
+- `cp -i`: Interactive (prompt before overwrite)
+- `cp -v`: Verbose (show what's being copied)
+
+**mv (Move/Rename):**
+- Move files to different location
+- Rename files
+- `mv source destination`
+- Can move multiple files
+
+**rm (Remove):**
+- Delete files and directories
+- **Warning**: Permanent deletion (no trash)
+- `rm file`: Delete file
+- `rm -r`: Delete directory recursively
+- `rm -f`: Force (no prompts)
+- `rm -i`: Interactive (safer)
+
+**mkdir (Make Directory):**
+- Create new directories
+- `mkdir dirname`
+- `mkdir -p`: Create parent directories if needed
+
+**touch:**
+- Create empty file
+- Update file timestamp
+- `touch filename`
+
+**File Naming:**
+- Case-sensitive (File.txt ≠ file.txt)
+- Avoid spaces (use underscores or hyphens)
+- Avoid special characters`,
+					CodeExamples: `# Create a file
+touch myfile.txt
+
+# Create multiple files
+touch file1.txt file2.txt file3.txt
+
+# Create a directory
+mkdir mydir
+
+# Create nested directories
+mkdir -p parent/child/grandchild
+
+# Copy a file
+cp source.txt destination.txt
+
+# Copy to directory
+cp file.txt /home/user/documents/
+
+# Copy directory
+cp -r sourcedir destdir
+
+# Copy with confirmation
+cp -i source.txt dest.txt
+
+# Move/rename a file
+mv oldname.txt newname.txt
+
+# Move file to directory
+mv file.txt /home/user/documents/
+
+# Move multiple files
+mv file1.txt file2.txt /home/user/documents/
+
+# Delete a file
+rm file.txt
+
+# Delete directory
+rm -r directory
+
+# Delete with confirmation (safer)
+rm -ri directory
+
+# Force delete (dangerous!)
+rm -rf directory
+
+# List files to verify operations
+ls -l`,
+				},
+				{
+					Title: "Command History & Shortcuts",
+					Content: `Linux provides powerful shortcuts and history features to make command line work more efficient.
+
+**Command History:**
+- **history**: View command history
+- **Up/Down arrows**: Navigate through history
+- **Ctrl+R**: Search history interactively
+- **!n**: Execute command number n from history
+- **!!**: Repeat last command
+- **!string**: Execute last command starting with string
+
+**Keyboard Shortcuts:**
+- **Ctrl+C**: Cancel/interrupt current command
+- **Ctrl+D**: Exit shell or end input
+- **Ctrl+L**: Clear screen (same as `clear`)
+- **Ctrl+A**: Move cursor to beginning of line
+- **Ctrl+E**: Move cursor to end of line
+- **Ctrl+U**: Delete from cursor to beginning of line
+- **Ctrl+K**: Delete from cursor to end of line
+- **Ctrl+W**: Delete word before cursor
+- **Tab**: Auto-complete commands and filenames
+- **Double Tab**: Show completion options
+
+**Command Aliases:**
+- Create shortcuts for long commands
+- `alias ll='ls -lah'`
+- `alias ..='cd ..'`
+- View aliases: `alias`
+- Remove alias: `unalias name`
+
+**Environment Variables:**
+- `$HOME`: Home directory path
+- `$USER`: Current username
+- `$PATH`: Directories searched for commands
+- `$PWD`: Current directory`,
+					CodeExamples: `# View command history
+history
+
+# View last 10 commands
+history | tail -10
+
+# Execute command from history by number
+!42
+
+# Repeat last command
+!!
+
+# Execute last command starting with 'ls'
+!ls
+
+# Search history interactively
+# Press Ctrl+R, type search term
+
+# Clear history
+history -c
+
+# Keyboard shortcuts in action
+# Type: ls -l /very/long/path
+# Press Ctrl+A: cursor moves to beginning
+# Press Ctrl+E: cursor moves to end
+# Press Ctrl+U: deletes entire line
+
+# Tab completion
+# Type: ls /usr/b
+# Press Tab: completes to /usr/bin
+
+# Create aliases
+alias ll='ls -lah'
+alias ..='cd ..'
+alias grep='grep --color=auto'
+
+# Use alias
+ll  # Executes: ls -lah
+
+# View all aliases
+alias
+
+# Remove alias
+unalias ll
+
+# View environment variables
+echo $HOME
+echo $USER
+echo $PATH
+
+# Add to PATH (temporarily)
+export PATH=$PATH:/new/directory
+
+# Make alias permanent (add to ~/.bashrc)
+echo "alias ll='ls -lah'" >> ~/.bashrc
+source ~/.bashrc`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          112,
+			Title:       "File System & Permissions",
+			Description: "Understand Linux file system structure, file types, permissions, ownership, and links.",
+			Order:       2,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Linux File System Structure",
+					Content: `Linux organizes everything in a hierarchical tree structure starting from root (/). Understanding this structure is crucial.
+
+**Root Directory (/):**
+- Top-level directory
+- Everything branches from here
+- Similar to C:\ on Windows
+
+**Important Directories:**
+
+**/bin**: Essential binary executables (ls, cp, mv)
+**/boot**: Boot loader files and kernel
+**/dev**: Device files (hardware representation)
+**/etc**: System configuration files
+**/home**: User home directories
+**/lib**: Shared libraries
+**/media**: Removable media mount points
+**/mnt**: Temporary mount points
+**/opt**: Optional/third-party software
+**/proc**: Virtual filesystem (process/kernel info)
+**/root**: Root user's home directory
+**/run**: Runtime data (since boot)
+**/sbin**: System binaries (admin commands)
+**/srv**: Service data
+**/sys**: Virtual filesystem (kernel/sys info)
+**/tmp**: Temporary files
+**/usr**: User programs and data
+**/var**: Variable data (logs, cache, spool)
+
+**File Types:**
+- **Regular files**: Text, images, executables
+- **Directories**: Folders containing files
+- **Symbolic links**: Shortcuts to files/directories
+- **Device files**: Represent hardware
+- **Sockets**: Inter-process communication
+- **Named pipes**: Process communication`,
+					CodeExamples: `# View root directory structure
+ls /
+
+# View directory tree
+tree /
+# (if tree not installed: apt install tree)
+
+# View specific directory
+ls /etc
+ls /home
+ls /usr/bin
+
+# Check file type
+file /bin/ls
+# Output: /bin/ls: ELF 64-bit LSB executable
+
+file /etc/passwd
+# Output: /etc/passwd: ASCII text
+
+# List with file types
+ls -F
+# Shows: / for directories, * for executables, @ for links
+
+# Detailed listing showing file types
+ls -l
+# First character shows type:
+# - = regular file
+# d = directory
+# l = symbolic link
+# c = character device
+# b = block device
+# s = socket
+# p = named pipe
+
+# Navigate important directories
+cd /etc        # Configuration files
+cd /var/log    # Log files
+cd /tmp        # Temporary files
+cd /usr/bin    # User executables`,
+				},
+				{
+					Title: "File Permissions",
+					Content: `Linux uses a permission system to control access to files and directories. Understanding permissions is essential for security.
+
+**Permission Types:**
+- **Read (r)**: View file contents or list directory
+- **Write (w)**: Modify file or create/delete in directory
+- **Execute (x)**: Run file as program or enter directory
+
+**Permission Groups:**
+- **Owner (u)**: File owner
+- **Group (g)**: Group members
+- **Others (o)**: Everyone else
+
+**Permission Representation:**
+- **Symbolic**: rwxrwxrwx (read, write, execute for owner/group/others)
+- **Octal**: 755 (4+2+1 for each group)
+  - 4 = read
+  - 2 = write
+  - 1 = execute
+  - 7 = 4+2+1 (read+write+execute)
+
+**Common Permissions:**
+- **755**: rwxr-xr-x (owner: all, others: read+execute)
+- **644**: rw-r--r-- (owner: read+write, others: read)
+- **600**: rw------- (owner only)
+- **777**: rwxrwxrwx (all permissions - dangerous!)
+
+**Viewing Permissions:**
+\`\`\`
+ls -l filename
+-rwxr-xr-x 1 user group 1234 Jan 1 12:00 filename
+\`\`\`
+- First 10 characters: permissions and type
+- Next: number of links, owner, group, size, date, name`,
+					CodeExamples: `# View file permissions
+ls -l myfile.txt
+# Output: -rw-r--r-- 1 user group 1024 Jan 1 12:00 myfile.txt
+
+# Breakdown:
+# - = regular file
+# rw- = owner can read/write
+# r-- = group can read
+# r-- = others can read
+
+# View directory permissions
+ls -ld mydir
+# Output: drwxr-xr-x 2 user group 4096 Jan 1 12:00 mydir
+
+# Change permissions (symbolic)
+chmod u+x file.txt      # Add execute for owner
+chmod g-w file.txt      # Remove write for group
+chmod o+r file.txt      # Add read for others
+chmod a+x file.txt      # Add execute for all (a = all)
+
+# Change permissions (octal)
+chmod 755 script.sh     # rwxr-xr-x
+chmod 644 file.txt      # rw-r--r--
+chmod 600 secret.txt    # rw------- (owner only)
+chmod 777 dangerous.sh  # rwxrwxrwx (all - not recommended!)
+
+# Recursive permission change
+chmod -R 755 directory/
+
+# Common permission patterns
+chmod 755 script.sh      # Executable script
+chmod 644 document.txt   # Regular document
+chmod 600 .ssh/id_rsa    # Private key (owner only)
+chmod 700 .ssh/          # SSH directory (owner only)`,
+				},
+				{
+					Title: "Ownership & chown",
+					Content: `File ownership determines who can change permissions and control access. Understanding ownership is crucial for system administration.
+
+**Ownership Concepts:**
+- **Owner**: User who created the file
+- **Group**: Group associated with the file
+- **Root**: Superuser with all permissions
+
+**chown (Change Owner):**
+- Change file/directory owner
+- Usually requires root privileges
+- `chown user file`
+- `chown user:group file`
+- `chown -R`: Recursive (for directories)
+
+**chgrp (Change Group):**
+- Change group ownership
+- `chgrp groupname file`
+
+**whoami**: Show current user
+**id**: Show user and group IDs
+**groups**: Show groups user belongs to
+
+**sudo:**
+- Execute command as another user (usually root)
+- `sudo command`
+- Requires password (unless configured otherwise)
+- Use sparingly and carefully!`,
+					CodeExamples: `# Check current user
+whoami
+# Output: username
+
+# Check user and group IDs
+id
+# Output: uid=1000(username) gid=1000(username) groups=1000(username),27(sudo)
+
+# Check groups
+groups
+# Output: username sudo
+
+# View file ownership
+ls -l file.txt
+# Output: -rw-r--r-- 1 user group 1024 Jan 1 12:00 file.txt
+#         owner: user, group: group
+
+# Change owner (requires sudo)
+sudo chown newuser file.txt
+
+# Change owner and group
+sudo chown newuser:newgroup file.txt
+
+# Change group only
+sudo chgrp newgroup file.txt
+# or
+sudo chown :newgroup file.txt
+
+# Recursive ownership change
+sudo chown -R user:group directory/
+
+# Common ownership operations
+sudo chown www-data:www-data /var/www/html  # Web server files
+sudo chown user:user ~/documents            # User's documents
+
+# Change ownership of current user's files
+chown $USER:$USER file.txt
+# (may not require sudo for own files)
+
+# View all files owned by user
+find / -user username 2>/dev/null
+
+# View all files owned by group
+find / -group groupname 2>/dev/null`,
+				},
+				{
+					Title: "Links (Hard & Soft)",
+					Content: `Links provide ways to reference files by multiple names or locations. Linux supports two types of links.
+
+**Hard Links:**
+- Multiple directory entries pointing to same file data
+- Same inode number
+- Cannot link directories
+- Cannot cross filesystems
+- All links are equal (no "original")
+- Deleting one link doesn't delete data (until last link removed)
+
+**Symbolic Links (Soft Links):**
+- Special file containing path to target
+- Different inode from target
+- Can link directories
+- Can cross filesystems
+- Points to name, not data
+- Broken if target deleted (dangling link)
+- Shows with -> in ls -l
+
+**When to Use:**
+- **Hard links**: Same filesystem, want multiple names
+- **Symbolic links**: Cross filesystem, directories, or want to see target clearly
+
+**Creating Links:**
+- `ln target linkname`: Create hard link
+- `ln -s target linkname`: Create symbolic link`,
+					CodeExamples: `# Create a file
+echo "Hello World" > original.txt
+
+# Create hard link
+ln original.txt hardlink.txt
+
+# Create symbolic link
+ln -s original.txt symlink.txt
+
+# View links
+ls -li
+# Output shows inode numbers:
+# 1234567 -rw-r--r-- 2 user group 12 Jan 1 12:00 original.txt
+# 1234567 -rw-r--r-- 2 user group 12 Jan 1 12:00 hardlink.txt
+# 1234568 lrwxrwxrwx 1 user group 12 Jan 1 12:00 symlink.txt -> original.txt
+# Note: hard links have same inode (1234567), symlink has different (1234568)
+
+# Count links
+ls -l original.txt
+# Shows: -rw-r--r-- 2 user group ...
+#         ^ number of hard links
+
+# Edit through link (both work)
+echo "Modified" >> hardlink.txt
+cat original.txt  # Shows modification
+
+echo "Modified2" >> symlink.txt
+cat original.txt  # Shows modification
+
+# Delete original
+rm original.txt
+
+# Hard link still works
+cat hardlink.txt  # Still shows content
+
+# Symbolic link is broken
+cat symlink.txt   # Error: No such file or directory
+ls -l symlink.txt # Shows: symlink.txt -> original.txt (red/broken)
+
+# Create symbolic link to directory
+ln -s /usr/bin bin_link
+cd bin_link  # Works like /usr/bin
+
+# Find all symbolic links
+find /usr -type l
+
+# Find broken symbolic links
+find /usr -type l ! -exec test -e {} \;`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          113,
+			Title:       "Text Processing & Filters",
+			Description: "Master text processing tools: cat, grep, sed, awk, sort, and other filters for manipulating text data.",
+			Order:       3,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Viewing Files",
+					Content: `Linux provides many tools to view file contents. Each has its use case.
+
+**cat (concatenate):**
+- Display entire file
+- Simple, fast
+- Good for small files
+- `cat file.txt`
+- `cat file1 file2`: Concatenate multiple files
+
+**less/more:**
+- View file page by page
+- **less**: More features (can scroll backward)
+- **more**: Simpler, older
+- Navigate with arrow keys, space, 'q' to quit
+- Better for large files
+
+**head:**
+- Show first N lines (default: 10)
+- `head -n 20 file.txt`
+- `head -20 file.txt`
+
+**tail:**
+- Show last N lines (default: 10)
+- `tail -n 20 file.txt`
+- `tail -f file.txt`: Follow file (watch for new lines) - great for logs!
+
+**wc (word count):**
+- Count lines, words, characters
+- `wc file.txt`: Shows lines, words, bytes
+- `wc -l`: Lines only
+- `wc -w`: Words only
+- `wc -c`: Bytes only`,
+					CodeExamples: `# View entire file
+cat file.txt
+
+# View multiple files
+cat file1.txt file2.txt
+
+# View with line numbers
+cat -n file.txt
+
+# View file page by page
+less file.txt
+# Navigate: Space=next page, b=previous, q=quit, /search=find
+
+more file.txt
+# Navigate: Space=next page, q=quit
+
+# View first 10 lines
+head file.txt
+
+# View first 20 lines
+head -n 20 file.txt
+head -20 file.txt
+
+# View last 10 lines
+tail file.txt
+
+# View last 20 lines
+tail -n 20 file.txt
+tail -20 file.txt
+
+# Follow log file (watch updates)
+tail -f /var/log/syslog
+# Press Ctrl+C to stop
+
+# Count lines, words, bytes
+wc file.txt
+# Output: 100 500 5000 file.txt
+#         lines words bytes
+
+# Count lines only
+wc -l file.txt
+
+# Count words only
+wc -w file.txt
+
+# Count bytes only
+wc -c file.txt
+
+# Count characters
+wc -m file.txt`,
+				},
+				{
+					Title: "grep - Pattern Searching",
+					Content: `grep is one of the most powerful text search tools. It finds lines matching a pattern.
+
+**Basic Usage:**
+- `grep pattern file`
+- Searches for pattern in file
+- Prints matching lines
+
+**Common Options:**
+- `-i`: Case-insensitive search
+- `-v`: Invert match (show non-matching lines)
+- `-r`: Recursive (search in directories)
+- `-n`: Show line numbers
+- `-c`: Count matches
+- `-l`: Show only filenames with matches
+- `-E`: Extended regex (or use egrep)
+- `-w`: Match whole words only
+- `--color`: Highlight matches
+
+**Pattern Types:**
+- **Literal**: `grep "error" file.txt`
+- **Regex**: `grep "^Error" file.txt` (lines starting with Error)
+- **Character classes**: `grep "[0-9]" file.txt` (lines with digits)
+
+**Common Patterns:**
+- `^`: Start of line
+- `$`: End of line
+- `.`: Any character
+- `*`: Zero or more of previous
+- `+`: One or more of previous
+- `[]`: Character class
+- `|`: OR (with -E)`,
+					CodeExamples: `# Basic search
+grep "error" logfile.txt
+
+# Case-insensitive
+grep -i "error" logfile.txt
+
+# Show line numbers
+grep -n "error" logfile.txt
+
+# Count matches
+grep -c "error" logfile.txt
+
+# Show only filenames
+grep -l "error" *.txt
+
+# Invert match (show lines without pattern)
+grep -v "error" logfile.txt
+
+# Recursive search
+grep -r "error" /var/log
+
+# Whole word match
+grep -w "error" logfile.txt
+# Matches "error" but not "errors" or "terror"
+
+# Extended regex
+grep -E "error|warning" logfile.txt
+# Matches lines with "error" OR "warning"
+
+# Multiple patterns
+grep -e "error" -e "warning" logfile.txt
+
+# Highlight matches
+grep --color "error" logfile.txt
+
+# Search in multiple files
+grep "pattern" file1.txt file2.txt
+
+# Common patterns
+grep "^Error" file.txt        # Lines starting with Error
+grep "error$" file.txt       # Lines ending with error
+grep "[0-9]" file.txt        # Lines with digits
+grep "^$" file.txt           # Empty lines
+grep "error.*warning" file.txt # error followed by warning
+
+# Combine with pipes
+cat file.txt | grep "error" | grep -v "debug"`,
+				},
+				{
+					Title: "sed - Stream Editor",
+					Content: `sed is a stream editor for filtering and transforming text. It's powerful for batch editing.
+
+**Basic Usage:**
+- `sed 's/old/new/' file`: Substitute first occurrence per line
+- `sed 's/old/new/g' file`: Substitute all occurrences (global)
+- `sed -i`: Edit file in-place (modify file)
+
+**Common Operations:**
+- **Substitute**: `s/pattern/replacement/`
+- **Delete**: `d` (delete lines)
+- **Print**: `p` (print lines)
+- **Insert**: `i` (insert before line)
+- **Append**: `a` (append after line)
+
+**Addresses:**
+- Line numbers: `sed '5d' file` (delete line 5)
+- Ranges: `sed '1,5d' file` (delete lines 1-5)
+- Patterns: `sed '/pattern/d' file` (delete matching lines)
+- Last line: `$`
+
+**Common Options:**
+- `-i`: In-place editing
+- `-n`: Suppress default output
+- `-e`: Multiple expressions`,
+					CodeExamples: `# Substitute first occurrence per line
+sed 's/old/new/' file.txt
+
+# Substitute all occurrences
+sed 's/old/new/g' file.txt
+
+# Case-insensitive substitution
+sed 's/old/new/gi' file.txt
+
+# Edit file in-place (modify file)
+sed -i 's/old/new/g' file.txt
+
+# Delete line 5
+sed '5d' file.txt
+
+# Delete lines 1-5
+sed '1,5d' file.txt
+
+# Delete lines matching pattern
+sed '/error/d' file.txt
+
+# Delete empty lines
+sed '/^$/d' file.txt
+
+# Print specific lines
+sed -n '5p' file.txt        # Print line 5
+sed -n '1,5p' file.txt      # Print lines 1-5
+
+# Print lines matching pattern
+sed -n '/error/p' file.txt
+
+# Substitute and save to new file
+sed 's/old/new/g' file.txt > newfile.txt
+
+# Multiple substitutions
+sed -e 's/old1/new1/g' -e 's/old2/new2/g' file.txt
+
+# Common transformations
+sed 's/^/prefix /' file.txt     # Add prefix to each line
+sed 's/$/ suffix/' file.txt     # Add suffix to each line
+sed 's/[0-9]//g' file.txt       # Remove all digits
+sed 's/  */ /g' file.txt        # Replace multiple spaces with single space`,
+				},
+				{
+					Title: "awk - Pattern Processing",
+					Content: `awk is a powerful programming language for text processing. It's excellent for column-based data.
+
+**Basic Usage:**
+- `awk 'pattern {action}' file`
+- Processes file line by line
+- Splits lines into fields (columns)
+- Fields accessed as $1, $2, $3, etc.
+- $0 = entire line
+
+**Built-in Variables:**
+- `NR`: Current record (line) number
+- `NF`: Number of fields in current line
+- `FS`: Field separator (default: space)
+- `OFS`: Output field separator
+
+**Common Patterns:**
+- `/pattern/`: Lines matching pattern
+- `NR==1`: First line
+- `$1=="value"`: First field equals value
+- `$NF`: Last field
+
+**Common Actions:**
+- `print`: Print line or fields
+- `print $1`: Print first field
+- `print $NF`: Print last field`,
+					CodeExamples: `# Print entire file
+awk '{print}' file.txt
+
+# Print first field (column)
+awk '{print $1}' file.txt
+
+# Print first and second fields
+awk '{print $1, $2}' file.txt
+
+# Print last field
+awk '{print $NF}' file.txt
+
+# Print lines matching pattern
+awk '/error/ {print}' file.txt
+
+# Print specific lines
+awk 'NR==1 {print}' file.txt        # First line
+awk 'NR==5 {print}' file.txt        # Line 5
+awk 'NR>=5 && NR<=10 {print}' file.txt  # Lines 5-10
+
+# Print with line numbers
+awk '{print NR, $0}' file.txt
+
+# Print number of fields per line
+awk '{print NF, $0}' file.txt
+
+# Custom field separator
+awk -F: '{print $1}' /etc/passwd
+# Uses ':' as separator (like /etc/passwd)
+
+# Print lines where field matches
+awk '$1=="error" {print}' file.txt
+awk '$3>100 {print}' file.txt
+
+# Calculations
+awk '{sum+=$1} END {print sum}' file.txt
+# Sum first column
+
+# Count lines
+awk 'END {print NR}' file.txt
+
+# Common patterns
+awk '{print $1, $NF}' file.txt           # First and last field
+awk 'NF>5 {print}' file.txt              # Lines with more than 5 fields
+awk '$1~/pattern/ {print}' file.txt      # First field matches pattern`,
+				},
+				{
+					Title: "Other Useful Filters",
+					Content: `Linux provides many other text processing tools for specific tasks.
+
+**sort:**
+- Sort lines
+- `sort file.txt`: Alphabetical sort
+- `sort -n`: Numeric sort
+- `sort -r`: Reverse sort
+- `sort -u`: Unique lines only
+- `sort -k2`: Sort by second field
+
+**uniq:**
+- Remove duplicate consecutive lines
+- `uniq file.txt`
+- `uniq -c`: Count occurrences
+- `uniq -d`: Show only duplicates
+- Usually used with sort: `sort file.txt | uniq`
+
+**cut:**
+- Extract columns/fields
+- `cut -d: -f1 file.txt`: Field 1, delimiter ':'
+- `cut -c1-5 file.txt`: Characters 1-5
+- `cut -f1,3 file.txt`: Fields 1 and 3
+
+**paste:**
+- Merge lines from files
+- `paste file1.txt file2.txt`
+- `paste -d: file1 file2`: Custom delimiter
+
+**tr (translate):**
+- Translate or delete characters
+- `tr 'a-z' 'A-Z'`: Convert to uppercase
+- `tr -d ' '`: Delete spaces
+- `tr -s ' '`: Squeeze multiple spaces`,
+					CodeExamples: `# Sort alphabetically
+sort file.txt
+
+# Sort numerically
+sort -n numbers.txt
+
+# Reverse sort
+sort -r file.txt
+
+# Sort by second field
+sort -k2 file.txt
+
+# Remove duplicates (requires sorted input)
+sort file.txt | uniq
+
+# Count occurrences
+sort file.txt | uniq -c
+
+# Show only duplicates
+sort file.txt | uniq -d
+
+# Extract first field (tab-delimited)
+cut -f1 file.txt
+
+# Extract first field (colon-delimited)
+cut -d: -f1 /etc/passwd
+
+# Extract characters 1-10
+cut -c1-10 file.txt
+
+# Extract multiple fields
+cut -d: -f1,3,5 /etc/passwd
+
+# Merge files side by side
+paste file1.txt file2.txt
+
+# Merge with delimiter
+paste -d: file1.txt file2.txt
+
+# Convert to uppercase
+tr 'a-z' 'A-Z' < file.txt
+
+# Convert to lowercase
+tr 'A-Z' 'a-z' < file.txt
+
+# Delete characters
+tr -d ' ' < file.txt
+
+# Squeeze multiple spaces
+tr -s ' ' < file.txt
+
+# Replace characters
+tr ' ' '_' < file.txt
+
+# Combine tools
+cat file.txt | grep "error" | sort | uniq -c
+# Find errors, sort, count unique`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          114,
+			Title:       "Process Management Basics",
+			Description: "Learn to view, control, and manage processes: ps, top, kill, jobs, and process states.",
+			Order:       4,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Understanding Processes",
+					Content: `A process is a running instance of a program. Understanding processes is essential for system administration.
+
+**What is a Process?**
+- Running program with its own memory space
+- Has Process ID (PID)
+- Has parent process (PPID)
+- Has user owner
+- Consumes resources (CPU, memory)
+
+**Process States:**
+- **Running (R)**: Currently executing
+- **Sleeping (S)**: Waiting for event
+- **Stopped (T)**: Suspended (Ctrl+Z)
+- **Zombie (Z)**: Terminated but not cleaned up
+- **Dead (X)**: Terminated
+
+**Process Types:**
+- **Foreground**: Interactive, blocks terminal
+- **Background**: Runs without blocking terminal
+- **Daemon**: Background service, detached from terminal
+
+**Process Hierarchy:**
+- All processes descend from init (PID 1) or systemd
+- Parent-child relationships
+- Process tree structure`,
+					CodeExamples: `# View process tree
+pstree
+# Shows hierarchical process tree
+
+# View with PIDs
+pstree -p
+
+# View process hierarchy
+ps auxf
+# 'f' shows forest (tree) view
+
+# Find process ID
+pgrep firefox
+# Output: 12345
+
+# Check if process is running
+pidof firefox
+# Output: 12345
+
+# View process information
+ps -p 12345
+
+# Process states in ps output
+ps aux
+# STAT column shows state:
+# R = Running
+# S = Sleeping
+# T = Stopped
+# Z = Zombie
+# D = Uninterruptible sleep`,
+				},
+				{
+					Title: "ps - Process Status",
+					Content: `ps displays information about running processes. It's one of the most important process management tools.
+
+**Common ps Commands:**
+- `ps`: Show current terminal's processes
+- `ps aux`: Show all processes (BSD style)
+- `ps -ef`: Show all processes (Unix style)
+- `ps -u username`: Show user's processes
+- `ps -p PID`: Show specific process
+
+**ps aux Output Columns:**
+- **USER**: Process owner
+- **PID**: Process ID
+- **%CPU**: CPU usage percentage
+- **%MEM**: Memory usage percentage
+- **VSZ**: Virtual memory size
+- **RSS**: Resident set size (physical memory)
+- **TTY**: Terminal
+- **STAT**: Process state
+- **START**: Start time
+- **TIME**: CPU time used
+- **COMMAND**: Command line
+
+**Useful Options:**
+- `-f`: Full format (more details)
+- `-l`: Long format
+- `-e`: All processes
+- `-u`: User-specific
+- `--sort`: Sort output`,
+					CodeExamples: `# Show current terminal processes
+ps
+
+# Show all processes
+ps aux
+
+# Show all processes (alternative)
+ps -ef
+
+# Show processes for specific user
+ps -u username
+ps aux | grep username
+
+# Show specific process
+ps -p 12345
+
+# Show process tree
+ps auxf
+
+# Show full command line
+ps auxww
+# 'ww' shows unlimited width
+
+# Sort by CPU usage
+ps aux --sort=-%cpu | head
+
+# Sort by memory usage
+ps aux --sort=-%mem | head
+
+# Show only running processes
+ps aux | grep -v "sleep"
+
+# Count processes
+ps aux | wc -l
+
+# Find process by name
+ps aux | grep firefox
+
+# Show parent-child relationships
+ps -ef | grep -E "PID|firefox"
+
+# Custom output format
+ps -eo pid,user,comm,etime
+# Shows: PID, user, command, elapsed time`,
+				},
+				{
+					Title: "top & htop",
+					Content: `top and htop provide real-time, interactive views of running processes. They're essential for monitoring system performance.
+
+**top:**
+- Built-in process monitor
+- Updates continuously
+- Shows CPU, memory usage
+- Interactive commands
+- Available on all Linux systems
+
+**htop:**
+- Enhanced version of top
+- Better interface (colors, bars)
+- Easier navigation
+- May need installation: `apt install htop`
+
+**top Interactive Commands:**
+- **q**: Quit
+- **k**: Kill process (enter PID)
+- **r**: Renice process (change priority)
+- **Space**: Refresh immediately
+- **M**: Sort by memory
+- **P**: Sort by CPU
+- **T**: Sort by time
+- **u**: Filter by user
+- **/**: Search
+
+**Key Information Displayed:**
+- System uptime
+- Load average
+- CPU usage
+- Memory usage
+- Process list with details`,
+					CodeExamples: `# Start top
+top
+
+# Start htop (if installed)
+htop
+
+# Run top in batch mode (non-interactive)
+top -b -n 1
+# Useful for scripting
+
+# Run top for specific user
+top -u username
+
+# Update interval (seconds)
+top -d 5
+# Updates every 5 seconds
+
+# Show specific number of processes
+top -n 20
+
+# Save top output to file
+top -b -n 1 > top_output.txt
+
+# While in top:
+# Press 'M' to sort by memory
+# Press 'P' to sort by CPU
+# Press 'k' then enter PID to kill
+# Press 'r' then enter PID to renice
+# Press 'u' then enter username to filter
+# Press 'q' to quit
+
+# Alternative: Use htop (more user-friendly)
+htop
+# Navigate with arrow keys
+# F9 to kill process
+# F10 to quit`,
+				},
+				{
+					Title: "kill & Process Control",
+					Content: `Controlling processes is essential for system management. Learn to stop, restart, and manage processes.
+
+**kill:**
+- Send signals to processes
+- `kill PID`: Send TERM signal (graceful termination)
+- `kill -9 PID`: Send KILL signal (force kill)
+- `kill -15 PID`: Send TERM signal (default)
+
+**Common Signals:**
+- **SIGTERM (15)**: Terminate gracefully (default)
+- **SIGKILL (9)**: Force kill (cannot be ignored)
+- **SIGHUP (1)**: Hang up (often used to reload config)
+- **SIGINT (2)**: Interrupt (Ctrl+C)
+- **SIGSTOP (19)**: Stop process (Ctrl+Z)
+- **SIGCONT (18)**: Continue stopped process
+
+**killall:**
+- Kill processes by name
+- `killall processname`
+- `killall -9 processname`: Force kill
+
+**pkill:**
+- Kill processes by pattern
+- `pkill firefox`
+- `pkill -9 -u username processname`
+
+**jobs, fg, bg:**
+- Manage background jobs
+- `jobs`: List background jobs
+- `fg %1`: Bring job 1 to foreground
+- `bg %1`: Run job 1 in background
+- `&`: Run command in background`,
+					CodeExamples: `# Kill process gracefully
+kill 12345
+
+# Force kill process
+kill -9 12345
+kill -KILL 12345
+
+# Send HUP signal (reload config)
+kill -HUP 12345
+kill -1 12345
+
+# Kill by name
+killall firefox
+
+# Force kill by name
+killall -9 firefox
+
+# Kill by pattern
+pkill firefox
+
+# Kill user's processes
+pkill -u username firefox
+
+# List all signals
+kill -l
+
+# Run command in background
+sleep 100 &
+# Output: [1] 12345
+#         [1] = job number, 12345 = PID
+
+# List background jobs
+jobs
+# Output: [1]+ Running sleep 100 &
+
+# Bring job to foreground
+fg %1
+# or
+fg 1
+
+# Send job to background
+bg %1
+
+# Stop process (Ctrl+Z)
+# Process goes to stopped state
+
+# Continue stopped process
+fg
+# or
+bg  # if you want it in background
+
+# Kill background job
+kill %1
+
+# No hangup (continue after logout)
+nohup command &
+# Output goes to nohup.out
+
+# Disown job (remove from shell's job table)
+disown %1`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+	})
+}
