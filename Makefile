@@ -246,12 +246,18 @@ deploy:
 		echo "Stopping existing containers..." && \
 		if command -v docker-compose > /dev/null 2>&1; then \
 			docker-compose down 2>/dev/null || true; \
+		elif docker compose version > /dev/null 2>&1; then \
+			docker compose down 2>/dev/null || true; \
+		fi && \
+		echo "Cleaning up Docker system and volumes..." && \
+		docker system prune -f && \
+		docker volume prune -f && \
+		if command -v docker-compose > /dev/null 2>&1; then \
 			echo "Building Docker image..." && \
 			docker-compose build && \
 			echo "Starting containers..." && \
 			docker-compose up -d; \
 		elif docker compose version > /dev/null 2>&1; then \
-			docker compose down 2>/dev/null || true; \
 			echo "Building Docker image..." && \
 			docker compose build && \
 			echo "Starting containers..." && \
