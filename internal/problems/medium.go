@@ -7,6 +7,7 @@ var MediumProblems = []Problem{
 		Title:       "Group Anagrams",
 		Description: "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
 		Difficulty:  "Medium",
+		Topic:       "Hash Tables",
 		Signature:   "func groupAnagrams(strs []string) [][]string",
 		TestCases: []TestCase{
 			{Input: "strs = []string{\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"}", Expected: "[[bat] [nat tan] [ate eat tea]]"},
@@ -33,16 +34,20 @@ var MediumProblems = []Problem{
 		PythonSolution: `def groupAnagrams(strs: List[str]) -> List[List[str]]:
     groups = {}
     for s in strs:
-        key = tuple(sorted(s))
-        if key not in groups:
-            groups[key] = []
-        groups[key].append(s)
+        key = [0] * 26
+        for c in s:
+            key[ord(c) - ord('a')] += 1
+        key_tuple = tuple(key)
+        if key_tuple not in groups:
+            groups[key_tuple] = []
+        groups[key_tuple].append(s)
     return list(groups.values())`,
 		Explanation: "Use character count array as key for grouping anagrams. Each anagram will have same character frequencies. Time: O(n*k), Space: O(n*k).",
 	},
 	{
 		ID:          22,
 		Title:       "Top K Frequent Elements",
+		Topic:       "Hash Tables",
 		Description: "Given an integer array nums and an integer k, return the k most frequent elements.",
 		Difficulty:  "Medium",
 		Signature:   "func topKFrequent(nums []int, k int) []int",
@@ -86,6 +91,7 @@ var MediumProblems = []Problem{
 	{
 		ID:          23,
 		Title:       "Product of Array Except Self",
+		Topic:       "Arrays",
 		Description: "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].",
 		Difficulty:  "Medium",
 		Signature:   "func productExceptSelf(nums []int) []int",
@@ -125,6 +131,7 @@ var MediumProblems = []Problem{
 	{
 		ID:          24,
 		Title:       "Longest Consecutive Sequence",
+		Topic:       "Hash Tables",
 		Description: "Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.",
 		Difficulty:  "Medium",
 		Signature:   "func longestConsecutive(nums []int) int",
@@ -170,6 +177,7 @@ var MediumProblems = []Problem{
 	{
 		ID:          25,
 		Title:       "Valid Sudoku",
+		Topic:       "Hash Tables",
 		Description: "Determine if a 9 x 9 Sudoku board is valid. Only the filled cells need to be validated.",
 		Difficulty:  "Medium",
 		Signature:   "func isValidSudoku(board [][]byte) bool",
@@ -224,6 +232,7 @@ var MediumProblems = []Problem{
 	{
 		ID:          26,
 		Title:       "Encode and Decode Strings",
+		Topic:       "Arrays",
 		Description: "Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.",
 		Difficulty:  "Medium",
 		Signature:   "func encode(strs []string) string",
@@ -276,6 +285,7 @@ def decode(s: str) -> List[str]:
 	{
 		ID:          27,
 		Title:       "Longest Substring Without Repeating Characters",
+		Topic:       "Sliding Window",
 		Description: "Given a string s, find the length of the longest substring without repeating characters.",
 		Difficulty:  "Medium",
 		Signature:   "func lengthOfLongestSubstring(s string) int",
@@ -318,6 +328,7 @@ def decode(s: str) -> List[str]:
 	{
 		ID:          28,
 		Title:       "Longest Repeating Character Replacement",
+		Topic:       "Sliding Window",
 		Description: "You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most k times.",
 		Difficulty:  "Medium",
 		Signature:   "func characterReplacement(s string, k int) int",
@@ -366,6 +377,7 @@ def decode(s: str) -> List[str]:
 	{
 		ID:          29,
 		Title:       "Permutation in String",
+		Topic:       "Sliding Window",
 		Description: "Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.",
 		Difficulty:  "Medium",
 		Signature:   "func checkInclusion(s1 string, s2 string) bool",
@@ -443,6 +455,7 @@ def decode(s: str) -> List[str]:
 	{
 		ID:          30,
 		Title:       "Minimum Window Substring",
+		Topic:       "Sliding Window",
 		Description: "Given two strings s and t, return the minimum window substring of s such that every character in t (including duplicates) is included in the window.",
 		Difficulty:  "Medium",
 		Signature:   "func minWindow(s string, t string) string",
@@ -527,6 +540,7 @@ def decode(s: str) -> List[str]:
 	{
 		ID:          31,
 		Title:       "Valid Palindrome II",
+		Topic:       "Two Pointers",
 		Description: "Given a string s, return true if the s can be palindrome after deleting at most one character from it.",
 		Difficulty:  "Medium",
 		Signature:   "func validPalindrome(s string) bool",
@@ -581,6 +595,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          32,
 		Title:       "3Sum",
+		Topic:       "Two Pointers",
 		Description: "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
 		Difficulty:  "Medium",
 		Signature:   "func threeSum(nums []int) [][]int",
@@ -644,6 +659,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          33,
 		Title:       "Container With Most Water",
+		Topic:       "Two Pointers",
 		Description: "You are given an integer array height of length n. There are n vertical lines. Find two lines that together with the x-axis form a container that contains the most water.",
 		Difficulty:  "Medium",
 		Signature:   "func maxArea(height []int) int",
@@ -693,6 +709,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          34,
 		Title:       "Trapping Rain Water",
+		Topic:       "Two Pointers",
 		Description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
 		Difficulty:  "Medium",
 		Signature:   "func trap(height []int) int",
@@ -755,6 +772,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          35,
 		Title:       "Minimum Size Subarray Sum",
+		Topic:       "Sliding Window",
 		Description: "Given an array of positive integers nums and a positive integer target, return the minimal length of a contiguous subarray whose sum is greater than or equal to target.",
 		Difficulty:  "Medium",
 		Signature:   "func minSubArrayLen(target int, nums []int) int",
@@ -801,6 +819,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          36,
 		Title:       "Maximum Subarray",
+		Topic:       "Dynamic Programming",
 		Description: "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
 		Difficulty:  "Medium",
 		Signature:   "func maxSubArray(nums []int) int",
@@ -842,6 +861,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          37,
 		Title:       "Jump Game",
+		Topic:       "Dynamic Programming",
 		Description: "You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.",
 		Difficulty:  "Medium",
 		Signature:   "func canJump(nums []int) bool",
@@ -882,6 +902,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          38,
 		Title:       "Jump Game II",
+		Topic:       "Dynamic Programming",
 		Description: "Given an array of non-negative integers nums, you are initially positioned at the first index of the array. Your goal is to reach the last index in the minimum number of jumps.",
 		Difficulty:  "Medium",
 		Signature:   "func jump(nums []int) int",
@@ -923,6 +944,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          39,
 		Title:       "Gas Station",
+		Topic:       "Greedy",
 		Description: "There are n gas stations along a circular route. Given two integer arrays gas and cost, return the starting gas station's index if you can travel around the circuit once, otherwise return -1.",
 		Difficulty:  "Medium",
 		Signature:   "func canCompleteCircuit(gas []int, cost []int) int",
@@ -968,6 +990,7 @@ func isPalindromeRange(s string, i, j int) bool {
 	{
 		ID:          40,
 		Title:       "Hand of Straights",
+		Topic:       "Hash Tables",
 		Description: "Given an integer array hand where hand[i] is the value of the ith card and an integer groupSize, return true if she can rearrange the cards into groups of groupSize consecutive cards.",
 		Difficulty:  "Medium",
 		Signature:   "func isNStraightHand(hand []int, groupSize int) bool",

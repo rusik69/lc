@@ -7,6 +7,7 @@ var EasyProblems = []Problem{
 		Title:       "Two Sum",
 		Description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
 		Difficulty:  "Easy",
+		Topic:       "Hash Tables",
 		Signature:   "func twoSum(nums []int, target int) []int",
 		TestCases: []TestCase{
 			{Input: "nums = []int{2, 7, 11, 15}, target = 9", Expected: "[0 1]"},
@@ -40,6 +41,7 @@ var EasyProblems = []Problem{
 		Title:       "Reverse String",
 		Description: "Write a function that reverses a string. The input string is given as an array of characters. You must do this by modifying the input array in-place.",
 		Difficulty:  "Easy",
+		Topic:       "Two Pointers",
 		Signature:   "func reverseString(s []byte)",
 		TestCases: []TestCase{
 			{Input: "s = []byte{'h','e','l','l','o'}", Expected: "olleh"},
@@ -67,6 +69,7 @@ var EasyProblems = []Problem{
 		Title:       "FizzBuzz",
 		Description: "Given an integer n, return a string array answer where: answer[i] == \"FizzBuzz\" if i is divisible by 3 and 5, answer[i] == \"Fizz\" if i is divisible by 3, answer[i] == \"Buzz\" if i is divisible by 5, answer[i] == i if none of the above conditions are true.",
 		Difficulty:  "Easy",
+		Topic:       "Arrays",
 		Signature:   "func fizzBuzz(n int) []string",
 		TestCases: []TestCase{
 			{Input: "n = 3", Expected: "[1 2 Fizz]"},
@@ -109,6 +112,7 @@ var EasyProblems = []Problem{
 		Title:       "Palindrome Check",
 		Description: "Given a string s, return true if it is a palindrome, or false otherwise. A palindrome is a string that reads the same forward and backward.",
 		Difficulty:  "Easy",
+		Topic:       "Two Pointers",
 		Signature:   "func isPalindrome(s string) bool",
 		TestCases: []TestCase{
 			{Input: "s = \"racecar\"", Expected: "true"},
@@ -149,6 +153,7 @@ var EasyProblems = []Problem{
 		Title:       "Fibonacci",
 		Description: "The Fibonacci numbers, commonly denoted F(n) form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from 0 and 1. Given n, calculate F(n).",
 		Difficulty:  "Easy",
+		Topic:       "Dynamic Programming",
 		Signature:   "func fib(n int) int",
 		TestCases: []TestCase{
 			{Input: "n = 2", Expected: "1"},
@@ -184,6 +189,7 @@ var EasyProblems = []Problem{
 		Title:       "Contains Duplicate",
 		Description: "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
 		Difficulty:  "Easy",
+		Topic:       "Hash Tables",
 		Signature:   "func containsDuplicate(nums []int) bool",
 		TestCases: []TestCase{
 			{Input: "nums = []int{1,2,3,1}", Expected: "true"},
@@ -215,6 +221,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          7,
 		Title:       "Valid Anagram",
+		Topic:       "Hash Tables",
 		Description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
 		Difficulty:  "Easy",
 		Signature:   "func isAnagram(s string, t string) bool",
@@ -258,6 +265,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          8,
 		Title:       "Valid Parentheses",
+		Topic:       "Stack",
 		Description: "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
 		Difficulty:  "Easy",
 		Signature:   "func isValid(s string) bool",
@@ -302,6 +310,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          9,
 		Title:       "Merge Two Sorted Lists",
+		Topic:       "Linked Lists",
 		Description: "Merge two sorted linked lists and return it as a sorted list. The list should be made by splicing together the nodes of the first two lists.",
 		Difficulty:  "Easy",
 		Signature:   "func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode",
@@ -350,6 +359,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          10,
 		Title:       "Best Time to Buy and Sell Stock",
+		Topic:       "Arrays",
 		Description: "You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.",
 		Difficulty:  "Easy",
 		Signature:   "func maxProfit(prices []int) int",
@@ -387,6 +397,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          11,
 		Title:       "Binary Search",
+		Topic:       "Binary Search",
 		Description: "Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.",
 		Difficulty:  "Easy",
 		Signature:   "func search(nums []int, target int) int",
@@ -428,6 +439,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          12,
 		Title:       "First Bad Version",
+		Topic:       "Binary Search",
 		Description: "You are a product manager and currently leading a team to develop a new product. Since each version is developed based on the previous version, all the versions after a bad version are also bad. Find the first bad version.",
 		Difficulty:  "Easy",
 		Signature:   "func firstBadVersion(n int) int",
@@ -464,6 +476,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          13,
 		Title:       "Ransom Note",
+		Topic:       "Hash Tables",
 		Description: "Given two strings ransomNote and magazine, return true if ransomNote can be constructed by using the letters from magazine and false otherwise.",
 		Difficulty:  "Easy",
 		Signature:   "func canConstruct(ransomNote string, magazine string) bool",
@@ -502,6 +515,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          14,
 		Title:       "Climbing Stairs",
+		Topic:       "Dynamic Programming",
 		Description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
 		Difficulty:  "Easy",
 		Signature:   "func climbStairs(n int) int",
@@ -535,6 +549,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          15,
 		Title:       "Longest Common Prefix",
+		Topic:       "Arrays",
 		Description: "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string.",
 		Difficulty:  "Easy",
 		Signature:   "func longestCommonPrefix(strs []string) string",
@@ -573,6 +588,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          16,
 		Title:       "Single Number",
+		Topic:       "Hash Tables",
 		Description: "Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.",
 		Difficulty:  "Easy",
 		Signature:   "func singleNumber(nums []int) int",
@@ -600,6 +616,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          17,
 		Title:       "Majority Element",
+		Topic:       "Hash Tables",
 		Description: "Given an array nums of size n, return the majority element. The majority element is the element that appears more than ⌊n / 2⌋ times.",
 		Difficulty:  "Easy",
 		Signature:   "func majorityElement(nums []int) int",
@@ -639,6 +656,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          18,
 		Title:       "Remove Duplicates from Sorted Array",
+		Topic:       "Two Pointers",
 		Description: "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once.",
 		Difficulty:  "Easy",
 		Signature:   "func removeDuplicates(nums []int) int",
@@ -677,6 +695,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          19,
 		Title:       "Move Zeroes",
+		Topic:       "Two Pointers",
 		Description: "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.",
 		Difficulty:  "Easy",
 		Signature:   "func moveZeroes(nums []int)",
@@ -708,6 +727,7 @@ var EasyProblems = []Problem{
 	{
 		ID:          20,
 		Title:       "Reverse Linked List",
+		Topic:       "Linked Lists",
 		Description: "Given the head of a singly linked list, reverse the list, and return the reversed list.",
 		Difficulty:  "Easy",
 		Signature:   "func reverseList(head *ListNode) *ListNode",

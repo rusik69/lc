@@ -17,6 +17,7 @@ type Problem struct {
 	Title         string
 	Description   string
 	Difficulty    string // "Easy", "Medium", "Hard"
+	Topic         string // Data structure/algorithm topic (e.g., "Arrays", "Hash Tables")
 	Signature     string
 	TestCases     []TestCase
 	Solution      string // Go solution
@@ -24,9 +25,28 @@ type Problem struct {
 	Explanation   string
 }
 
+// Lesson represents educational content within a course module
+type Lesson struct {
+	Title        string
+	Content      string // HTML/markdown content explaining the concept
+	CodeExamples string // Optional code examples
+}
+
+// CourseModule represents a course module with lessons and related problems
+type CourseModule struct {
+	ID          int
+	Title       string
+	Description string
+	Order       int // For sequencing modules
+	Lessons     []Lesson
+	ProblemIDs  []int // IDs of problems related to this module
+}
+
 var (
 	allProblems []Problem
 	problemsMu  sync.RWMutex
+	allModules  []CourseModule
+	modulesMu   sync.RWMutex
 )
 
 func init() {
@@ -192,4 +212,38 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 	}
 	
 	return "def " + funcName + "(" + strings.Join(params, ", ") + ") -> " + returnType
+}
+
+// GetProblemsByTopic returns all problems filtered by topic
+func GetProblemsByTopic(topic string) []Problem {
+	problemsMu.RLock()
+	defer problemsMu.RUnlock()
+	result := []Problem{}
+	for i := range allProblems {
+		if allProblems[i].Topic == topic {
+			result = append(result, allProblems[i])
+		}
+	}
+	return result
+}
+
+// GetCourseModules returns all course modules
+func GetCourseModules() []CourseModule {
+	modulesMu.RLock()
+	defer modulesMu.RUnlock()
+	result := make([]CourseModule, len(allModules))
+	copy(result, allModules)
+	return result
+}
+
+// GetModuleByID returns a course module by its ID
+func GetModuleByID(id int) *CourseModule {
+	modulesMu.RLock()
+	defer modulesMu.RUnlock()
+	for i := range allModules {
+		if allModules[i].ID == id {
+			return &allModules[i]
+		}
+	}
+	return nil
 }

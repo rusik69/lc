@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	templates       *template.Template
-	indexTemplate   *template.Template
-	problemTemplate *template.Template
+	templates         *template.Template
+	indexTemplate     *template.Template
+	problemTemplate   *template.Template
+	courseTemplate    *template.Template
+	courseModuleTemplate *template.Template
 )
 
 const (
@@ -39,6 +41,18 @@ func InitTemplates(templateDir string) error {
 
 	// Parse problem template separately to avoid block conflicts
 	problemTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/problem.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse course template separately
+	courseTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse course module template separately
+	courseModuleTemplate, err = template.ParseFiles(templateDir+"/layout.html", templateDir+"/course_module.html")
 	if err != nil {
 		return err
 	}
@@ -343,6 +357,59 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 		}, 100);
 	}
 </script>`, langSelector, codeLang, template.HTMLEscapeString(solution), explanationHTML, codeLang)
+}
+
+func HandleCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/course" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetCourseModules()
+	if err := courseTemplate.Execute(w, modules); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleCourseModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := courseModuleTemplate.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func containsDangerousPatterns(code string) bool {

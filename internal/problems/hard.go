@@ -7,6 +7,7 @@ var HardProblems = []Problem{
 		Title:       "Median of Two Sorted Arrays",
 		Description: "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
 		Difficulty:  "Hard",
+		Topic:       "Binary Search",
 		Signature:   "func findMedianSortedArrays(nums1 []int, nums2 []int) float64",
 		TestCases: []TestCase{
 			{Input: "nums1 = []int{1,3}, nums2 = []int{2}", Expected: "2.00000"},
@@ -80,6 +81,7 @@ var HardProblems = []Problem{
 	{
 		ID:          42,
 		Title:       "Longest Valid Parentheses",
+		Topic:       "Stack",
 		Description: "Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.",
 		Difficulty:  "Hard",
 		Signature:   "func longestValidParentheses(s string) int",
@@ -128,6 +130,7 @@ var HardProblems = []Problem{
 	{
 		ID:          43,
 		Title:       "Wildcard Matching",
+		Topic:       "Dynamic Programming",
 		Description: "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*' where '?' matches any single character and '*' matches any sequence of characters.",
 		Difficulty:  "Hard",
 		Signature:   "func isMatch(s string, p string) bool",
@@ -181,6 +184,7 @@ var HardProblems = []Problem{
 	{
 		ID:          44,
 		Title:       "Regular Expression Matching",
+		Topic:       "Dynamic Programming",
 		Description: "Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where '.' matches any single character and '*' matches zero or more of the preceding element.",
 		Difficulty:  "Hard",
 		Signature:   "func isMatchRegex(s string, p string) bool",
@@ -235,6 +239,7 @@ var HardProblems = []Problem{
 	{
 		ID:          45,
 		Title:       "Merge k Sorted Lists",
+		Topic:       "Linked Lists",
 		Description: "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
 		Difficulty:  "Hard",
 		Signature:   "func mergeKLists(lists []*ListNode) *ListNode",
@@ -276,6 +281,7 @@ var HardProblems = []Problem{
 	{
 		ID:          46,
 		Title:       "Reverse Nodes in k-Group",
+		Topic:       "Linked Lists",
 		Description: "Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list.",
 		Difficulty:  "Hard",
 		Signature:   "func reverseKGroup(head *ListNode, k int) *ListNode",
@@ -324,6 +330,7 @@ var HardProblems = []Problem{
 	{
 		ID:          47,
 		Title:       "Largest Rectangle in Histogram",
+		Topic:       "Stack",
 		Description: "Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.",
 		Difficulty:  "Hard",
 		Signature:   "func largestRectangleArea(heights []int) int",
@@ -375,6 +382,7 @@ var HardProblems = []Problem{
 	{
 		ID:          48,
 		Title:       "Maximal Rectangle",
+		Topic:       "Dynamic Programming",
 		Description: "Given a rows x cols binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.",
 		Difficulty:  "Hard",
 		Signature:   "func maximalRectangle(matrix [][]byte) int",
@@ -421,6 +429,7 @@ var HardProblems = []Problem{
 	{
 		ID:          49,
 		Title:       "Minimum Window Substring",
+		Topic:       "Sliding Window",
 		Description: "Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window.",
 		Difficulty:  "Hard",
 		Signature:   "func minWindowHard(s string, t string) string",
@@ -497,6 +506,7 @@ var HardProblems = []Problem{
 	{
 		ID:          50,
 		Title:       "Sliding Window Maximum",
+		Topic:       "Sliding Window",
 		Description: "You are given an array of integers nums, there is a sliding window of size k which is moving from the very left of the array to the very right.",
 		Difficulty:  "Hard",
 		Signature:   "func maxSlidingWindow(nums []int, k int) []int",
@@ -538,6 +548,7 @@ var HardProblems = []Problem{
 	{
 		ID:          51,
 		Title:       "Word Ladder",
+		Topic:       "Graphs",
 		Description: "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words such that each adjacent pair differs by a single letter.",
 		Difficulty:  "Hard",
 		Signature:   "func ladderLength(beginWord string, endWord string, wordList []string) int",
@@ -614,6 +625,7 @@ var HardProblems = []Problem{
 	{
 		ID:          52,
 		Title:       "Word Ladder II",
+		Topic:       "Graphs",
 		Description: "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words. Given two words, return all the shortest transformation sequences.",
 		Difficulty:  "Hard",
 		Signature:   "func findLadders(beginWord string, endWord string, wordList []string) [][]string",
@@ -647,6 +659,7 @@ var HardProblems = []Problem{
 	{
 		ID:          53,
 		Title:       "Alien Dictionary",
+		Topic:       "Graphs",
 		Description: "There is a new alien language that uses the English alphabet. However, the order among the letters is unknown to you. You are given a list of strings words from the alien language's dictionary.",
 		Difficulty:  "Hard",
 		Signature:   "func alienOrder(words []string) string",
@@ -733,6 +746,7 @@ var HardProblems = []Problem{
 	{
 		ID:          54,
 		Title:       "Longest Increasing Path in a Matrix",
+		Topic:       "Dynamic Programming",
 		Description: "Given an m x n integers matrix, return the length of the longest increasing path in matrix.",
 		Difficulty:  "Hard",
 		Signature:   "func longestIncreasingPath(matrix [][]int) int",
@@ -808,6 +822,7 @@ var HardProblems = []Problem{
 	{
 		ID:          55,
 		Title:       "Number of Islands",
+		Topic:       "Graphs",
 		Description: "Given an m x n 2D binary grid which represents a map of '1's (land) and '0's (water), return the number of islands.",
 		Difficulty:  "Hard",
 		Signature:   "func numIslands(grid [][]byte) int",
@@ -864,6 +879,7 @@ var HardProblems = []Problem{
 	{
 		ID:          56,
 		Title:       "Course Schedule II",
+		Topic:       "Graphs",
 		Description: "There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.",
 		Difficulty:  "Hard",
 		Signature:   "func findOrder(numCourses int, prerequisites [][]int) []int",
@@ -923,6 +939,7 @@ var HardProblems = []Problem{
 	{
 		ID:          57,
 		Title:       "Serialize and Deserialize Binary Tree",
+		Topic:       "Trees",
 		Description: "Design an algorithm to serialize and deserialize a binary tree. Serialization is converting a tree to a string, deserialization is converting string back to tree.",
 		Difficulty:  "Hard",
 		Signature:   "func serialize(root *TreeNode) string",
@@ -977,6 +994,7 @@ def deserialize(data: str) -> Optional[TreeNode]:
 	{
 		ID:          58,
 		Title:       "Binary Tree Maximum Path Sum",
+		Topic:       "Trees",
 		Description: "A path in a binary tree is a sequence of nodes where each pair of adjacent nodes has an edge connecting them. A path's sum is the sum of the node's values in the path.",
 		Difficulty:  "Hard",
 		Signature:   "func maxPathSum(root *TreeNode) int",
@@ -1024,6 +1042,7 @@ def deserialize(data: str) -> Optional[TreeNode]:
 	{
 		ID:          59,
 		Title:       "Distinct Subsequences",
+		Topic:       "Dynamic Programming",
 		Description: "Given two strings s and t, return the number of distinct subsequences of s which equals t.",
 		Difficulty:  "Hard",
 		Signature:   "func numDistinct(s string, t string) int",
@@ -1068,6 +1087,7 @@ def deserialize(data: str) -> Optional[TreeNode]:
 	{
 		ID:          60,
 		Title:       "Edit Distance",
+		Topic:       "Dynamic Programming",
 		Description: "Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have three operations: insert, delete, or replace a character.",
 		Difficulty:  "Hard",
 		Signature:   "func minDistance(word1 string, word2 string) int",
