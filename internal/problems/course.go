@@ -354,56 +354,348 @@ print(f"log₂(1000000) ≈ {math.log2(1000000):.1f}")`,
 					Content: `Arrays are one of the most fundamental data structures in computer science. An array is a collection of elements stored in contiguous memory locations, each identified by an index.
 
 **Key Properties:**
-- Fixed size (in most languages)
-- Random access: O(1) time complexity
-- Contiguous memory allocation
-- Zero-based indexing
+- Fixed size (in most languages) - though dynamic arrays exist
+- Random access: O(1) time complexity - can jump to any index instantly
+- Contiguous memory allocation - elements stored next to each other
+- Zero-based indexing - first element at index 0
+
+**Memory Layout:**
+Arrays store elements sequentially in memory. For an array [10, 20, 30]:
+- Index 0: Memory address = base + 0×size
+- Index 1: Memory address = base + 1×size  
+- Index 2: Memory address = base + 2×size
+
+This contiguous layout provides excellent cache locality, making arrays very fast for sequential access.
 
 **Common Operations:**
-- Access: O(1)
-- Search: O(n)
-- Insertion: O(n) (requires shifting)
-- Deletion: O(n) (requires shifting)`,
-					CodeExamples: `// Go example
-arr := []int{1, 2, 3, 4, 5}
-fmt.Println(arr[0])  // Access: O(1)
-arr = append(arr, 6)  // Append: O(1) amortized
+- **Access by index**: O(1) - direct memory calculation
+- **Search**: O(n) - must check each element
+- **Insertion at end**: O(1) amortized (dynamic arrays)
+- **Insertion at position**: O(n) - requires shifting elements
+- **Deletion**: O(n) - requires shifting elements
 
-# Python example
+**Dynamic Arrays (Slices/Lists):**
+Most modern languages provide dynamic arrays that grow automatically:
+- When capacity is reached, allocate larger array (usually 2×)
+- Copy existing elements to new array
+- Amortized O(1) for append operations
+
+**When to Use Arrays:**
+- Need random access by index
+- Fixed or predictable size
+- Sequential processing
+- Cache-friendly operations
+
+**Common Pitfalls:**
+- Index out of bounds errors
+- Off-by-one errors (0-indexed vs 1-indexed thinking)
+- Forgetting arrays are passed by reference in some languages`,
+					CodeExamples: `// Go: Array operations
+arr := []int{1, 2, 3, 4, 5}
+
+// Access: O(1)
+first := arr[0]  // 1
+last := arr[len(arr)-1]  // 5
+
+// Search: O(n)
+func find(arr []int, target int) int {
+    for i, val := range arr {
+        if val == target {
+            return i
+        }
+    }
+    return -1
+}
+
+// Insertion at end: O(1) amortized
+arr = append(arr, 6)  // [1, 2, 3, 4, 5, 6]
+
+// Insertion at position: O(n)
+func insert(arr []int, index int, value int) []int {
+    arr = append(arr, 0)  // Make room
+    copy(arr[index+1:], arr[index:])  // Shift right
+    arr[index] = value
+    return arr
+}
+
+# Python: List operations
 arr = [1, 2, 3, 4, 5]
-print(arr[0])  # Access: O(1)
-arr.append(6)  # Append: O(1) amortized`,
+
+# Access: O(1)
+first = arr[0]  # 1
+last = arr[-1]  # 5 (negative indexing)
+
+# Search: O(n)
+def find(arr, target):
+    try:
+        return arr.index(target)
+    except ValueError:
+        return -1
+
+# Insertion at end: O(1) amortized
+arr.append(6)  # [1, 2, 3, 4, 5, 6]
+
+# Insertion at position: O(n)
+arr.insert(2, 99)  # [1, 2, 99, 3, 4, 5, 6]`,
 				},
 				{
 					Title: "Hash Tables",
 					Content: `Hash tables (also called hash maps or dictionaries) provide O(1) average-case time complexity for insertions, deletions, and lookups.
 
 **How They Work:**
-1. A hash function converts keys into array indices
-2. Values are stored at those indices
-3. Collisions are handled using techniques like chaining or open addressing
+1. **Hash Function**: Converts keys into array indices
+   - Input: key (string, int, etc.)
+   - Output: index in underlying array
+   - Should distribute keys uniformly
+
+2. **Storage**: Values stored at calculated indices
+   - Array of buckets/slots
+   - Each bucket can hold one or more key-value pairs
+
+3. **Collision Handling**: When two keys hash to same index
+   - **Chaining**: Each bucket is a linked list
+   - **Open Addressing**: Find next available slot (linear probing, quadratic probing)
+
+**Hash Function Properties:**
+- **Deterministic**: Same key always produces same hash
+- **Uniform Distribution**: Keys spread evenly across buckets
+- **Fast Computation**: Should be O(1) or very fast
+- **Avalanche Effect**: Small change in input → large change in output
 
 **Key Properties:**
-- Average O(1) for insert, delete, lookup
-- Worst case O(n) if all keys hash to same bucket
-- No guaranteed order (unless using ordered hash map)
+- **Average Case**: O(1) for insert, delete, lookup
+- **Worst Case**: O(n) if all keys hash to same bucket (rare with good hash function)
+- **Load Factor**: ratio of elements to buckets (typically kept < 0.75)
+- **No Guaranteed Order**: Keys unordered (unless using ordered hash map)
+
+**Collision Resolution Strategies:**
+
+1. **Separate Chaining**:
+   - Each bucket is a linked list
+   - Simple, handles many collisions well
+   - Extra memory for pointers
+
+2. **Open Addressing**:
+   - Store directly in array
+   - Linear probing: check next slot
+   - Quadratic probing: check slots at increasing distances
+   - Better cache performance, but clustering issues
 
 **Common Use Cases:**
-- Counting frequencies
-- Fast lookups
-- Caching/memoization
-- Grouping elements`,
-					CodeExamples: `// Go example
-m := make(map[int]int)
-m[1] = 100  // Insert: O(1)
-val := m[1]  // Lookup: O(1)
-delete(m, 1)  // Delete: O(1)
+- **Frequency Counting**: Count occurrences of elements
+- **Fast Lookups**: O(1) instead of O(n) search
+- **Caching/Memoization**: Store computed results
+- **Grouping**: Group elements by key
+- **Deduplication**: Remove duplicates efficiently
 
-# Python example
+**Real-World Applications:**
+- Database indexing
+- Caching systems (Redis, Memcached)
+- Symbol tables in compilers
+- Session management in web apps
+- Counting word frequencies
+
+**Best Practices:**
+- Choose appropriate initial capacity
+- Monitor load factor and resize when needed
+- Use immutable keys when possible
+- Consider thread-safety for concurrent access`,
+					CodeExamples: `// Go: Hash table operations
+m := make(map[int]int)
+
+// Insert: O(1) average
+m[1] = 100
+m[2] = 200
+m[3] = 300
+
+// Lookup: O(1) average
+val, exists := m[1]  // val=100, exists=true
+val, exists = m[99]  // val=0, exists=false
+
+// Delete: O(1) average
+delete(m, 1)
+
+// Iteration: O(n) - order not guaranteed
+for key, value := range m {
+    fmt.Printf("%d: %d\n", key, value)
+}
+
+// Frequency counting example
+func countFreq(nums []int) map[int]int {
+    freq := make(map[int]int)
+    for _, num := range nums {
+        freq[num]++  // O(1) per operation
+    }
+    return freq  // Total: O(n)
+}
+
+# Python: Dictionary operations
 m = {}
-m[1] = 100  # Insert: O(1)
-val = m[1]  # Lookup: O(1)
-del m[1]  # Delete: O(1)`,
+
+# Insert: O(1) average
+m[1] = 100
+m[2] = 200
+m[3] = 300
+
+# Lookup: O(1) average
+val = m.get(1)  # 100
+val = m.get(99, 0)  # 0 (default if not found)
+
+# Delete: O(1) average
+del m[1]
+# or: m.pop(1)
+
+# Iteration: O(n) - order preserved in Python 3.7+
+for key, value in m.items():
+    print(f"{key}: {value}")
+
+# Frequency counting example
+def count_freq(nums):
+    freq = {}
+    for num in nums:
+        freq[num] = freq.get(num, 0) + 1  # O(1) per operation
+    return freq  # Total: O(n)`,
+				},
+				{
+					Title: "Array Techniques",
+					Content: `Master essential array manipulation techniques for efficient problem-solving.
+
+**Prefix Sum:**
+- Precompute cumulative sums for range queries
+- Enables O(1) range sum queries after O(n) preprocessing
+- Useful for: subarray sum problems, range queries
+
+**Two-Pass Techniques:**
+- First pass: collect information
+- Second pass: use information to solve problem
+- Example: Product except self, trapping rainwater
+
+**In-Place Modifications:**
+- Modify array without extra space
+- Use array itself to store information
+- Example: Move zeros, remove duplicates
+
+**Array Rotation:**
+- Rotate array left/right by k positions
+- Techniques: Reverse method, cyclic replacement
+- Time: O(n), Space: O(1)
+
+**Common Patterns:**
+- **Partitioning**: Separate elements based on condition (two pointers)
+- **Cyclic Replacements**: Move elements in cycles
+- **Reversal**: Reverse entire array or segments`,
+					CodeExamples: `// Go: Prefix sum
+func prefixSum(nums []int) []int {
+    prefix := make([]int, len(nums)+1)
+    for i := 0; i < len(nums); i++ {
+        prefix[i+1] = prefix[i] + nums[i]
+    }
+    return prefix
+}
+
+// Range sum query: O(1)
+func rangeSum(prefix []int, i, j int) int {
+    return prefix[j+1] - prefix[i]
+}
+
+// Product except self (two passes)
+func productExceptSelf(nums []int) []int {
+    n := len(nums)
+    result := make([]int, n)
+    result[0] = 1
+    // Left products
+    for i := 1; i < n; i++ {
+        result[i] = result[i-1] * nums[i-1]
+    }
+    // Right products
+    right := 1
+    for i := n - 1; i >= 0; i-- {
+        result[i] *= right
+        right *= nums[i]
+    }
+    return result
+}
+
+# Python: Prefix sum
+def prefix_sum(nums):
+    prefix = [0]
+    for num in nums:
+        prefix.append(prefix[-1] + num)
+    return prefix
+
+# Range sum query: O(1)
+def range_sum(prefix, i, j):
+    return prefix[j+1] - prefix[i]`,
+				},
+				{
+					Title: "Hash Table Advanced Techniques",
+					Content: `Advanced hash table techniques for complex problem-solving.
+
+**Frequency Counting:**
+- Count occurrences of elements
+- Track character frequencies in strings
+- Group elements by frequency
+
+**Two-Sum Pattern:**
+- Store complements (target - current) in map
+- Check if complement exists before adding current
+- Enables O(n) solution instead of O(n²)
+
+**Grouping/Partitioning:**
+- Group elements by some property
+- Use property as key, list of elements as value
+- Example: Group anagrams by sorted string
+
+**Sliding Window with Hash Map:**
+- Track window state using hash map
+- Add/remove elements as window moves
+- Efficiently check constraints
+
+**Common Patterns:**
+- **Character Frequency Array**: For limited alphabet (26 letters)
+- **Index Mapping**: Store indices for quick lookup
+- **Complement Tracking**: Store what we're looking for`,
+					CodeExamples: `// Go: Group anagrams
+func groupAnagrams(strs []string) [][]string {
+    groups := make(map[[26]int][]string)
+    for _, s := range strs {
+        key := [26]int{}
+        for _, c := range s {
+            key[c-'a']++
+        }
+        groups[key] = append(groups[key], s)
+    }
+    result := make([][]string, 0, len(groups))
+    for _, group := range groups {
+        result = append(result, group)
+    }
+    return result
+}
+
+// Two-sum pattern
+func twoSum(nums []int, target int) []int {
+    m := make(map[int]int)
+    for i, num := range nums {
+        if idx, ok := m[target-num]; ok {
+            return []int{idx, i}
+        }
+        m[num] = i
+    }
+    return nil
+}
+
+# Python: Group anagrams
+def group_anagrams(strs):
+    groups = {}
+    for s in strs:
+        key = [0] * 26
+        for c in s:
+            key[ord(c) - ord('a')] += 1
+        key_tuple = tuple(key)
+        if key_tuple not in groups:
+            groups[key_tuple] = []
+        groups[key_tuple].append(s)
+    return list(groups.values())`,
 				},
 			},
 			ProblemIDs: []int{1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
@@ -416,21 +708,40 @@ del m[1]  # Delete: O(1)`,
 			Lessons: []Lesson{
 				{
 					Title: "Two Pointers Technique",
-					Content: `The two-pointer technique uses two pointers moving through a data structure to solve problems efficiently.
+					Content: `The two-pointer technique uses two pointers moving through a data structure to solve problems efficiently. It's one of the most powerful optimization techniques, often reducing O(n²) brute force solutions to O(n).
 
 **Common Patterns:**
-1. **Opposite Ends**: Start with pointers at both ends, move them toward each other
-2. **Same Direction**: Both pointers start at the beginning, move at different speeds
-3. **Sliding Window**: Maintain a window of elements between two pointers
+
+1. **Opposite Ends (Converging Pointers)**:
+   - Start with pointers at both ends
+   - Move them toward each other based on conditions
+   - Best for: sorted arrays, palindromes, finding pairs
+
+2. **Same Direction (Fast/Slow Pointers)**:
+   - Both start at beginning
+   - Move at different speeds
+   - Best for: removing duplicates, cycle detection, partitioning
+
+3. **Sliding Window**:
+   - Maintain a window of elements
+   - Expand and contract based on conditions
+   - Best for: subarray/substring problems
 
 **When to Use:**
-- Sorted arrays
-- Palindrome checking
-- Finding pairs/triplets
-- Removing duplicates
-- Merging sorted arrays
+- **Sorted arrays**: Can eliminate half the search space
+- **Palindrome checking**: Compare from both ends
+- **Finding pairs/triplets**: Avoid nested loops
+- **Removing duplicates**: In-place modification
+- **Merging sorted arrays**: Combine efficiently
+- **Cycle detection**: Floyd's algorithm
 
-**Time Complexity:** Often reduces O(n²) to O(n)`,
+**Key Insight:** Instead of checking all pairs O(n²), use pointers to eliminate possibilities systematically, achieving O(n).
+
+**Common Mistakes:**
+- Moving pointers incorrectly (infinite loops)
+- Off-by-one errors with pointer positions
+- Not handling edge cases (empty arrays, single element)
+- Forgetting to update pointers in all branches`,
 					CodeExamples: `// Go: Two pointers from opposite ends
 func twoSumSorted(nums []int, target int) []int {
     left, right := 0, len(nums)-1
@@ -456,6 +767,73 @@ def removeDuplicates(nums):
             nums[slow] = nums[fast]
     return slow + 1`,
 				},
+				{
+					Title: "Fast and Slow Pointers",
+					Content: `The fast/slow pointer technique uses two pointers moving at different speeds to solve problems efficiently.
+
+**Common Applications:**
+
+1. **Cycle Detection** (Floyd's Algorithm):
+   - Fast pointer moves 2 steps, slow moves 1 step
+   - If cycle exists, they will meet
+   - Time: O(n), Space: O(1)
+
+2. **Finding Middle Element**:
+   - Fast pointer reaches end when slow is at middle
+   - Useful for: splitting list, palindrome checking
+
+3. **Finding kth Element from End**:
+   - Move fast pointer k steps ahead
+   - Then move both at same speed
+   - When fast reaches end, slow is at kth from end
+
+**Why It Works:**
+- Fast pointer covers distance twice as fast
+- When fast completes 2n steps, slow completes n steps
+- They meet at specific positions based on problem
+
+**Pattern:**
+- Initialize both pointers at head
+- Move fast pointer faster (usually 2x speed)
+- Check conditions when pointers meet or fast reaches end`,
+					CodeExamples: `// Go: Cycle detection
+func hasCycle(head *ListNode) bool {
+    if head == nil {
+        return false
+    }
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
+        slow = slow.Next
+        fast = fast.Next.Next
+        if slow == fast {
+            return true  // Cycle detected
+        }
+    }
+    return false
+}
+
+// Find middle element
+func findMiddle(head *ListNode) *ListNode {
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
+        slow = slow.Next
+        fast = fast.Next.Next
+    }
+    return slow  // Middle element
+}
+
+# Python: Cycle detection
+def has_cycle(head):
+    if not head:
+        return False
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    return False`,
+				},
 			},
 			ProblemIDs: []int{2, 3, 4, 5, 21, 22, 23, 24, 25},
 		},
@@ -467,19 +845,45 @@ def removeDuplicates(nums):
 			Lessons: []Lesson{
 				{
 					Title: "Sliding Window Technique",
-					Content: `The sliding window technique maintains a window of elements and slides it across the array/string to find optimal solutions.
+					Content: `The sliding window technique maintains a window of elements and slides it across the array/string to find optimal solutions. It's essential for substring/subarray problems.
 
 **Types:**
-1. **Fixed Window**: Window size is constant
-2. **Variable Window**: Window size changes based on conditions
+
+1. **Fixed Window**:
+   - Window size is constant (e.g., always k elements)
+   - Slide window one position at a time
+   - Example: Maximum sum of subarray of size k
+
+2. **Variable Window**:
+   - Window size changes based on conditions
+   - Expand when condition not met, contract when met
+   - Example: Longest substring with at most k distinct characters
+
+**Window Maintenance:**
+- **Expand**: Move right pointer forward
+- **Contract**: Move left pointer forward
+- **Track State**: Use hash map or variables to track window properties
 
 **When to Use:**
 - Subarray/substring problems
 - Finding maximum/minimum in a window
 - Problems asking for "longest" or "shortest" subarray
-- Problems with constraints (sum, unique characters, etc.)
+- Problems with constraints (sum, unique characters, frequency)
+- String pattern matching
 
-**Time Complexity:** O(n) - each element visited at most twice`,
+**Time Complexity:** O(n) - each element visited at most twice (once by left pointer, once by right pointer)
+
+**Template Pattern:**
+1. Initialize left = 0, right = 0
+2. Expand window (right++)
+3. While window is invalid, contract (left++)
+4. Update answer when window is valid
+5. Repeat until right reaches end
+
+**Common Variations:**
+- **At most k**: Use while loop to contract
+- **Exactly k**: Use if statement to check
+- **At least k**: Different contraction logic`,
 					CodeExamples: `// Go: Fixed window - maximum sum of subarray of size k
 func maxSumSubarray(nums []int, k int) int {
     windowSum := 0
@@ -521,22 +925,59 @@ def lengthOfLongestSubstring(s):
 			Lessons: []Lesson{
 				{
 					Title: "Stack",
-					Content: `A stack is a LIFO (Last In, First Out) data structure.
+					Content: `A stack is a LIFO (Last In, First Out) data structure. Think of it like a stack of plates - you add to the top and remove from the top.
 
-**Operations:**
-- Push: Add element to top
-- Pop: Remove element from top
-- Peek/Top: View top element without removing
-- IsEmpty: Check if stack is empty
+**Core Operations:**
+- **Push**: Add element to top - O(1)
+- **Pop**: Remove element from top - O(1)
+- **Peek/Top**: View top element without removing - O(1)
+- **IsEmpty**: Check if stack is empty - O(1)
+- **Size**: Get number of elements - O(1)
+
+**Implementation:**
+- **Array-based**: Fixed or dynamic array, push/pop at end
+- **Linked list-based**: Nodes with pointers, push/pop at head
 
 **Common Use Cases:**
-- Expression evaluation
-- Parentheses matching
-- Function call stack
-- Undo operations
-- Backtracking algorithms
 
-**Time Complexity:** All operations O(1)`,
+1. **Expression Evaluation**:
+   - Infix to postfix conversion
+   - Postfix expression evaluation
+   - Handling operator precedence
+
+2. **Parentheses Matching**:
+   - Valid parentheses problem
+   - Nested structure validation
+   - HTML/XML tag matching
+
+3. **Function Call Stack**:
+   - Recursion implementation
+   - Call stack management
+   - Backtracking algorithms
+
+4. **Undo/Redo Operations**:
+   - Text editor undo
+   - Browser back button
+   - Command pattern implementation
+
+5. **Monotonic Stack**:
+   - Next greater/smaller element
+   - Largest rectangle in histogram
+   - Stock span problem
+
+**Monotonic Stack Pattern:**
+Maintain stack in sorted order (increasing or decreasing) to efficiently find next greater/smaller elements.
+
+**Time Complexity:** All operations O(1) - constant time
+
+**Space Complexity:** O(n) - stores n elements
+
+**Real-World Applications:**
+- Compiler syntax checking
+- Browser navigation
+- Text editor undo/redo
+- Expression parsers
+- Graph algorithms (DFS)`,
 					CodeExamples: `// Go: Using slice as stack
 stack := []int{}
 stack = append(stack, 1)  // Push
@@ -551,21 +992,68 @@ stack.pop()  # Pop`,
 				},
 				{
 					Title: "Queue",
-					Content: `A queue is a FIFO (First In, First Out) data structure.
+					Content: `A queue is a FIFO (First In, First Out) data structure. Think of it like a line at a store - first person in is first person out.
 
-**Operations:**
-- Enqueue: Add element to rear
-- Dequeue: Remove element from front
-- Front: View front element
-- IsEmpty: Check if queue is empty
+**Core Operations:**
+- **Enqueue**: Add element to rear (back) - O(1)
+- **Dequeue**: Remove element from front - O(1)
+- **Front/Peek**: View front element without removing - O(1)
+- **IsEmpty**: Check if queue is empty - O(1)
+- **Size**: Get number of elements - O(1)
+
+**Implementation:**
+- **Array-based**: Circular array to avoid shifting
+- **Linked list-based**: Nodes with head and tail pointers
+- **Deque (Double-ended queue)**: Can add/remove from both ends
 
 **Common Use Cases:**
-- BFS (Breadth-First Search)
-- Task scheduling
-- Print queue
-- Request handling
 
-**Time Complexity:** All operations O(1) with proper implementation`,
+1. **BFS (Breadth-First Search)**:
+   - Level-order tree traversal
+   - Shortest path in unweighted graphs
+   - Finding minimum steps
+
+2. **Task Scheduling**:
+   - Process scheduling in OS
+   - Print queue management
+   - Request handling in web servers
+
+3. **Sliding Window Maximum**:
+   - Using deque to maintain window
+   - Efficiently find max in window
+
+4. **Level-order Processing**:
+   - Process tree nodes level by level
+   - Generate binary numbers
+   - Right side view of tree
+
+**Queue Variants:**
+
+1. **Priority Queue**:
+   - Elements dequeued by priority
+   - Implemented with heap
+   - Used in Dijkstra's algorithm
+
+2. **Circular Queue**:
+   - Fixed size, wraps around
+   - Efficient memory usage
+   - Used in buffering
+
+3. **Deque (Double-ended Queue)**:
+   - Add/remove from both ends
+   - More flexible than regular queue
+   - Used in sliding window problems
+
+**Time Complexity:** All operations O(1) with proper implementation
+
+**Space Complexity:** O(n) - stores n elements
+
+**Real-World Applications:**
+- Operating system process scheduling
+- Network packet routing
+- Print queue management
+- Web server request handling
+- BFS graph traversal`,
 					CodeExamples: `// Go: Using slice as queue
 queue := []int{}
 queue = append(queue, 1)  // Enqueue
@@ -590,26 +1078,71 @@ queue.popleft()  # Dequeue`,
 			Lessons: []Lesson{
 				{
 					Title: "Linked Lists Basics",
-					Content: `A linked list is a linear data structure where elements are stored in nodes, each containing data and a reference to the next node.
+					Content: `A linked list is a linear data structure where elements are stored in nodes, each containing data and a reference to the next node. Unlike arrays, elements are not stored in contiguous memory.
 
 **Types:**
-- Singly Linked List: Each node points to next
-- Doubly Linked List: Each node points to next and previous
-- Circular Linked List: Last node points back to first
+
+1. **Singly Linked List**:
+   - Each node points only to next node
+   - Can traverse only forward
+   - Less memory overhead
+
+2. **Doubly Linked List**:
+   - Each node points to both next and previous
+   - Can traverse both forward and backward
+   - More memory but more flexibility
+
+3. **Circular Linked List**:
+   - Last node points back to first
+   - No null pointer at end
+   - Useful for round-robin scheduling
+
+**Memory Structure:**
+Array:    [10][20][30]  (contiguous)
+          All in same memory block
+
+Linked List:  [10]->[20]->[30]->nil
+              Scattered in memory
 
 **Advantages:**
-- Dynamic size
-- Efficient insertion/deletion at any position
+- **Dynamic Size**: Grow/shrink as needed
+- **Efficient Insertion/Deletion**: O(1) at known position (no shifting)
+- **Memory Efficiency**: Only allocate what you need
+- **Flexible**: Easy to rearrange elements
 
 **Disadvantages:**
-- No random access
-- Extra memory for pointers
-- Cache unfriendly
+- **No Random Access**: Must traverse from head to reach element
+- **Extra Memory**: Need to store pointers (overhead)
+- **Cache Unfriendly**: Nodes scattered in memory
+- **No Backward Traversal**: In singly linked lists
 
 **Common Operations:**
-- Insert: O(1) at head, O(n) at position
-- Delete: O(1) at head, O(n) at position
-- Search: O(n)`,
+
+- **Insert at Head**: O(1) - just update head pointer
+- **Insert at Tail**: O(1) if tail pointer maintained, else O(n)
+- **Insert at Position**: O(n) - must traverse to position
+- **Delete at Head**: O(1) - update head pointer
+- **Delete at Position**: O(n) - must find node first
+- **Search**: O(n) - linear search required
+
+**Common Patterns:**
+
+1. **Dummy Node**: Use dummy head to simplify edge cases
+2. **Two Pointers**: Fast/slow pointers for cycle detection, finding middle
+3. **Reverse**: Iterative or recursive reversal
+4. **Merge**: Combine two sorted lists efficiently
+
+**When to Use:**
+- Unknown or frequently changing size
+- Frequent insertions/deletions in middle
+- Don't need random access
+- Implementing other data structures (stack, queue)
+
+**Common Mistakes:**
+- Losing reference to nodes (memory leaks)
+- Not handling empty list case
+- Off-by-one errors in traversal
+- Forgetting to update pointers correctly`,
 					CodeExamples: `// Go: ListNode structure
 type ListNode struct {
     Val  int
@@ -646,22 +1179,59 @@ class ListNode:
 			Lessons: []Lesson{
 				{
 					Title: "Binary Trees",
-					Content: `A binary tree is a tree data structure where each node has at most two children: left and right.
+					Content: `A binary tree is a tree data structure where each node has at most two children: left and right. Trees are fundamental for representing hierarchical relationships.
 
 **Tree Terminology:**
-- Root: Topmost node
-- Leaf: Node with no children
-- Depth: Distance from root
-- Height: Maximum depth
-- Subtree: Tree formed by a node and its descendants
+- **Root**: Topmost node (no parent)
+- **Leaf**: Node with no children (terminal node)
+- **Internal Node**: Node with at least one child
+- **Depth**: Distance from root to node (root depth = 0)
+- **Height**: Maximum depth of tree (longest path from root to leaf)
+- **Subtree**: Tree formed by a node and all its descendants
+- **Ancestor**: Any node on path from root to current node
+- **Descendant**: Any node in subtree of current node
+- **Sibling**: Nodes with same parent
+
+**Tree Properties:**
+- **Full Binary Tree**: Every node has 0 or 2 children
+- **Complete Binary Tree**: All levels filled except possibly last, filled left to right
+- **Perfect Binary Tree**: All internal nodes have 2 children, all leaves at same level
+- **Balanced Tree**: Height difference between left and right subtrees ≤ 1
 
 **Traversal Methods:**
-1. **Inorder**: Left → Root → Right
-2. **Preorder**: Root → Left → Right
-3. **Postorder**: Left → Right → Root
-4. **Level-order**: Breadth-first, level by level
 
-**Time Complexity:** O(n) for all traversals`,
+1. **Inorder (Left → Root → Right)**:
+   - Visits nodes in sorted order for BST
+   - Used for: printing sorted values, expression trees
+
+2. **Preorder (Root → Left → Right)**:
+   - Root visited before children
+   - Used for: copying tree, prefix expressions
+
+3. **Postorder (Left → Right → Root)**:
+   - Root visited after children
+   - Used for: deleting tree, postfix expressions
+
+4. **Level-order (Breadth-First)**:
+   - Visits nodes level by level
+   - Uses queue for implementation
+   - Used for: finding level-specific information
+
+**Recursive vs Iterative:**
+- **Recursive**: Natural for tree problems, uses call stack
+- **Iterative**: Uses explicit stack/queue, more control
+
+**Common Patterns:**
+- **DFS (Depth-First)**: Preorder, Inorder, Postorder
+- **BFS (Breadth-First)**: Level-order traversal
+- **Path Problems**: Track path from root to node
+- **Tree Construction**: Build tree from traversal sequences
+
+**Time Complexity:** O(n) for all traversals - visit each node once
+
+**Space Complexity:** 
+- Recursive: O(h) where h is height (call stack)
+- Iterative: O(n) worst case (explicit stack/queue)`,
 					CodeExamples: `// Go: TreeNode structure
 type TreeNode struct {
     Val   int
@@ -690,16 +1260,60 @@ class TreeNode:
 				},
 				{
 					Title: "Binary Search Trees",
-					Content: `A Binary Search Tree (BST) is a binary tree where:
-- Left subtree contains nodes with values < root
-- Right subtree contains nodes with values > root
-- Both subtrees are also BSTs
+					Content: `A Binary Search Tree (BST) is a binary tree with ordering property that enables efficient searching, insertion, and deletion.
 
-**Properties:**
-- Inorder traversal gives sorted order
-- Search: O(log n) average, O(n) worst
-- Insert: O(log n) average, O(n) worst
-- Delete: O(log n) average, O(n) worst`,
+**BST Property:**
+- **Left subtree**: All nodes have values < root
+- **Right subtree**: All nodes have values > root
+- **Both subtrees**: Are also valid BSTs
+- **No duplicates**: Typically (or handle with count/frequency)
+
+**Key Properties:**
+- **Inorder Traversal**: Always gives sorted order (ascending)
+- **Search**: O(log n) average (balanced), O(n) worst (skewed)
+- **Insert**: O(log n) average, O(n) worst
+- **Delete**: O(log n) average, O(n) worst
+- **Min/Max**: O(log n) - leftmost/rightmost node
+
+**BST Operations:**
+
+1. **Search**:
+   - Compare target with root
+   - Go left if smaller, right if larger
+   - Repeat until found or null
+
+2. **Insert**:
+   - Find correct position (like search)
+   - Insert new node as leaf
+   - Maintain BST property
+
+3. **Delete** (Three Cases):
+   - **No children**: Simply remove node
+   - **One child**: Replace with child
+   - **Two children**: Replace with inorder successor (or predecessor)
+
+**Balanced BSTs:**
+- **AVL Tree**: Self-balancing, height difference ≤ 1
+- **Red-Black Tree**: Self-balancing with color properties
+- **B-Tree**: Multi-way tree for databases
+- **Splay Tree**: Recently accessed nodes move to root
+
+**When BST Degenerates:**
+- Inserting sorted sequence creates linked list
+- Height becomes O(n) instead of O(log n)
+- Operations become O(n) instead of O(log n)
+
+**Common Problems:**
+- Validate BST (check ordering property)
+- Find kth smallest/largest element
+- Range queries (find all values in range)
+- Lowest Common Ancestor (LCA)
+
+**Real-World Applications:**
+- Database indexing
+- Symbol tables in compilers
+- Priority queues (with modifications)
+- Expression evaluation`,
 					CodeExamples: `// Go: BST search
 func searchBST(root *TreeNode, val int) *TreeNode {
     if root == nil || root.Val == val {
@@ -718,6 +1332,110 @@ def searchBST(root, val):
     if val < root.val:
         return searchBST(root.left, val)
     return searchBST(root.right, val)`,
+				},
+				{
+					Title: "Tree Traversal Techniques",
+					Content: `Master different tree traversal methods and when to use each.
+
+**Iterative Traversals:**
+
+All recursive traversals can be converted to iterative using explicit stack:
+
+1. **Preorder Iterative**:
+   - Push root to stack
+   - While stack not empty: pop, process, push right then left
+
+2. **Inorder Iterative**:
+   - Use stack to simulate recursion
+   - Go left as far as possible, then process, then go right
+
+3. **Postorder Iterative**:
+   - Most complex - need to track if node processed
+   - Use two stacks or modified preorder
+
+**Level-order (BFS) Traversal:**
+- Use queue instead of stack
+- Process nodes level by level
+- Natural for: finding level-specific info, shortest path
+
+**Morris Traversal:**
+- Inorder traversal with O(1) space (no stack)
+- Uses threaded binary tree concept
+- Advanced technique for space-constrained scenarios
+
+**Common Tree Problems:**
+- Maximum depth/height
+- Symmetric tree checking
+- Path sum problems
+- Lowest Common Ancestor (LCA)
+- Serialization/Deserialization`,
+					CodeExamples: `// Go: Iterative preorder
+func preorderIterative(root *TreeNode) []int {
+    if root == nil {
+        return []int{}
+    }
+    stack := []*TreeNode{root}
+    result := []int{}
+    
+    for len(stack) > 0 {
+        node := stack[len(stack)-1]
+        stack = stack[:len(stack)-1]
+        result = append(result, node.Val)
+        
+        if node.Right != nil {
+            stack = append(stack, node.Right)
+        }
+        if node.Left != nil {
+            stack = append(stack, node.Left)
+        }
+    }
+    return result
+}
+
+// Level-order traversal
+func levelOrder(root *TreeNode) [][]int {
+    if root == nil {
+        return [][]int{}
+    }
+    queue := []*TreeNode{root}
+    result := [][]int{}
+    
+    for len(queue) > 0 {
+        levelSize := len(queue)
+        level := []int{}
+        
+        for i := 0; i < levelSize; i++ {
+            node := queue[0]
+            queue = queue[1:]
+            level = append(level, node.Val)
+            
+            if node.Left != nil {
+                queue = append(queue, node.Left)
+            }
+            if node.Right != nil {
+                queue = append(queue, node.Right)
+            }
+        }
+        result = append(result, level)
+    }
+    return result
+}
+
+# Python: Iterative preorder
+def preorder_iterative(root):
+    if not root:
+        return []
+    stack = [root]
+    result = []
+    
+    while stack:
+        node = stack.pop()
+        result.append(node.val)
+        if node.right:
+            stack.append(node.right)
+        if node.left:
+            stack.append(node.left)
+    return result`,
 				},
 			},
 			ProblemIDs: []int{41, 42, 43, 44, 45, 46, 47, 48, 49, 50},
@@ -904,32 +1622,64 @@ def is_palindrome(s):
 			Lessons: []Lesson{
 				{
 					Title: "Graph Fundamentals",
-					Content: `A graph is a collection of nodes (vertices) connected by edges. Graphs model relationships and networks.
+					Content: `A graph is a collection of nodes (vertices) connected by edges. Graphs are the most general data structure, modeling any relationship or network.
 
 **Graph Types:**
-1. **Directed Graph**: Edges have direction (A→B ≠ B→A)
-2. **Undirected Graph**: Edges have no direction (A-B = B-A)
-3. **Weighted Graph**: Edges have weights/costs
-4. **Unweighted Graph**: All edges equal
+
+1. **Directed Graph (Digraph)**:
+   - Edges have direction: A→B means edge from A to B
+   - A→B ≠ B→A (unless both edges exist)
+   - Examples: Web links, dependencies, social media follows
+
+2. **Undirected Graph**:
+   - Edges have no direction: A-B means bidirectional connection
+   - A-B = B-A
+   - Examples: Social networks (friends), road networks
+
+3. **Weighted Graph**:
+   - Edges have weights/costs
+   - Can represent distance, cost, time, etc.
+   - Examples: Maps with distances, network latency
+
+4. **Unweighted Graph**:
+   - All edges equal (weight = 1)
+   - Simpler, used when only connectivity matters
 
 **Graph Representations:**
 
 1. **Adjacency List** (Most common):
    - List of lists: graph[i] = [neighbors of node i]
-   - Space: O(V + E)
-   - Good for sparse graphs
+   - **Space**: O(V + E) - efficient for sparse graphs
+   - **Edge Lookup**: O(degree) - check neighbors
+   - **Add Edge**: O(1) - append to list
+   - **Best for**: Sparse graphs, most algorithms
 
 2. **Adjacency Matrix**:
-   - 2D array: matrix[i][j] = edge exists?
-   - Space: O(V²)
-   - Good for dense graphs, fast edge lookup
+   - 2D array: matrix[i][j] = 1 if edge exists, 0 otherwise
+   - **Space**: O(V²) - can be wasteful for sparse graphs
+   - **Edge Lookup**: O(1) - direct array access
+   - **Add Edge**: O(1) - set matrix[i][j] = 1
+   - **Best for**: Dense graphs, frequent edge queries
 
 **Key Terminology:**
 - **Vertex/Node**: A point in the graph
 - **Edge**: Connection between vertices
+- **Degree**: Number of edges connected to vertex
+  - In-degree: incoming edges (directed)
+  - Out-degree: outgoing edges (directed)
 - **Path**: Sequence of connected vertices
 - **Cycle**: Path that starts and ends at same vertex
-- **Connected**: All vertices reachable from each other`,
+- **Connected**: All vertices reachable from each other
+- **Component**: Maximal connected subgraph
+- **Tree**: Connected graph with no cycles (n-1 edges for n vertices)
+- **Forest**: Collection of trees
+
+**Graph Properties:**
+- **Sparse**: Few edges relative to vertices (E ≈ V)
+- **Dense**: Many edges (E ≈ V²)
+- **Acyclic**: No cycles
+- **Connected**: All vertices reachable
+- **Bipartite**: Can partition vertices into two sets with no edges within sets`,
 					CodeExamples: `// Go: Graph representation (adjacency list)
 type Graph struct {
     vertices int
@@ -960,25 +1710,49 @@ class Graph:
 				},
 				{
 					Title: "Graph Traversal: BFS",
-					Content: `Breadth-First Search (BFS) explores a graph level by level, visiting all neighbors before moving to next level.
+					Content: `Breadth-First Search (BFS) explores a graph level by level, visiting all neighbors before moving to next level. It's like ripples spreading from a stone dropped in water.
 
 **BFS Algorithm:**
-1. Start from source node
-2. Visit all neighbors at current level
-3. Move to next level
-4. Use queue to track nodes to visit
+1. Start from source node, mark as visited
+2. Add source to queue
+3. While queue not empty:
+   - Dequeue node
+   - Process node
+   - Add all unvisited neighbors to queue
+   - Mark neighbors as visited
 
 **Key Properties:**
-- Finds shortest path in unweighted graphs
-- Uses queue (FIFO)
-- Visits nodes in order of distance from source
-- Time: O(V + E), Space: O(V)
+- **Shortest Path**: Finds shortest path in unweighted graphs (minimum edges)
+- **Level Order**: Visits nodes level by level (distance 0, 1, 2, ...)
+- **Queue-based**: Uses FIFO queue to maintain level order
+- **Complete**: Visits all reachable nodes from source
+- **Time**: O(V + E) - visit each vertex and edge once
+- **Space**: O(V) - queue and visited array
 
-**When to Use:**
-- Shortest path in unweighted graph
-- Level-order traversal
-- Finding connected components
-- Minimum steps problems`,
+**BFS Applications:**
+
+1. **Shortest Path** (Unweighted):
+   - Minimum steps to reach target
+   - Shortest path length
+   - Level of each node from source
+
+2. **Level-order Processing**:
+   - Process nodes level by level
+   - Find nodes at specific distance
+   - Level-order tree traversal
+
+3. **Connected Components**:
+   - Find all nodes reachable from source
+   - Count connected components
+   - Check connectivity
+
+4. **Bipartite Checking**:
+   - Color nodes alternately
+   - Check if graph is bipartite
+
+**BFS vs DFS:**
+- **BFS**: Finds shortest path, uses more memory (queue)
+- **DFS**: Uses less memory (stack), doesn't guarantee shortest path`,
 					CodeExamples: `// Go: BFS implementation
 func BFS(graph [][]int, start int) []int {
     visited := make([]bool, len(graph))
@@ -1023,26 +1797,60 @@ def bfs(graph, start):
 				},
 				{
 					Title: "Graph Traversal: DFS",
-					Content: `Depth-First Search (DFS) explores as far as possible along each branch before backtracking.
+					Content: `Depth-First Search (DFS) explores as far as possible along each branch before backtracking. Like exploring a maze - go as deep as possible before trying another path.
 
 **DFS Algorithm:**
-1. Start from source node
-2. Explore one path completely
+1. Start from source node, mark as visited
+2. For each unvisited neighbor:
+   - Recursively visit neighbor
+   - Or use explicit stack
 3. Backtrack when no more unvisited neighbors
-4. Use stack (recursion or explicit)
 
 **Key Properties:**
-- Uses stack (LIFO) - naturally recursive
-- Explores deep before wide
-- Time: O(V + E), Space: O(V) for recursion stack
-- Can find cycles, connected components
+- **Stack-based**: Uses LIFO stack (naturally recursive)
+- **Deep Exploration**: Explores one path completely before others
+- **Memory Efficient**: Only stores path from root to current node
+- **Time**: O(V + E) - visit each vertex and edge once
+- **Space**: O(V) for recursion stack (or explicit stack)
 
-**When to Use:**
-- Finding paths
-- Detecting cycles
-- Topological sorting
-- Maze solving
-- Backtracking problems`,
+**DFS Variants:**
+
+1. **Pre-order**: Process node before children
+2. **In-order**: Process node between children (trees)
+3. **Post-order**: Process node after children
+
+**DFS Applications:**
+
+1. **Path Finding**:
+   - Find any path from source to target
+   - Check if path exists
+   - Enumerate all paths
+
+2. **Cycle Detection**:
+   - Detect cycles in directed/undirected graphs
+   - Use color marking (white/gray/black)
+
+3. **Topological Sort**:
+   - Order nodes such that dependencies come first
+   - Used in: build systems, course prerequisites
+
+4. **Connected Components**:
+   - Find all nodes in component
+   - Count components
+   - Check connectivity
+
+5. **Strongly Connected Components**:
+   - Kosaraju's or Tarjan's algorithm
+   - Find SCCs in directed graphs
+
+**DFS vs BFS:**
+- **DFS**: Less memory, doesn't guarantee shortest path
+- **BFS**: More memory, guarantees shortest path (unweighted)
+
+**Common Patterns:**
+- **Backtracking**: Use DFS with state restoration
+- **Memoization**: Cache results during DFS
+- **Path Tracking**: Maintain path during traversal`,
 					CodeExamples: `// Go: DFS recursive
 func DFS(graph [][]int, start int) []int {
     visited := make([]bool, len(graph))
@@ -1156,22 +1964,57 @@ def has_cycle(graph):
 			Lessons: []Lesson{
 				{
 					Title: "Introduction to Dynamic Programming",
-					Content: `Dynamic Programming (DP) is a method for solving complex problems by breaking them down into simpler subproblems and storing the results.
+					Content: `Dynamic Programming (DP) is a powerful method for solving complex problems by breaking them down into simpler subproblems and storing the results to avoid recomputation.
+
+**Core Concept:**
+Instead of solving the same subproblem multiple times (like naive recursion), DP solves each subproblem once and stores the result for future use.
 
 **Key Characteristics:**
-- Overlapping subproblems
-- Optimal substructure
-- Memoization or tabulation
 
-**Approaches:**
-1. **Top-down (Memoization)**: Recursive with caching
-2. **Bottom-up (Tabulation)**: Iterative, building from base cases
+1. **Overlapping Subproblems**:
+   - Same subproblems appear multiple times
+   - Example: Fibonacci - fib(5) needs fib(3) and fib(4), fib(4) needs fib(3) again
+   - Without DP: Exponential time O(2^n)
+   - With DP: Linear time O(n)
 
-**When to Use:**
-- Optimization problems
-- Counting problems
-- Problems with overlapping subproblems
-- Problems asking for "maximum", "minimum", "number of ways"`,
+2. **Optimal Substructure**:
+   - Optimal solution contains optimal solutions to subproblems
+   - Example: Shortest path from A→C via B = shortest A→B + shortest B→C
+   - Can combine optimal subproblem solutions
+
+**Two Main Approaches:**
+
+1. **Top-down (Memoization)**:
+   - Start with full problem, break down recursively
+   - Cache results as you compute them
+   - More intuitive, natural recursion
+   - Space: O(n) for recursion stack + memo
+
+2. **Bottom-up (Tabulation)**:
+   - Start with base cases, build up iteratively
+   - Fill table/dp array systematically
+   - More efficient (no recursion overhead)
+   - Space: Can often optimize to O(1) with careful variable management
+
+**When to Use DP:**
+- **Optimization**: "maximum", "minimum", "longest", "shortest"
+- **Counting**: "number of ways", "how many paths"
+- **Decision**: "can we achieve X?", "is it possible?"
+- **Overlapping Subproblems**: Recursive solution repeats work
+- **Optimal Substructure**: Can build solution from subproblems
+
+**DP Problem Identification:**
+- Problem asks for optimal value (max/min)
+- Can be broken into smaller similar problems
+- Brute force would be exponential
+- Greedy doesn't work (need to consider all possibilities)
+
+**Common DP Patterns:**
+- 1D DP: dp[i] = optimal value up to position i
+- 2D DP: dp[i][j] = optimal value at position (i,j)
+- Knapsack: Choosing items with constraints
+- LCS: Longest Common Subsequence
+- Edit Distance: Minimum operations to transform`,
 					CodeExamples: `// Go: Fibonacci with memoization
 func fib(n int) int {
     memo := make(map[int]int)
@@ -1202,18 +2045,65 @@ def fib(n, memo={}):
 					Title: "DP Patterns",
 					Content: `**Common DP Patterns:**
 
-1. **1D DP**: dp[i] represents state at position i
-2. **2D DP**: dp[i][j] represents state at position (i, j)
-3. **Knapsack**: Choosing items with constraints
-4. **Longest Common Subsequence**: Finding common patterns
-5. **Edit Distance**: Minimum operations to transform
+1. **1D DP**: dp[i] represents optimal value up to position i
+   - Examples: Climbing stairs, House robber, Coin change
+   - Recurrence: dp[i] = f(dp[i-1], dp[i-2], ...)
 
-**Steps to Solve:**
-1. Identify subproblems
-2. Define state
-3. Find recurrence relation
-4. Set base cases
-5. Implement (memoization or tabulation)`,
+2. **2D DP**: dp[i][j] represents optimal value at position (i, j)
+   - Examples: Unique paths, Edit distance, LCS
+   - Recurrence: dp[i][j] = f(dp[i-1][j], dp[i][j-1], ...)
+
+3. **Knapsack Problems**: Choosing items with weight/value constraints
+   - 0/1 Knapsack: Each item used at most once
+   - Unbounded Knapsack: Items can be reused
+   - Fractional Knapsack: Greedy (not DP)
+
+4. **Longest Common Subsequence (LCS)**: Finding longest common pattern
+   - Compare two sequences character by character
+   - Build solution incrementally
+
+5. **Edit Distance**: Minimum operations to transform one string to another
+   - Operations: Insert, Delete, Replace
+   - Used in: Spell checkers, DNA alignment, diff algorithms
+
+6. **Interval DP**: dp[i][j] = optimal value for interval from i to j
+   - Examples: Matrix chain multiplication, Palindrome partitioning
+
+7. **State Machine DP**: Track state transitions
+   - Examples: Buy/sell stock with restrictions, State transitions
+
+**Steps to Solve DP Problems:**
+
+1. **Identify Subproblems**:
+   - What smaller problems need to be solved?
+   - How do they relate to the main problem?
+
+2. **Define State**:
+   - What does dp[i] or dp[i][j] represent?
+   - What information do we need to track?
+
+3. **Find Recurrence Relation**:
+   - How do we compute dp[i] from previous states?
+   - What are the transitions?
+
+4. **Set Base Cases**:
+   - What are the smallest subproblems?
+   - What are their known values?
+
+5. **Implement**:
+   - Choose: Memoization (top-down) or Tabulation (bottom-up)
+   - Consider space optimization
+
+6. **Optimize** (if needed):
+   - Reduce space complexity
+   - Optimize time if possible
+
+**Common Mistakes:**
+- Forgetting base cases
+- Incorrect recurrence relation
+- Off-by-one errors in indices
+- Not handling edge cases
+- Confusing state definition`,
 					CodeExamples: `// Go: 1D DP - Climbing stairs
 func climbStairs(n int) int {
     if n <= 2 {
