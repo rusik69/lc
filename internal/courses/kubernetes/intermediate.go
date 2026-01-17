@@ -406,6 +406,221 @@ kubectl describe pvc pvc-example
 # Delete PVC (triggers reclaim)
 kubectl delete pvc pvc-example`,
 				},
+				{
+					Title: "Storage Classes and Dynamic Provisioning",
+					Content: `**Storage Classes** define different "classes" of storage and enable dynamic provisioning.
+
+**Storage Class Benefits:**
+- **Dynamic Provisioning**: PVs created automatically
+- **Multiple Storage Types**: Different classes for different needs
+- **Simplified Management**: No manual PV creation
+- **Cost Optimization**: Use appropriate storage for workload
+
+**Storage Class Parameters:**
+- **provisioner**: Storage provisioner plugin
+- **parameters**: Provisioner-specific parameters
+- **volumeBindingMode**: When to bind PVC to PV
+- **allowVolumeExpansion**: Enable volume expansion
+- **reclaimPolicy**: Default reclaim policy
+
+**Volume Binding Modes:**
+- **Immediate**: Bind immediately when PVC created
+- **WaitForFirstConsumer**: Bind when pod uses PVC
+- Enables better pod scheduling
+- Useful for topology constraints
+
+**Common Provisioners:**
+- **kubernetes.io/aws-ebs**: AWS EBS volumes
+- **kubernetes.io/gce-pd**: Google Persistent Disks
+- **kubernetes.io/azure-disk**: Azure Disks
+- **kubernetes.io/cinder**: OpenStack Cinder
+- **kubernetes.io/nfs**: NFS storage
+- **kubernetes.io/cephfs**: CephFS
+
+**Volume Expansion:**
+- Expand PVC without downtime
+- Requires StorageClass with allowVolumeExpansion: true
+- Update PVC spec.resources.requests.storage
+- Storage provisioner handles expansion`,
+					CodeExamples: `# StorageClass with immediate binding
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  fsType: ext4
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+
+# StorageClass with WaitForFirstConsumer
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-local
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: io1
+  iopsPerGB: "50"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+# PVC with volume expansion
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: expandable-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+
+# Expand PVC
+kubectl patch pvc expandable-pvc -p '{"spec":{"resources":{"requests":{"storage":"20Gi"}}}}'
+
+# View StorageClasses
+kubectl get storageclass
+kubectl describe storageclass standard
+
+# Set default StorageClass
+kubectl patch storageclass standard -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`,
+				},
+				{
+					Title: "Volume Types Deep Dive",
+					Content: `**Volume Types** provide different storage backends for different use cases.
+
+**Ephemeral Volumes:**
+- **emptyDir**: Temporary storage, deleted with pod
+- **hostPath**: Mount host filesystem (not portable)
+- **local**: Local node storage (persistent)
+
+**Network Volumes:**
+- **NFS**: Network File System
+- **CephFS**: Ceph distributed filesystem
+- **GlusterFS**: Distributed filesystem
+- **Cinder**: OpenStack block storage
+
+**Cloud Volumes:**
+- **awsElasticBlockStore**: AWS EBS
+- **gcePersistentDisk**: Google Persistent Disk
+- **azureDisk**: Azure Disk
+- **azureFile**: Azure File Share
+- **vsphereVolume**: vSphere VMDK
+
+**Special Volumes:**
+- **configMap**: Mount ConfigMap as files
+- **secret**: Mount Secret as files
+- **downwardAPI**: Expose pod/container info
+- **projected**: Combine multiple sources
+
+**Volume Mount Options:**
+- **mountPath**: Where to mount in container
+- **subPath**: Mount subdirectory
+- **readOnly**: Read-only mount
+- **mountPropagation**: Share mounts with host
+
+**Best Practices:**
+- Use PVCs for persistent data
+- Use emptyDir for temporary data
+- Avoid hostPath in production
+- Use appropriate access modes
+- Consider performance requirements`,
+					CodeExamples: `# NFS volume
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    volumeMounts:
+    - name: nfs-volume
+      mountPath: /data
+  volumes:
+  - name: nfs-volume
+    nfs:
+      server: nfs-server.example.com
+      path: /exports/data
+      readOnly: false
+
+# AWS EBS volume
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebs-pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    volumeMounts:
+    - name: ebs-volume
+      mountPath: /data
+  volumes:
+  - name: ebs-volume
+    awsElasticBlockStore:
+      volumeID: vol-12345678
+      fsType: ext4
+
+# Projected volume (combine sources)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: projected-pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    volumeMounts:
+    - name: all-in-one
+      mountPath: /projected-volume
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+      - configMap:
+          name: myconfigmap
+      - downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+
+# DownwardAPI volume
+apiVersion: v1
+kind: Pod
+metadata:
+  name: downwardapi-pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    volumeMounts:
+    - name: podinfo
+      mountPath: /etc/podinfo
+  volumes:
+  - name: podinfo
+    downwardAPI:
+      items:
+      - path: "labels"
+        fieldRef:
+          fieldPath: metadata.labels
+      - path: "annotations"
+        fieldRef:
+          fieldPath: metadata.annotations
+      - path: "cpu_limit"
+        resourceFieldRef:
+          containerName: app
+          resource: limits.cpu`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -505,6 +720,217 @@ kubectl scale statefulset mysql --replicas=5
 kubectl get pods -l app=mysql
 
 # Pods will be: mysql-0, mysql-1, mysql-2, mysql-3, mysql-4`,
+				},
+				{
+					Title: "StatefulSet Patterns",
+					Content: `**StatefulSet Patterns** solve common problems when running stateful applications.
+
+**Patterns:**
+
+**1. Master-Slave Pattern:**
+- Pod 0 is master
+- Other pods are replicas
+- Use init containers to configure
+- Master handles writes, replicas handle reads
+
+**2. Peer Discovery:**
+- Pods discover each other via DNS
+- Use headless service
+- Stable DNS names enable discovery
+- Common in distributed databases
+
+**3. Ordered Initialization:**
+- Pods initialize in order
+- Each pod waits for previous
+- Use readiness probes
+- Ensures proper startup sequence
+
+**4. Stateful Scaling:**
+- Scale up: Add replicas in order
+- Scale down: Remove from end
+- Data migration may be needed
+- Backup before scaling down
+
+**5. Update Strategies:**
+- **RollingUpdate**: Default, ordered updates
+- **OnDelete**: Manual updates
+- Updates happen in reverse order
+- Each pod updated individually
+
+**Best Practices:**
+- Use headless service
+- Implement proper health checks
+- Handle pod identity in application
+- Backup data before updates
+- Test scaling procedures`,
+					CodeExamples: `# StatefulSet with master-slave pattern
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: mysql
+  replicas: 3
+  template:
+    spec:
+      initContainers:
+      - name: init-mysql
+        image: mysql:8.0
+        command:
+        - bash
+        - "-c"
+        - |
+          set -ex
+          [[ $HOSTNAME =~ -([0-9]+)$ ]] || exit 1
+          ordinal=${BASH_REMATCH[1]}
+          if [[ $ordinal -eq 0 ]]; then
+            # Master configuration
+            echo "server-id=1" >> /mnt/conf.d/server-id.cnf
+          else
+            # Replica configuration
+            echo "server-id=$((100 + $ordinal))" >> /mnt/conf.d/server-id.cnf
+          fi
+        volumeMounts:
+        - name: conf
+          mountPath: /mnt/conf.d
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+        - name: conf
+          mountPath: /etc/mysql/conf.d
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 10
+          periodSeconds: 5
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+
+# Peer discovery example
+# Pod mysql-0 can reach mysql-1 via:
+# mysql-1.mysql.default.svc.cluster.local
+
+# Update strategy
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 2  # Only update pods with ordinal >= 2
+  # ... rest of spec`,
+				},
+				{
+					Title: "StatefulSet Scaling and Updates",
+					Content: `**StatefulSet Scaling** and updates require careful consideration due to stateful nature.
+
+**Scaling Up:**
+- New pods created in order
+- Each pod gets its own PVC
+- Pods initialize sequentially
+- Use readiness probes to ensure readiness
+- Data replication may be needed
+
+**Scaling Down:**
+- Pods removed in reverse order (highest ordinal first)
+- PVCs are NOT deleted automatically
+- Manual cleanup may be required
+- Backup data before scaling down
+- Ensure data is replicated
+
+**Update Strategies:**
+
+**RollingUpdate (Default):**
+- Updates pods one at a time
+- In reverse ordinal order
+- Can use partition for staged updates
+- Each pod updated individually
+
+**OnDelete:**
+- No automatic updates
+- Pods updated when manually deleted
+- Full control over update process
+- Useful for manual coordination
+
+**Partition Updates:**
+- partition field controls updates
+- Only pods with ordinal >= partition updated
+- Enables staged rollouts
+- Canary-like deployments
+
+**Best Practices:**
+- Test scaling procedures
+- Backup before scaling down
+- Use partition for staged updates
+- Monitor during updates
+- Have rollback plan`,
+					CodeExamples: `# Scale up StatefulSet
+kubectl scale statefulset mysql --replicas=5
+# Pods created: mysql-0, mysql-1, mysql-2, mysql-3, mysql-4
+
+# Scale down StatefulSet
+kubectl scale statefulset mysql --replicas=3
+# Pods removed: mysql-4, mysql-3 (reverse order)
+# PVCs remain: data-mysql-0, data-mysql-1, data-mysql-2, data-mysql-3, data-mysql-4
+
+# Manual PVC cleanup after scale down
+kubectl delete pvc data-mysql-3
+kubectl delete pvc data-mysql-4
+
+# Staged update with partition
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 3  # Only update mysql-3 and mysql-4
+  template:
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0.33  # New version
+  # ... rest of spec
+
+# Update all pods (remove partition)
+kubectl patch statefulset mysql -p '{"spec":{"updateStrategy":{"rollingUpdate":{"partition":null}}}}'
+
+# OnDelete update strategy
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  updateStrategy:
+    type: OnDelete
+  template:
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0.33
+  # ... rest of spec
+
+# Manual update (delete pod to trigger update)
+kubectl delete pod mysql-0`,
 				},
 				{
 					Title: "DaemonSets",
@@ -797,6 +1223,114 @@ kubectl patch cronjob hourly-backup -p '{"spec":{"suspend":true}}'
 
 # Resume CronJob
 kubectl patch cronjob hourly-backup -p '{"spec":{"suspend":false}}'`,
+				},
+				{
+					Title: "Job Patterns and Best Practices",
+					Content: `**Job Patterns** solve common problems when running batch workloads.
+
+**Common Patterns:**
+
+**1. Work Queue Pattern:**
+- Multiple workers process queue
+- Each worker processes one item
+- Job completes when queue empty
+- Use parallelism for concurrent workers
+
+**2. Indexed Jobs:**
+- Each pod processes specific index
+- Pod gets index via environment variable
+- Useful for parallel processing
+- Each pod handles subset of work
+
+**3. Job Dependencies:**
+- Jobs that depend on other jobs
+- Use init containers or external coordination
+- Wait for prerequisite jobs
+- Chain multiple jobs
+
+**4. Job Monitoring:**
+- Track job completion
+- Monitor job failures
+- Alert on job failures
+- Log job execution
+
+**Best Practices:**
+- Set appropriate backoffLimit
+- Use activeDeadlineSeconds
+- Implement proper error handling
+- Clean up completed jobs
+- Monitor job execution
+- Use resource limits`,
+					CodeExamples: `# Indexed Job (Kubernetes 1.21+)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: indexed-job
+spec:
+  completions: 5
+  parallelism: 2
+  completionMode: Indexed
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: busybox
+        command: ["sh", "-c"]
+        args:
+        - |
+          echo "Processing index $JOB_COMPLETION_INDEX"
+          process-item.sh $JOB_COMPLETION_INDEX
+        env:
+        - name: JOB_COMPLETION_INDEX
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
+      restartPolicy: Never
+
+# Work queue Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: queue-worker
+spec:
+  parallelism: 3
+  completions: 6
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: queue-worker:latest
+        command: ["process-queue"]
+        env:
+        - name: QUEUE_URL
+          value: "redis://queue-service:6379"
+      restartPolicy: OnFailure
+  backoffLimit: 4
+  activeDeadlineSeconds: 3600
+
+# Job with resource limits
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: resource-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: worker:latest
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1"
+      restartPolicy: Never
+
+# Clean up completed jobs
+kubectl delete jobs --field-selector status.successful=1
+kubectl delete jobs --field-selector status.failed=1`,
 				},
 			},
 			ProblemIDs: []int{},

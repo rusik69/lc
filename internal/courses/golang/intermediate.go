@@ -178,6 +178,256 @@ func main() {
     // s can be garbage collected after main returns
 }`,
 				},
+				{
+					Title: "Pointer Methods",
+					Content: `Methods can have pointer receivers, allowing them to modify the receiver and work efficiently with large structs.
+
+**Pointer Receiver Methods:**
+- Syntax: func (p *Type) MethodName()
+- Can modify receiver
+- More efficient for large structs
+- Required when method needs to modify state
+
+**Value vs Pointer Receivers:**
+- Value receiver: Works on copy, cannot modify
+- Pointer receiver: Works on original, can modify
+- Go automatically converts: value.Method() works with pointer receiver
+
+**When to Use Pointer Receivers:**
+- Method modifies receiver
+- Struct is large (avoid copying)
+- Consistency: use same receiver type for all methods
+- Need nil checks
+
+**Nil Receivers:**
+- Pointer receivers can be nil
+- Check for nil before use
+- Common pattern: return early if nil`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type Counter struct {
+    value int
+}
+
+// Pointer receiver - can modify
+func (c *Counter) Increment() {
+    c.value++
+}
+
+// Pointer receiver - can be nil
+func (c *Counter) GetValue() int {
+    if c == nil {
+        return 0  // Handle nil receiver
+    }
+    return c.value
+}
+
+// Value receiver - cannot modify
+func (c Counter) Display() {
+    fmt.Printf("Counter value: %d\n", c.value)
+}
+
+func main() {
+    c := Counter{value: 0}
+    
+    // Both work (Go converts automatically)
+    c.Increment()      // Converts to (&c).Increment()
+    (&c).Increment()  // Explicit
+    
+    fmt.Println(c.GetValue())  // 2
+    
+    // Nil receiver
+    var nilCounter *Counter
+    fmt.Println(nilCounter.GetValue())  // 0 (handled)
+}`,
+				},
+				{
+					Title: "Nil Pointer Safety",
+					Content: `Nil pointers are a common source of panics in Go. Understanding how to handle them safely is crucial.
+
+**Nil Pointer Behavior:**
+- Dereferencing nil pointer causes panic
+- Methods on nil receivers can be called (if handled)
+- Always check for nil before dereferencing
+- Use defensive programming
+
+**Nil Checks:**
+- if ptr == nil { return }
+- if ptr != nil { use ptr }
+- Common pattern: return early on nil
+
+**Nil Receiver Methods:**
+- Methods can handle nil receivers
+- Check for nil inside method
+- Return sensible default values
+- Common in standard library
+
+**Best Practices:**
+- Check for nil before dereferencing
+- Return early on nil
+- Handle nil in methods
+- Use nil to represent "not found" or "empty"
+- Document nil behavior
+
+**Common Patterns:**
+- Return nil for "not found"
+- Check nil before use
+- Provide nil-safe methods
+- Use nil as sentinel value`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type Node struct {
+    Value int
+    Next  *Node
+}
+
+// Safe nil handling
+func (n *Node) GetValue() int {
+    if n == nil {
+        return 0  // Default value
+    }
+    return n.Value
+}
+
+// Nil check before use
+func traverse(head *Node) {
+    current := head
+    for current != nil {
+        fmt.Println(current.Value)
+        current = current.Next
+    }
+}
+
+// Return nil for "not found"
+func findNode(head *Node, value int) *Node {
+    current := head
+    for current != nil {
+        if current.Value == value {
+            return current
+        }
+        current = current.Next
+    }
+    return nil  // Not found
+}
+
+func main() {
+    var head *Node  // nil
+    
+    // Safe to call method (handles nil)
+    fmt.Println(head.GetValue())  // 0
+    
+    // Check before dereferencing
+    if head != nil {
+        fmt.Println(head.Value)  // Won't execute
+    }
+    
+    // Find node
+    node := findNode(head, 5)
+    if node != nil {
+        fmt.Println("Found:", node.Value)
+    } else {
+        fmt.Println("Not found")
+    }
+}`,
+				},
+				{
+					Title: "Pointer Best Practices",
+					Content: `Following best practices for pointers helps write safe, efficient, and maintainable Go code.
+
+**When to Use Pointers:**
+
+**1. Modify Function Arguments:**
+- Pass pointer when function needs to modify value
+- More efficient than returning new value
+- Clear intent
+
+**2. Large Structs:**
+- Avoid copying large structs
+- Use pointer to pass efficiently
+- Pointer is 8 bytes (64-bit), struct might be much larger
+
+**3. Optional Values:**
+- Use nil to represent "not set"
+- Common pattern: *int for optional integer
+- Check for nil before use
+
+**4. Sharing State:**
+- Multiple functions need same data
+- Pass pointer to share
+- Be careful with concurrent access
+
+**When NOT to Use Pointers:**
+
+**1. Small Values:**
+- int, string, bool: pass by value
+- Copying is cheap
+- Simpler code
+
+**2. Immutable Data:**
+- If value shouldn't change
+- Pass by value prevents modification
+- Type safety
+
+**3. Slices and Maps:**
+- Already reference types
+- Don't need pointer (usually)
+- Exception: when modifying slice itself (append)
+
+**Best Practices:**
+- Use pointers for large structs
+- Use pointers when modification needed
+- Always check for nil
+- Document nil behavior
+- Be consistent in API design`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type User struct {
+    ID    int
+    Name  string
+    Email string
+}
+
+// Good: Pointer for large struct
+func updateUser(u *User, name string) {
+    u.Name = name  // Modifies original
+}
+
+// Good: Pointer for optional
+func setOptionalID(id *int) {
+    if id != nil {
+        *id = 42
+    }
+}
+
+// Good: Value for small
+func add(a, b int) int {  // No pointer needed
+    return a + b
+}
+
+// Bad: Unnecessary pointer
+func addBad(a, b *int) int {  // Overcomplicated
+    return *a + *b
+}
+
+func main() {
+    user := User{ID: 1, Name: "Alice"}
+    updateUser(&user, "Bob")
+    fmt.Println(user.Name)  // Bob
+    
+    var optionalID *int
+    setOptionalID(optionalID)  // Safe, does nothing
+    
+    id := 0
+    setOptionalID(&id)
+    fmt.Println(id)  // 42
+}`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -556,6 +806,241 @@ func main() {
     // {"id":1,"username":"alice","email":"alice@example.com"}
 }`,
 				},
+				{
+					Title: "Embedding",
+					Content: `Struct embedding allows one struct to include another struct's fields and methods, promoting composition over inheritance.
+
+**Embedding Syntax:**
+- Embed struct without field name
+- Fields and methods are promoted
+- Can access embedded fields directly
+- Can override methods
+
+**Promotion:**
+- Embedded struct's fields become accessible
+- Embedded struct's methods become callable
+- No need to qualify with embedded struct name
+- Can still access via embedded struct name
+
+**Method Promotion:**
+- Methods of embedded struct are promoted
+- Can call directly on outer struct
+- Can override by defining method on outer struct
+- Outer struct's method takes precedence
+
+**Use Cases:**
+- Composition over inheritance
+- Code reuse
+- Extending functionality
+- Mixin pattern
+
+**Best Practices:**
+- Use embedding for "is-a" relationships
+- Prefer composition over inheritance
+- Be explicit about what you're embedding
+- Document embedded types`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type Engine struct {
+    Power int
+}
+
+func (e Engine) Start() {
+    fmt.Println("Engine started")
+}
+
+type Car struct {
+    Engine  // Embedded (no field name)
+    Brand   string
+}
+
+// Method promotion
+func (c Car) Drive() {
+    c.Start()  // Can call embedded method
+    fmt.Printf("Driving %s car\n", c.Brand)
+}
+
+// Override method
+func (c Car) Start() {
+    fmt.Println("Car engine starting...")
+    c.Engine.Start()  // Call embedded method explicitly
+}
+
+func main() {
+    car := Car{
+        Engine: Engine{Power: 200},
+        Brand:  "Toyota",
+    }
+    
+    // Promoted fields
+    fmt.Println(car.Power)  // Direct access
+    fmt.Println(car.Engine.Power)  // Explicit access
+    
+    // Promoted methods
+    car.Start()  // Uses Car's Start (overridden)
+    car.Drive()
+}`,
+				},
+				{
+					Title: "Method Promotion",
+					Content: `When a struct embeds another struct, the embedded struct's methods are promoted and can be called directly on the outer struct.
+
+**Promotion Rules:**
+- Embedded struct's methods become available
+- Can call directly: outer.Method()
+- Can still call explicitly: outer.Embedded.Method()
+- Outer struct can override methods
+
+**Method Resolution:**
+- Outer struct's methods take precedence
+- If not found, check embedded structs
+- Ambiguity causes compile error
+- Must be explicit if ambiguous
+
+**Use Cases:**
+- Extending functionality
+- Code reuse
+- Interface satisfaction
+- Mixin pattern
+
+**Best Practices:**
+- Use promotion for convenience
+- Override when behavior needs to change
+- Be explicit when ambiguous
+- Document promoted methods`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type Reader struct{}
+
+func (r Reader) Read() {
+    fmt.Println("Reading...")
+}
+
+type Writer struct{}
+
+func (w Writer) Write() {
+    fmt.Println("Writing...")
+}
+
+// Multiple embedding
+type ReadWriter struct {
+    Reader  // Promotes Read()
+    Writer  // Promotes Write()
+}
+
+// Override Read
+func (rw ReadWriter) Read() {
+    fmt.Println("ReadWriter reading...")
+    rw.Reader.Read()  // Call embedded method
+}
+
+func main() {
+    rw := ReadWriter{}
+    
+    // Promoted methods
+    rw.Read()   // Uses ReadWriter's Read (overridden)
+    rw.Write()  // Uses Writer's Write (promoted)
+    
+    // Explicit access
+    rw.Reader.Read()  // Uses Reader's Read directly
+}`,
+				},
+				{
+					Title: "Struct Tags",
+					Content: `Struct tags provide metadata for struct fields, used by encoding packages and validation libraries.
+
+**Tag Syntax:**
+- Format: ` + "`" + `key:"value" key2:"value2"` + "`" + `
+- Multiple tags separated by spaces
+- Values can have options (comma-separated)
+- Accessed via reflection
+
+**Common Tag Types:**
+
+**1. JSON Tags:**
+- json:"field_name"
+- json:"field_name,omitempty" (omit if zero)
+- json:"-" (ignore field)
+- json:",omitempty" (use Go field name)
+
+**2. XML Tags:**
+- xml:"field_name"
+- xml:"field_name,attr" (attribute)
+- xml:",chardata" (character data)
+
+**3. Database Tags:**
+- db:"column_name"
+- gorm:"column:name" (GORM)
+- sql:"column_name" (database/sql)
+
+**4. Validation Tags:**
+- validate:"required"
+- validate:"min=1,max=100"
+- validate:"email"
+
+**Tag Options:**
+- omitempty: Omit if zero value
+- -: Ignore field
+- attr: XML attribute
+- chardata: XML character data
+
+**Accessing Tags:**
+- Use reflect package
+- Common in encoding/json, encoding/xml
+- Used by ORMs and validators`,
+					CodeExamples: `package main
+
+import (
+    "encoding/json"
+    "encoding/xml"
+    "fmt"
+    "reflect"
+)
+
+type User struct {
+    ID       int    ` + "`" + `json:"id" xml:"id,attr" db:"user_id" validate:"required"` + "`" + `
+    Username string ` + "`" + `json:"username" xml:"username" db:"username" validate:"required,min=3"` + "`" + `
+    Email    string ` + "`" + `json:"email,omitempty" xml:"email" db:"email" validate:"email"` + "`" + `
+    Password string ` + "`" + `json:"-" xml:"-" db:"password"` + "`" + `
+}
+
+// Access tags via reflection
+func printTags(u User) {
+    t := reflect.TypeOf(u)
+    for i := 0; i < t.NumField(); i++ {
+        field := t.Field(i)
+        fmt.Printf("Field: %s\n", field.Name)
+        fmt.Printf("  JSON: %s\n", field.Tag.Get("json"))
+        fmt.Printf("  XML: %s\n", field.Tag.Get("xml"))
+        fmt.Printf("  DB: %s\n", field.Tag.Get("db"))
+        fmt.Printf("  Validate: %s\n", field.Tag.Get("validate"))
+    }
+}
+
+func main() {
+    u := User{
+        ID:       1,
+        Username: "alice",
+        Email:    "alice@example.com",
+        Password: "secret",
+    }
+    
+    // JSON
+    jsonData, _ := json.Marshal(u)
+    fmt.Println("JSON:", string(jsonData))
+    
+    // XML
+    xmlData, _ := xml.Marshal(u)
+    fmt.Println("XML:", string(xmlData))
+    
+    // Tags
+    printTags(u)
+}`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -795,6 +1280,178 @@ func main() {
     
     // Counter implements io.Writer
     fmt.Fprintf(os.Stdout, "World")
+}`,
+				},
+				{
+					Title: "Interface Composition",
+					Content: `Interfaces can embed other interfaces, creating larger interfaces through composition.
+
+**Composition Syntax:**
+- Embed interface without method name
+- All embedded methods become part of interface
+- Type must implement all methods
+- Promotes code reuse
+
+**Benefits:**
+- Code reuse
+- Flexible design
+- Clear intent
+- Standard library pattern
+
+**Common Compositions:**
+- io.ReadWriter = io.Reader + io.Writer
+- io.ReadWriteCloser = io.Reader + io.Writer + io.Closer
+- http.ResponseWriter = io.Writer + http.Flusher + http.Hijacker
+
+**Best Practices:**
+- Compose small, focused interfaces
+- Follow standard library patterns
+- Document composed interfaces
+- Use for code reuse`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "io"
+)
+
+type Reader interface {
+    Read([]byte) (int, error)
+}
+
+type Writer interface {
+    Write([]byte) (int, error)
+}
+
+type Closer interface {
+    Close() error
+}
+
+// Composed interfaces
+type ReadWriter interface {
+    Reader
+    Writer
+}
+
+type ReadWriteCloser interface {
+    Reader
+    Writer
+    Closer
+}
+
+type File struct {
+    data []byte
+    pos  int
+}
+
+func (f *File) Read(b []byte) (int, error) {
+    if f.pos >= len(f.data) {
+        return 0, io.EOF
+    }
+    n := copy(b, f.data[f.pos:])
+    f.pos += n
+    return n, nil
+}
+
+func (f *File) Write(b []byte) (int, error) {
+    f.data = append(f.data, b...)
+    return len(b), nil
+}
+
+func (f *File) Close() error {
+    f.data = nil
+    return nil
+}
+
+func main() {
+    var rwc ReadWriteCloser = &File{}
+    
+    rwc.Write([]byte("Hello"))
+    
+    buf := make([]byte, 10)
+    rwc.Read(buf)
+    fmt.Println(string(buf))
+    
+    rwc.Close()
+}`,
+				},
+				{
+					Title: "Empty Interface",
+					Content: `The empty interface (interface{}) represents any type, enabling generic-like behavior before Go 1.18.
+
+**Empty Interface:**
+- interface{} is alias for any (Go 1.18+)
+- Can hold any value
+- Zero value is nil
+- Used extensively before generics
+
+**Common Uses:**
+- Accept any type as parameter
+- Store heterogeneous collections
+- JSON unmarshaling
+- Reflection operations
+- Function parameters (fmt.Printf, etc.)
+
+**Working with Empty Interface:**
+- Type assertions to extract type
+- Type switches for multiple types
+- Reflection for inspection
+- No type safety (use generics when possible)
+
+**Best Practices:**
+- Use sparingly (prefer generics in Go 1.18+)
+- Document expected types
+- Use type assertions/switches
+- Consider generics for new code
+- Prefer specific interfaces when possible`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Accept any type
+func printValue(v interface{}) {
+    // Type switch
+    switch val := v.(type) {
+    case int:
+        fmt.Printf("Integer: %d\n", val)
+    case string:
+        fmt.Printf("String: %s\n", val)
+    case bool:
+        fmt.Printf("Boolean: %v\n", val)
+    default:
+        fmt.Printf("Unknown: %v (type: %T)\n", val, val)
+    }
+}
+
+// Store different types
+func storeMixed() {
+    var values []interface{}
+    values = append(values, 42)
+    values = append(values, "hello")
+    values = append(values, true)
+    values = append(values, 3.14)
+    
+    for _, v := range values {
+        printValue(v)
+    }
+}
+
+// Type assertion
+func extractString(v interface{}) (string, bool) {
+    str, ok := v.(string)
+    return str, ok
+}
+
+func main() {
+    printValue(42)
+    printValue("hello")
+    printValue(true)
+    
+    storeMixed()
+    
+    if str, ok := extractString("test"); ok {
+        fmt.Println("Extracted:", str)
+    }
 }`,
 				},
 			},

@@ -1,0 +1,68 @@
+package main
+
+import (
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/rusik69/lc/internal/auth"
+	_ "github.com/rusik69/lc/internal/courses/algorithms"
+	_ "github.com/rusik69/lc/internal/courses/golang"
+	_ "github.com/rusik69/lc/internal/courses/kubernetes"
+	_ "github.com/rusik69/lc/internal/courses/machine_learning"
+	_ "github.com/rusik69/lc/internal/courses/python"
+	_ "github.com/rusik69/lc/internal/courses/systems_design"
+	"github.com/rusik69/lc/internal/handlers"
+)
+
+func main() {
+	// Initialize auth
+	if err := auth.InitAuth(); err != nil {
+		log.Fatalf("Failed to initialize auth: %v", err)
+	}
+
+	// Initialize templates
+	if err := handlers.InitTemplates("web/templates"); err != nil {
+		log.Fatalf("Failed to load templates: %v", err)
+	}
+
+	mux := http.NewServeMux()
+
+	// Auth routes (no auth required)
+	mux.HandleFunc("/login", auth.HandleLogin)
+	mux.HandleFunc("/logout", auth.HandleLogout)
+
+	// Protected routes - exact paths first, then paths with trailing slashes
+	mux.HandleFunc("/", handlers.HandleIndex)
+	mux.HandleFunc("/algorithms", handlers.HandleAlgorithms)
+	mux.HandleFunc("/algorithms/", handlers.HandleAlgorithmsModule)
+	mux.HandleFunc("/systems-design", handlers.HandleSystemsDesignCourse)
+	mux.HandleFunc("/systems-design/", handlers.HandleSystemsDesignModule)
+	mux.HandleFunc("/golang", handlers.HandleGolangCourse)
+	mux.HandleFunc("/golang/", handlers.HandleGolangModule)
+	mux.HandleFunc("/python", handlers.HandlePythonCourse)
+	mux.HandleFunc("/python/", handlers.HandlePythonModule)
+	mux.HandleFunc("/kubernetes", handlers.HandleKubernetesCourse)
+	mux.HandleFunc("/kubernetes/", handlers.HandleKubernetesModule)
+	mux.HandleFunc("/machine-learning", handlers.HandleMachineLearningCourse)
+	mux.HandleFunc("/machine-learning/", handlers.HandleMachineLearningModule)
+	mux.HandleFunc("/problem/", handlers.HandleProblem)
+	mux.HandleFunc("/run/", handlers.HandleRun)
+	mux.HandleFunc("/solution/", handlers.HandleSolution)
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
+
+	// Apply auth middleware
+	handler := auth.Middleware(mux)
+
+	server := &http.Server{
+		Addr:           ":8080",
+		Handler:        handler,
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 1 << 20, // 1MB
+	}
+
+	log.Println("Server starting on :8080")
+	log.Fatal(server.ListenAndServe())
+}

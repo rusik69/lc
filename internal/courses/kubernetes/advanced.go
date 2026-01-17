@@ -241,6 +241,100 @@ metadata:
     pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/warn: restricted`,
 				},
+				{
+					Title: "RBAC Best Practices",
+					Content: `**RBAC Best Practices** ensure secure and maintainable access control.
+
+**Principle of Least Privilege:**
+- Grant minimum permissions needed
+- Start with no permissions
+- Add permissions as needed
+- Regular permission audits
+
+**Role Organization:**
+- Create roles for specific functions
+- Use descriptive role names
+- Group related permissions
+- Avoid overly broad roles
+
+**Service Account Strategy:**
+- Use dedicated service accounts per application
+- Don't use default service account
+- Limit service account permissions
+- Use RBAC to control access
+
+**Namespace Isolation:**
+- Use namespaces for isolation
+- Namespace-scoped roles when possible
+- ClusterRoles only when needed
+- Separate production/staging/dev
+
+**Common Patterns:**
+- **Read-only roles**: For monitoring/logging
+- **Developer roles**: Limited to namespace
+- **Admin roles**: Full namespace access
+- **CI/CD roles**: Deploy permissions
+
+**Auditing:**
+- Enable audit logging
+- Review access regularly
+- Monitor for privilege escalation
+- Use kubectl auth can-i for testing`,
+					CodeExamples: `# Read-only role for monitoring
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-only
+  namespace: production
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "deployments"]
+  verbs: ["get", "list", "watch"]
+
+# Developer role (namespace-scoped)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: development
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch", "exec", "logs"]
+
+# CI/CD role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cicd
+  namespace: production
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+
+# ClusterRole for cluster-wide read
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-reader
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["*"]
+  verbs: ["get", "list"]
+
+# Test permissions
+kubectl auth can-i create pods --namespace=production
+kubectl auth can-i delete deployments --namespace=production --as=system:serviceaccount:default:app-sa`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -411,6 +505,184 @@ kubectl logs -l app=myapp
 
 # View events
 kubectl get events --sort-by='.lastTimestamp'`,
+				},
+				{
+					Title: "Distributed Tracing",
+					Content: `**Distributed Tracing** tracks requests across multiple services in microservices architectures.
+
+**Tracing Concepts:**
+- **Trace**: Complete request journey
+- **Span**: Single operation in trace
+- **Context Propagation**: Pass trace context between services
+- **Sampling**: Reduce trace volume
+
+**Tracing Systems:**
+- **Jaeger**: Open-source distributed tracing
+- **Zipkin**: Distributed tracing system
+- **OpenTelemetry**: Observability framework
+- **Datadog APM**: Commercial APM solution
+
+**OpenTelemetry:**
+- Standard for observability
+- Supports metrics, logs, traces
+- Vendor-neutral
+- Auto-instrumentation support
+
+**Tracing Benefits:**
+- Understand request flow
+- Identify bottlenecks
+- Debug distributed systems
+- Performance analysis
+
+**Implementation:**
+- Instrument applications
+- Collect traces
+- Store and query traces
+- Visualize traces`,
+					CodeExamples: `# Jaeger Operator
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+spec:
+  strategy: allInOne
+
+# OpenTelemetry Collector
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+    processors:
+      batch:
+    exporters:
+      jaeger:
+        endpoint: jaeger:14250
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [jaeger]
+
+# Instrument application with OpenTelemetry
+# Python example
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.jaeger import JaegerExporter
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+
+jaeger_exporter = JaegerExporter(
+    agent_host_name="jaeger",
+    agent_port=6831,
+)
+span_processor = BatchSpanProcessor(jaeger_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+# Use tracer
+with tracer.start_as_current_span("operation"):
+    # Your code here
+    pass`,
+				},
+				{
+					Title: "Observability Best Practices",
+					Content: `**Observability Best Practices** ensure effective monitoring and debugging.
+
+**Three Pillars of Observability:**
+- **Metrics**: Quantitative measurements
+- **Logs**: Event records
+- **Traces**: Request journeys
+
+**Golden Signals:**
+- **Latency**: Request processing time
+- **Traffic**: Request rate
+- **Errors**: Error rate
+- **Saturation**: Resource utilization
+
+**SLI/SLO/SLA:**
+- **SLI**: Service Level Indicator (metric)
+- **SLO**: Service Level Objective (target)
+- **SLA**: Service Level Agreement (contract)
+
+**Alerting:**
+- Set up meaningful alerts
+- Avoid alert fatigue
+- Use alerting best practices
+- Test alerting regularly
+
+**Dashboards:**
+- Create useful dashboards
+- Show key metrics
+- Use consistent naming
+- Keep dashboards updated
+
+**Best Practices:**
+- Instrument all services
+- Use structured logging
+- Implement distributed tracing
+- Set up proper alerting
+- Regular review of metrics
+- Document runbooks`,
+					CodeExamples: `# Prometheus alerting rules
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-alerts
+spec:
+  groups:
+  - name: app.rules
+    interval: 30s
+    rules:
+    - alert: HighErrorRate
+      expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High error rate detected"
+        description: "Error rate is {{ $value }}"
+    
+    - alert: HighLatency
+      expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 1
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High latency detected"
+
+# Grafana dashboard (JSON)
+{
+  "dashboard": {
+    "title": "Application Metrics",
+    "panels": [
+      {
+        "title": "Request Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{status=~'5..'}[5m])"
+          }
+        ]
+      }
+    ]
+  }
+}`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -1046,6 +1318,428 @@ kubectl get events --sort-by='.lastTimestamp'
 # 5. Check resource usage
 kubectl top pods
 kubectl top nodes`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          75,
+			Title:       "CI/CD with Kubernetes",
+			Description: "Integrate Kubernetes with CI/CD pipelines, GitOps, and deployment automation.",
+			Order:       15,
+			Lessons: []problems.Lesson{
+				{
+					Title: "CI/CD Concepts",
+					Content: `**CI/CD (Continuous Integration/Continuous Deployment)** automates building, testing, and deploying applications.
+
+**CI/CD Pipeline Stages:**
+1. **Source**: Code repository (Git)
+2. **Build**: Compile and build artifacts
+3. **Test**: Run automated tests
+4. **Package**: Create container images
+5. **Deploy**: Deploy to Kubernetes
+6. **Verify**: Health checks and smoke tests
+
+**CI/CD Tools:**
+- **Jenkins**: Popular CI/CD server
+- **GitLab CI**: Integrated CI/CD
+- **GitHub Actions**: GitHub-native CI/CD
+- **CircleCI**: Cloud-based CI/CD
+- **Argo CD**: GitOps continuous delivery
+- **Flux**: GitOps operator
+- **Tekton**: Kubernetes-native CI/CD
+
+**Kubernetes Integration:**
+- Deploy applications automatically
+- Use Kubernetes as CI/CD runners
+- GitOps for declarative deployments
+- Rollback capabilities
+- Blue-green deployments
+- Canary deployments
+
+**Best Practices:**
+- Use GitOps for deployments
+- Automate everything
+- Test in production-like environments
+- Implement proper security scanning
+- Use semantic versioning
+- Tag container images properly`,
+					CodeExamples: `# GitHub Actions workflow example
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build -t myapp:${{ github.sha }} .
+        docker tag myapp:${{ github.sha }} myapp:latest
+    
+    - name: Push to registry
+      run: |
+        docker push myapp:${{ github.sha }}
+        docker push myapp:latest
+    
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/myapp myapp=myapp:${{ github.sha }}
+        kubectl rollout status deployment/myapp
+
+# GitLab CI example
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+test:
+  stage: test
+  script:
+    - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA npm test
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/myapp myapp=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - kubectl rollout status deployment/myapp`,
+				},
+				{
+					Title: "GitOps with Argo CD",
+					Content: `**GitOps** uses Git as the single source of truth for declarative infrastructure and applications.
+
+**GitOps Principles:**
+- **Declarative**: Everything defined in Git
+- **Version Controlled**: All changes tracked
+- **Automated**: Changes automatically applied
+- **Observable**: State continuously monitored
+- **Pull-based**: Cluster pulls desired state
+
+**Argo CD:**
+- Declarative GitOps continuous delivery tool
+- Syncs applications from Git to Kubernetes
+- Web UI for visualization
+- CLI for operations
+- Multi-cluster support
+
+**Argo CD Components:**
+- **Application**: Represents app to sync
+- **ApplicationSet**: Manages multiple apps
+- **Project**: Logical grouping of apps
+- **Sync Policy**: Automatic or manual sync
+- **Health Status**: Monitors app health
+
+**Argo CD Workflow:**
+1. Monitor Git repository
+2. Detect changes
+3. Compare desired vs actual state
+4. Sync if different
+5. Report status
+
+**Benefits:**
+- Single source of truth
+- Audit trail
+- Rollback via Git
+- Multi-environment support
+- Self-healing`,
+					CodeExamples: `# Install Argo CD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Access Argo CD UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Get admin password
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+# Argo CD Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/user/repo
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+# ApplicationSet for multiple apps
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: production
+        url: https://prod-cluster
+      - cluster: staging
+        url: https://staging-cluster
+  template:
+    metadata:
+      name: '{{cluster}}-myapp'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/user/repo
+        targetRevision: main
+        path: k8s
+      destination:
+        server: '{{url}}'
+        namespace: default
+
+# CLI commands
+argocd app list
+argocd app get myapp
+argocd app sync myapp
+argocd app rollback myapp`,
+				},
+				{
+					Title: "Deployment Strategies",
+					Content: `**Deployment Strategies** define how applications are updated in production.
+
+**Rolling Update (Default):**
+- Gradual replacement of pods
+- Zero downtime
+- Old and new versions coexist
+- Automatic rollback on failure
+- Configurable update speed
+
+**Recreate:**
+- Terminate all old pods first
+- Then create new pods
+- Brief downtime
+- Simple but risky
+- Use for non-critical apps
+
+**Blue-Green:**
+- Two identical environments
+- Switch traffic instantly
+- Fast rollback
+- Requires double resources
+- Zero downtime
+
+**Canary:**
+- Gradual traffic shift
+- Test new version with subset
+- Monitor metrics
+- Gradually increase traffic
+- Low risk deployment
+
+**A/B Testing:**
+- Run multiple versions simultaneously
+- Route traffic based on rules
+- Compare performance
+- User-based routing
+- Feature flags
+
+**Best Practices:**
+- Use rolling updates for most cases
+- Implement health checks
+- Monitor metrics during deployment
+- Set up automatic rollback
+- Test deployment process`,
+					CodeExamples: `# Rolling Update (default)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    spec:
+      containers:
+      - name: app
+        image: myapp:v2
+
+# Blue-Green with Services
+# Blue deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-blue
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        version: blue
+    spec:
+      containers:
+      - name: app
+        image: myapp:v1
+
+# Green deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-green
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        version: green
+    spec:
+      containers:
+      - name: app
+        image: myapp:v2
+
+# Service switches between blue/green
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    version: blue  # Switch to 'green' for new version
+  ports:
+  - port: 80
+
+# Canary with Istio
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: app-vs
+spec:
+  hosts:
+  - app.example.com
+  http:
+  - match:
+    - headers:
+        canary:
+          exact: "true"
+    route:
+    - destination:
+        host: app
+        subset: v2
+      weight: 100
+  - route:
+    - destination:
+        host: app
+        subset: v1
+      weight: 90
+    - destination:
+        host: app
+        subset: v2
+      weight: 10`,
+				},
+				{
+					Title: "Container Image Management",
+					Content: `**Container Image Management** is crucial for secure and efficient CI/CD pipelines.
+
+**Image Tagging Strategies:**
+- **Semantic Versioning**: v1.2.3
+- **Git SHA**: Commit hash as tag
+- **Branch Names**: main, develop
+- **Build Numbers**: Sequential numbers
+- **Date/Time**: Timestamp-based tags
+
+**Image Registries:**
+- **Docker Hub**: Public registry
+- **GitHub Container Registry**: Integrated with GitHub
+- **Google Container Registry**: GCP
+- **Amazon ECR**: AWS
+- **Azure Container Registry**: Azure
+- **Harbor**: Self-hosted registry
+
+**Image Security:**
+- **Vulnerability Scanning**: Scan for CVEs
+- **Image Signing**: Sign images cryptographically
+- **Base Image Updates**: Keep base images updated
+- **Multi-stage Builds**: Reduce image size
+- **Non-root Users**: Run as non-root
+
+**Image Optimization:**
+- Use multi-stage builds
+- Minimize layers
+- Use .dockerignore
+- Use specific tags (not latest)
+- Remove unnecessary files
+
+**Best Practices:**
+- Tag images with Git SHA
+- Use semantic versioning
+- Scan images for vulnerabilities
+- Use private registries
+- Implement image signing
+- Keep images small`,
+					CodeExamples: `# Multi-stage Dockerfile
+FROM golang:1.21-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o app .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/app .
+CMD ["./app"]
+
+# Build and tag
+docker build -t myapp:$GIT_SHA .
+docker build -t myapp:$VERSION .
+docker build -t myapp:latest .
+
+# Push to registry
+docker push myregistry.com/myapp:$GIT_SHA
+docker push myregistry.com/myapp:$VERSION
+
+# ImagePullSecrets for private registry
+kubectl create secret docker-registry regcred \
+  --docker-server=myregistry.com \
+  --docker-username=user \
+  --docker-password=pass \
+  --docker-email=email@example.com
+
+# Use in deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: app
+        image: myregistry.com/myapp:$GIT_SHA
+
+# Scan image with Trivy
+trivy image myapp:$GIT_SHA
+
+# Sign image with Cosign
+cosign sign myregistry.com/myapp:$GIT_SHA
+cosign verify myregistry.com/myapp:$GIT_SHA`,
 				},
 			},
 			ProblemIDs: []int{},

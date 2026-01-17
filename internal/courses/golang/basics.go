@@ -76,6 +76,349 @@ require (
 )`,
 				},
 				{
+					Title: "Go Toolchain",
+					Content: `The Go toolchain provides essential commands for building, testing, and managing Go code.
+
+**Essential Commands:**
+
+**1. go build:**
+- Compiles packages and dependencies
+- Creates executable binary
+- Example: go build ./cmd/myapp
+- Output: Executable file (or .exe on Windows)
+
+**2. go run:**
+- Compiles and runs Go program
+- Convenient for quick testing
+- Example: go run main.go
+- No binary left behind
+
+**3. go test:**
+- Runs tests in package
+- Example: go test ./...
+- Flags: -v (verbose), -cover (coverage), -bench (benchmarks)
+
+**4. go mod:**
+- Module management commands
+- go mod init: Create new module
+- go mod tidy: Add/remove dependencies
+- go mod download: Download dependencies
+- go mod vendor: Create vendor directory
+
+**5. go fmt:**
+- Formats Go code
+- Enforces standard formatting
+- Example: go fmt ./...
+- Usually run automatically by editors
+
+**6. go vet:**
+- Reports suspicious code
+- Catches common mistakes
+- Example: go vet ./...
+- Run before committing
+
+**7. go get:**
+- Add/update dependencies
+- Example: go get github.com/gin-gonic/gin
+- Updates go.mod and go.sum
+
+**8. go install:**
+- Compile and install binary
+- Installs to $GOPATH/bin or $GOBIN
+- Example: go install example.com/cmd/tool
+
+**9. go doc:**
+- Show documentation
+- Example: go doc fmt.Println
+- Web server: godoc -http=:6060
+
+**10. go generate:**
+- Run code generators
+- Uses //go:generate comments
+- Example: go generate ./...
+
+**Development Workflow:**
+1. go mod init (create project)
+2. Write code
+3. go fmt (format)
+4. go vet (check)
+5. go test (test)
+6. go build (build)
+7. go run (run)`,
+					CodeExamples: `// Project structure
+myproject/
+  go.mod
+  go.sum
+  cmd/
+    myapp/
+      main.go
+  internal/
+    handlers/
+      handlers.go
+  pkg/
+    utils/
+      utils.go
+  go.mod
+
+// Build
+go build ./cmd/myapp
+
+// Run
+go run ./cmd/myapp/main.go
+
+// Test
+go test ./...
+go test -v ./internal/handlers
+go test -cover ./...
+
+// Format
+go fmt ./...
+
+// Vet
+go vet ./...
+
+// Get dependency
+go get github.com/gin-gonic/gin@v1.9.1
+
+// Install tool
+go install golang.org/x/tools/cmd/goimports@latest`,
+				},
+				{
+					Title: "Go Workspace Setup",
+					Content: `Setting up a proper Go workspace is crucial for effective development.
+
+**Modern Workspace (Go Modules):**
+- No need for GOPATH
+- Each project is independent module
+- go.mod defines module
+- Dependencies in go.mod and go.sum
+
+**Project Structure:**
+```
+myproject/
+  go.mod              # Module definition
+  go.sum              # Dependency checksums
+  cmd/                # Application entry points
+    app1/
+      main.go
+    app2/
+      main.go
+  internal/           # Private application code
+    handlers/
+    services/
+    models/
+  pkg/                # Public library code
+    utils/
+  api/                # API definitions
+  web/                # Web assets
+  configs/            # Configuration files
+  scripts/            # Build scripts
+  tests/              # Integration tests
+```
+
+**Directory Conventions:**
+- **cmd/**: Main applications (each subdirectory is an executable)
+- **internal/**: Private code (not importable from outside)
+- **pkg/**: Public library code (importable)
+- **api/**: API contracts, protobuf definitions
+- **web/**: Web frontend assets
+- **configs/**: Configuration files
+- **scripts/**: Build and deployment scripts
+
+**Module Path:**
+- Use reverse domain notation
+- Example: github.com/username/project
+- Or: company.com/project
+- Should match repository location
+
+**Environment Setup:**
+- GOROOT: Go installation (usually auto-detected)
+- GOPATH: Legacy (not needed with modules)
+- GOBIN: Where go install puts binaries
+- PATH: Include $GOROOT/bin and $GOBIN
+
+**IDE Setup:**
+- VS Code: Install Go extension
+- GoLand: JetBrains IDE for Go
+- Vim/Neovim: Use vim-go plugin
+- Emacs: Use go-mode
+
+**Best Practices:**
+- One module per repository
+- Use semantic versioning for releases
+- Keep dependencies up to date
+- Use go mod tidy regularly
+- Commit go.mod and go.sum`,
+					CodeExamples: `// go.mod
+module github.com/username/myproject
+
+go 1.21
+
+require (
+    github.com/gin-gonic/gin v1.9.1
+    github.com/lib/pq v1.10.9
+)
+
+// Project structure example
+myproject/
+  cmd/
+    server/
+      main.go          # HTTP server
+    cli/
+      main.go          # CLI tool
+  internal/
+    handlers/
+      user.go
+    services/
+      user.go
+    models/
+      user.go
+  pkg/
+    utils/
+      string.go        # Public utilities
+  go.mod
+  go.sum
+  README.md
+
+// Build commands
+go build ./cmd/server    # Build server
+go build ./cmd/cli       # Build CLI tool
+go build ./...           # Build everything`,
+				},
+				{
+					Title: "Go Modules Deep Dive",
+					Content: `Go modules revolutionized dependency management in Go, replacing the legacy GOPATH system.
+
+**Module Basics:**
+- Module: Collection of related Go packages
+- Defined by go.mod file in root directory
+- Module path: Unique identifier (usually repository URL)
+- Version: Semantic versioning (v1.2.3)
+
+**go.mod File Structure:**
+```
+module module-path
+
+go version
+
+require (
+    dependency-path version
+)
+
+exclude dependency-path version  // Exclude specific version
+replace dependency-path => replacement-path  // Replace dependency
+retract version  // Retract version
+```
+
+**Module Commands:**
+
+**go mod init:**
+- Initialize new module
+- Creates go.mod file
+- Example: go mod init github.com/user/project
+
+**go mod tidy:**
+- Add missing dependencies
+- Remove unused dependencies
+- Update go.mod and go.sum
+- Run regularly
+
+**go mod download:**
+- Download dependencies
+- Populates module cache
+- Doesn't modify go.mod
+
+**go mod vendor:**
+- Create vendor directory
+- Copies dependencies locally
+- Enables offline builds
+- Use: go build -mod=vendor
+
+**go mod verify:**
+- Verify dependencies haven't been modified
+- Checks go.sum checksums
+- Ensures security
+
+**go mod graph:**
+- Print module dependency graph
+- Useful for debugging
+- Shows all dependencies
+
+**go mod why:**
+- Explain why dependency is needed
+- Shows dependency chain
+- Example: go mod why github.com/pkg/errors
+
+**Version Selection:**
+- Minimal version selection (MVS)
+- Chooses lowest compatible version
+- Ensures reproducible builds
+- go get updates to latest compatible
+
+**Indirect Dependencies:**
+- Dependencies of direct dependencies
+- Marked with // indirect comment
+- Automatically managed
+
+**go.sum File:**
+- Contains checksums for dependencies
+- Ensures integrity
+- Must be committed to version control
+- Generated automatically
+
+**Best Practices:**
+- Commit go.mod and go.sum
+- Use semantic versioning
+- Pin versions for production
+- Run go mod tidy before commits
+- Review dependency updates
+- Use go mod verify in CI`,
+					CodeExamples: `// Initialize module
+go mod init github.com/user/myproject
+
+// Add dependency
+go get github.com/gin-gonic/gin
+
+// Update dependency
+go get -u github.com/gin-gonic/gin
+
+// Update all dependencies
+go get -u ./...
+
+// Remove unused dependencies
+go mod tidy
+
+// Vendor dependencies
+go mod vendor
+
+// Verify dependencies
+go mod verify
+
+// Why is dependency needed?
+go mod why github.com/pkg/errors
+
+// View dependency graph
+go mod graph
+
+// go.mod example
+module github.com/user/myproject
+
+go 1.21
+
+require (
+    github.com/gin-gonic/gin v1.9.1
+    github.com/lib/pq v1.10.9
+)
+
+require (
+    github.com/bytedance/sonic v1.8.0 // indirect
+    github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
+)
+
+// go.sum contains checksums
+// Automatically generated, commit to version control`,
+				},
+				{
 					Title: "Basic Program Structure",
 					Content: `**Package Declaration:**
 Every Go file starts with a package declaration. The main package is special - it creates an executable.
@@ -271,6 +614,222 @@ func main() {
     var r rune = rune(b)
     
     fmt.Println(i, f, u, s, num, b, r)
+}`,
+				},
+				{
+					Title: "Type Assertions",
+					Content: `Type assertions allow you to extract the concrete type from an interface value.
+
+**Syntax:**
+- value, ok := interface.(Type) - Safe assertion with ok check
+- value := interface.(Type) - Unsafe assertion (panics if wrong type)
+
+**When to Use:**
+- Extract concrete type from interface{}
+- Check if value implements interface
+- Type switches for multiple types
+
+**Type Switches:**
+- Switch on type of interface value
+- More convenient than multiple assertions
+- Syntax: switch v := x.(type) { case Type: }
+
+**Common Patterns:**
+- Check if error is specific type
+- Extract concrete type from interface{}
+- Handle different types in generic code`,
+					CodeExamples: `package main
+
+import "fmt"
+
+func processValue(v interface{}) {
+    // Type assertion with ok check
+    if str, ok := v.(string); ok {
+        fmt.Printf("String: %s\n", str)
+    } else if num, ok := v.(int); ok {
+        fmt.Printf("Number: %d\n", num)
+    }
+    
+    // Type switch (preferred for multiple types)
+    switch val := v.(type) {
+    case string:
+        fmt.Printf("String: %s\n", val)
+    case int:
+        fmt.Printf("Int: %d\n", val)
+    case float64:
+        fmt.Printf("Float: %f\n", val)
+    case bool:
+        fmt.Printf("Boolean: %v\n", val)
+    default:
+        fmt.Printf("Unknown type: %v\n", val)
+    }
+}
+
+// Error type assertion
+func handleError(err error) {
+    if validationErr, ok := err.(ValidationError); ok {
+        fmt.Printf("Validation error in %s: %s\n", 
+            validationErr.Field, validationErr.Message)
+    } else if notFoundErr, ok := err.(NotFoundError); ok {
+        fmt.Printf("%s not found\n", notFoundErr.Resource)
+    } else {
+        fmt.Printf("Unknown error: %v\n", err)
+    }
+}
+
+func main() {
+    processValue("hello")
+    processValue(42)
+    processValue(3.14)
+    processValue(true)
+}`,
+				},
+				{
+					Title: "Type Switches",
+					Content: `Type switches are a powerful way to handle multiple types in a clean, readable manner.
+
+**Syntax:**
+switch v := x.(type) {
+case Type1:
+    // v is Type1
+case Type2:
+    // v is Type2
+default:
+    // v is other type
+}
+
+**Key Points:**
+- v is the value with asserted type in each case
+- Cases are type names, not values
+- Default case handles unmatched types
+- More readable than multiple type assertions
+
+**Use Cases:**
+- Handle multiple types from interface{}
+- Process different error types
+- Generic-like behavior (before Go 1.18)
+- JSON unmarshaling with multiple types
+
+**Best Practices:**
+- Use type switches for 3+ types
+- Use type assertion for 1-2 types
+- Always handle default case
+- Document expected types`,
+					CodeExamples: `package main
+
+import "fmt"
+
+func printType(v interface{}) {
+    switch val := v.(type) {
+    case int:
+        fmt.Printf("Integer: %d\n", val)
+    case string:
+        fmt.Printf("String: %s\n", val)
+    case bool:
+        fmt.Printf("Boolean: %v\n", val)
+    case []int:
+        fmt.Printf("Slice of ints: %v\n", val)
+    case map[string]int:
+        fmt.Printf("Map: %v\n", val)
+    default:
+        fmt.Printf("Unknown type: %T\n", val)
+    }
+}
+
+// Type switch with methods
+type Stringer interface {
+    String() string
+}
+
+func printStringer(v interface{}) {
+    switch val := v.(type) {
+    case Stringer:
+        fmt.Println(val.String())
+    case string:
+        fmt.Println(val)
+    case int:
+        fmt.Printf("%d\n", val)
+    default:
+        fmt.Printf("%v\n", val)
+    }
+}
+
+func main() {
+    printType(42)
+    printType("hello")
+    printType(true)
+    printType([]int{1, 2, 3})
+    printType(map[string]int{"a": 1})
+}`,
+				},
+				{
+					Title: "Interface{} Usage",
+					Content: `The empty interface (interface{}) can hold values of any type, making it useful for generic-like behavior.
+
+**Empty Interface:**
+- interface{} is alias for any (Go 1.18+)
+- Can hold any type
+- Used before generics were available
+- Common in standard library
+
+**Common Uses:**
+- Accept any type as parameter
+- Store heterogeneous collections
+- JSON unmarshaling
+- Reflection operations
+- Function parameters (fmt.Printf, etc.)
+
+**Limitations:**
+- Need type assertions to use
+- No type safety
+- Prefer generics (Go 1.18+) when possible
+
+**Best Practices:**
+- Use sparingly (prefer generics)
+- Document expected types
+- Use type assertions/switches
+- Consider generics for new code`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Accept any type
+func printAny(v interface{}) {
+    fmt.Printf("Value: %v, Type: %T\n", v, v)
+}
+
+// Store different types
+func storeMixed() {
+    var values []interface{}
+    values = append(values, 42)
+    values = append(values, "hello")
+    values = append(values, true)
+    values = append(values, 3.14)
+    
+    for _, v := range values {
+        printAny(v)
+    }
+}
+
+// JSON-like structure
+type JSONValue struct {
+    Type  string
+    Value interface{}
+}
+
+func createJSONValue(t string, v interface{}) JSONValue {
+    return JSONValue{Type: t, Value: v}
+}
+
+func main() {
+    printAny(42)
+    printAny("hello")
+    printAny([]int{1, 2, 3})
+    
+    storeMixed()
+    
+    jsonVal := createJSONValue("string", "hello")
+    fmt.Println(jsonVal)
 }`,
 				},
 			},
@@ -474,6 +1033,178 @@ func main() {
     }
 }`,
 				},
+				{
+					Title: "Error Handling Patterns",
+					Content: `Go's error handling is explicit and requires checking errors after each operation that can fail.
+
+**Error Handling Pattern:**
+```go
+result, err := function()
+if err != nil {
+    return err  // or handle error
+}
+// Use result
+```
+
+**Common Patterns:**
+
+**1. Early Return:**
+- Return immediately on error
+- Keeps code readable
+- Reduces nesting
+
+**2. Error Wrapping:**
+- Add context to errors
+- Use fmt.Errorf with %w verb
+- Preserves original error
+
+**3. Error Checking:**
+- Always check errors
+- Don't ignore with _
+- Handle appropriately
+
+**4. Error Propagation:**
+- Return errors up the call stack
+- Let caller decide how to handle
+- Add context at each level
+
+**Best Practices:**
+- Check errors immediately
+- Return early on error
+- Wrap errors with context
+- Use errors.Is() and errors.As()
+- Don't panic for normal errors`,
+					CodeExamples: `package main
+
+import (
+    "errors"
+    "fmt"
+    "os"
+)
+
+// Early return pattern
+func readConfig(filename string) (string, error) {
+    data, err := os.ReadFile(filename)
+    if err != nil {
+        return "", fmt.Errorf("failed to read config: %w", err)
+    }
+    
+    // Process data only if no error
+    return string(data), nil
+}
+
+// Error wrapping
+func processUser(id int) error {
+    user, err := getUser(id)
+    if err != nil {
+        return fmt.Errorf("failed to get user %d: %w", id, err)
+    }
+    
+    err = validateUser(user)
+    if err != nil {
+        return fmt.Errorf("validation failed for user %d: %w", id, err)
+    }
+    
+    return nil
+}
+
+// Error checking
+func safeDivide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, errors.New("division by zero")
+    }
+    return a / b, nil
+}
+
+func main() {
+    result, err := safeDivide(10, 2)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Result:", result)
+}`,
+				},
+				{
+					Title: "Panic and Recover",
+					Content: `Panic and recover provide exception-like behavior in Go, but should be used sparingly.
+
+**Panic:**
+- Stops normal execution
+- Deferred functions still run
+- Should be used for programmer errors, not normal errors
+- Similar to exceptions in other languages
+- Panics propagate up call stack
+
+**Recover:**
+- Recovers from panic
+- Only useful inside deferred functions
+- Returns value passed to panic
+- Use sparingly - prefer error returns
+
+**When to Use Panic:**
+- Programming errors (nil pointer, index out of bounds)
+- Impossible conditions
+- Initialization failures
+- Not for normal error conditions
+
+**When to Use Recover:**
+- Top-level error handling
+- Graceful shutdown
+- Logging panics
+- Converting panics to errors
+
+**Best Practices:**
+- Prefer error returns over panic
+- Use panic for unrecoverable errors
+- Recover at appropriate boundaries
+- Log panics before recovering
+- Don't recover and continue silently`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Panic example
+func riskyFunction() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from panic:", r)
+        }
+    }()
+    
+    panic("something went wrong")
+    fmt.Println("This won't execute")
+}
+
+// Recover pattern
+func safeCall(fn func()) (err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = fmt.Errorf("panic recovered: %v", r)
+        }
+    }()
+    fn()
+    return nil
+}
+
+// Converting panic to error
+func mustDoSomething() error {
+    return safeCall(func() {
+        // Code that might panic
+        panic("error occurred")
+    })
+}
+
+func main() {
+    riskyFunction()
+    fmt.Println("Program continues")
+    
+    err := mustDoSomething()
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+}`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -674,6 +1405,267 @@ func main() {
     fmt.Println(c())  // 1
     fmt.Println(c())  // 2
     fmt.Println(c())  // 3
+}`,
+				},
+				{
+					Title: "Method Sets",
+					Content: `Method sets determine which methods are available on a type and how it can satisfy interfaces.
+
+**Method Set Rules:**
+
+**Value Receiver Methods:**
+- Available on both value and pointer
+- T has methods with receiver T
+- *T has methods with receiver T and *T
+
+**Pointer Receiver Methods:**
+- Available only on pointer
+- *T has methods with receiver *T
+- T does NOT have methods with receiver *T
+
+**Interface Satisfaction:**
+- Type T satisfies interface if T has all methods
+- Type *T satisfies interface if *T has all methods
+- Value receiver: both T and *T satisfy
+- Pointer receiver: only *T satisfies
+
+**Practical Implications:**
+- Use pointer receivers when method modifies struct
+- Use pointer receivers for large structs (efficiency)
+- Use value receivers for small, immutable structs
+- Pointer receivers enable nil checks
+
+**Best Practices:**
+- Be consistent: use same receiver type for all methods
+- Pointer receivers: when modifying or struct is large
+- Value receivers: when not modifying and struct is small`,
+					CodeExamples: `package main
+
+import "fmt"
+
+type Counter struct {
+    value int
+}
+
+// Pointer receiver (can modify)
+func (c *Counter) Increment() {
+    c.value++
+}
+
+// Value receiver (cannot modify)
+func (c Counter) GetValue() int {
+    return c.value
+}
+
+// Interface
+type Incrementer interface {
+    Increment()
+    GetValue() int
+}
+
+func main() {
+    c := Counter{value: 0}
+    
+    // Both work (Go automatically converts)
+    c.Increment()      // Go converts to (&c).Increment()
+    (&c).Increment()  // Explicit pointer
+    
+    fmt.Println(c.GetValue())  // 2
+    
+    // Interface satisfaction
+    var inc Incrementer = &c  // *Counter satisfies
+    // var inc2 Incrementer = c  // Error: Counter doesn't satisfy
+    
+    inc.Increment()
+    fmt.Println(inc.GetValue())  // 3
+}`,
+				},
+				{
+					Title: "Function Values",
+					Content: `Functions are first-class values in Go - they can be assigned, passed, and returned like any other value.
+
+**Function Values:**
+- Functions have types
+- Can assign to variables
+- Can pass as arguments
+- Can return from functions
+- Can compare with nil
+
+**Function Types:**
+- Syntax: func(parameters) returnType
+- Can be used as type annotations
+- Enable higher-order functions
+
+**Use Cases:**
+- Callbacks
+- Strategy pattern
+- Middleware
+- Event handlers
+- Higher-order functions
+
+**Function Comparison:**
+- Functions can only be compared to nil
+- Cannot compare function values directly
+- Use function types for type safety`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Function type
+type BinaryOp func(int, int) int
+
+// Assign function to variable
+var add BinaryOp = func(a, b int) int {
+    return a + b
+}
+
+// Pass function as argument
+func calculate(op BinaryOp, a, b int) int {
+    return op(a, b)
+}
+
+// Return function
+func getOperation(op string) BinaryOp {
+    switch op {
+    case "add":
+        return func(a, b int) int { return a + b }
+    case "multiply":
+        return func(a, b int) int { return a * b }
+    default:
+        return nil
+    }
+}
+
+// Higher-order function
+func makeMultiplier(factor int) func(int) int {
+    return func(x int) int {
+        return x * factor
+    }
+}
+
+func main() {
+    // Use function value
+    result := add(3, 4)
+    fmt.Println(result)
+    
+    // Pass function
+    result2 := calculate(add, 5, 6)
+    fmt.Println(result2)
+    
+    // Return function
+    op := getOperation("multiply")
+    if op != nil {
+        fmt.Println(op(3, 4))
+    }
+    
+    // Closure
+    double := makeMultiplier(2)
+    triple := makeMultiplier(3)
+    fmt.Println(double(5))  // 10
+    fmt.Println(triple(5))  // 15
+}`,
+				},
+				{
+					Title: "Higher-Order Functions",
+					Content: `Higher-order functions take functions as arguments or return functions, enabling powerful abstractions.
+
+**Common Patterns:**
+
+**1. Map:**
+- Apply function to each element
+- Transform slice elements
+- Return new slice
+
+**2. Filter:**
+- Select elements matching condition
+- Return subset of slice
+- Predicate function determines inclusion
+
+**3. Reduce/Fold:**
+- Combine elements into single value
+- Accumulate result
+- Common for sums, products, etc.
+
+**4. ForEach:**
+- Execute function for each element
+- Side effects only
+- No return value
+
+**Benefits:**
+- Code reuse
+- Separation of concerns
+- Functional programming style
+- Composable operations
+
+**Go Approach:**
+- No built-in map/filter/reduce
+- Easy to implement
+- Can use generics (Go 1.18+) for type safety`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Map: Transform each element
+func mapInts(slice []int, fn func(int) int) []int {
+    result := make([]int, len(slice))
+    for i, v := range slice {
+        result[i] = fn(v)
+    }
+    return result
+}
+
+// Filter: Select matching elements
+func filterInts(slice []int, fn func(int) bool) []int {
+    var result []int
+    for _, v := range slice {
+        if fn(v) {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+
+// Reduce: Combine elements
+func reduceInts(slice []int, fn func(int, int) int, initial int) int {
+    result := initial
+    for _, v := range slice {
+        result = fn(result, v)
+    }
+    return result
+}
+
+// ForEach: Execute for each element
+func forEachInts(slice []int, fn func(int)) {
+    for _, v := range slice {
+        fn(v)
+    }
+}
+
+func main() {
+    numbers := []int{1, 2, 3, 4, 5}
+    
+    // Map: Square each number
+    squared := mapInts(numbers, func(x int) int {
+        return x * x
+    })
+    fmt.Println(squared)  // [1, 4, 9, 16, 25]
+    
+    // Filter: Even numbers
+    evens := filterInts(numbers, func(x int) bool {
+        return x%2 == 0
+    })
+    fmt.Println(evens)  // [2, 4]
+    
+    // Reduce: Sum
+    sum := reduceInts(numbers, func(acc, x int) int {
+        return acc + x
+    }, 0)
+    fmt.Println(sum)  // 15
+    
+    // ForEach: Print
+    forEachInts(numbers, func(x int) {
+        fmt.Printf("%d ", x)
+    })
 }`,
 				},
 			},

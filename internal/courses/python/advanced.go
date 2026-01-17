@@ -1073,5 +1073,363 @@ result = "".join(words)`,
 			},
 			ProblemIDs: []int{},
 		},
+		{
+			ID:          58,
+			Title:       "Data Science Essentials",
+			Description: "Introduction to NumPy, Pandas, Matplotlib, and data analysis with Python.",
+			Order:       14,
+			Lessons: []problems.Lesson{
+				{
+					Title: "NumPy Basics",
+					Content: `**NumPy (Numerical Python):**
+- Fundamental package for scientific computing
+- Provides N-dimensional array object
+- Fast mathematical operations
+- Install: pip install numpy
+
+**Key Features:**
+- **ndarray**: N-dimensional array object
+- **Vectorized operations**: Fast element-wise operations
+- **Broadcasting**: Operations on arrays of different shapes
+- **Linear algebra**: Matrix operations
+- **Random number generation**: Statistical distributions
+
+**Why NumPy:**
+- Much faster than Python lists for numerical operations
+- Memory efficient
+- Rich mathematical functions
+- Foundation for Pandas, SciPy, scikit-learn
+
+**Common Operations:**
+- Array creation: np.array(), np.zeros(), np.ones(), np.arange()
+- Array manipulation: reshape(), transpose(), concatenate()
+- Mathematical operations: +, -, *, /, np.sum(), np.mean()
+- Indexing and slicing: Similar to Python lists but multi-dimensional`,
+					CodeExamples: `import numpy as np
+
+# Create arrays
+arr1 = np.array([1, 2, 3, 4, 5])
+arr2 = np.array([[1, 2, 3], [4, 5, 6]])  # 2D array
+arr3 = np.zeros((3, 3))  # 3x3 array of zeros
+arr4 = np.ones((2, 4))   # 2x4 array of ones
+arr5 = np.arange(0, 10, 2)  # [0, 2, 4, 6, 8]
+
+# Array properties
+print(arr2.shape)   # (2, 3) - dimensions
+print(arr2.ndim)    # 2 - number of dimensions
+print(arr2.size)    # 6 - total elements
+print(arr2.dtype)   # int64 - data type
+
+# Array operations (vectorized)
+arr = np.array([1, 2, 3, 4, 5])
+print(arr * 2)           # [2, 4, 6, 8, 10] - element-wise
+print(arr + 10)          # [11, 12, 13, 14, 15]
+print(arr ** 2)          # [1, 4, 9, 16, 25]
+
+# Array operations between arrays
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+print(a + b)             # [5, 7, 9]
+print(a * b)             # [4, 10, 18]
+
+# Mathematical functions
+arr = np.array([1, 2, 3, 4, 5])
+print(np.sum(arr))       # 15
+print(np.mean(arr))      # 3.0
+print(np.std(arr))       # Standard deviation
+print(np.max(arr))       # 5
+print(np.min(arr))       # 1
+
+# Indexing and slicing
+arr = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(arr[0, 1])         # 2 - element at row 0, col 1
+print(arr[0, :])         # [1, 2, 3] - first row
+print(arr[:, 1])         # [2, 5, 8] - second column
+print(arr[0:2, 1:3])     # [[2, 3], [5, 6]] - subarray
+
+# Reshaping
+arr = np.arange(12)
+reshaped = arr.reshape(3, 4)  # 3x4 array
+
+# Random numbers
+random_arr = np.random.rand(3, 3)  # 3x3 random array [0, 1)
+random_int = np.random.randint(0, 10, size=(3, 3))  # Random integers`,
+				},
+				{
+					Title: "Pandas DataFrames",
+					Content: `**Pandas:**
+- Powerful data manipulation and analysis library
+- Built on NumPy
+- Provides DataFrame (2D) and Series (1D) objects
+- Install: pip install pandas
+
+**Key Features:**
+- **DataFrame**: 2D labeled data structure (like Excel spreadsheet)
+- **Series**: 1D labeled array
+- **Data cleaning**: Handle missing data, duplicates
+- **Data transformation**: Filter, group, merge, pivot
+- **I/O**: Read/write CSV, Excel, JSON, SQL, etc.
+
+**Common Operations:**
+- Reading data: pd.read_csv(), pd.read_excel(), pd.read_json()
+- Data inspection: head(), tail(), info(), describe()
+- Selection: loc[], iloc[], column selection
+- Filtering: Boolean indexing
+- Grouping: groupby()
+- Merging: merge(), join()
+
+**Why Pandas:**
+- Handles missing data gracefully
+- Flexible data manipulation
+- Time series support
+- SQL-like operations
+- Integration with other libraries`,
+					CodeExamples: `import pandas as pd
+import numpy as np
+
+# Create DataFrame
+data = {
+    'name': ['Alice', 'Bob', 'Charlie', 'David'],
+    'age': [25, 30, 35, 28],
+    'city': ['NYC', 'LA', 'NYC', 'Chicago'],
+    'salary': [50000, 60000, 70000, 55000]
+}
+df = pd.DataFrame(data)
+
+# Read from CSV
+df = pd.read_csv('data.csv')
+
+# Basic inspection
+print(df.head())        # First 5 rows
+print(df.tail())        # Last 5 rows
+print(df.info())        # Data types and non-null counts
+print(df.describe())    # Statistical summary
+print(df.shape)         # (rows, columns)
+
+# Column selection
+print(df['name'])       # Single column (Series)
+print(df[['name', 'age']])  # Multiple columns (DataFrame)
+
+# Row selection
+print(df.loc[0])       # Row by label
+print(df.iloc[0])       # Row by integer position
+print(df.loc[0:2])      # Rows 0-2
+
+# Filtering
+young = df[df['age'] < 30]
+nyc_residents = df[df['city'] == 'NYC']
+high_salary = df[df['salary'] > 60000]
+
+# Multiple conditions
+filtered = df[(df['age'] < 30) & (df['salary'] > 50000)]
+
+# Adding columns
+df['bonus'] = df['salary'] * 0.1
+df['total'] = df['salary'] + df['bonus']
+
+# Grouping
+by_city = df.groupby('city')
+print(by_city['salary'].mean())  # Average salary by city
+print(by_city.size())            # Count by city
+
+# Aggregations
+print(df.groupby('city').agg({
+    'salary': ['mean', 'sum', 'count'],
+    'age': 'mean'
+}))
+
+# Missing data
+df['new_col'] = np.nan  # Add column with NaN
+print(df.isnull())      # Check for missing values
+df_clean = df.dropna()  # Remove rows with NaN
+df_filled = df.fillna(0)  # Fill NaN with 0
+
+# Sorting
+df_sorted = df.sort_values('salary', ascending=False)
+
+# Merging
+df1 = pd.DataFrame({'id': [1, 2, 3], 'name': ['A', 'B', 'C']})
+df2 = pd.DataFrame({'id': [1, 2, 4], 'age': [25, 30, 35]})
+merged = pd.merge(df1, df2, on='id', how='inner')`,
+				},
+				{
+					Title: "Data Visualization with Matplotlib",
+					Content: `**Matplotlib:**
+- Comprehensive plotting library
+- Create static, animated, and interactive visualizations
+- Install: pip install matplotlib
+
+**Key Features:**
+- **Line plots**: Plot data over time
+- **Bar charts**: Compare categories
+- **Histograms**: Distribution of data
+- **Scatter plots**: Relationship between variables
+- **Subplots**: Multiple plots in one figure
+- **Customization**: Colors, labels, legends, styles
+
+**Common Plot Types:**
+- plot(): Line plot
+- scatter(): Scatter plot
+- bar(): Bar chart
+- hist(): Histogram
+- boxplot(): Box plot
+- pie(): Pie chart
+
+**Best Practices:**
+- Always label axes
+- Add title and legend
+- Use appropriate plot type
+- Keep plots simple and clear
+- Save figures with appropriate format`,
+					CodeExamples: `import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+# Basic line plot
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+plt.plot(x, y)
+plt.xlabel('X axis')
+plt.ylabel('Y axis')
+plt.title('Sine Wave')
+plt.grid(True)
+plt.show()
+
+# Multiple lines
+x = np.linspace(0, 10, 100)
+plt.plot(x, np.sin(x), label='sin(x)')
+plt.plot(x, np.cos(x), label='cos(x)')
+plt.legend()
+plt.show()
+
+# Scatter plot
+x = np.random.randn(100)
+y = np.random.randn(100)
+plt.scatter(x, y, alpha=0.5)
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Scatter Plot')
+plt.show()
+
+# Bar chart
+categories = ['A', 'B', 'C', 'D']
+values = [23, 45, 56, 78]
+plt.bar(categories, values)
+plt.xlabel('Category')
+plt.ylabel('Value')
+plt.title('Bar Chart')
+plt.show()
+
+# Histogram
+data = np.random.normal(100, 15, 1000)
+plt.hist(data, bins=30, edgecolor='black')
+plt.xlabel('Value')
+plt.ylabel('Frequency')
+plt.title('Histogram')
+plt.show()
+
+# Subplots
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+axes[0, 0].plot(x, y)
+axes[0, 1].scatter(x, y)
+axes[1, 0].bar(categories, values)
+axes[1, 1].hist(data, bins=30)
+plt.tight_layout()
+plt.show()
+
+# Pandas integration
+df = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100)
+})
+df.plot.scatter(x='x', y='y')
+plt.show()`,
+				},
+				{
+					Title: "Data Cleaning and Preprocessing",
+					Content: `**Data Cleaning:**
+- Critical step in data science workflow
+- Real-world data is messy
+- Handle missing values, duplicates, outliers
+- Normalize and transform data
+
+**Common Tasks:**
+- **Handle missing data**: Remove or impute
+- **Remove duplicates**: Drop duplicate rows
+- **Handle outliers**: Detect and treat outliers
+- **Data types**: Convert to appropriate types
+- **Normalization**: Scale numerical features
+- **Encoding**: Convert categorical to numerical
+
+**Pandas Methods:**
+- dropna(): Remove missing values
+- fillna(): Fill missing values
+- drop_duplicates(): Remove duplicates
+- replace(): Replace values
+- astype(): Convert data types
+- normalize(): Normalize data`,
+					CodeExamples: `import pandas as pd
+import numpy as np
+
+# Create sample data with issues
+data = {
+    'name': ['Alice', 'Bob', 'Alice', 'Charlie', None],
+    'age': [25, 30, 25, None, 28],
+    'salary': [50000, 60000, 50000, 70000, 55000],
+    'city': ['NYC', 'LA', 'NYC', 'NYC', 'Chicago']
+}
+df = pd.DataFrame(data)
+
+# Check for missing values
+print(df.isnull().sum())
+print(df.isnull().any())
+
+# Handle missing values
+# Option 1: Remove rows with any missing value
+df_clean = df.dropna()
+
+# Option 2: Remove rows where all values are missing
+df_clean = df.dropna(how='all')
+
+# Option 3: Fill missing values
+df_filled = df.fillna(0)  # Fill with 0
+df_filled = df.fillna(df.mean())  # Fill with mean
+df_filled = df['age'].fillna(df['age'].mean())  # Fill specific column
+
+# Remove duplicates
+df_no_dup = df.drop_duplicates()
+df_no_dup = df.drop_duplicates(subset=['name'])  # Based on specific columns
+
+# Handle outliers
+# Using IQR method
+Q1 = df['salary'].quantile(0.25)
+Q3 = df['salary'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+df_no_outliers = df[(df['salary'] >= lower_bound) & (df['salary'] <= upper_bound)]
+
+# Data type conversion
+df['age'] = df['age'].astype(int)
+df['salary'] = df['salary'].astype(float)
+
+# String operations
+df['name_upper'] = df['name'].str.upper()
+df['name_length'] = df['name'].str.len()
+
+# Replace values
+df['city'] = df['city'].replace('NYC', 'New York')
+
+# Normalization (min-max scaling)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+df['salary_normalized'] = scaler.fit_transform(df[['salary']])
+
+# One-hot encoding (categorical to numerical)
+df_encoded = pd.get_dummies(df, columns=['city'])`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
 	})
 }

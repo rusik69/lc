@@ -55,6 +55,8 @@ var (
 	pythonMu               sync.RWMutex
 	allKubernetesModules   []CourseModule
 	kubernetesMu            sync.RWMutex
+	allMachineLearningModules []CourseModule
+	machineLearningMu        sync.RWMutex
 )
 
 func init() {
@@ -335,6 +337,27 @@ func GetKubernetesModuleByID(id int) *CourseModule {
 	for i := range allKubernetesModules {
 		if allKubernetesModules[i].ID == id {
 			return &allKubernetesModules[i]
+		}
+	}
+	return nil
+}
+
+// GetMachineLearningModules returns all machine learning course modules
+func GetMachineLearningModules() []CourseModule {
+	machineLearningMu.RLock()
+	defer machineLearningMu.RUnlock()
+	result := make([]CourseModule, len(allMachineLearningModules))
+	copy(result, allMachineLearningModules)
+	return result
+}
+
+// GetMachineLearningModuleByID returns a machine learning module by its ID
+func GetMachineLearningModuleByID(id int) *CourseModule {
+	machineLearningMu.RLock()
+	defer machineLearningMu.RUnlock()
+	for i := range allMachineLearningModules {
+		if allMachineLearningModules[i].ID == id {
+			return &allMachineLearningModules[i]
 		}
 	}
 	return nil

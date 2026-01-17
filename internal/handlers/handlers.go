@@ -30,6 +30,8 @@ var (
 	pythonModuleTemplate     *template.Template
 	kubernetesTemplate       *template.Template
 	kubernetesModuleTemplate *template.Template
+	machineLearningTemplate  *template.Template
+	machineLearningModuleTemplate *template.Template
 )
 
 const (
@@ -70,73 +72,85 @@ func InitTemplates(templateDir string) error {
 	}
 
 	// Parse index template separately to avoid block conflicts
-	indexTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/index.html")
+	indexTemplate, err = template.New("index").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/index.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse problem template separately to avoid block conflicts
-	problemTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/problem.html")
+	problemTemplate, err = template.New("problem").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/problem.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse algorithms template separately
-	algorithmsTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms.html")
+	algorithmsTemplate, err = template.New("algorithms").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse algorithms module template separately
-	algorithmsModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms_module.html")
+	algorithmsModuleTemplate, err = template.New("algorithms_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/algorithms_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse systems design course template
-	systemsDesignTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_course.html")
+	systemsDesignTemplate, err = template.New("systems_design").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse systems design module template
-	systemsDesignModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_module.html")
+	systemsDesignModuleTemplate, err = template.New("systems_design_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/systems_design_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Golang course template
-	golangTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_course.html")
+	golangTemplate, err = template.New("golang").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Golang module template
-	golangModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_module.html")
+	golangModuleTemplate, err = template.New("golang_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/golang_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Python course template
-	pythonTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_course.html")
+	pythonTemplate, err = template.New("python").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Python module template
-	pythonModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_module.html")
+	pythonModuleTemplate, err = template.New("python_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/python_module.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Kubernetes course template
-	kubernetesTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_course.html")
+	kubernetesTemplate, err = template.New("kubernetes").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_course.html")
 	if err != nil {
 		return err
 	}
 
 	// Parse Kubernetes module template
-	kubernetesModuleTemplate, err = template.New("").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_module.html")
+	kubernetesModuleTemplate, err = template.New("kubernetes_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/kubernetes_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Machine Learning course template
+	machineLearningTemplate, err = template.New("machine_learning").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/machine_learning_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Machine Learning module template
+	machineLearningModuleTemplate, err = template.New("machine_learning_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/machine_learning_module.html")
 	if err != nil {
 		return err
 	}
@@ -194,7 +208,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	problems := problems.GetAllProblems()
-	if err := indexTemplate.Execute(w, problems); err != nil {
+	if err := indexTemplate.ExecuteTemplate(w, "layout.html", problems); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -218,7 +232,7 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := problemTemplate.Execute(w, problem); err != nil {
+	if err := problemTemplate.ExecuteTemplate(w, "layout.html", problem); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -769,6 +783,72 @@ func HandleKubernetesModule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := kubernetesModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleMachineLearningCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/machine-learning" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetMachineLearningModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := machineLearningTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleMachineLearningModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetMachineLearningModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := machineLearningModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

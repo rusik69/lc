@@ -201,6 +201,230 @@ func main() {
     fmt.Println("Program continues")
 }`,
 				},
+				{
+					Title: "Error Wrapping Advanced",
+					Content: `Advanced error wrapping techniques enable better error handling and debugging in complex applications.
+
+**Error Wrapping Patterns:**
+
+**1. Multi-Level Wrapping:**
+- Wrap errors at each level
+- Preserve full error chain
+- Enables precise error matching
+
+**2. Error Annotations:**
+- Add context at each level
+- Include function names, parameters
+- Helpful for debugging
+
+**3. Error Inspection:**
+- errors.Is(): Check for specific error in chain
+- errors.As(): Extract error of specific type
+- errors.Unwrap(): Get next error
+
+**4. Error Chains:**
+- Errors can wrap multiple levels
+- Chain preserved through wrapping
+- Can traverse entire chain
+
+**Best Practices:**
+- Wrap at appropriate levels
+- Add meaningful context
+- Use errors.Is() for sentinel errors
+- Use errors.As() for error types
+- Don't wrap unnecessarily`,
+					CodeExamples: `package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+var (
+    ErrNotFound     = errors.New("not found")
+    ErrInvalidInput = errors.New("invalid input")
+)
+
+func findUser(id int) error {
+    if id < 0 {
+        return fmt.Errorf("invalid user id %d: %w", id, ErrInvalidInput)
+    }
+    if id > 1000 {
+        return fmt.Errorf("user %d: %w", id, ErrNotFound)
+    }
+    return nil
+}
+
+func getUserProfile(id int) error {
+    user, err := findUser(id)
+    if err != nil {
+        return fmt.Errorf("failed to get user profile: %w", err)
+    }
+    // Process user...
+    return nil
+}
+
+func handleRequest(id int) error {
+    profile, err := getUserProfile(id)
+    if err != nil {
+        return fmt.Errorf("request failed: %w", err)
+    }
+    // Handle profile...
+    return nil
+}
+
+func main() {
+    err := handleRequest(-1)
+    
+    // Check entire chain
+    if errors.Is(err, ErrInvalidInput) {
+        fmt.Println("Invalid input detected")
+    }
+    
+    if errors.Is(err, ErrNotFound) {
+        fmt.Println("Not found detected")
+    }
+    
+    // Print full error chain
+    fmt.Printf("Full error: %v\n", err)
+    
+    // Unwrap chain
+    current := err
+    for current != nil {
+        fmt.Printf("  %v\n", current)
+        current = errors.Unwrap(current)
+    }
+}`,
+				},
+				{
+					Title: "Error Handling Best Practices",
+					Content: `Following best practices ensures robust, maintainable error handling throughout your Go application.
+
+**Core Principles:**
+- Check errors immediately
+- Return errors up the call stack
+- Add context when wrapping
+- Don't ignore errors
+- Handle errors appropriately
+
+**Error Handling Patterns:**
+
+**1. Early Return:**
+- Return immediately on error
+- Reduces nesting
+- Clear error paths
+- Most common pattern
+
+**2. Error Wrapping:**
+- Add context at each level
+- Use fmt.Errorf with %w
+- Preserve original error
+- Enable error inspection
+
+**3. Error Checking:**
+- Always check errors
+- Don't use _ to ignore
+- Handle or propagate
+- Log appropriately
+
+**4. Error Types:**
+- Create custom error types
+- Use errors.Is() and errors.As()
+- Enable type-specific handling
+- Export error variables
+
+**Common Mistakes:**
+- Ignoring errors with _
+- Not checking errors
+- Losing error context
+- Panicking for normal errors
+- Not wrapping errors
+
+**Best Practices:**
+- Check errors immediately
+- Return early on error
+- Wrap with context
+- Use errors.Is() and errors.As()
+- Document error behavior
+- Create error types for categories
+- Log errors appropriately
+- Don't panic for normal errors`,
+					CodeExamples: `package main
+
+import (
+    "errors"
+    "fmt"
+    "os"
+)
+
+// Good: Early return
+func readConfig(filename string) (string, error) {
+    data, err := os.ReadFile(filename)
+    if err != nil {
+        return "", fmt.Errorf("failed to read config %s: %w", filename, err)
+    }
+    return string(data), nil
+}
+
+// Good: Error wrapping
+func processUser(id int) error {
+    user, err := getUser(id)
+    if err != nil {
+        return fmt.Errorf("failed to get user %d: %w", id, err)
+    }
+    
+    err = validateUser(user)
+    if err != nil {
+        return fmt.Errorf("validation failed for user %d: %w", id, err)
+    }
+    
+    return nil
+}
+
+// Good: Error checking
+func safeOperation() error {
+    result, err := riskyOperation()
+    if err != nil {
+        return err  // Don't ignore
+    }
+    
+    // Use result only if no error
+    fmt.Println(result)
+    return nil
+}
+
+// Bad: Ignoring error
+func badExample() {
+    data, _ := os.ReadFile("file.txt")  // Don't do this!
+    fmt.Println(string(data))
+}
+
+// Good: Error type checking
+func handleError(err error) {
+    var validationErr ValidationError
+    if errors.As(err, &validationErr) {
+        fmt.Printf("Validation error: %s\n", validationErr.Message)
+        return
+    }
+    
+    var notFoundErr NotFoundError
+    if errors.As(err, &notFoundErr) {
+        fmt.Printf("Not found: %s\n", notFoundErr.Resource)
+        return
+    }
+    
+    fmt.Printf("Unknown error: %v\n", err)
+}
+
+func main() {
+    config, err := readConfig("config.json")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Config:", config)
+}`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -498,6 +722,695 @@ func main() {
     
     wg.Wait()
     fmt.Println(counter.GetValue())
+}`,
+				},
+				{
+					Title: "Worker Pools",
+					Content: `Worker pools use a fixed number of goroutines to process jobs from a channel, providing efficient resource usage and controlled concurrency.
+
+**Worker Pool Pattern:**
+- Fixed number of worker goroutines
+- Jobs sent via channel
+- Results collected via channel
+- Efficient resource usage
+- Controlled concurrency
+
+**Benefits:**
+- Limit resource usage
+- Control concurrency level
+- Efficient for I/O-bound tasks
+- Easy to scale
+
+**Implementation Steps:**
+1. Create job and result channels
+2. Start fixed number of workers
+3. Send jobs to channel
+4. Workers process jobs
+5. Collect results
+6. Close channels when done
+
+**Use Cases:**
+- Processing files
+- API requests
+- Database operations
+- Image processing
+- Any parallelizable task`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+type Job struct {
+    ID     int
+    Data   string
+}
+
+type Result struct {
+    JobID  int
+    Output string
+}
+
+func worker(id int, jobs <-chan Job, results chan<- Result, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for job := range jobs {
+        // Simulate work
+        time.Sleep(100 * time.Millisecond)
+        results <- Result{
+            JobID:  job.ID,
+            Output: fmt.Sprintf("Processed: %s", job.Data),
+        }
+    }
+}
+
+func main() {
+    numWorkers := 3
+    numJobs := 10
+    
+    jobs := make(chan Job, numJobs)
+    results := make(chan Result, numJobs)
+    var wg sync.WaitGroup
+    
+    // Start workers
+    for w := 1; w <= numWorkers; w++ {
+        wg.Add(1)
+        go worker(w, jobs, results, &wg)
+    }
+    
+    // Send jobs
+    for j := 1; j <= numJobs; j++ {
+        jobs <- Job{ID: j, Data: fmt.Sprintf("job-%d", j)}
+    }
+    close(jobs)
+    
+    // Wait for workers to finish
+    go func() {
+        wg.Wait()
+        close(results)
+    }()
+    
+    // Collect results
+    for result := range results {
+        fmt.Println(result.Output)
+    }
+}`,
+				},
+				{
+					Title: "Fan-In/Fan-Out",
+					Content: `Fan-in and fan-out are powerful concurrency patterns for distributing and collecting work across multiple goroutines.
+
+**Fan-Out:**
+- Distribute work across multiple goroutines
+- Split input channel to multiple workers
+- Each worker processes subset of work
+- Increases throughput
+
+**Fan-In:**
+- Combine results from multiple channels
+- Merge multiple channels into one
+- Collect results from workers
+- Common in worker pool patterns
+
+**Patterns:**
+
+**1. Fan-Out:**
+- One input channel
+- Multiple worker goroutines
+- Each worker reads from same channel
+- Distributes load
+
+**2. Fan-In:**
+- Multiple input channels
+- One output channel
+- Use select to merge
+- Collects results
+
+**Use Cases:**
+- Parallel processing
+- Load distribution
+- Result aggregation
+- Pipeline processing
+
+**Benefits:**
+- Better resource utilization
+- Increased throughput
+- Scalable design
+- Clean separation of concerns`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// Fan-out: Distribute work
+func fanOut(input <-chan int, outputs []chan int) {
+    defer func() {
+        for _, ch := range outputs {
+            close(ch)
+        }
+    }()
+    
+    for val := range input {
+        // Round-robin distribution
+        for _, ch := range outputs {
+            select {
+            case ch <- val:
+            default:
+            }
+        }
+    }
+}
+
+// Fan-in: Combine results
+func fanIn(inputs []<-chan int) <-chan int {
+    output := make(chan int)
+    var wg sync.WaitGroup
+    
+    for _, input := range inputs {
+        wg.Add(1)
+        go func(ch <-chan int) {
+            defer wg.Done()
+            for val := range ch {
+                output <- val
+            }
+        }(input)
+    }
+    
+    go func() {
+        wg.Wait()
+        close(output)
+    }()
+    
+    return output
+}
+
+// Worker function
+func worker(id int, jobs <-chan int, results chan<- int) {
+    for job := range jobs {
+        results <- job * 2  // Process job
+    }
+}
+
+func main() {
+    // Create channels
+    jobs := make(chan int, 10)
+    results1 := make(chan int, 5)
+    results2 := make(chan int, 5)
+    
+    // Start workers (fan-out)
+    go worker(1, jobs, results1)
+    go worker(2, jobs, results2)
+    
+    // Send jobs
+    for i := 1; i <= 10; i++ {
+        jobs <- i
+    }
+    close(jobs)
+    
+    // Fan-in: Combine results
+    merged := fanIn([]<-chan int{results1, results2})
+    
+    // Collect results
+    for result := range merged {
+        fmt.Println("Result:", result)
+    }
+}`,
+				},
+				{
+					Title: "Context Package Deep Dive",
+					Content: `The context package provides a powerful way to manage cancellation, timeouts, and request-scoped values in Go programs.
+
+**Context Basics:**
+- Carries cancellation signals
+- Carries deadlines and timeouts
+- Carries request-scoped values
+- Immutable (create new context, don't modify)
+
+**Context Creation:**
+- context.Background(): Root context
+- context.TODO(): Placeholder context
+- context.WithCancel(): Cancellable context
+- context.WithTimeout(): Context with timeout
+- context.WithDeadline(): Context with deadline
+- context.WithValue(): Context with values
+
+**Context Propagation:**
+- Pass context as first parameter
+- Convention: ctx context.Context
+- Propagate through call chain
+- Check ctx.Done() in loops
+
+**Common Patterns:**
+- HTTP request handling
+- Database queries with timeout
+- Long-running operations
+- Graceful shutdown
+- Request tracing
+
+**Best Practices:**
+- Pass context as first parameter
+- Check ctx.Done() in loops
+- Use context for cancellation
+- Don't store contexts in structs
+- Use context.WithValue sparingly`,
+					CodeExamples: `package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+// Context as first parameter
+func processRequest(ctx context.Context, data string) error {
+    // Check cancellation
+    select {
+    case <-ctx.Done():
+        return ctx.Err()
+    default:
+    }
+    
+    // Simulate work
+    time.Sleep(1 * time.Second)
+    
+    // Check again
+    if ctx.Err() != nil {
+        return ctx.Err()
+    }
+    
+    fmt.Println("Processed:", data)
+    return nil
+}
+
+// With timeout
+func doWithTimeout() {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+    
+    err := processRequest(ctx, "data")
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+}
+
+// With cancellation
+func doWithCancel() {
+    ctx, cancel := context.WithCancel(context.Background())
+    
+    go func() {
+        time.Sleep(1 * time.Second)
+        cancel()  // Cancel after 1 second
+    }()
+    
+    err := processRequest(ctx, "data")
+    if err != nil {
+        fmt.Println("Cancelled:", err)
+    }
+}
+
+// With value
+func doWithValue() {
+    ctx := context.WithValue(context.Background(), "userID", 123)
+    
+    userID := ctx.Value("userID")
+    fmt.Println("User ID:", userID)
+}
+
+func main() {
+    doWithTimeout()
+    doWithCancel()
+    doWithValue()
+}`,
+				},
+				{
+					Title: "Channel Patterns",
+					Content: `Common channel patterns solve specific concurrency problems elegantly.
+
+**Channel Patterns:**
+
+**1. Pipeline:**
+- Chain of stages connected by channels
+- Each stage processes and passes to next
+- Enables streaming processing
+- Example: Read → Process → Write
+
+**2. Generator:**
+- Function that returns channel
+- Produces values on demand
+- Closes channel when done
+- Example: Fibonacci generator
+
+**3. Multiplexing:**
+- Combine multiple channels into one
+- Use select statement
+- Fan-in pattern
+- Example: Merge multiple result channels
+
+**4. Demultiplexing:**
+- Split one channel to multiple
+- Distribute work
+- Fan-out pattern
+- Example: Distribute jobs to workers
+
+**5. Or-Done:**
+- Wait for channel or done signal
+- Prevents blocking forever
+- Common in context usage
+- Example: Select with ctx.Done()
+
+**6. Tee:**
+- Split channel to multiple outputs
+- Broadcast to multiple receivers
+- Useful for logging, monitoring
+- Example: Process and log simultaneously
+
+**Best Practices:**
+- Close channels when done
+- Use select for multiple channels
+- Handle context cancellation
+- Avoid channel leaks`,
+					CodeExamples: `package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+// Generator pattern
+func generate(ctx context.Context, max int) <-chan int {
+    ch := make(chan int)
+    go func() {
+        defer close(ch)
+        for i := 0; i < max; i++ {
+            select {
+            case <-ctx.Done():
+                return
+            case ch <- i:
+            }
+        }
+    }()
+    return ch
+}
+
+// Pipeline stage
+func square(ctx context.Context, input <-chan int) <-chan int {
+    output := make(chan int)
+    go func() {
+        defer close(output)
+        for val := range input {
+            select {
+            case <-ctx.Done():
+                return
+            case output <- val * val:
+            }
+        }
+    }()
+    return output
+}
+
+// Or-done pattern
+func orDone(ctx context.Context, input <-chan int) <-chan int {
+    output := make(chan int)
+    go func() {
+        defer close(output)
+        for {
+            select {
+            case <-ctx.Done():
+                return
+            case val, ok := <-input:
+                if !ok {
+                    return
+                }
+                select {
+                case <-ctx.Done():
+                    return
+                case output <- val:
+                }
+            }
+        }
+    }()
+    return output
+}
+
+// Tee pattern: Split channel
+func tee(ctx context.Context, input <-chan int) (<-chan int, <-chan int) {
+    out1 := make(chan int)
+    out2 := make(chan int)
+    
+    go func() {
+        defer close(out1)
+        defer close(out2)
+        for val := range input {
+            var out1, out2 = out1, out2
+            for i := 0; i < 2; i++ {
+                select {
+                case <-ctx.Done():
+                    return
+                case out1 <- val:
+                    out1 = nil
+                case out2 <- val:
+                    out2 = nil
+                }
+            }
+        }
+    }()
+    
+    return out1, out2
+}
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+    
+    // Pipeline: generate → square
+    numbers := generate(ctx, 5)
+    squared := square(ctx, numbers)
+    
+    for val := range squared {
+        fmt.Println(val)
+    }
+}`,
+				},
+				{
+					Title: "Select Statement",
+					Content: `The select statement is crucial for coordinating multiple channel operations and implementing timeouts.
+
+**Select Basics:**
+- Waits on multiple channel operations
+- Chooses ready case (non-deterministic if multiple ready)
+- Blocks until at least one case ready
+- Default case makes it non-blocking
+
+**Select Patterns:**
+
+**1. Multiplexing:**
+- Wait on multiple channels
+- Process first ready
+- Common in fan-in
+
+**2. Timeouts:**
+- Use time.After() channel
+- Prevent blocking forever
+- Essential for production code
+
+**3. Non-Blocking:**
+- Default case
+- Check if operation ready
+- Don't block
+
+**4. Cancellation:**
+- Select on ctx.Done()
+- Cancel long operations
+- Graceful shutdown
+
+**Best Practices:**
+- Always include timeout or cancellation
+- Handle default case appropriately
+- Close channels properly
+- Use select in loops for continuous operations`,
+					CodeExamples: `package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+// Multiplexing
+func multiplex(ch1, ch2 <-chan string) {
+    for {
+        select {
+        case msg := <-ch1:
+            fmt.Println("From ch1:", msg)
+        case msg := <-ch2:
+            fmt.Println("From ch2:", msg)
+        }
+    }
+}
+
+// With timeout
+func withTimeout() {
+    ch := make(chan string)
+    
+    go func() {
+        time.Sleep(2 * time.Second)
+        ch <- "result"
+    }()
+    
+    select {
+    case result := <-ch:
+        fmt.Println("Got result:", result)
+    case <-time.After(1 * time.Second):
+        fmt.Println("Timeout!")
+    }
+}
+
+// Non-blocking
+func nonBlocking(ch chan int) {
+    select {
+    case val := <-ch:
+        fmt.Println("Got value:", val)
+    default:
+        fmt.Println("No value ready")
+    }
+}
+
+// With context
+func withContext(ctx context.Context, ch <-chan int) {
+    for {
+        select {
+        case <-ctx.Done():
+            fmt.Println("Cancelled")
+            return
+        case val := <-ch:
+            fmt.Println("Value:", val)
+        }
+    }
+}
+
+func main() {
+    // Timeout example
+    withTimeout()
+    
+    // Non-blocking
+    ch := make(chan int)
+    nonBlocking(ch)
+    
+    // With context
+    ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+    defer cancel()
+    withContext(ctx, ch)
+}`,
+				},
+				{
+					Title: "Channel Buffering",
+					Content: `Channel buffering affects when sends and receives block, impacting performance and behavior.
+
+**Unbuffered Channels:**
+- Synchronous communication
+- Send blocks until receiver ready
+- Receive blocks until sender ready
+- Zero capacity: make(chan Type)
+
+**Buffered Channels:**
+- Asynchronous communication
+- Send blocks only when buffer full
+- Receive blocks only when buffer empty
+- Capacity > 0: make(chan Type, capacity)
+
+**Buffer Sizing:**
+- Small buffer (1-10): Reduces blocking
+- Medium buffer (10-100): Balances memory and performance
+- Large buffer (100+): For high-throughput scenarios
+- Zero buffer: Synchronous, most common
+
+**When to Use Buffered:**
+- Producer faster than consumer
+- Batch processing
+- Reduce blocking
+- Performance optimization
+
+**When to Use Unbuffered:**
+- Synchronization needed
+- Backpressure desired
+- Simple communication
+- Most common case
+
+**Best Practices:**
+- Start with unbuffered
+- Add buffer if needed for performance
+- Don't use buffer as queue
+- Consider backpressure
+- Monitor channel capacity`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "time"
+)
+
+// Unbuffered: Synchronous
+func unbufferedExample() {
+    ch := make(chan int)  // Unbuffered
+    
+    go func() {
+        fmt.Println("Sending...")
+        ch <- 42  // Blocks until receiver ready
+        fmt.Println("Sent")
+    }()
+    
+    time.Sleep(100 * time.Millisecond)
+    fmt.Println("Receiving...")
+    val := <-ch  // Now sender can proceed
+    fmt.Println("Received:", val)
+}
+
+// Buffered: Asynchronous
+func bufferedExample() {
+    ch := make(chan int, 3)  // Buffer size 3
+    
+    // Can send 3 values without blocking
+    ch <- 1
+    ch <- 2
+    ch <- 3
+    
+    fmt.Println("Sent 3 values")
+    
+    // Now buffer is full, next send would block
+    // But we can receive
+    fmt.Println(<-ch)  // 1
+    fmt.Println(<-ch)  // 2
+    fmt.Println(<-ch)  // 3
+}
+
+// Producer-consumer with buffer
+func producerConsumer() {
+    ch := make(chan int, 10)  // Buffer allows async
+    
+    // Producer
+    go func() {
+        for i := 0; i < 20; i++ {
+            ch <- i
+            fmt.Printf("Produced: %d\n", i)
+        }
+        close(ch)
+    }()
+    
+    // Consumer
+    for val := range ch {
+        time.Sleep(50 * time.Millisecond)  // Slower consumer
+        fmt.Printf("Consumed: %d\n", val)
+    }
+}
+
+func main() {
+    unbufferedExample()
+    bufferedExample()
+    producerConsumer()
 }`,
 				},
 			},
@@ -1468,6 +2381,1338 @@ func validateUser(name string) error {
         return fmt.Errorf("name cannot be empty")
     }
     return nil
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          44,
+			Title:       "File I/O",
+			Description: "Master file operations, reading, writing, and working with the filesystem.",
+			Order:       14,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Reading Files",
+					Content: `Reading files in Go is straightforward with the os and io packages.
+
+**Reading Methods:**
+
+**1. os.ReadFile():**
+- Reads entire file into memory
+- Returns []byte and error
+- Simple for small files
+- Closes file automatically
+
+**2. os.Open() + io.ReadAll():**
+- More control over file handle
+- Can read in chunks
+- Must close file manually
+- Better for large files
+
+**3. bufio.Scanner:**
+- Line-by-line reading
+- Memory efficient
+- Handles large files well
+- Convenient for text files
+
+**4. io.Copy():**
+- Copy from reader to writer
+- Efficient for large files
+- Streams data
+- No memory buffer needed
+
+**Best Practices:**
+- Use os.ReadFile() for small files
+- Use bufio.Scanner for line-by-line
+- Always handle errors
+- Close files when done
+- Use defer for cleanup`,
+					CodeExamples: `package main
+
+import (
+    "bufio"
+    "fmt"
+    "io"
+    "os"
+)
+
+// Method 1: Read entire file
+func readEntireFile(filename string) error {
+    data, err := os.ReadFile(filename)
+    if err != nil {
+        return err
+    }
+    fmt.Println(string(data))
+    return nil
+}
+
+// Method 2: Open and read
+func readWithOpen(filename string) error {
+    file, err := os.Open(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    data, err := io.ReadAll(file)
+    if err != nil {
+        return err
+    }
+    fmt.Println(string(data))
+    return nil
+}
+
+// Method 3: Line by line
+func readLineByLine(filename string) error {
+    file, err := os.Open(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        fmt.Println(scanner.Text())
+    }
+    return scanner.Err()
+}
+
+// Method 4: Read in chunks
+func readInChunks(filename string) error {
+    file, err := os.Open(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    buf := make([]byte, 1024)  // 1KB chunks
+    for {
+        n, err := file.Read(buf)
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            return err
+        }
+        fmt.Print(string(buf[:n]))
+    }
+    return nil
+}
+
+func main() {
+    readEntireFile("file.txt")
+    readWithOpen("file.txt")
+    readLineByLine("file.txt")
+    readInChunks("file.txt")
+}`,
+				},
+				{
+					Title: "Writing Files",
+					Content: `Writing files in Go offers multiple approaches depending on your needs.
+
+**Writing Methods:**
+
+**1. os.WriteFile():**
+- Writes entire []byte to file
+- Creates file if doesn't exist
+- Truncates if exists
+- Simple for small data
+
+**2. os.Create() + Write():**
+- More control over file handle
+- Can write incrementally
+- Must close file manually
+- Better for large writes
+
+**3. bufio.Writer:**
+- Buffered writing
+- More efficient for multiple writes
+- Flush when done
+- Reduces system calls
+
+**4. io.Copy():**
+- Copy from reader to file
+- Efficient for large data
+- Streams data
+- No memory buffer needed
+
+**File Modes:**
+- 0644: Read/write for owner, read for others
+- 0755: Execute permissions
+- 0600: Read/write for owner only
+
+**Best Practices:**
+- Use os.WriteFile() for small data
+- Use bufio.Writer for multiple writes
+- Set appropriate file permissions
+- Always handle errors
+- Close files when done`,
+					CodeExamples: `package main
+
+import (
+    "bufio"
+    "fmt"
+    "io"
+    "os"
+)
+
+// Method 1: Write entire file
+func writeEntireFile(filename string, data []byte) error {
+    return os.WriteFile(filename, data, 0644)
+}
+
+// Method 2: Create and write
+func writeWithCreate(filename string, data []byte) error {
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = file.Write(data)
+    return err
+}
+
+// Method 3: Buffered writing
+func writeBuffered(filename string, lines []string) error {
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    writer := bufio.NewWriter(file)
+    defer writer.Flush()
+    
+    for _, line := range lines {
+        _, err := writer.WriteString(line + "\n")
+        if err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+// Method 4: Append to file
+func appendToFile(filename string, data []byte) error {
+    file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = file.Write(data)
+    return err
+}
+
+// Method 5: Copy from reader
+func copyToFile(filename string, reader io.Reader) error {
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = io.Copy(file, reader)
+    return err
+}
+
+func main() {
+    data := []byte("Hello, World!")
+    writeEntireFile("output.txt", data)
+    
+    lines := []string{"Line 1", "Line 2", "Line 3"}
+    writeBuffered("lines.txt", lines)
+    
+    appendToFile("output.txt", []byte("\nAppended line"))
+}`,
+				},
+				{
+					Title: "File Operations",
+					Content: `Go provides comprehensive file and directory operations through the os package.
+
+**File Operations:**
+
+**1. File Info:**
+- os.Stat(): Get file information
+- FileInfo interface: Size, Mode, ModTime, IsDir
+- Check if file exists
+- Get file permissions
+
+**2. File Manipulation:**
+- os.Rename(): Rename/move file
+- os.Remove(): Delete file
+- os.RemoveAll(): Delete directory recursively
+- os.Chmod(): Change permissions
+
+**3. Directory Operations:**
+- os.Mkdir(): Create directory
+- os.MkdirAll(): Create directory tree
+- os.ReadDir(): List directory contents
+- os.Chdir(): Change directory
+
+**4. Path Operations:**
+- filepath.Join(): Join path components
+- filepath.Dir(): Get directory
+- filepath.Base(): Get filename
+- filepath.Ext(): Get extension
+- filepath.Clean(): Clean path
+
+**Best Practices:**
+- Use filepath.Join() for paths
+- Check errors from file operations
+- Handle file permissions
+- Use os.RemoveAll() carefully
+- Check if file exists before operations`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "os"
+    "path/filepath"
+)
+
+// File info
+func fileInfo(filename string) error {
+    info, err := os.Stat(filename)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Printf("Name: %s\n", info.Name())
+    fmt.Printf("Size: %d bytes\n", info.Size())
+    fmt.Printf("Mode: %v\n", info.Mode())
+    fmt.Printf("IsDir: %v\n", info.IsDir())
+    fmt.Printf("ModTime: %v\n", info.ModTime())
+    
+    return nil
+}
+
+// Check if file exists
+func fileExists(filename string) bool {
+    _, err := os.Stat(filename)
+    return !os.IsNotExist(err)
+}
+
+// Create directory
+func createDir(path string) error {
+    return os.MkdirAll(path, 0755)
+}
+
+// List directory
+func listDir(path string) error {
+    entries, err := os.ReadDir(path)
+    if err != nil {
+        return err
+    }
+    
+    for _, entry := range entries {
+        info, _ := entry.Info()
+        fmt.Printf("%s (%d bytes)\n", entry.Name(), info.Size())
+    }
+    return nil
+}
+
+// Path operations
+func pathOperations() {
+    path := filepath.Join("dir", "subdir", "file.txt")
+    fmt.Println("Full path:", path)
+    fmt.Println("Dir:", filepath.Dir(path))
+    fmt.Println("Base:", filepath.Base(path))
+    fmt.Println("Ext:", filepath.Ext(path))
+    fmt.Println("Clean:", filepath.Clean("/a/../b/./c"))
+}
+
+// Walk directory tree
+func walkDir(root string) error {
+    return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+        fmt.Println(path)
+        return nil
+    })
+}
+
+func main() {
+    fileInfo("file.txt")
+    fmt.Println("Exists:", fileExists("file.txt"))
+    createDir("mydir")
+    listDir(".")
+    pathOperations()
+    walkDir(".")
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          45,
+			Title:       "HTTP Client & Server",
+			Description: "Build HTTP clients and servers using Go's net/http package.",
+			Order:       15,
+			Lessons: []problems.Lesson{
+				{
+					Title: "HTTP Client",
+					Content: `Go's net/http package provides a powerful HTTP client for making requests.
+
+**HTTP Methods:**
+- http.Get(): GET request
+- http.Post(): POST request
+- http.PostForm(): POST with form data
+- http.Head(): HEAD request
+- http.NewRequest(): Custom request
+
+**Request Options:**
+- Set headers
+- Add query parameters
+- Set request body
+- Set timeout
+- Add authentication
+
+**Response Handling:**
+- Read response body
+- Check status code
+- Read headers
+- Handle redirects
+- Close response body
+
+**Best Practices:**
+- Always close response body
+- Set timeouts
+- Handle errors
+- Check status codes
+- Use context for cancellation`,
+					CodeExamples: `package main
+
+import (
+    "bytes"
+    "context"
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "time"
+)
+
+// Simple GET request
+func simpleGet(url string) error {
+    resp, err := http.Get(url)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Println(string(body))
+    return nil
+}
+
+// GET with headers
+func getWithHeaders(url string) error {
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        return err
+    }
+    
+    req.Header.Set("Authorization", "Bearer token")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{Timeout: 10 * time.Second}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    body, _ := io.ReadAll(resp.Body)
+    fmt.Println(string(body))
+    return nil
+}
+
+// POST with JSON
+func postJSON(url string, data interface{}) error {
+    jsonData, err := json.Marshal(data)
+    if err != nil {
+        return err
+    }
+    
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    if err != nil {
+        return err
+    }
+    
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{Timeout: 10 * time.Second}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    return nil
+}
+
+// POST with form data
+func postForm(url string, formData map[string]string) error {
+    values := make(map[string][]string)
+    for k, v := range formData {
+        values[k] = []string{v}
+    }
+    
+    resp, err := http.PostForm(url, values)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    return nil
+}
+
+// With context
+func getWithContext(ctx context.Context, url string) error {
+    req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+    if err != nil {
+        return err
+    }
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    return nil
+}
+
+func main() {
+    simpleGet("https://example.com")
+    getWithHeaders("https://api.example.com/data")
+    postJSON("https://api.example.com/users", map[string]string{"name": "Alice"})
+}`,
+				},
+				{
+					Title: "HTTP Server",
+					Content: `Building HTTP servers in Go is straightforward with the net/http package.
+
+**Server Basics:**
+- http.HandleFunc(): Register handler function
+- http.Handle(): Register handler interface
+- http.ListenAndServe(): Start server
+- http.Server: Advanced server configuration
+
+**Handler Functions:**
+- Signature: func(w http.ResponseWriter, r *http.Request)
+- Write response with w.Write()
+- Set headers with w.Header()
+- Set status with w.WriteHeader()
+
+**Handler Interface:**
+- Implement ServeHTTP method
+- More flexible than functions
+- Can store state
+- Reusable handlers
+
+**Server Configuration:**
+- Set read/write timeouts
+- Set max header size
+- Configure TLS
+- Set address and port
+
+**Best Practices:**
+- Use http.HandleFunc() for simple handlers
+- Use http.Handle() for reusable handlers
+- Set appropriate timeouts
+- Handle errors
+- Use middleware for common functionality`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "net/http"
+    "time"
+)
+
+// Handler function
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
+}
+
+// Handler with method check
+func apiHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+    
+    w.Header().Set("Content-Type", "application/json")
+    fmt.Fprintf(w, `{"status": "ok"}`)
+}
+
+// Handler interface
+type CounterHandler struct {
+    count int
+}
+
+func (h *CounterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    h.count++
+    fmt.Fprintf(w, "Count: %d", h.count)
+}
+
+// Middleware
+func loggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        fmt.Printf("%s %s %v\n", r.Method, r.URL.Path, time.Since(start))
+    })
+}
+
+// Advanced server
+func advancedServer() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", helloHandler)
+    mux.Handle("/counter", &CounterHandler{})
+    
+    server := &http.Server{
+        Addr:         ":8080",
+        Handler:      loggingMiddleware(mux),
+        ReadTimeout:  15 * time.Second,
+        WriteTimeout: 15 * time.Second,
+        IdleTimeout:  60 * time.Second,
+    }
+    
+    server.ListenAndServe()
+}
+
+// Simple server
+func simpleServer() {
+    http.HandleFunc("/", helloHandler)
+    http.HandleFunc("/api", apiHandler)
+    http.ListenAndServe(":8080", nil)
+}
+
+func main() {
+    simpleServer()
+    // advancedServer()
+}`,
+				},
+				{
+					Title: "HTTP Middleware",
+					Content: `Middleware provides a way to add cross-cutting concerns to HTTP handlers.
+
+**Middleware Pattern:**
+- Wrap handlers with additional functionality
+- Chain multiple middlewares
+- Common uses: logging, auth, CORS, rate limiting
+
+**Middleware Types:**
+
+**1. Function Middleware:**
+- Takes http.Handler, returns http.Handler
+- Simple and flexible
+- Easy to chain
+
+**2. Method Middleware:**
+- Methods on handler struct
+- Can store state
+- More object-oriented
+
+**Common Middleware:**
+
+**1. Logging:**
+- Log requests and responses
+- Track request time
+- Log errors
+
+**2. Authentication:**
+- Check authentication
+- Validate tokens
+- Set user context
+
+**3. CORS:**
+- Set CORS headers
+- Handle preflight requests
+- Allow cross-origin requests
+
+**4. Rate Limiting:**
+- Limit request rate
+- Prevent abuse
+- Track by IP or user
+
+**5. Recovery:**
+- Recover from panics
+- Log panics
+- Return error response
+
+**Best Practices:**
+- Keep middleware focused
+- Chain in correct order
+- Handle errors properly
+- Don't modify request after reading body
+- Use context for values`,
+					CodeExamples: `package main
+
+import (
+    "context"
+    "fmt"
+    "net/http"
+    "time"
+)
+
+// Logging middleware
+func loggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        fmt.Printf("%s %s %v\n", r.Method, r.URL.Path, time.Since(start))
+    })
+}
+
+// Auth middleware
+func authMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        token := r.Header.Get("Authorization")
+        if token == "" {
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+        // Validate token...
+        next.ServeHTTP(w, r)
+    })
+}
+
+// CORS middleware
+func corsMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        
+        if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+        
+        next.ServeHTTP(w, r)
+    })
+}
+
+// Recovery middleware
+func recoveryMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {
+                fmt.Printf("Panic: %v\n", err)
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+            }
+        }()
+        next.ServeHTTP(w, r)
+    })
+}
+
+// Context middleware
+func contextMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        ctx := context.WithValue(r.Context(), "userID", 123)
+        next.ServeHTTP(w, r.WithContext(ctx))
+    })
+}
+
+// Chain middlewares
+func chainMiddlewares(handler http.Handler, middlewares ...func(http.Handler) http.Handler) http.Handler {
+    for i := len(middlewares) - 1; i >= 0; i-- {
+        handler = middlewares[i](handler)
+    }
+    return handler
+}
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello!")
+}
+
+func main() {
+    handler := http.HandlerFunc(helloHandler)
+    
+    handler = chainMiddlewares(
+        handler,
+        loggingMiddleware,
+        corsMiddleware,
+        recoveryMiddleware,
+    )
+    
+    http.Handle("/", handler)
+    http.ListenAndServe(":8080", nil)
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          46,
+			Title:       "JSON & Encoding",
+			Description: "Work with JSON encoding and decoding, and other encoding formats.",
+			Order:       16,
+			Lessons: []problems.Lesson{
+				{
+					Title: "JSON Encoding",
+					Content: `Go's encoding/json package provides powerful JSON encoding and decoding capabilities.
+
+**JSON Encoding:**
+
+**1. json.Marshal():**
+- Convert Go value to JSON []byte
+- Handles structs, maps, slices
+- Uses struct tags for field names
+- Returns error on failure
+
+**2. json.Encoder:**
+- Stream encoding
+- Write directly to io.Writer
+- More efficient for large data
+- Use Encode() method
+
+**Struct Tags:**
+- json:"field_name": Custom field name
+- json:"-": Ignore field
+- json:",omitempty": Omit if zero value
+- json:",string": Encode as string
+
+**Best Practices:**
+- Use struct tags for field names
+- Handle encoding errors
+- Use omitempty for optional fields
+- Use Encoder for streaming
+- Set Content-Type header`,
+					CodeExamples: `package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+type User struct {
+    ID       int    ` + "`" + `json:"id"` + "`" + `
+    Username string ` + "`" + `json:"username"` + "`" + `
+    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
+    Password string ` + "`" + `json:"-"` + "`" + `
+    Active   bool   ` + "`" + `json:"active"` + "`" + `
+}
+
+// Marshal to JSON
+func marshalExample() {
+    user := User{
+        ID:       1,
+        Username: "alice",
+        Email:    "alice@example.com",
+        Password: "secret",
+        Active:   true,
+    }
+    
+    data, err := json.Marshal(user)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    
+    fmt.Println(string(data))
+    // {"id":1,"username":"alice","email":"alice@example.com","active":true}
+}
+
+// Marshal with indentation
+func marshalIndent() {
+    user := User{ID: 1, Username: "bob"}
+    data, _ := json.MarshalIndent(user, "", "  ")
+    fmt.Println(string(data))
+}
+
+// Encoder for streaming
+func encoderExample() {
+    user := User{ID: 1, Username: "charlie"}
+    encoder := json.NewEncoder(os.Stdout)
+    encoder.SetIndent("", "  ")
+    encoder.Encode(user)
+}
+
+// Custom marshaling
+func (u User) MarshalJSON() ([]byte, error) {
+    type Alias User
+    return json.Marshal(&struct {
+        *Alias
+        Username string ` + "`" + `json:"user_name"` + "`" + `
+    }{
+        Alias:    (*Alias)(&u),
+        Username: u.Username,
+    })
+}
+
+func main() {
+    marshalExample()
+    marshalIndent()
+    encoderExample()
+}`,
+				},
+				{
+					Title: "JSON Decoding",
+					Content: `Decoding JSON in Go converts JSON data back into Go values.
+
+**JSON Decoding:**
+
+**1. json.Unmarshal():**
+- Convert JSON []byte to Go value
+- Handles structs, maps, slices
+- Uses struct tags for field mapping
+- Returns error on failure
+
+**2. json.Decoder:**
+- Stream decoding
+- Read directly from io.Reader
+- More efficient for large data
+- Use Decode() method
+
+**Decoding Behavior:**
+- Ignores unknown fields
+- Uses field names or tags
+- Converts compatible types
+- Returns error on type mismatch
+
+**Best Practices:**
+- Use struct tags for field mapping
+- Handle decoding errors
+- Check for required fields
+- Use Decoder for streaming
+- Validate decoded data`,
+					CodeExamples: `package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "strings"
+)
+
+type User struct {
+    ID       int    ` + "`" + `json:"id"` + "`" + `
+    Username string ` + "`" + `json:"username"` + "`" + `
+    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
+}
+
+// Unmarshal from JSON
+func unmarshalExample() {
+    jsonStr := ` + "`" + `{"id":1,"username":"alice","email":"alice@example.com"}` + "`" + `
+    
+    var user User
+    err := json.Unmarshal([]byte(jsonStr), &user)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    
+    fmt.Printf("User: %+v\n", user)
+}
+
+// Decoder for streaming
+func decoderExample() {
+    jsonStr := ` + "`" + `{"id":2,"username":"bob"}
+{"id":3,"username":"charlie"}` + "`" + `
+    
+    decoder := json.NewDecoder(strings.NewReader(jsonStr))
+    for {
+        var user User
+        if err := decoder.Decode(&user); err != nil {
+            break
+        }
+        fmt.Printf("User: %+v\n", user)
+    }
+}
+
+// Decode to map
+func decodeToMap() {
+    jsonStr := ` + "`" + `{"id":1,"username":"alice","extra":"value"}` + "`" + `
+    
+    var result map[string]interface{}
+    json.Unmarshal([]byte(jsonStr), &result)
+    
+    fmt.Println(result)
+    fmt.Println(result["id"])
+    fmt.Println(result["username"])
+}
+
+// Custom unmarshaling
+func (u *User) UnmarshalJSON(data []byte) error {
+    type Alias User
+    aux := &struct {
+        *Alias
+        Username string ` + "`" + `json:"user_name"` + "`" + `
+    }{
+        Alias: (*Alias)(u),
+    }
+    
+    if err := json.Unmarshal(data, &aux); err != nil {
+        return err
+    }
+    
+    u.Username = aux.Username
+    return nil
+}
+
+func main() {
+    unmarshalExample()
+    decoderExample()
+    decodeToMap()
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          47,
+			Title:       "Database Operations",
+			Description: "Connect to databases, execute queries, and work with database/sql package.",
+			Order:       17,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Database Connection",
+					Content: `Go's database/sql package provides a generic interface for SQL databases.
+
+**Database Drivers:**
+- Import database driver (blank import)
+- Register driver automatically
+- Use driver-specific connection string
+- Common drivers: mysql, postgres, sqlite
+
+**Connection:**
+- sql.Open(): Open database connection
+- Returns *sql.DB (connection pool)
+- Doesn't actually connect until used
+- Manages connection pool automatically
+
+**Connection Pool:**
+- SetMaxOpenConns(): Max open connections
+- SetMaxIdleConns(): Max idle connections
+- SetConnMaxLifetime(): Connection lifetime
+- SetConnMaxIdleTime(): Idle timeout
+
+**Best Practices:**
+- Import driver with blank import
+- Use connection pooling
+- Set appropriate pool settings
+- Close database when done
+- Handle connection errors`,
+					CodeExamples: `package main
+
+import (
+    "database/sql"
+    "fmt"
+    "time"
+    
+    _ "github.com/lib/pq"  // PostgreSQL driver
+)
+
+func connectDB() (*sql.DB, error) {
+    // Connection string format depends on driver
+    dsn := "host=localhost user=postgres password=secret dbname=mydb sslmode=disable"
+    
+    db, err := sql.Open("postgres", dsn)
+    if err != nil {
+        return nil, err
+    }
+    
+    // Configure connection pool
+    db.SetMaxOpenConns(25)
+    db.SetMaxIdleConns(5)
+    db.SetConnMaxLifetime(5 * time.Minute)
+    db.SetConnMaxIdleTime(10 * time.Minute)
+    
+    // Test connection
+    if err := db.Ping(); err != nil {
+        return nil, err
+    }
+    
+    return db, nil
+}
+
+func main() {
+    db, err := connectDB()
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    defer db.Close()
+    
+    fmt.Println("Connected to database")
+}`,
+				},
+				{
+					Title: "Executing Queries",
+					Content: `Executing SQL queries in Go involves different methods depending on the operation.
+
+**Query Methods:**
+
+**1. db.Query():**
+- SELECT queries
+- Returns multiple rows
+- Use rows.Next() to iterate
+- Close rows when done
+
+**2. db.QueryRow():**
+- SELECT query expecting one row
+- Returns *sql.Row
+- Use Scan() to get values
+- Returns sql.ErrNoRows if no result
+
+**3. db.Exec():**
+- INSERT, UPDATE, DELETE
+- Returns Result with LastInsertId, RowsAffected
+- Use for data modification
+
+**4. Prepared Statements:**
+- db.Prepare(): Prepare statement
+- stmt.Query(), stmt.Exec(): Execute
+- More efficient for repeated queries
+- Prevents SQL injection
+
+**Best Practices:**
+- Always check errors
+- Close rows when done
+- Use prepared statements for repeated queries
+- Handle sql.ErrNoRows
+- Use transactions for multiple operations`,
+					CodeExamples: `package main
+
+import (
+    "database/sql"
+    "fmt"
+    "log"
+    
+    _ "github.com/lib/pq"
+)
+
+type User struct {
+    ID       int
+    Username string
+    Email    string
+}
+
+// Query multiple rows
+func queryUsers(db *sql.DB) ([]User, error) {
+    rows, err := db.Query("SELECT id, username, email FROM users")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+    
+    var users []User
+    for rows.Next() {
+        var u User
+        if err := rows.Scan(&u.ID, &u.Username, &u.Email); err != nil {
+            return nil, err
+        }
+        users = append(users, u)
+    }
+    
+    return users, rows.Err()
+}
+
+// Query single row
+func queryUser(db *sql.DB, id int) (*User, error) {
+    var u User
+    err := db.QueryRow("SELECT id, username, email FROM users WHERE id = $1", id).
+        Scan(&u.ID, &u.Username, &u.Email)
+    
+    if err == sql.ErrNoRows {
+        return nil, fmt.Errorf("user %d not found", id)
+    }
+    if err != nil {
+        return nil, err
+    }
+    
+    return &u, nil
+}
+
+// Execute INSERT
+func insertUser(db *sql.DB, username, email string) (int, error) {
+    var id int
+    err := db.QueryRow(
+        "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
+        username, email,
+    ).Scan(&id)
+    
+    return id, err
+}
+
+// Execute UPDATE
+func updateUser(db *sql.DB, id int, email string) error {
+    result, err := db.Exec(
+        "UPDATE users SET email = $1 WHERE id = $2",
+        email, id,
+    )
+    if err != nil {
+        return err
+    }
+    
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return err
+    }
+    
+    if rowsAffected == 0 {
+        return fmt.Errorf("user %d not found", id)
+    }
+    
+    return nil
+}
+
+// Prepared statement
+func preparedQuery(db *sql.DB) error {
+    stmt, err := db.Prepare("SELECT id, username FROM users WHERE id = $1")
+    if err != nil {
+        return err
+    }
+    defer stmt.Close()
+    
+    var id, username string
+    err = stmt.QueryRow(1).Scan(&id, &username)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Println(id, username)
+    return nil
+}
+
+func main() {
+    db, err := sql.Open("postgres", "connection string")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+    
+    users, _ := queryUsers(db)
+    fmt.Println(users)
+}`,
+				},
+				{
+					Title: "Transactions",
+					Content: `Transactions ensure multiple database operations succeed or fail together.
+
+**Transaction Basics:**
+- db.Begin(): Start transaction
+- tx.Commit(): Commit transaction
+- tx.Rollback(): Rollback transaction
+- All operations on tx, not db
+
+**Transaction Methods:**
+- tx.Query(), tx.QueryRow(), tx.Exec()
+- Same as db methods but within transaction
+- All operations atomic
+- Use defer tx.Rollback()
+
+**Best Practices:**
+- Always defer Rollback()
+- Commit only if all operations succeed
+- Handle errors properly
+- Keep transactions short
+- Don't nest transactions
+
+**Use Cases:**
+- Multiple related operations
+- Data consistency
+- Atomic updates
+- Complex operations`,
+					CodeExamples: `package main
+
+import (
+    "database/sql"
+    "fmt"
+    "log"
+    
+    _ "github.com/lib/pq"
+)
+
+// Simple transaction
+func transferMoney(db *sql.DB, fromID, toID int, amount float64) error {
+    tx, err := db.Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()  // Rollback if not committed
+    
+    // Deduct from sender
+    _, err = tx.Exec(
+        "UPDATE accounts SET balance = balance - $1 WHERE id = $2",
+        amount, fromID,
+    )
+    if err != nil {
+        return err
+    }
+    
+    // Add to receiver
+    _, err = tx.Exec(
+        "UPDATE accounts SET balance = balance + $1 WHERE id = $2",
+        amount, toID,
+    )
+    if err != nil {
+        return err
+    }
+    
+    // Commit transaction
+    return tx.Commit()
+}
+
+// Transaction with checks
+func createUserWithProfile(db *sql.DB, username, email string) (int, error) {
+    tx, err := db.Begin()
+    if err != nil {
+        return 0, err
+    }
+    defer tx.Rollback()
+    
+    // Insert user
+    var userID int
+    err = tx.QueryRow(
+        "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
+        username, email,
+    ).Scan(&userID)
+    if err != nil {
+        return 0, err
+    }
+    
+    // Insert profile
+    _, err = tx.Exec(
+        "INSERT INTO profiles (user_id) VALUES ($1)",
+        userID,
+    )
+    if err != nil {
+        return 0, err
+    }
+    
+    // Commit
+    if err := tx.Commit(); err != nil {
+        return 0, err
+    }
+    
+    return userID, nil
+}
+
+func main() {
+    db, err := sql.Open("postgres", "connection string")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+    
+    err = transferMoney(db, 1, 2, 100.0)
+    if err != nil {
+        log.Fatal(err)
+    }
 }`,
 				},
 			},

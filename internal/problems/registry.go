@@ -36,3 +36,10 @@ func RegisterKubernetesModules(modules []CourseModule) {
 	defer kubernetesMu.Unlock()
 	allKubernetesModules = append(allKubernetesModules, modules...)
 }
+
+// RegisterMachineLearningModules registers machine learning course modules
+func RegisterMachineLearningModules(modules []CourseModule) {
+	machineLearningMu.Lock()
+	defer machineLearningMu.Unlock()
+	allMachineLearningModules = append(allMachineLearningModules, modules...)
+}
