@@ -43,10 +43,14 @@ type CourseModule struct {
 }
 
 var (
-	allProblems []Problem
-	problemsMu  sync.RWMutex
-	allModules  []CourseModule
-	modulesMu   sync.RWMutex
+	allProblems            []Problem
+	problemsMu             sync.RWMutex
+	allModules             []CourseModule
+	modulesMu              sync.RWMutex
+	allSystemsDesignModules []CourseModule
+	systemsDesignMu        sync.RWMutex
+	allGolangModules       []CourseModule
+	golangMu               sync.RWMutex
 )
 
 func init() {
@@ -243,6 +247,48 @@ func GetModuleByID(id int) *CourseModule {
 	for i := range allModules {
 		if allModules[i].ID == id {
 			return &allModules[i]
+		}
+	}
+	return nil
+}
+
+// GetSystemsDesignModules returns all systems design course modules
+func GetSystemsDesignModules() []CourseModule {
+	systemsDesignMu.RLock()
+	defer systemsDesignMu.RUnlock()
+	result := make([]CourseModule, len(allSystemsDesignModules))
+	copy(result, allSystemsDesignModules)
+	return result
+}
+
+// GetSystemsDesignModuleByID returns a systems design module by its ID
+func GetSystemsDesignModuleByID(id int) *CourseModule {
+	systemsDesignMu.RLock()
+	defer systemsDesignMu.RUnlock()
+	for i := range allSystemsDesignModules {
+		if allSystemsDesignModules[i].ID == id {
+			return &allSystemsDesignModules[i]
+		}
+	}
+	return nil
+}
+
+// GetGolangModules returns all Golang course modules
+func GetGolangModules() []CourseModule {
+	golangMu.RLock()
+	defer golangMu.RUnlock()
+	result := make([]CourseModule, len(allGolangModules))
+	copy(result, allGolangModules)
+	return result
+}
+
+// GetGolangModuleByID returns a Golang module by its ID
+func GetGolangModuleByID(id int) *CourseModule {
+	golangMu.RLock()
+	defer golangMu.RUnlock()
+	for i := range allGolangModules {
+		if allGolangModules[i].ID == id {
+			return &allGolangModules[i]
 		}
 	}
 	return nil

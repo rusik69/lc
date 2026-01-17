@@ -1,0 +1,186 @@
+{{define "title"}}{{.Module.Title}} - Systems Design Course - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <div class="module-header">
+        <div>
+            <a href="/systems-design" style="color: #3b82f6; text-decoration: none;">← Back to Systems Design Course</a>
+            <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
+            <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
+        </div>
+    </div>
+
+    <div class="module-content">
+        <div class="lessons-section">
+            <h3>Lessons</h3>
+            {{range $index, $lesson := .Module.Lessons}}
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson({{$index}})">
+                    <h4>{{$lesson.Title}}</h4>
+                    <span class="lesson-toggle" id="toggle-{{$index}}">▼</span>
+                </div>
+                <div class="lesson-content" id="lesson-{{$index}}" style="display: none;">
+                    <div class="lesson-text">{{printf "%s" $lesson.Content}}</div>
+                    {{if $lesson.CodeExamples}}
+                    <div class="lesson-code">
+                        <pre><code>{{$lesson.CodeExamples}}</code></pre>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+
+        <div class="problems-section">
+            <h3>Practice Problems</h3>
+            {{if .Problems}}
+            <ul class="problem-list">
+                {{range .Problems}}
+                <li>
+                    <a href="/problem/{{.ID}}">
+                        <span class="problem-id">#{{.ID}}</span>
+                        <span class="problem-title">{{.Title}}</span>
+                        <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span>
+                        <span class="problem-topic">{{.Topic}}</span>
+                    </a>
+                </li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p style="color: #888; font-style: italic;">No practice problems available yet.</p>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+<style>
+.module-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.lessons-section, .problems-section {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+}
+
+.lesson-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    background: #1e293b;
+    transition: background 0.2s;
+}
+
+.lesson-header:hover {
+    background: #253347;
+}
+
+.lesson-header h4 {
+    margin: 0;
+    color: #f8f8f2;
+    font-size: 1.1em;
+}
+
+.lesson-toggle {
+    color: #3b82f6;
+    font-size: 0.9em;
+    transition: transform 0.3s;
+}
+
+.lesson-content {
+    padding: 20px;
+    border-top: 1px solid #334155;
+}
+
+.lesson-text {
+    color: #ccc;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    margin-bottom: 15px;
+}
+
+.lesson-code {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.lesson-code pre {
+    margin: 0;
+    overflow-x: auto;
+}
+
+.lesson-code code {
+    color: #f8f8f2;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.problem-topic {
+    background: #3b82f6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-left: auto;
+}
+
+.problem-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+</style>
+
+<script>
+function toggleLesson(index) {
+    const content = document.getElementById('lesson-' + index);
+    const toggle = document.getElementById('toggle-' + index);
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggle.textContent = '▲';
+    } else {
+        content.style.display = 'none';
+        toggle.textContent = '▼';
+    }
+}
+
+// Highlight code blocks on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
+        var codeBlocks = document.querySelectorAll('.lesson-code code');
+        codeBlocks.forEach(function(block) {
+            if (!block.hasAttribute('data-highlighted')) {
+                var text = block.textContent;
+                block.textContent = '';
+                // Try to detect language from content
+                var lang = 'go';
+                if (text.includes('def ') || text.includes('import ') && text.includes('List')) {
+                    lang = 'python';
+                }
+                CodeMirror.runMode(text, lang, block);
+                block.setAttribute('data-highlighted', 'true');
+            }
+        });
+    }
+});
+</script>
+{{end}}
+{{template "layout.html" .}}

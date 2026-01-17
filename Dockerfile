@@ -4,7 +4,7 @@ FROM golang:1.23-alpine AS builder
 WORKDIR /app
 
 # Install dependencies (including docker CLI for tests)
-RUN apk add --no-cache git make docker-cli
+RUN apk update && apk add --no-cache git make docker-cli
 
 # Copy go mod files
 COPY go.mod go.sum* ./
@@ -23,7 +23,8 @@ FROM golang:1.23-alpine
 WORKDIR /app
 
 # Install docker CLI and Python 3 for executing code in sandbox
-RUN apk add --no-cache docker-cli ca-certificates python3 py3-pip
+# Ensure community repository is available and update package index
+RUN apk update && apk add --no-cache docker-cli ca-certificates python3 py3-pip
 
 # Copy built binary
 COPY --from=builder /app/bin/lc /app/lc

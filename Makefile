@@ -249,9 +249,12 @@ deploy:
 		elif docker compose version > /dev/null 2>&1; then \
 			docker compose down 2>/dev/null || true; \
 		fi && \
-		echo "Cleaning up Docker system and volumes..." && \
-		docker system prune -f && \
-		docker volume prune -f && \
+		echo "Cleaning up Docker resources..." && \
+		docker container prune -f 2>/dev/null || true && \
+		docker image prune -af 2>/dev/null || true && \
+		docker volume prune -f 2>/dev/null || true && \
+		docker system prune -af --volumes 2>/dev/null || true && \
+		docker builder prune -af 2>/dev/null || true && \
 		if command -v docker-compose > /dev/null 2>&1; then \
 			echo "Building Docker image..." && \
 			docker-compose build && \

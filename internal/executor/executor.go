@@ -3,49 +3,13 @@ package executor
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
-	"os"
 	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/rusik69/lc/internal/problems"
 )
-
-type TestResult struct {
-	Passed   bool
-	Input    string
-	Expected string
-	Got      string
-	Error    string
-}
-
-type ExecutionResult struct {
-	Success   bool
-	Results   []TestResult
-	Error     string
-	Output    string
-	Stderr    string
-	TimeTaken string
-}
-
-// getSandboxContainer returns the sandbox container name from env or default
-func GetSandboxContainer() string {
-	container := os.Getenv("SANDBOX_CONTAINER")
-	if container == "" {
-		container = "lc-sandbox"
-	}
-	return container
-}
-
-// generateUniqueID generates a random ID for temporary files
-func GenerateUniqueID() string {
-	b := make([]byte, 8)
-	rand.Read(b)
-	return hex.EncodeToString(b)
-}
 
 func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bool) string {
 	var sb strings.Builder
@@ -1223,17 +1187,6 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 	sb.WriteString("}\n")
 
 	return sb.String()
-}
-
-// DetectLanguage detects the programming language from user code
-func DetectLanguage(userCode string) string {
-	code := strings.TrimSpace(userCode)
-	if strings.HasPrefix(code, "def ") || strings.HasPrefix(code, "class ") || 
-		strings.Contains(code, "import ") || strings.Contains(code, "print(") ||
-		strings.Contains(code, "if __name__") {
-		return "python"
-	}
-	return "go"
 }
 
 // GeneratePythonTestCode generates Python test code for a problem
