@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -16,7 +18,24 @@ import (
 
 func init() {
 	// Initialize templates for tests
-	if err := handlers.InitTemplates("../../web/templates"); err != nil {
+	// Find the project root by looking for go.mod
+	wd, _ := os.Getwd()
+	projectRoot := wd
+	for {
+		if _, err := os.Stat(filepath.Join(projectRoot, "go.mod")); err == nil {
+			break
+		}
+		parent := filepath.Dir(projectRoot)
+		if parent == projectRoot {
+			// Reached filesystem root
+			projectRoot = wd
+			break
+		}
+		projectRoot = parent
+	}
+	
+	templatePath := filepath.Join(projectRoot, "web", "templates")
+	if err := handlers.InitTemplates(templatePath); err != nil {
 		panic("Failed to initialize templates: " + err.Error())
 	}
 }
