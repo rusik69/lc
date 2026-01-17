@@ -22,8 +22,8 @@ FROM golang:1.23-alpine
 
 WORKDIR /app
 
-# Install docker CLI for executing code in sandbox
-RUN apk add --no-cache docker-cli ca-certificates
+# Install docker CLI and Python 3 for executing code in sandbox
+RUN apk add --no-cache docker-cli ca-certificates python3 py3-pip
 
 # Copy built binary
 COPY --from=builder /app/bin/lc /app/lc

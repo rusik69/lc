@@ -30,6 +30,14 @@ var MediumProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def groupAnagrams(strs: List[str]) -> List[List[str]]:
+    groups = {}
+    for s in strs:
+        key = tuple(sorted(s))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(s)
+    return list(groups.values())`,
 		Explanation: "Use character count array as key for grouping anagrams. Each anagram will have same character frequencies. Time: O(n*k), Space: O(n*k).",
 	},
 	{
@@ -60,6 +68,19 @@ var MediumProblems = []Problem{
 	}
 	return result[:k]
 }`,
+		PythonSolution: `def topKFrequent(nums: List[int], k: int) -> List[int]:
+    freq = {}
+    for num in nums:
+        freq[num] = freq.get(num, 0) + 1
+    buckets = [[] for _ in range(len(nums) + 1)]
+    for num, count in freq.items():
+        buckets[count].append(num)
+    result = []
+    for i in range(len(buckets) - 1, -1, -1):
+        result.extend(buckets[i])
+        if len(result) >= k:
+            break
+    return result[:k]`,
 		Explanation: "Use bucket sort. Create buckets indexed by frequency, then collect from highest frequency buckets. Time: O(n), Space: O(n).",
 	},
 	{
@@ -89,6 +110,16 @@ var MediumProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def productExceptSelf(nums: List[int]) -> List[int]:
+    n = len(nums)
+    result = [1] * n
+    for i in range(1, n):
+        result[i] = result[i-1] * nums[i-1]
+    right = 1
+    for i in range(n - 1, -1, -1):
+        result[i] *= right
+        right *= nums[i]
+    return result`,
 		Explanation: "Two passes: first calculate prefix products, then multiply by suffix products. Avoids division. Time: O(n), Space: O(1).",
 	},
 	{
@@ -124,6 +155,16 @@ var MediumProblems = []Problem{
 	}
 	return longest
 }`,
+		PythonSolution: `def longestConsecutive(nums: List[int]) -> int:
+    num_set = set(nums)
+    longest = 0
+    for num in num_set:
+        if num - 1 not in num_set:
+            length = 1
+            while num + length in num_set:
+                length += 1
+            longest = max(longest, length)
+    return longest`,
 		Explanation: "Use hash set. Only start counting from sequence starts (no num-1 exists). Count consecutive numbers. Time: O(n), Space: O(n).",
 	},
 	{
@@ -162,6 +203,22 @@ var MediumProblems = []Problem{
 	}
 	return true
 }`,
+		PythonSolution: `def isValidSudoku(board: List[List[str]]) -> bool:
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == '.':
+                continue
+            num = board[i][j]
+            box_index = (i // 3) * 3 + j // 3
+            if num in rows[i] or num in cols[j] or num in boxes[box_index]:
+                return False
+            rows[i].add(num)
+            cols[j].add(num)
+            boxes[box_index].add(num)
+    return True`,
 		Explanation: "Use hash sets for rows, columns, and 3x3 boxes to track seen digits. Check for duplicates in single pass. Time: O(1), Space: O(1).",
 	},
 	{
@@ -197,6 +254,23 @@ func decode(s string) []string {
 	}
 	return result
 }`,
+		PythonSolution: `def encode(strs: List[str]) -> str:
+    result = []
+    for s in strs:
+        result.append(str(len(s)) + '#' + s)
+    return ''.join(result)
+
+def decode(s: str) -> List[str]:
+    result = []
+    i = 0
+    while i < len(s):
+        j = i
+        while s[j] != '#':
+            j += 1
+        length = int(s[i:j])
+        result.append(s[j+1:j+1+length])
+        i = j + 1 + length
+    return result`,
 		Explanation: "Prefix each string with its length and a delimiter. Decode by reading length, then extracting that many characters. Time: O(n), Space: O(1).",
 	},
 	{
@@ -229,6 +303,16 @@ func decode(s string) []string {
 	}
 	return maxLen
 }`,
+		PythonSolution: `def lengthOfLongestSubstring(s: str) -> int:
+    char_index = {}
+    max_len = 0
+    start = 0
+    for end in range(len(s)):
+        if s[end] in char_index and char_index[s[end]] >= start:
+            start = char_index[s[end]] + 1
+        char_index[s[end]] = end
+        max_len = max(max_len, end - start + 1)
+    return max_len`,
 		Explanation: "Sliding window with hash map. Track last seen index of each character. Move start when duplicate found. Time: O(n), Space: O(min(n,m)) where m is charset size.",
 	},
 	{
@@ -264,6 +348,19 @@ func decode(s string) []string {
 	}
 	return maxLen
 }`,
+		PythonSolution: `def characterReplacement(s: str, k: int) -> int:
+    count = {}
+    max_count = 0
+    max_len = 0
+    left = 0
+    for right in range(len(s)):
+        count[s[right]] = count.get(s[right], 0) + 1
+        max_count = max(max_count, count[s[right]])
+        while right - left + 1 - max_count > k:
+            count[s[left]] -= 1
+            left += 1
+        max_len = max(max_len, right - left + 1)
+    return max_len`,
 		Explanation: "Sliding window. Track most frequent character count. Window is valid if replacements needed ≤ k. Time: O(n), Space: O(1).",
 	},
 	{
@@ -316,6 +413,31 @@ func decode(s string) []string {
 	}
 	return matches == 26
 }`,
+		PythonSolution: `def checkInclusion(s1: str, s2: str) -> bool:
+    if len(s1) > len(s2):
+        return False
+    s1_count = [0] * 26
+    s2_count = [0] * 26
+    for i in range(len(s1)):
+        s1_count[ord(s1[i]) - ord('a')] += 1
+        s2_count[ord(s2[i]) - ord('a')] += 1
+    matches = sum(1 for i in range(26) if s1_count[i] == s2_count[i])
+    for i in range(len(s1), len(s2)):
+        if matches == 26:
+            return True
+        index = ord(s2[i]) - ord('a')
+        s2_count[index] += 1
+        if s1_count[index] == s2_count[index]:
+            matches += 1
+        elif s1_count[index] + 1 == s2_count[index]:
+            matches -= 1
+        index = ord(s2[i - len(s1)]) - ord('a')
+        s2_count[index] -= 1
+        if s1_count[index] == s2_count[index]:
+            matches += 1
+        elif s1_count[index] - 1 == s2_count[index]:
+            matches -= 1
+    return matches == 26`,
 		Explanation: "Sliding window with character frequency matching. Maintain count of matching character frequencies. Time: O(n), Space: O(1).",
 	},
 	{
@@ -370,6 +492,36 @@ func decode(s string) []string {
 	}
 	return s[minLeft : minLeft+minLen]
 }`,
+		PythonSolution: `def minWindow(s: str, t: str) -> str:
+    if len(s) < len(t):
+        return ""
+    t_count = {}
+    for c in t:
+        t_count[c] = t_count.get(c, 0) + 1
+    required = len(t_count)
+    formed = 0
+    window_counts = {}
+    left, right = 0, 0
+    min_len = len(s) + 1
+    min_left = 0
+    while right < len(s):
+        c = s[right]
+        window_counts[c] = window_counts.get(c, 0) + 1
+        if c in t_count and window_counts[c] == t_count[c]:
+            formed += 1
+        while left <= right and formed == required:
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                min_left = left
+            c = s[left]
+            window_counts[c] -= 1
+            if c in t_count and window_counts[c] < t_count[c]:
+                formed -= 1
+            left += 1
+        right += 1
+    if min_len == len(s) + 1:
+        return ""
+    return s[min_left:min_left + min_len]`,
 		Explanation: "Sliding window. Expand right to include all characters, shrink left while valid. Track minimum window. Time: O(m+n), Space: O(m+n).",
 	},
 	{
@@ -408,6 +560,22 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return true
 }`,
+		PythonSolution: `def validPalindrome(s: str) -> bool:
+    def is_palindrome_range(i: int, j: int) -> bool:
+        while i < j:
+            if s[i] != s[j]:
+                return False
+            i += 1
+            j -= 1
+        return True
+    
+    left, right = 0, len(s) - 1
+    while left < right:
+        if s[left] != s[right]:
+            return is_palindrome_range(left + 1, right) or is_palindrome_range(left, right - 1)
+        left += 1
+        right -= 1
+    return True`,
 		Explanation: "Two pointers. When mismatch found, try skipping left or right character. Time: O(n), Space: O(1).",
 	},
 	{
@@ -449,6 +617,28 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return result
 }`,
+		PythonSolution: `def threeSum(nums: List[int]) -> List[List[int]]:
+    nums.sort()
+    result = []
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+        left, right = i + 1, len(nums) - 1
+        while left < right:
+            s = nums[i] + nums[left] + nums[right]
+            if s == 0:
+                result.append([nums[i], nums[left], nums[right]])
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+                left += 1
+                right -= 1
+            elif s < 0:
+                left += 1
+            else:
+                right -= 1
+    return result`,
 		Explanation: "Sort array, fix one number, use two pointers for remaining two. Skip duplicates to avoid duplicate triplets. Time: O(n²), Space: O(1).",
 	},
 	{
@@ -485,6 +675,19 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return maxArea
 }`,
+		PythonSolution: `def maxArea(height: List[int]) -> int:
+    left, right = 0, len(height) - 1
+    max_area = 0
+    while left < right:
+        width = right - left
+        h = min(height[left], height[right])
+        area = width * h
+        max_area = max(max_area, area)
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return max_area`,
 		Explanation: "Two pointers from both ends. Move pointer with smaller height inward (only way to potentially increase area). Time: O(n), Space: O(1).",
 	},
 	{
@@ -527,6 +730,26 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return water
 }`,
+		PythonSolution: `def trap(height: List[int]) -> int:
+    if not height:
+        return 0
+    left, right = 0, len(height) - 1
+    left_max, right_max = height[left], height[right]
+    water = 0
+    while left < right:
+        if left_max < right_max:
+            left += 1
+            if height[left] > left_max:
+                left_max = height[left]
+            else:
+                water += left_max - height[left]
+        else:
+            right -= 1
+            if height[right] > right_max:
+                right_max = height[right]
+            else:
+                water += right_max - height[right]
+    return water`,
 		Explanation: "Two pointers. Track max height from both sides. Water at position is min(leftMax, rightMax) - height. Time: O(n), Space: O(1).",
 	},
 	{
@@ -561,6 +784,18 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return minLen
 }`,
+		PythonSolution: `def minSubArrayLen(target: int, nums: List[int]) -> int:
+    min_len = len(nums) + 1
+    sum_val = 0
+    left = 0
+    for right in range(len(nums)):
+        sum_val += nums[right]
+        while sum_val >= target:
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+            sum_val -= nums[left]
+            left += 1
+    return 0 if min_len == len(nums) + 1 else min_len`,
 		Explanation: "Sliding window. Expand right to increase sum, shrink left when sum ≥ target. Track minimum length. Time: O(n), Space: O(1).",
 	},
 	{
@@ -592,6 +827,16 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return maxSum
 }`,
+		PythonSolution: `def maxSubArray(nums: List[int]) -> int:
+    max_sum = nums[0]
+    current_sum = nums[0]
+    for i in range(1, len(nums)):
+        if current_sum < 0:
+            current_sum = nums[i]
+        else:
+            current_sum += nums[i]
+        max_sum = max(max_sum, current_sum)
+    return max_sum`,
 		Explanation: "Kadane's algorithm. Track current subarray sum, reset when negative (start new subarray). Keep maximum. Time: O(n), Space: O(1).",
 	},
 	{
@@ -623,6 +868,15 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return true
 }`,
+		PythonSolution: `def canJump(nums: List[int]) -> bool:
+    max_reach = 0
+    for i in range(len(nums)):
+        if i > max_reach:
+            return False
+        max_reach = max(max_reach, i + nums[i])
+        if max_reach >= len(nums) - 1:
+            return True
+    return True`,
 		Explanation: "Greedy approach. Track maximum reachable index. If current index exceeds max reach, can't proceed. Time: O(n), Space: O(1).",
 	},
 	{
@@ -654,6 +908,16 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return jumps
 }`,
+		PythonSolution: `def jump(nums: List[int]) -> int:
+    jumps = 0
+    current_end = 0
+    farthest = 0
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == current_end:
+            jumps += 1
+            current_end = farthest
+    return jumps`,
 		Explanation: "Greedy BFS approach. Track farthest reachable position in current jump. Increment jumps when reaching end of current range. Time: O(n), Space: O(1).",
 	},
 	{
@@ -686,6 +950,19 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return start
 }`,
+		PythonSolution: `def canCompleteCircuit(gas: List[int], cost: List[int]) -> int:
+    total_gas = total_cost = 0
+    tank = start = 0
+    for i in range(len(gas)):
+        total_gas += gas[i]
+        total_cost += cost[i]
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            start = i + 1
+            tank = 0
+    if total_gas < total_cost:
+        return -1
+    return start`,
 		Explanation: "Greedy approach. If total gas < total cost, impossible. Otherwise, find first position where we can maintain positive tank. Time: O(n), Space: O(1).",
 	},
 	{
@@ -724,6 +1001,21 @@ func isPalindromeRange(s string, i, j int) bool {
 	}
 	return true
 }`,
+		PythonSolution: `def isNStraightHand(hand: List[int], groupSize: int) -> bool:
+    if len(hand) % groupSize != 0:
+        return False
+    count = {}
+    for card in hand:
+        count[card] = count.get(card, 0) + 1
+    hand.sort()
+    for card in hand:
+        if count[card] == 0:
+            continue
+        for i in range(groupSize):
+            if count.get(card + i, 0) == 0:
+                return False
+            count[card + i] -= 1
+    return True`,
 		Explanation: "Sort cards and use greedy approach. For each card, try to form a group starting from it. Use hash map to track counts. Time: O(n log n), Space: O(n).",
 	},
 }

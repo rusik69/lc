@@ -194,6 +194,11 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	language := r.FormValue("language")
+	if language == "" {
+		language = "go" // Default to Go
+	}
+
 	// Validate code size
 	if len(userCode) > maxCodeSize {
 		http.Error(w, fmt.Sprintf("Code too large (max %d bytes)", maxCodeSize), http.StatusBadRequest)
@@ -222,7 +227,7 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result := executor.ExecuteCodeStream(problem, userCode, runAllTests, w)
+		result := executor.ExecuteCodeStreamWithLanguage(problem, userCode, runAllTests, w, language)
 
 		passed := 0
 		for _, r := range result.Results {
@@ -237,7 +242,7 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Non-streaming execution (for Submit button)
-	result := executor.ExecuteCode(problem, userCode, runAllTests)
+	result := executor.ExecuteCodeWithLanguage(problem, userCode, runAllTests, language)
 	passed := 0
 	for _, r := range result.Results {
 		if r.Passed {
@@ -289,13 +294,43 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get language from query parameter, default to go
+	language := r.URL.Query().Get("lang")
+	if language == "" {
+		language = "go"
+	}
+
+	solution := problem.GetSolution(language)
+	codeLang := "go"
+	if language == "python" && problem.HasLanguageSolution("python") {
+		codeLang = "python"
+	}
+
 	explanationHTML := ""
 	if problem.Explanation != "" {
 		explanationHTML = `<div class="explanation"><h4>Explanation</h4><p>` + template.HTMLEscapeString(problem.Explanation) + `</p></div>`
 	}
+	
+	// Add language selector
+	goSelected := ""
+	pythonSelected := ""
+	if language == "go" {
+		goSelected = " selected"
+	} else {
+		pythonSelected = " selected"
+	}
+	langSelector := `<div style="margin-bottom: 10px;">
+		<label for="solution-lang" style="margin-right: 10px; color: #ccc;">Language:</label>
+		<select id="solution-lang" onchange="loadSolution(` + fmt.Sprintf("%d", id) + `, this.value)" style="padding: 5px; background: #272822; color: #f8f8f2; border: 1px solid #555; border-radius: 3px;">
+			<option value="go"` + goSelected + `>Go</option>
+			<option value="python"` + pythonSelected + `>Python 3</option>
+		</select>
+	</div>`
+
 	fmt.Fprintf(w, `<div class="solution">
+	%s
 	<h3>Solution</h3>
-	<pre><code class="language-go">%s</code></pre>
+	<pre><code class="language-%s">%s</code></pre>
 	%s
 </div>
 <script>
@@ -303,11 +338,11 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 		setTimeout(function() {
 			var solutionCode = document.querySelector('.solution code');
 			if (solutionCode) {
-				CodeMirror.runMode(solutionCode.textContent, 'go', solutionCode);
+				CodeMirror.runMode(solutionCode.textContent, '%s', solutionCode);
 			}
 		}, 100);
 	}
-</script>`, template.HTMLEscapeString(problem.Solution), explanationHTML)
+</script>`, langSelector, codeLang, template.HTMLEscapeString(solution), explanationHTML, codeLang)
 }
 
 func containsDangerousPatterns(code string) bool {

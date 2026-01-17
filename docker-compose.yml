@@ -19,6 +19,8 @@ services:
 
   # Test service
   test:
+    profiles:
+      - test
     build:
       context: .
       target: builder
@@ -34,13 +36,13 @@ services:
       - lc-network
     depends_on:
       - sandbox
-    # Service only runs when explicitly invoked with 'docker-compose run test'
+    # Service only runs when explicitly invoked with 'docker-compose run --profile test test'
 
   # Sandbox container for code execution
   sandbox:
     image: golang:1.23-alpine
     container_name: lc-sandbox
-    command: sleep infinity
+    command: sh -c "apk add --no-cache python3 py3-pip coreutils && python3 --version && sleep infinity"
     mem_limit: 512m
     cpus: '0.5'
     pids_limit: 100

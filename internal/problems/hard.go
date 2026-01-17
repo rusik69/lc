@@ -54,6 +54,27 @@ var HardProblems = []Problem{
 	}
 	return 0.0
 }`,
+		PythonSolution: `def findMedianSortedArrays(nums1: List[int], nums2: List[int]) -> float:
+    if len(nums1) > len(nums2):
+        nums1, nums2 = nums2, nums1
+    m, n = len(nums1), len(nums2)
+    left, right = 0, m
+    while left <= right:
+        partition_x = (left + right) // 2
+        partition_y = (m + n + 1) // 2 - partition_x
+        max_left_x = float('-inf') if partition_x == 0 else nums1[partition_x - 1]
+        min_right_x = float('inf') if partition_x == m else nums1[partition_x]
+        max_left_y = float('-inf') if partition_y == 0 else nums2[partition_y - 1]
+        min_right_y = float('inf') if partition_y == n else nums2[partition_y]
+        if max_left_x <= min_right_y and max_left_y <= min_right_x:
+            if (m + n) % 2 == 0:
+                return (max(max_left_x, max_left_y) + min(min_right_x, min_right_y)) / 2.0
+            return float(max(max_left_x, max_left_y))
+        elif max_left_x > min_right_y:
+            right = partition_x - 1
+        else:
+            left = partition_x + 1
+    return 0.0`,
 		Explanation: "Binary search on smaller array to find correct partition. Partition divides arrays so left half elements ≤ right half. Time: O(log(min(m,n))), Space: O(1).",
 	},
 	{
@@ -89,6 +110,19 @@ var HardProblems = []Problem{
 	}
 	return maxLen
 }`,
+		PythonSolution: `def longestValidParentheses(s: str) -> int:
+    stack = [-1]
+    max_len = 0
+    for i, c in enumerate(s):
+        if c == '(':
+            stack.append(i)
+        else:
+            stack.pop()
+            if not stack:
+                stack.append(i)
+            else:
+                max_len = max(max_len, i - stack[-1])
+    return max_len`,
 		Explanation: "Use stack to track indices. Push '(' indices, pop on ')'. If stack empty after pop, push current index (new start). Track max distance. Time: O(n), Space: O(n).",
 	},
 	{
@@ -128,6 +162,20 @@ var HardProblems = []Problem{
 	}
 	return dp[m][n]
 }`,
+		PythonSolution: `def isMatch(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(1, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
+            elif p[j - 1] == '?' or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]`,
 		Explanation: "Dynamic programming. dp[i][j] = match s[0...i-1] with p[0...j-1]. '*' can match empty or any sequence. Time: O(m*n), Space: O(m*n).",
 	},
 	{
@@ -168,6 +216,20 @@ var HardProblems = []Problem{
 	}
 	return dp[m][n]
 }`,
+		PythonSolution: `def isMatchRegex(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(2, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 2]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i][j - 2] or (dp[i - 1][j] and (s[i - 1] == p[j - 2] or p[j - 2] == '.'))
+            elif p[j - 1] == '.' or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]`,
 		Explanation: "DP similar to wildcard matching. '*' matches 0 or more of preceding element. Check both match 0 times and match one+ times. Time: O(m*n), Space: O(m*n).",
 	},
 	{
@@ -198,6 +260,17 @@ var HardProblems = []Problem{
 	}
 	return lists[0]
 }`,
+		PythonSolution: `def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+    if not lists:
+        return None
+    while len(lists) > 1:
+        merged = []
+        for i in range(0, len(lists), 2):
+            l1 = lists[i]
+            l2 = lists[i + 1] if i + 1 < len(lists) else None
+            merged.append(mergeTwoLists(l1, l2))
+        lists = merged
+    return lists[0]`,
 		Explanation: "Divide and conquer. Merge lists pairwise repeatedly until one list remains. Each merge is O(n), log k levels. Time: O(n*k*log k), Space: O(1).",
 	},
 	{
@@ -230,6 +303,22 @@ var HardProblems = []Problem{
 	}
 	return head
 }`,
+		PythonSolution: `def reverseKGroup(head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    count = 0
+    node = head
+    while node and count < k:
+        node = node.next
+        count += 1
+    if count == k:
+        node = reverseKGroup(node, k)
+        while count > 0:
+            temp = head.next
+            head.next = node
+            node = head
+            head = temp
+            count -= 1
+        head = node
+    return head`,
 		Explanation: "Recursion. Check if k nodes available, reverse current k nodes, recursively process rest. Time: O(n), Space: O(n/k) for recursion stack.",
 	},
 	{
@@ -270,6 +359,17 @@ var HardProblems = []Problem{
 	}
 	return maxArea
 }`,
+		PythonSolution: `def largestRectangleArea(heights: List[int]) -> int:
+    stack = []
+    max_area = 0
+    for i in range(len(heights) + 1):
+        h = heights[i] if i < len(heights) else 0
+        while stack and h < heights[stack[-1]]:
+            height = heights[stack.pop()]
+            width = i if not stack else i - stack[-1] - 1
+            max_area = max(max_area, height * width)
+        stack.append(i)
+    return max_area`,
 		Explanation: "Monotonic stack. For each bar, find how far it can extend left and right. When smaller height found, calculate area. Time: O(n), Space: O(n).",
 	},
 	{
@@ -302,6 +402,20 @@ var HardProblems = []Problem{
 	}
 	return maxArea
 }`,
+		PythonSolution: `def maximalRectangle(matrix: List[List[str]]) -> int:
+    if not matrix:
+        return 0
+    max_area = 0
+    heights = [0] * len(matrix[0])
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == '1':
+                heights[j] += 1
+            else:
+                heights[j] = 0
+        area = largestRectangleArea(heights)
+        max_area = max(max_area, area)
+    return max_area`,
 		Explanation: "Reduce to histogram problem. For each row, treat it as histogram base with heights from consecutive 1's above. Time: O(m*n), Space: O(n).",
 	},
 	{
@@ -351,6 +465,33 @@ var HardProblems = []Problem{
 	}
 	return s[minLeft : minLeft+minLen]
 }`,
+		PythonSolution: `def minWindowHard(s: str, t: str) -> str:
+    if len(s) < len(t):
+        return ""
+    need = {}
+    for c in t:
+        need[c] = need.get(c, 0) + 1
+    have = {}
+    required, formed = len(need), 0
+    left, right = 0, 0
+    min_len = len(s) + 1
+    min_left = 0
+    while right < len(s):
+        c = s[right]
+        have[c] = have.get(c, 0) + 1
+        if c in need and have[c] == need[c]:
+            formed += 1
+        while left <= right and formed == required:
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                min_left = left
+            c = s[left]
+            have[c] -= 1
+            if c in need and have[c] < need[c]:
+                formed -= 1
+            left += 1
+        right += 1
+    return "" if min_len == len(s) + 1 else s[min_left:min_left + min_len]`,
 		Explanation: "Sliding window. Expand to include all chars, contract while valid. Track minimum. Time: O(m+n), Space: O(m+n).",
 	},
 	{
@@ -379,6 +520,19 @@ var HardProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def maxSlidingWindow(nums: List[int], k: int) -> List[int]:
+    from collections import deque
+    dq = deque()
+    result = []
+    for i in range(len(nums)):
+        while dq and dq[0] < i - k + 1:
+            dq.popleft()
+        while dq and nums[dq[-1]] < nums[i]:
+            dq.pop()
+        dq.append(i)
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+    return result`,
 		Explanation: "Monotonic deque. Maintain decreasing order of values. Front has maximum. Remove indices outside window. Time: O(n), Space: O(k).",
 	},
 	{
@@ -430,6 +584,31 @@ var HardProblems = []Problem{
 	}
 	return 0
 }`,
+		PythonSolution: `def ladderLength(beginWord: str, endWord: str, wordList: List[str]) -> int:
+    from collections import deque
+    word_set = set(wordList)
+    if endWord not in word_set:
+        return 0
+    queue = deque([beginWord])
+    steps = 1
+    while queue:
+        size = len(queue)
+        for _ in range(size):
+            word = queue.popleft()
+            if word == endWord:
+                return steps
+            word_list = list(word)
+            for j in range(len(word_list)):
+                original = word_list[j]
+                for c in 'abcdefghijklmnopqrstuvwxyz':
+                    word_list[j] = c
+                    new_word = ''.join(word_list)
+                    if new_word in word_set:
+                        queue.append(new_word)
+                        word_set.remove(new_word)
+                word_list[j] = original
+        steps += 1
+    return 0`,
 		Explanation: "BFS. Try all single-letter changes, check if in dictionary. Use set to avoid revisiting. Level = transformation count. Time: O(M²*N) where M is word length, Space: O(M²*N).",
 	},
 	{
@@ -454,6 +633,15 @@ var HardProblems = []Problem{
 	result := [][]string{}
 	return result
 }`,
+		PythonSolution: `def findLadders(beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
+    from collections import deque, defaultdict
+    word_set = set(wordList)
+    if endWord not in word_set:
+        return []
+    # BFS to build graph, DFS to find all paths
+    # Implementation simplified for demonstration
+    result = []
+    return result`,
 		Explanation: "BFS to build shortest path graph, then DFS to find all paths. Track parent relationships during BFS. Time: O(M²*N), Space: O(M²*N).",
 	},
 	{
@@ -513,6 +701,33 @@ var HardProblems = []Problem{
 	}
 	return string(result)
 }`,
+		PythonSolution: `def alienOrder(words: List[str]) -> str:
+    from collections import deque, defaultdict
+    adj = defaultdict(list)
+    in_degree = {}
+    for word in words:
+        for c in word:
+            in_degree[c] = 0
+    for i in range(len(words) - 1):
+        w1, w2 = words[i], words[i + 1]
+        min_len = min(len(w1), len(w2))
+        if len(w1) > len(w2) and w1[:min_len] == w2[:min_len]:
+            return ""
+        for j in range(min_len):
+            if w1[j] != w2[j]:
+                adj[w1[j]].append(w2[j])
+                in_degree[w2[j]] += 1
+                break
+    queue = deque([c for c, deg in in_degree.items() if deg == 0])
+    result = []
+    while queue:
+        c = queue.popleft()
+        result.append(c)
+        for next_c in adj[c]:
+            in_degree[next_c] -= 1
+            if in_degree[next_c] == 0:
+                queue.append(next_c)
+    return "" if len(result) != len(in_degree) else ''.join(result)`,
 		Explanation: "Topological sort. Build graph from word pairs, find ordering with BFS (Kahn's algorithm). Detect cycles. Time: O(C) where C is total chars, Space: O(1) for alphabet.",
 	},
 	{
@@ -567,6 +782,27 @@ var HardProblems = []Problem{
 	}
 	return maxLen
 }`,
+		PythonSolution: `def longestIncreasingPath(matrix: List[List[int]]) -> int:
+    if not matrix:
+        return 0
+    m, n = len(matrix), len(matrix[0])
+    memo = [[0] * n for _ in range(m)]
+    max_len = 0
+    dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    def dfs(i: int, j: int) -> int:
+        if memo[i][j] != 0:
+            return memo[i][j]
+        max_path = 1
+        for di, dj in dirs:
+            ni, nj = i + di, j + dj
+            if 0 <= ni < m and 0 <= nj < n and matrix[ni][nj] > matrix[i][j]:
+                max_path = max(max_path, 1 + dfs(ni, nj))
+        memo[i][j] = max_path
+        return max_path
+    for i in range(m):
+        for j in range(n):
+            max_len = max(max_len, dfs(i, j))
+    return max_len`,
 		Explanation: "DFS with memoization. For each cell, try all four directions with increasing values. Cache results to avoid recomputation. Time: O(m*n), Space: O(m*n).",
 	},
 	{
@@ -604,6 +840,25 @@ var HardProblems = []Problem{
 	}
 	return count
 }`,
+		PythonSolution: `def numIslands(grid: List[List[str]]) -> int:
+    if not grid:
+        return 0
+    count = 0
+    m, n = len(grid), len(grid[0])
+    def dfs(i: int, j: int):
+        if i < 0 or i >= m or j < 0 or j >= n or grid[i][j] == '0':
+            return
+        grid[i][j] = '0'
+        dfs(i + 1, j)
+        dfs(i - 1, j)
+        dfs(i, j + 1)
+        dfs(i, j - 1)
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == '1':
+                count += 1
+                dfs(i, j)
+    return count`,
 		Explanation: "DFS to mark connected components. For each unvisited land cell, increment count and mark entire island. Time: O(m*n), Space: O(m*n) for recursion.",
 	},
 	{
@@ -646,6 +901,23 @@ var HardProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def findOrder(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+    from collections import deque, defaultdict
+    adj = defaultdict(list)
+    in_degree = [0] * numCourses
+    for pre in prerequisites:
+        adj[pre[1]].append(pre[0])
+        in_degree[pre[0]] += 1
+    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])
+    result = []
+    while queue:
+        course = queue.popleft()
+        result.append(course)
+        for next_course in adj[course]:
+            in_degree[next_course] -= 1
+            if in_degree[next_course] == 0:
+                queue.append(next_course)
+    return result if len(result) == numCourses else []`,
 		Explanation: "Topological sort with BFS (Kahn's algorithm). Start with courses having no prerequisites. Process in order. Detect cycles. Time: O(V+E), Space: O(V+E).",
 	},
 	{
@@ -683,6 +955,23 @@ func deserialize(data string) *TreeNode {
 	}
 	return build()
 }`,
+		PythonSolution: `def serialize(root: Optional[TreeNode]) -> str:
+    if not root:
+        return "null"
+    return str(root.val) + "," + serialize(root.left) + "," + serialize(root.right)
+
+def deserialize(data: str) -> Optional[TreeNode]:
+    vals = data.split(",")
+    i = 0
+    def build():
+        nonlocal i
+        if vals[i] == "null":
+            i += 1
+            return None
+        val = int(vals[i])
+        i += 1
+        return TreeNode(val, build(), build())
+    return build()`,
 		Explanation: "Preorder traversal for serialize and deserialize. Use 'null' for nil nodes. Build tree recursively following same order. Time: O(n), Space: O(n).",
 	},
 	{
@@ -717,6 +1006,19 @@ func deserialize(data string) *TreeNode {
 	dfs(root)
 	return maxSum
 }`,
+		PythonSolution: `def maxPathSum(root: Optional[TreeNode]) -> int:
+    max_sum = root.val
+    def dfs(node: Optional[TreeNode]) -> int:
+        nonlocal max_sum
+        if not node:
+            return 0
+        left_max = max(dfs(node.left), 0)
+        right_max = max(dfs(node.right), 0)
+        current_max = node.val + left_max + right_max
+        max_sum = max(max_sum, current_max)
+        return node.val + max(left_max, right_max)
+    dfs(root)
+    return max_sum`,
 		Explanation: "Post-order DFS. For each node, max path through it = val + leftMax + rightMax. Return val + max(leftMax, rightMax) as contribution to parent. Time: O(n), Space: O(h).",
 	},
 	{
@@ -750,6 +1052,17 @@ func deserialize(data string) *TreeNode {
 	}
 	return dp[m][n]
 }`,
+		PythonSolution: `def numDistinct(s: str, t: str) -> int:
+    m, n = len(s), len(t)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1):
+        dp[i][0] = 1
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            dp[i][j] = dp[i - 1][j]
+            if s[i - 1] == t[j - 1]:
+                dp[i][j] += dp[i - 1][j - 1]
+    return dp[m][n]`,
 		Explanation: "DP. dp[i][j] = ways to match t[0...j-1] using s[0...i-1]. If chars match, add ways without using current char. Time: O(m*n), Space: O(m*n).",
 	},
 	{
@@ -787,6 +1100,20 @@ func deserialize(data string) *TreeNode {
 	}
 	return dp[m][n]
 }`,
+		PythonSolution: `def minDistance(word1: str, word2: str) -> int:
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i - 1] == word2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    return dp[m][n]`,
 		Explanation: "Classic DP (Levenshtein distance). dp[i][j] = min operations for word1[0...i-1] to word2[0...j-1]. Consider insert, delete, replace. Time: O(m*n), Space: O(m*n).",
 	},
 }

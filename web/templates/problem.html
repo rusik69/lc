@@ -11,7 +11,7 @@
             <h3>Description</h3>
             <p>{{.Description}}</p>
             <h3>Function Signature</h3>
-            <pre><code class="language-go">{{.Signature}}</code></pre>
+            <pre><code id="function-signature" class="language-go">{{.Signature}}</code></pre>
             <h3>Test Cases</h3>
             <ul>
                 {{range .TestCases}}
@@ -25,6 +25,13 @@
         
         <div class="editor-section">
             <form id="code-form" hx-post="/run/{{.ID}}" hx-target="#result" hx-swap="innerHTML">
+                <div style="margin-bottom: 10px;">
+                    <label for="language-select" style="margin-right: 10px; color: #ccc;">Language:</label>
+                    <select id="language-select" name="language" style="padding: 5px; background: #272822; color: #f8f8f2; border: 1px solid #555; border-radius: 3px;">
+                        <option value="go">Go</option>
+                        <option value="python">Python 3</option>
+                    </select>
+                </div>
                 <textarea id="code-editor" name="code" class="code-editor" placeholder="// Write your solution here&#10;{{.Signature}} {&#10;    &#10;}" required>{{.Signature}} {
     
 }</textarea>
@@ -39,6 +46,45 @@
         
         <div id="solution" class="solution-panel"></div>
         <script>
+            // Global function to load solution with language
+            function loadSolution(id, lang) {
+                fetch('/solution/' + id + '?lang=' + lang)
+                    .then(response => response.text())
+                    .then(html => {
+                        // The response includes the full solution div, so we extract its innerHTML
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        var solutionContent = tempDiv.querySelector('.solution');
+                        if (solutionContent) {
+                            document.getElementById('solution').innerHTML = solutionContent.innerHTML;
+                            // Execute any scripts from the response
+                            var scripts = solutionContent.querySelectorAll('script');
+                            scripts.forEach(function(oldScript) {
+                                var newScript = document.createElement('script');
+                                Array.from(oldScript.attributes).forEach(function(attr) {
+                                    newScript.setAttribute(attr.name, attr.value);
+                                });
+                                newScript.textContent = oldScript.textContent;
+                                document.head.appendChild(newScript);
+                            });
+                        } else {
+                            document.getElementById('solution').innerHTML = html;
+                        }
+                        // Apply syntax highlighting
+                        if (typeof CodeMirror !== 'undefined') {
+                            setTimeout(function() {
+                                var solutionCode = document.querySelector('#solution code');
+                                if (solutionCode) {
+                                    CodeMirror.runMode(solutionCode.textContent, lang, solutionCode);
+                                }
+                            }, 100);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error loading solution:', error);
+                    });
+            }
+            
             var solutionOpen = false;
             var solutionProblemId = null;
             
@@ -55,8 +101,9 @@
                     solutionOpen = false;
                     solutionProblemId = null;
                 } else {
-                    // Open solution
-                    fetch('/solution/' + problemId)
+                    // Open solution - use current language selection
+                    var lang = document.getElementById('language-select').value;
+                    fetch('/solution/' + problemId + '?lang=' + lang)
                         .then(function(response) { return response.text(); })
                         .then(function(html) {
                             solutionPanel.innerHTML = html;
@@ -82,9 +129,151 @@
                 autofocus: true
             });
             
-            document.getElementById('code-form').addEventListener('submit', function() {
+            // Initialize signature highlighting
+            if (typeof CodeMirror !== 'undefined') {
+                setTimeout(function() {
+                    var signatureEl = document.getElementById('function-signature');
+                    if (signatureEl) {
+                        CodeMirror.runMode(signatureEl.textContent, 'go', signatureEl);
+                    }
+                }, 100);
+            }
+            
+            // Convert Go signature to Python signature
+            function goToPythonSignature(goSig) {
+                // Remove 'func ' prefix
+                var sig = goSig.replace(/^func\s+/, '');
+                // Extract function name (everything before first '(')
+                var match = sig.match(/^(\w+)\s*\(/);
+                if (!match) return 'def solution():\n    pass';
+                var funcName = match[1];
+                // Extract parameters
+                var paramsMatch = sig.match(/\(([^)]*)\)/);
+                var params = [];
+                if (paramsMatch && paramsMatch[1].trim()) {
+                    var paramParts = paramsMatch[1].split(',');
+                    paramParts.forEach(function(p) {
+                        p = p.trim();
+                        var parts = p.split(/\s+/);
+                        if (parts.length >= 2) {
+                            var paramName = parts[0];
+                            var paramType = parts[1];
+                            // Convert Go types to Python types
+                            var pyType = paramType
+                                .replace(/\[\]int/g, 'List[int]')
+                                .replace(/\[\]string/g, 'List[str]')
+                                .replace(/\[\]byte/g, 'List[str]')
+                                .replace(/\[\]\*ListNode/g, 'List[Optional[ListNode]]')
+                                .replace(/\*ListNode/g, 'Optional[ListNode]')
+                                .replace(/\*TreeNode/g, 'Optional[TreeNode]')
+                                .replace(/int/g, 'int')
+                                .replace(/string/g, 'str')
+                                .replace(/bool/g, 'bool')
+                                .replace(/float64/g, 'float');
+                            params.push(paramName + ': ' + pyType);
+                        }
+                    });
+                }
+                // Extract return type
+                var returnType = 'None';
+                if (sig.includes(') []int')) {
+                    returnType = 'List[int]';
+                } else if (sig.includes(') []string')) {
+                    returnType = 'List[str]';
+                } else if (sig.includes(') string')) {
+                    returnType = 'str';
+                } else if (sig.includes(') int')) {
+                    returnType = 'int';
+                } else if (sig.includes(') bool')) {
+                    returnType = 'bool';
+                } else if (sig.includes(') float64')) {
+                    returnType = 'float';
+                } else if (sig.includes(') *ListNode')) {
+                    returnType = 'Optional[ListNode]';
+                } else if (sig.includes(') *TreeNode')) {
+                    returnType = 'Optional[TreeNode]';
+                }
+                var pySig = 'def ' + funcName + '(' + params.join(', ') + ') -> ' + returnType + ':\n    pass';
+                return pySig;
+            }
+            
+            // Handle language change
+            document.getElementById('language-select').addEventListener('change', function() {
+                var lang = this.value;
+                editor.setOption('mode', lang);
+                
+                // Update function signature display
+                var signatureEl = document.getElementById('function-signature');
+                if (signatureEl) {
+                    var goSig = '{{.Signature}}';
+                    if (lang === 'python') {
+                        var pySig = goToPythonSignature(goSig);
+                        signatureEl.textContent = pySig;
+                        signatureEl.className = 'language-python';
+                    } else {
+                        signatureEl.textContent = goSig;
+                        signatureEl.className = 'language-go';
+                    }
+                    // Re-apply syntax highlighting
+                    if (typeof CodeMirror !== 'undefined') {
+                        CodeMirror.runMode(signatureEl.textContent, lang, signatureEl);
+                    }
+                }
+                
+                // Update placeholder based on language
+                if (lang === 'python') {
+                    var goSig = '{{.Signature}}';
+                    var pySig = goToPythonSignature(goSig);
+                    editor.setValue(pySig);
+                } else {
+                    editor.setValue('{{.Signature}} {\n    \n}');
+                }
+                // If solution is open, reload it with new language
+                if (solutionOpen && solutionProblemId === {{.ID}}) {
+                    fetch('/solution/{{.ID}}?lang=' + lang)
+                        .then(function(response) { return response.text(); })
+                        .then(function(html) {
+                            var tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = html;
+                            var solutionContent = tempDiv.querySelector('.solution');
+                            if (solutionContent) {
+                                document.getElementById('solution').innerHTML = solutionContent.innerHTML;
+                                var scripts = solutionContent.querySelectorAll('script');
+                                scripts.forEach(function(oldScript) {
+                                    var newScript = document.createElement('script');
+                                    Array.from(oldScript.attributes).forEach(function(attr) {
+                                        newScript.setAttribute(attr.name, attr.value);
+                                    });
+                                    newScript.textContent = oldScript.textContent;
+                                    document.head.appendChild(newScript);
+                                });
+                            } else {
+                                document.getElementById('solution').innerHTML = html;
+                            }
+                            if (typeof CodeMirror !== 'undefined') {
+                                setTimeout(function() {
+                                    var solutionCode = document.querySelector('#solution code');
+                                    if (solutionCode) {
+                                        CodeMirror.runMode(solutionCode.textContent, lang, solutionCode);
+                                    }
+                                }, 100);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error reloading solution:', error);
+                        });
+                }
+            });
+            
+            document.getElementById('code-form').addEventListener('submit', function(e) {
                 var code = editor.getValue();
                 document.getElementById('code-editor').value = code;
+                // Add language to form
+                var langInput = document.createElement('input');
+                langInput.type = 'hidden';
+                langInput.name = 'language';
+                langInput.value = document.getElementById('language-select').value;
+                this.appendChild(langInput);
             });
             
             // Handle Run button with streaming
@@ -106,6 +295,7 @@
                 var formData = new FormData();
                 formData.append('code', code);
                 formData.append('action', 'test');
+                formData.append('language', document.getElementById('language-select').value);
                 
                 // Create abort controller for timeout
                 var controller = new AbortController();

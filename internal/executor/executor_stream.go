@@ -15,16 +15,37 @@ import (
 )
 
 func ExecuteCodeStream(problem *problems.Problem, userCode string, runAllTests bool, w io.Writer) *ExecutionResult {
+	return ExecuteCodeStreamWithLanguage(problem, userCode, runAllTests, w, "")
+}
+
+func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, runAllTests bool, w io.Writer, language string) *ExecutionResult {
 	start := time.Now()
 
-	testCode := GenerateTestCode(problem, userCode, runAllTests)
+	// Detect language if not provided
+	if language == "" {
+		language = DetectLanguage(userCode)
+	}
+
+	var testCode string
+	var fileExt string
+	var execCmd string
+
+	if language == "python" {
+		testCode = GeneratePythonTestCode(problem, userCode, runAllTests)
+		fileExt = "py"
+		execCmd = "python3"
+	} else {
+		testCode = GenerateTestCode(problem, userCode, runAllTests)
+		fileExt = "go"
+		execCmd = "go run"
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	// Generate unique filename
 	uniqueID := GenerateUniqueID()
-	filename := fmt.Sprintf("/tmp/code_%s.go", uniqueID)
+	filename := fmt.Sprintf("/tmp/code_%s.%s", uniqueID, fileExt)
 	
 	// Get sandbox container name
 	container := GetSandboxContainer()
@@ -44,8 +65,15 @@ func ExecuteCodeStream(problem *problems.Problem, userCode string, runAllTests b
 	}
 
 	// Execute code in sandbox container
-	cmd := exec.CommandContext(ctx, "docker", "exec", container,
-		"sh", "-c", fmt.Sprintf("cd /tmp && timeout 25 go run %s", filename))
+	var cmd *exec.Cmd
+	if language == "python" {
+		// For Python, use python3 directly (timeout handled by context)
+		cmd = exec.CommandContext(ctx, "docker", "exec", container,
+			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 25 python3 %s 2>&1", filename))
+	} else {
+		cmd = exec.CommandContext(ctx, "docker", "exec", container,
+			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 25 %s %s", execCmd, filename))
+	}
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
@@ -175,6 +203,18 @@ func ExecuteCodeStream(problem *problems.Problem, userCode string, runAllTests b
 			result.Error += "\n" + outputStr
 		}
 		result.Success = false
+	}
+
+	// Success should be true only if all tests passed and there were no errors
+	if len(result.Results) > 0 {
+		allPassed := true
+		for _, r := range result.Results {
+			if !r.Passed {
+				allPassed = false
+				break
+			}
+		}
+		result.Success = allPassed && err == nil
 	}
 
 	return result

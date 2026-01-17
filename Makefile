@@ -70,9 +70,9 @@ docker-sandbox:
 test:
 	@echo "Running tests in docker-compose..."
 	@if command -v docker-compose > /dev/null 2>&1; then \
-		docker-compose run --rm test; \
+		docker-compose run --rm --profile test test; \
 	elif docker compose version > /dev/null 2>&1; then \
-		docker compose run --rm test; \
+		docker compose run --rm --profile test test; \
 	else \
 		echo "✗ Error: docker-compose not found"; \
 		exit 1; \
@@ -94,9 +94,9 @@ test-unit:
 test-e2e:
 	@echo "Running e2e tests in docker-compose..."
 	@if command -v docker-compose > /dev/null 2>&1; then \
-		docker-compose run --rm test go test -v ./tests/... -run E2E; \
+		docker-compose run --rm --profile test test go test -v ./tests/... -run E2E; \
 	elif docker compose version > /dev/null 2>&1; then \
-		docker compose run --rm test go test -v ./tests/... -run E2E; \
+		docker compose run --rm --profile test test go test -v ./tests/... -run E2E; \
 	else \
 		echo "✗ Error: docker-compose not found"; \
 		exit 1; \
@@ -106,9 +106,9 @@ test-e2e:
 test-coverage: test
 	@echo "Generating coverage report..."
 	@if command -v docker-compose > /dev/null 2>&1; then \
-		docker-compose run --rm test go tool cover -html=coverage.out -o coverage.html; \
+		docker-compose run --rm --profile test test go tool cover -html=coverage.out -o coverage.html; \
 	elif docker compose version > /dev/null 2>&1; then \
-		docker compose run --rm test go tool cover -html=coverage.out -o coverage.html; \
+		docker compose run --rm --profile test test go tool cover -html=coverage.out -o coverage.html; \
 	else \
 		go tool cover -html=coverage.out -o coverage.html; \
 	fi
@@ -233,31 +233,33 @@ deploy:
 		echo "Create .prod.env with ADMIN_PASSWORD=your_password"; \
 		exit 1; \
 	fi
-	@echo "Building Docker image..."
-	@docker build -t lc:latest .
-	@echo "Saving Docker image..."
-	@docker save lc:latest | gzip > /tmp/lc-image.tar.gz
 	@echo "Copying files to server..."
 	@ssh root@msk.govno2.cloud 'mkdir -p /root/lc'
-	@scp /tmp/lc-image.tar.gz Dockerfile docker-compose.yml .prod.env root@msk.govno2.cloud:/root/lc/
-	@echo "Deploying on server..."
+	@FILES="Dockerfile docker-compose.yml .prod.env go.mod cmd/ internal/ web/"; \
+	if [ -f go.sum ]; then FILES="$$FILES go.sum"; fi; \
+	tar czf /tmp/lc-deploy.tar.gz $$FILES
+	@scp /tmp/lc-deploy.tar.gz root@msk.govno2.cloud:/root/lc/
+	@ssh root@msk.govno2.cloud 'cd /root/lc && tar xzf lc-deploy.tar.gz && rm lc-deploy.tar.gz'
+	@rm -f /tmp/lc-deploy.tar.gz
+	@echo "Building and deploying on server..."
 	@ssh root@msk.govno2.cloud 'cd /root/lc && \
-		echo "Loading Docker image..." && \
-		docker load < lc-image.tar.gz && \
 		echo "Stopping existing containers..." && \
 		if command -v docker-compose > /dev/null 2>&1; then \
 			docker-compose down 2>/dev/null || true; \
-			echo "Starting containers with pre-built image..." && \
-			docker-compose up -d --no-build; \
+			echo "Building Docker image..." && \
+			docker-compose build && \
+			echo "Starting containers..." && \
+			docker-compose up -d; \
 		elif docker compose version > /dev/null 2>&1; then \
 			docker compose down 2>/dev/null || true; \
-			echo "Starting containers with pre-built image..." && \
-			docker compose up -d --no-build; \
+			echo "Building Docker image..." && \
+			docker compose build && \
+			echo "Starting containers..." && \
+			docker compose up -d; \
 		else \
 			echo "Error: docker-compose not found"; \
 			exit 1; \
 		fi'
-	@rm -f /tmp/lc-image.tar.gz
 	@echo "✓ Deployment complete!"
 	@echo "Application should be available at http://msk.govno2.cloud:8080"
 

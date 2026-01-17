@@ -26,6 +26,13 @@ var EasyProblems = []Problem{
 	}
 	return nil
 }`,
+		PythonSolution: `def twoSum(nums: List[int], target: int) -> List[int]:
+    m = {}
+    for i, num in enumerate(nums):
+        if target - num in m:
+            return [m[target - num], i]
+        m[num] = i
+    return []`,
 		Explanation: "Use a hash map to store each number and its index as we iterate. For each number, check if the complement (target - num) exists in the map. If found, return both indices. Time: O(n), Space: O(n).",
 	},
 	{
@@ -47,6 +54,12 @@ var EasyProblems = []Problem{
 		s[i], s[j] = s[j], s[i]
 	}
 }`,
+		PythonSolution: `def reverseString(s: List[str]) -> None:
+    i, j = 0, len(s) - 1
+    while i < j:
+        s[i], s[j] = s[j], s[i]
+        i += 1
+        j -= 1`,
 		Explanation: "Use two pointers starting from both ends. Swap characters and move pointers toward the center until they meet. Time: O(n), Space: O(1).",
 	},
 	{
@@ -77,6 +90,18 @@ var EasyProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def fizzBuzz(n: int) -> List[str]:
+    result = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            result.append("FizzBuzz")
+        elif i % 3 == 0:
+            result.append("Fizz")
+        elif i % 5 == 0:
+            result.append("Buzz")
+        else:
+            result.append(str(i))
+    return result`,
 		Explanation: "Check divisibility in order: 15 (both 3 and 5), then 3, then 5. Convert numbers to strings using strconv.Itoa. Time: O(n), Space: O(n).",
 	},
 	{
@@ -108,6 +133,15 @@ var EasyProblems = []Problem{
 	}
 	return true
 }`,
+		PythonSolution: `def isPalindrome(s: str) -> bool:
+    cleaned = ''.join(c.lower() for c in s if c.isalnum())
+    i, j = 0, len(cleaned) - 1
+    while i < j:
+        if cleaned[i] != cleaned[j]:
+            return False
+        i += 1
+        j -= 1
+    return True`,
 		Explanation: "Normalize the string by converting to lowercase and removing spaces. Use two pointers to compare characters from both ends. Time: O(n), Space: O(1).",
 	},
 	{
@@ -136,6 +170,13 @@ var EasyProblems = []Problem{
 	}
 	return b
 }`,
+		PythonSolution: `def fib(n: int) -> int:
+    if n < 2:
+        return n
+    a, b = 0, 1
+    for i in range(2, n + 1):
+        a, b = b, a + b
+    return b`,
 		Explanation: "Use iterative approach with two variables to track previous two Fibonacci numbers. Avoid recursion to save space. Time: O(n), Space: O(1).",
 	},
 	{
@@ -162,6 +203,13 @@ var EasyProblems = []Problem{
 	}
 	return false
 }`,
+		PythonSolution: `def containsDuplicate(nums: List[int]) -> bool:
+    seen = set()
+    for num in nums:
+        if num in seen:
+            return True
+        seen.add(num)
+    return False`,
 		Explanation: "Use a hash set to track seen numbers. If we encounter a number already in the set, return true. Time: O(n), Space: O(n).",
 	},
 	{
@@ -194,6 +242,17 @@ var EasyProblems = []Problem{
 	}
 	return true
 }`,
+		PythonSolution: `def isAnagram(s: str, t: str) -> bool:
+    if len(s) != len(t):
+        return False
+    counts = {}
+    for c in s:
+        counts[c] = counts.get(c, 0) + 1
+    for c in t:
+        counts[c] = counts.get(c, 0) - 1
+        if counts[c] < 0:
+            return False
+    return True`,
 		Explanation: "Count character frequencies in both strings using a hash map. Increment for s, decrement for t. Time: O(n), Space: O(1) since limited to 26 letters.",
 	},
 	{
@@ -227,6 +286,17 @@ var EasyProblems = []Problem{
 	}
 	return len(stack) == 0
 }`,
+		PythonSolution: `def isValid(s: str) -> bool:
+    stack = []
+    pairs = {')': '(', '}': '{', ']': '['}
+    for c in s:
+        if c in pairs:
+            if not stack or stack[-1] != pairs[c]:
+                return False
+            stack.pop()
+        else:
+            stack.append(c)
+    return len(stack) == 0`,
 		Explanation: "Use a stack to match opening and closing brackets. Push opening brackets, pop and verify for closing brackets. Time: O(n), Space: O(n).",
 	},
 	{
@@ -262,6 +332,19 @@ var EasyProblems = []Problem{
 	}
 	return dummy.Next
 }`,
+		PythonSolution: `def mergeTwoLists(l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+    dummy = ListNode()
+    curr = dummy
+    while l1 and l2:
+        if l1.val < l2.val:
+            curr.next = l1
+            l1 = l1.next
+        else:
+            curr.next = l2
+            l2 = l2.next
+        curr = curr.next
+    curr.next = l1 if l1 else l2
+    return dummy.next`,
 		Explanation: "Use a dummy node and compare values from both lists one by one. Append remaining list when one is exhausted. Time: O(m+n), Space: O(1).",
 	},
 	{
@@ -290,6 +373,15 @@ var EasyProblems = []Problem{
 	}
 	return maxProfit
 }`,
+		PythonSolution: `def maxProfit(prices: List[int]) -> int:
+    min_price = prices[0]
+    max_profit = 0
+    for price in prices[1:]:
+        if price < min_price:
+            min_price = price
+        elif price - min_price > max_profit:
+            max_profit = price - min_price
+    return max_profit`,
 		Explanation: "Track the minimum price seen so far and calculate profit for each day. Keep the maximum profit. Time: O(n), Space: O(1).",
 	},
 	{
@@ -320,6 +412,17 @@ var EasyProblems = []Problem{
 	}
 	return -1
 }`,
+		PythonSolution: `def search(nums: List[int], target: int) -> int:
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = left + (right - left) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1`,
 		Explanation: "Classic binary search. Compare middle element with target and narrow search space by half each iteration. Time: O(log n), Space: O(1).",
 	},
 	{
@@ -347,6 +450,15 @@ var EasyProblems = []Problem{
 	}
 	return left
 }`,
+		PythonSolution: `def firstBadVersion(n: int) -> int:
+    left, right = 1, n
+    while left < right:
+        mid = left + (right - left) // 2
+        if isBadVersion(mid):
+            right = mid
+        else:
+            left = mid + 1
+    return left`,
 		Explanation: "Binary search variant. When bad version found, search left half for earlier bad version. Time: O(log n), Space: O(1).",
 	},
 	{
@@ -376,6 +488,15 @@ var EasyProblems = []Problem{
 	}
 	return true
 }`,
+		PythonSolution: `def canConstruct(ransomNote: str, magazine: str) -> bool:
+    counts = {}
+    for c in magazine:
+        counts[c] = counts.get(c, 0) + 1
+    for c in ransomNote:
+        if counts.get(c, 0) == 0:
+            return False
+        counts[c] -= 1
+    return True`,
 		Explanation: "Count available letters in magazine, then check if ransom note can be formed by consuming letters. Time: O(m+n), Space: O(1).",
 	},
 	{
@@ -402,6 +523,13 @@ var EasyProblems = []Problem{
 	}
 	return b
 }`,
+		PythonSolution: `def climbStairs(n: int) -> int:
+    if n <= 2:
+        return n
+    a, b = 1, 2
+    for i in range(3, n + 1):
+        a, b = b, a + b
+    return b`,
 		Explanation: "This is Fibonacci sequence. Ways to reach step n = ways(n-1) + ways(n-2). Time: O(n), Space: O(1).",
 	},
 	{
@@ -430,6 +558,16 @@ var EasyProblems = []Problem{
 	}
 	return prefix
 }`,
+		PythonSolution: `def longestCommonPrefix(strs: List[str]) -> str:
+    if not strs:
+        return ""
+    prefix = strs[0]
+    for s in strs[1:]:
+        while not s.startswith(prefix):
+            prefix = prefix[:-1]
+            if not prefix:
+                return ""
+    return prefix`,
 		Explanation: "Start with first string as prefix, then shorten it until it matches all strings. Time: O(S) where S is sum of all characters, Space: O(1).",
 	},
 	{
@@ -452,6 +590,11 @@ var EasyProblems = []Problem{
 	}
 	return result
 }`,
+		PythonSolution: `def singleNumber(nums: List[int]) -> int:
+    result = 0
+    for num in nums:
+        result ^= num
+    return result`,
 		Explanation: "Use XOR operation. XOR of two same numbers is 0, and XOR with 0 returns the number itself. Time: O(n), Space: O(1).",
 	},
 	{
@@ -481,6 +624,16 @@ var EasyProblems = []Problem{
 	}
 	return candidate
 }`,
+		PythonSolution: `def majorityElement(nums: List[int]) -> int:
+    candidate, count = 0, 0
+    for num in nums:
+        if count == 0:
+            candidate = num
+        if num == candidate:
+            count += 1
+        else:
+            count -= 1
+    return candidate`,
 		Explanation: "Boyer-Moore Voting Algorithm. Maintain a candidate and count, cancel out different elements. Time: O(n), Space: O(1).",
 	},
 	{
@@ -510,6 +663,15 @@ var EasyProblems = []Problem{
 	}
 	return i + 1
 }`,
+		PythonSolution: `def removeDuplicates(nums: List[int]) -> int:
+    if not nums:
+        return 0
+    i = 0
+    for j in range(1, len(nums)):
+        if nums[j] != nums[i]:
+            i += 1
+            nums[i] = nums[j]
+    return i + 1`,
 		Explanation: "Use two pointers. Keep unique elements at the beginning of array. Time: O(n), Space: O(1).",
 	},
 	{
@@ -535,6 +697,12 @@ var EasyProblems = []Problem{
 		}
 	}
 }`,
+		PythonSolution: `def moveZeroes(nums: List[int]) -> None:
+    left = 0
+    for right in range(len(nums)):
+        if nums[right] != 0:
+            nums[left], nums[right] = nums[right], nums[left]
+            left += 1`,
 		Explanation: "Two pointers approach. Left pointer tracks position for next non-zero element. Swap when non-zero found. Time: O(n), Space: O(1).",
 	},
 	{
@@ -561,6 +729,15 @@ var EasyProblems = []Problem{
 	}
 	return prev
 }`,
+		PythonSolution: `def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
+    prev = None
+    curr = head
+    while curr:
+        next_node = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_node
+    return prev`,
 		Explanation: "Iterate through list and reverse pointers. Keep track of previous, current, and next nodes. Time: O(n), Space: O(1).",
 	},
 }
