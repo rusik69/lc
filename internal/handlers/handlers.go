@@ -34,6 +34,8 @@ var (
 	machineLearningModuleTemplate *template.Template
 	linuxTemplate            *template.Template
 	linuxModuleTemplate      *template.Template
+	networkingTemplate       *template.Template
+	networkingModuleTemplate *template.Template
 )
 
 const (
@@ -157,6 +159,30 @@ func InitTemplates(templateDir string) error {
 		return err
 	}
 
+	// Parse Linux course template
+	linuxTemplate, err = template.New("linux").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/linux_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Linux module template
+	linuxModuleTemplate, err = template.New("linux_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/linux_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Networking course template
+	networkingTemplate, err = template.New("networking").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/networking_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Networking module template
+	networkingModuleTemplate, err = template.New("networking_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/networking_module.html")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -240,6 +266,17 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRun(w http.ResponseWriter, r *http.Request) {
+	// Set CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	
+	// Handle preflight requests
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -390,6 +427,17 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleSolution(w http.ResponseWriter, r *http.Request) {
+	// Set CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	
+	// Handle preflight requests
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
 		http.NotFound(w, r)
@@ -917,6 +965,72 @@ func HandleLinuxModule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := linuxModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleNetworkingCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/networking" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetNetworkingModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := networkingTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleNetworkingModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetNetworkingModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := networkingModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

@@ -760,4 +760,390 @@ var EasyProblems = []Problem{
     return prev`,
 		Explanation: "Iterate through list and reverse pointers. Keep track of previous, current, and next nodes. Time: O(n), Space: O(1).",
 	},
+	{
+		ID:          21,
+		Title:       "Valid Anagram",
+		Description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
+		Difficulty:  "Easy",
+		Topic:       "Hash Tables",
+		Signature:   "func isAnagram(s string, t string) bool",
+		TestCases: []TestCase{
+			{Input: "s = \"anagram\", t = \"nagaram\"", Expected: "true"},
+			{Input: "s = \"rat\", t = \"car\"", Expected: "false"},
+			{Input: "s = \"listen\", t = \"silent\"", Expected: "true"},
+			{Input: "s = \"a\", t = \"a\"", Expected: "true"},
+			{Input: "s = \"ab\", t = \"ba\"", Expected: "true"},
+			{Input: "s = \"ab\", t = \"a\"", Expected: "false"},
+		},
+		Solution: `func isAnagram(s string, t string) bool {
+	if len(s) != len(t) {
+		return false
+	}
+	count := make(map[rune]int)
+	for _, char := range s {
+		count[char]++
+	}
+	for _, char := range t {
+		count[char]--
+		if count[char] < 0 {
+			return false
+		}
+	}
+	return true
+}`,
+		PythonSolution: `def isAnagram(s: str, t: str) -> bool:
+    if len(s) != len(t):
+        return False
+    count = {}
+    for char in s:
+        count[char] = count.get(char, 0) + 1
+    for char in t:
+        if char not in count:
+            return False
+        count[char] -= 1
+        if count[char] < 0:
+            return False
+    return True`,
+		Explanation: "Count character frequencies in both strings. If lengths differ, return false. Use hash map to count characters in s, then decrement for t. If any count goes negative, return false. Time: O(n), Space: O(1) - limited to 26 characters.",
+	},
+	{
+		ID:          22,
+		Title:       "Contains Duplicate",
+		Description: "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+		Difficulty:  "Easy",
+		Topic:       "Hash Tables",
+		Signature:   "func containsDuplicate(nums []int) bool",
+		TestCases: []TestCase{
+			{Input: "nums = []int{1,2,3,1}", Expected: "true"},
+			{Input: "nums = []int{1,2,3,4}", Expected: "false"},
+			{Input: "nums = []int{1,1,1,3,3,4,3,2,4,2}", Expected: "true"},
+			{Input: "nums = []int{1}", Expected: "false"},
+			{Input: "nums = []int{1,1}", Expected: "true"},
+			{Input: "nums = []int{}", Expected: "false"},
+		},
+		Solution: `func containsDuplicate(nums []int) bool {
+	seen := make(map[int]bool)
+	for _, num := range nums {
+		if seen[num] {
+			return true
+		}
+		seen[num] = true
+	}
+	return false
+}`,
+		PythonSolution: `def containsDuplicate(nums: List[int]) -> bool:
+    seen = set()
+    for num in nums:
+        if num in seen:
+            return True
+        seen.add(num)
+    return False`,
+		Explanation: "Use hash set to track seen numbers. If we encounter a number already in the set, return true. Time: O(n), Space: O(n).",
+	},
+	{
+		ID:          23,
+		Title:       "Best Time to Buy and Sell Stock",
+		Description: "You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.",
+		Difficulty:  "Easy",
+		Topic:       "Arrays",
+		Signature:   "func maxProfit(prices []int) int",
+		TestCases: []TestCase{
+			{Input: "prices = []int{7,1,5,3,6,4}", Expected: "5"},
+			{Input: "prices = []int{7,6,4,3,1}", Expected: "0"},
+			{Input: "prices = []int{1,2}", Expected: "1"},
+			{Input: "prices = []int{2,4,1}", Expected: "2"},
+			{Input: "prices = []int{3,2,6,5,0,3}", Expected: "4"},
+			{Input: "prices = []int{1}", Expected: "0"},
+		},
+		Solution: `func maxProfit(prices []int) int {
+	if len(prices) < 2 {
+		return 0
+	}
+	minPrice := prices[0]
+	maxProfit := 0
+	for i := 1; i < len(prices); i++ {
+		if prices[i] < minPrice {
+			minPrice = prices[i]
+		} else if prices[i]-minPrice > maxProfit {
+			maxProfit = prices[i] - minPrice
+		}
+	}
+	return maxProfit
+}`,
+		PythonSolution: `def maxProfit(prices: List[int]) -> int:
+    if len(prices) < 2:
+        return 0
+    min_price = prices[0]
+    max_profit = 0
+    for price in prices[1:]:
+        if price < min_price:
+            min_price = price
+        elif price - min_price > max_profit:
+            max_profit = price - min_price
+    return max_profit`,
+		Explanation: "Track minimum price seen so far and maximum profit. For each day, update min price if current price is lower, or update max profit if selling today gives better profit. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          24,
+		Title:       "Valid Palindrome",
+		Description: "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Given a string s, return true if it is a palindrome, or false otherwise.",
+		Difficulty:  "Easy",
+		Topic:       "Two Pointers",
+		Signature:   "func isPalindrome(s string) bool",
+		TestCases: []TestCase{
+			{Input: "s = \"A man, a plan, a canal: Panama\"", Expected: "true"},
+			{Input: "s = \"race a car\"", Expected: "false"},
+			{Input: "s = \" \"", Expected: "true"},
+			{Input: "s = \"a\"", Expected: "true"},
+			{Input: "s = \"Madam\"", Expected: "true"},
+			{Input: "s = \"No 'x' in Nixon\"", Expected: "true"},
+		},
+		Solution: `func isPalindrome(s string) bool {
+	left, right := 0, len(s)-1
+	for left < right {
+		for left < right && !isAlphanumeric(s[left]) {
+			left++
+		}
+		for left < right && !isAlphanumeric(s[right]) {
+			right--
+		}
+		if toLower(s[left]) != toLower(s[right]) {
+			return false
+		}
+		left++
+		right--
+	}
+	return true
+}
+
+func isAlphanumeric(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
+}
+
+func toLower(c byte) byte {
+	if c >= 'A' && c <= 'Z' {
+		return c + 32
+	}
+	return c
+}`,
+		PythonSolution: `def isPalindrome(s: str) -> bool:
+    left, right = 0, len(s) - 1
+    while left < right:
+        while left < right and not s[left].isalnum():
+            left += 1
+        while left < right and not s[right].isalnum():
+            right -= 1
+        if s[left].lower() != s[right].lower():
+            return False
+        left += 1
+        right -= 1
+    return True`,
+		Explanation: "Use two pointers from both ends. Skip non-alphanumeric characters, compare characters (case-insensitive). Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          25,
+		Title:       "Missing Number",
+		Description: "Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.",
+		Difficulty:  "Easy",
+		Topic:       "Arrays",
+		Signature:   "func missingNumber(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{3,0,1}", Expected: "2"},
+			{Input: "nums = []int{0,1}", Expected: "2"},
+			{Input: "nums = []int{9,6,4,2,3,5,7,0,1}", Expected: "8"},
+			{Input: "nums = []int{0}", Expected: "1"},
+			{Input: "nums = []int{1}", Expected: "0"},
+			{Input: "nums = []int{1,2}", Expected: "0"},
+		},
+		Solution: `func missingNumber(nums []int) int {
+	n := len(nums)
+	expectedSum := n * (n + 1) / 2
+	actualSum := 0
+	for _, num := range nums {
+		actualSum += num
+	}
+	return expectedSum - actualSum
+}`,
+		PythonSolution: `def missingNumber(nums: List[int]) -> int:
+    n = len(nums)
+    expected_sum = n * (n + 1) // 2
+    actual_sum = sum(nums)
+    return expected_sum - actual_sum`,
+		Explanation: "Calculate expected sum of [0..n] using formula n*(n+1)/2. Subtract actual sum to find missing number. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          26,
+		Title:       "Climbing Stairs",
+		Description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+		Difficulty:  "Easy",
+		Topic:       "Dynamic Programming",
+		Signature:   "func climbStairs(n int) int",
+		TestCases: []TestCase{
+			{Input: "n = 2", Expected: "2"},
+			{Input: "n = 3", Expected: "3"},
+			{Input: "n = 4", Expected: "5"},
+			{Input: "n = 5", Expected: "8"},
+			{Input: "n = 1", Expected: "1"},
+			{Input: "n = 10", Expected: "89"},
+		},
+		Solution: `func climbStairs(n int) int {
+	if n <= 2 {
+		return n
+	}
+	first, second := 1, 2
+	for i := 3; i <= n; i++ {
+		first, second = second, first+second
+	}
+	return second
+}`,
+		PythonSolution: `def climbStairs(n: int) -> int:
+    if n <= 2:
+        return n
+    first, second = 1, 2
+    for i in range(3, n + 1):
+        first, second = second, first + second
+    return second`,
+		Explanation: "This is Fibonacci sequence. Ways to reach step n = ways to reach (n-1) + ways to reach (n-2). Use two variables to avoid array. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          27,
+		Title:       "Maximum Subarray",
+		Description: "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum. A subarray is a contiguous part of an array.",
+		Difficulty:  "Easy",
+		Topic:       "Dynamic Programming",
+		Signature:   "func maxSubArray(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{-2,1,-3,4,-1,2,1,-5,4}", Expected: "6"},
+			{Input: "nums = []int{1}", Expected: "1"},
+			{Input: "nums = []int{5,4,-1,7,8}", Expected: "23"},
+			{Input: "nums = []int{-1}", Expected: "-1"},
+			{Input: "nums = []int{-2,-1}", Expected: "-1"},
+			{Input: "nums = []int{1,2,3,4,5}", Expected: "15"},
+		},
+		Solution: `func maxSubArray(nums []int) int {
+	maxSum := nums[0]
+	currentSum := nums[0]
+	for i := 1; i < len(nums); i++ {
+		if currentSum < 0 {
+			currentSum = 0
+		}
+		currentSum += nums[i]
+		if currentSum > maxSum {
+			maxSum = currentSum
+		}
+	}
+	return maxSum
+}`,
+		PythonSolution: `def maxSubArray(nums: List[int]) -> int:
+    max_sum = current_sum = nums[0]
+    for num in nums[1:]:
+        if current_sum < 0:
+            current_sum = 0
+        current_sum += num
+        max_sum = max(max_sum, current_sum)
+    return max_sum`,
+		Explanation: "Kadane's algorithm. Keep track of current sum. If current sum becomes negative, reset to 0 (starting new subarray). Update max sum at each step. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          28,
+		Title:       "Single Number",
+		Description: "Given a non-empty array of integers nums, every element appears twice except for one. Find that single one. You must implement a solution with a linear runtime complexity and use only constant extra space.",
+		Difficulty:  "Easy",
+		Topic:       "Bit Manipulation",
+		Signature:   "func singleNumber(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{2,2,1}", Expected: "1"},
+			{Input: "nums = []int{4,1,2,1,2}", Expected: "4"},
+			{Input: "nums = []int{1}", Expected: "1"},
+			{Input: "nums = []int{1,2,3,2,1}", Expected: "3"},
+			{Input: "nums = []int{-1,-2,-2,-1,5}", Expected: "5"},
+			{Input: "nums = []int{7,3,5,3,7}", Expected: "5"},
+		},
+		Solution: `func singleNumber(nums []int) int {
+	result := 0
+	for _, num := range nums {
+		result ^= num
+	}
+	return result
+}`,
+		PythonSolution: `def singleNumber(nums: List[int]) -> int:
+    result = 0
+    for num in nums:
+        result ^= num
+    return result`,
+		Explanation: "Use XOR property: a XOR a = 0, a XOR 0 = a. XOR all numbers, pairs cancel out, leaving the single number. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          29,
+		Title:       "Intersection of Two Arrays",
+		Description: "Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.",
+		Difficulty:  "Easy",
+		Topic:       "Hash Tables",
+		Signature:   "func intersection(nums1 []int, nums2 []int) []int",
+		TestCases: []TestCase{
+			{Input: "nums1 = []int{1,2,2,1}, nums2 = []int{2,2}", Expected: "[2]"},
+			{Input: "nums1 = []int{4,9,5}, nums2 = []int{9,4,9,8,4}", Expected: "[4 9]"},
+			{Input: "nums1 = []int{1,2,3}, nums2 = []int{4,5,6}", Expected: "[]"},
+			{Input: "nums1 = []int{1}, nums2 = []int{1}", Expected: "[1]"},
+			{Input: "nums1 = []int{1,2}, nums2 = []int{2,3}", Expected: "[2]"},
+			{Input: "nums1 = []int{}, nums2 = []int{1,2}", Expected: "[]"},
+		},
+		Solution: `func intersection(nums1 []int, nums2 []int) []int {
+	set1 := make(map[int]bool)
+	for _, num := range nums1 {
+		set1[num] = true
+	}
+	result := []int{}
+	seen := make(map[int]bool)
+	for _, num := range nums2 {
+		if set1[num] && !seen[num] {
+			result = append(result, num)
+			seen[num] = true
+		}
+	}
+	return result
+}`,
+		PythonSolution: `def intersection(nums1: List[int], nums2: List[int]) -> List[int]:
+    set1 = set(nums1)
+    result = []
+    seen = set()
+    for num in nums2:
+        if num in set1 and num not in seen:
+            result.append(num)
+            seen.add(num)
+    return result`,
+		Explanation: "Convert first array to set for O(1) lookup. Iterate second array, add to result if in set1 and not already added. Time: O(n+m), Space: O(n+m).",
+	},
+	{
+		ID:          30,
+		Title:       "Move Zeroes",
+		Description: "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements. Note that you must do this in-place without making a copy of the array.",
+		Difficulty:  "Easy",
+		Topic:       "Two Pointers",
+		Signature:   "func moveZeroes(nums []int)",
+		TestCases: []TestCase{
+			{Input: "nums = []int{0,1,0,3,12}", Expected: "[1 3 12 0 0]"},
+			{Input: "nums = []int{0}", Expected: "[0]"},
+			{Input: "nums = []int{1,2,3}", Expected: "[1 2 3]"},
+			{Input: "nums = []int{0,0,1}", Expected: "[1 0 0]"},
+			{Input: "nums = []int{1,0,1,0,1}", Expected: "[1 1 1 0 0]"},
+			{Input: "nums = []int{0,0,0,1}", Expected: "[1 0 0 0]"},
+		},
+		Solution: `func moveZeroes(nums []int) {
+	writeIndex := 0
+	for i := 0; i < len(nums); i++ {
+		if nums[i] != 0 {
+			nums[writeIndex], nums[i] = nums[i], nums[writeIndex]
+			writeIndex++
+		}
+	}
+}`,
+		PythonSolution: `def moveZeroes(nums: List[int]) -> None:
+    write_index = 0
+    for i in range(len(nums)):
+        if nums[i] != 0:
+            nums[write_index], nums[i] = nums[i], nums[write_index]
+            write_index += 1`,
+		Explanation: "Use two pointers: writeIndex tracks position for next non-zero, i scans array. Swap non-zero elements to writeIndex position. Time: O(n), Space: O(1).",
+	},
 }

@@ -11,6 +11,7 @@ import (
 	_ "github.com/rusik69/lc/internal/courses/kubernetes"
 	_ "github.com/rusik69/lc/internal/courses/linux"
 	_ "github.com/rusik69/lc/internal/courses/machine_learning"
+	_ "github.com/rusik69/lc/internal/courses/networking"
 	_ "github.com/rusik69/lc/internal/courses/python"
 	_ "github.com/rusik69/lc/internal/courses/systems_design"
 	"github.com/rusik69/lc/internal/handlers"
@@ -49,6 +50,8 @@ func main() {
 	mux.HandleFunc("/linux/", handlers.HandleLinuxModule)
 	mux.HandleFunc("/machine-learning", handlers.HandleMachineLearningCourse)
 	mux.HandleFunc("/machine-learning/", handlers.HandleMachineLearningModule)
+	mux.HandleFunc("/networking", handlers.HandleNetworkingCourse)
+	mux.HandleFunc("/networking/", handlers.HandleNetworkingModule)
 	mux.HandleFunc("/problem/", handlers.HandleProblem)
 	mux.HandleFunc("/run/", handlers.HandleRun)
 	mux.HandleFunc("/solution/", handlers.HandleSolution)

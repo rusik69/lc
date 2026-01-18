@@ -84,23 +84,91 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 <head>
 	<title>Login - LeetCode Clone</title>
 	<style>
-		body { font-family: Arial, sans-serif; max-width: 400px; margin: 100px auto; padding: 20px; }
-		form { display: flex; flex-direction: column; gap: 15px; }
-		input { padding: 10px; font-size: 16px; }
-		button { padding: 10px; font-size: 16px; background: #007bff; color: white; border: none; cursor: pointer; }
-		button:hover { background: #0056b3; }
-		.error { color: red; margin-top: 10px; }
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+			background-color: #0f172a;
+			color: #e0e0e0;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+		.login-container {
+			background-color: #1a2332;
+			border: 1px solid #334155;
+			border-radius: 8px;
+			padding: 40px;
+			max-width: 400px;
+			width: 100%;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+		}
+		h2 {
+			color: #e0e0e0;
+			margin-bottom: 30px;
+			text-align: center;
+			font-size: 1.75rem;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+		input {
+			padding: 12px;
+			font-size: 16px;
+			background-color: #1e293b;
+			color: #e0e0e0;
+			border: 1px solid #334155;
+			border-radius: 4px;
+			transition: border-color 0.2s;
+		}
+		input:focus {
+			outline: none;
+			border-color: #3b82f6;
+		}
+		input::placeholder {
+			color: #999;
+		}
+		button {
+			padding: 12px;
+			font-size: 16px;
+			background: #3b82f6;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 500;
+			transition: background 0.2s;
+		}
+		button:hover {
+			background: #60a5fa;
+		}
+		button:active {
+			background: #2563eb;
+		}
+		.error {
+			color: #ff6b6b;
+			margin-top: 15px;
+			padding: 10px;
+			background-color: #4d1e1e;
+			border: 1px solid #5a2d2d;
+			border-radius: 4px;
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
-	<h2>Admin Login</h2>
-	<form method="POST">
-		<input type="password" name="password" placeholder="Password" required autofocus>
-		<button type="submit">Login</button>
-	</form>
-	%s
+	<div class="login-container">
+		<h2>Admin Login</h2>
+		<form method="POST">
+			<input type="password" name="password" placeholder="Password" required autofocus>
+			<button type="submit">Login</button>
+		</form>
+	</div>
 </body>
-</html>`, "")
+</html>`)
 		return
 	}
 
@@ -122,21 +190,90 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 <head>
 	<title>Login - LeetCode Clone</title>
 	<style>
-		body { font-family: Arial, sans-serif; max-width: 400px; margin: 100px auto; padding: 20px; }
-		form { display: flex; flex-direction: column; gap: 15px; }
-		input { padding: 10px; font-size: 16px; }
-		button { padding: 10px; font-size: 16px; background: #007bff; color: white; border: none; cursor: pointer; }
-		button:hover { background: #0056b3; }
-		.error { color: red; margin-top: 10px; }
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+			background-color: #0f172a;
+			color: #e0e0e0;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+		.login-container {
+			background-color: #1a2332;
+			border: 1px solid #334155;
+			border-radius: 8px;
+			padding: 40px;
+			max-width: 400px;
+			width: 100%;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+		}
+		h2 {
+			color: #e0e0e0;
+			margin-bottom: 30px;
+			text-align: center;
+			font-size: 1.75rem;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+		input {
+			padding: 12px;
+			font-size: 16px;
+			background-color: #1e293b;
+			color: #e0e0e0;
+			border: 1px solid #334155;
+			border-radius: 4px;
+			transition: border-color 0.2s;
+		}
+		input:focus {
+			outline: none;
+			border-color: #3b82f6;
+		}
+		input::placeholder {
+			color: #999;
+		}
+		button {
+			padding: 12px;
+			font-size: 16px;
+			background: #3b82f6;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 500;
+			transition: background 0.2s;
+		}
+		button:hover {
+			background: #60a5fa;
+		}
+		button:active {
+			background: #2563eb;
+		}
+		.error {
+			color: #ff6b6b;
+			margin-top: 15px;
+			padding: 10px;
+			background-color: #4d1e1e;
+			border: 1px solid #5a2d2d;
+			border-radius: 4px;
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
-	<h2>Admin Login</h2>
-	<form method="POST">
-		<input type="password" name="password" placeholder="Password" required autofocus>
-		<button type="submit">Login</button>
-	</form>
-	<div class="error">Invalid password</div>
+	<div class="login-container">
+		<h2>Admin Login</h2>
+		<form method="POST">
+			<input type="password" name="password" placeholder="Password" required autofocus>
+			<button type="submit">Login</button>
+		</form>
+		<div class="error">Invalid password</div>
+	</div>
 </body>
 </html>`)
 		return

@@ -1806,7 +1806,7 @@ func main() {
     fmt.Println(string(data))
     
     // Unmarshal
-    jsonStr := ` + "`" + `{"id":2,"username":"bob"}` + "`" + `
+    jsonStr := "{\"id\":2,\"username\":\"bob\"}"
     var u2 User
     json.Unmarshal([]byte(jsonStr), &u2)
     fmt.Println(u2)
@@ -2953,7 +2953,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
     }
     
     w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, `{"status": "ok"}`)
+    fmt.Fprintf(w, "{\"status\": \"ok\"}")
 }
 
 // Handler interface
@@ -3306,7 +3306,7 @@ type User struct {
 
 // Unmarshal from JSON
 func unmarshalExample() {
-    jsonStr := ` + "`" + `{"id":1,"username":"alice","email":"alice@example.com"}` + "`" + `
+    jsonStr := "{\"id\":1,\"username\":\"alice\",\"email\":\"alice@example.com\"}"
     
     var user User
     err := json.Unmarshal([]byte(jsonStr), &user)
@@ -3320,8 +3320,7 @@ func unmarshalExample() {
 
 // Decoder for streaming
 func decoderExample() {
-    jsonStr := ` + "`" + `{"id":2,"username":"bob"}
-{"id":3,"username":"charlie"}` + "`" + `
+    jsonStr := "{\"id\":2,\"username\":\"bob\"}\n{\"id\":3,\"username\":\"charlie\"}"
     
     decoder := json.NewDecoder(strings.NewReader(jsonStr))
     for {
@@ -3335,7 +3334,7 @@ func decoderExample() {
 
 // Decode to map
 func decodeToMap() {
-    jsonStr := ` + "`" + `{"id":1,"username":"alice","extra":"value"}` + "`" + `
+    jsonStr := "{\"id\":1,\"username\":\"alice\",\"extra\":\"value\"}"
     
     var result map[string]interface{}
     json.Unmarshal([]byte(jsonStr), &result)

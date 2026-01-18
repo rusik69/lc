@@ -21,17 +21,17 @@ func init() {
 - Combines multiple commands
 
 **Script Structure:**
-1. Shebang: `#!/bin/bash`
-2. Comments: `# This is a comment`
+1. Shebang: #!/bin/bash
+2. Comments: # This is a comment
 3. Commands: Actual shell commands
 4. Variables, conditionals, loops
 
 **Creating a Script:**
-1. Create file: `nano script.sh`
-2. Add shebang: `#!/bin/bash`
+1. Create file: nano script.sh
+2. Add shebang: #!/bin/bash
 3. Add commands
-4. Make executable: `chmod +x script.sh`
-5. Run: `./script.sh` or `bash script.sh`
+4. Make executable: chmod +x script.sh
+5. Run: ./script.sh or bash script.sh
 
 **Why Script?**
 - Automate repetitive tasks
@@ -59,28 +59,28 @@ bash hello.sh`,
 					Content: `Variables store data in scripts. Understanding variables is fundamental to scripting.
 
 **Variable Assignment:**
-- `VARIABLE=value` (no spaces around =)
+- VARIABLE=value (no spaces around =)
 - No $ when assigning
-- Use $ when referencing: `$VARIABLE`
+- Use $ when referencing: $VARIABLE
 
 **Variable Types:**
-- **Strings**: `NAME="John"`
-- **Numbers**: `COUNT=10`
-- **Command output**: `DATE=$(date)` or `DATE=`date``
+- **Strings**: NAME="John"
+- **Numbers**: COUNT=10
+- **Command output**: DATE=$(date) or DATE=date
 
 **Special Variables:**
-- `$0`: Script name
-- `$1, $2, ...`: Command line arguments
-- `$#`: Number of arguments
-- `$@`: All arguments
-- `$?`: Exit status of last command
-- `$$`: Process ID
+- $0: Script name
+- $1, $2, ...: Command line arguments
+- $#: Number of arguments
+- $@: All arguments
+- $?: Exit status of last command
+- $$: Process ID
 
 **Variable Best Practices:**
 - Use uppercase for constants
 - Use lowercase for variables
 - Quote strings with spaces
-- Use `{}` for clarity: `${VARIABLE}``,
+- Use {} for clarity: ${VARIABLE}`,
 					CodeExamples: `#!/bin/bash
 # Variable assignment
 NAME="John"
@@ -97,7 +97,7 @@ CURRENT_DATE=$(date)
 echo "Today: $CURRENT_DATE"
 
 # Alternative syntax
-CURRENT_TIME=`date +%H:%M:%S`
+CURRENT_TIME=date +%H:%M:%S
 echo "Time: $CURRENT_TIME"
 
 # Command line arguments
@@ -125,23 +125,18 @@ readonly PI=3.14159
 					Content: `Conditionals allow scripts to make decisions based on conditions.
 
 **if Statement:**
-\`\`\`bash
 if [ condition ]; then
     commands
 fi
-\`\`\`
 
 **if-else:**
-\`\`\`bash
 if [ condition ]; then
     commands
 else
     commands
 fi
-\`\`\`
 
 **if-elif-else:**
-\`\`\`bash
 if [ condition1 ]; then
     commands
 elif [ condition2 ]; then
@@ -149,21 +144,20 @@ elif [ condition2 ]; then
 else
     commands
 fi
-\`\`\`
 
 **Test Conditions:**
-- `[ -f file ]`: File exists and is regular file
-- `[ -d dir ]`: Directory exists
-- `[ -r file ]`: File is readable
-- `[ -w file ]`: File is writable
-- `[ -x file ]`: File is executable
-- `[ -z string ]`: String is empty
-- `[ -n string ]`: String is not empty
-- `[ str1 = str2 ]`: Strings are equal
-- `[ str1 != str2 ]`: Strings are not equal
-- `[ num1 -eq num2 ]`: Numbers are equal
-- `[ num1 -lt num2 ]`: num1 less than num2
-- `[ num1 -gt num2 ]`: num1 greater than num2`,
+- [ -f file ]: File exists and is regular file
+- [ -d dir ]: Directory exists
+- [ -r file ]: File is readable
+- [ -w file ]: File is writable
+- [ -x file ]: File is executable
+- [ -z string ]: String is empty
+- [ -n string ]: String is not empty
+- [ str1 = str2 ]: Strings are equal
+- [ str1 != str2 ]: Strings are not equal
+- [ num1 -eq num2 ]: Numbers are equal
+- [ num1 -lt num2 ]: num1 less than num2
+- [ num1 -gt num2 ]: num1 greater than num2`,
 					CodeExamples: `#!/bin/bash
 # Simple if
 if [ -f "file.txt" ]; then
@@ -229,35 +223,30 @@ esac`,
 					Content: `Loops repeat commands multiple times. Essential for processing lists and automating repetitive tasks.
 
 **for Loop:**
-\`\`\`bash
 for variable in list; do
     commands
 done
-\`\`\`
 
 **while Loop:**
-\`\`\`bash
 while [ condition ]; do
     commands
 done
-\`\`\`
 
 **until Loop:**
-\`\`\`bash
 until [ condition ]; do
     commands
 done
-\`\`\`
+
 
 **Loop Control:**
-- `break`: Exit loop
-- `continue`: Skip to next iteration
-- `exit`: Exit script
+- break: Exit loop
+- continue: Skip to next iteration
+- exit: Exit script
 
 **Common Patterns:**
-- Iterate over files: `for file in *.txt; do`
-- Iterate over numbers: `for i in {1..10}; do`
-- Read file line by line: `while read line; do``,
+- Iterate over files: for file in *.txt; do
+- Iterate over numbers: for i in {1..10}; do
+- Read file line by line: while read line; do`,
 					CodeExamples: `#!/bin/bash
 # For loop with list
 for name in Alice Bob Charlie; do
@@ -326,25 +315,22 @@ done`,
 					Content: `Functions group commands for reuse. They make scripts modular and maintainable.
 
 **Function Syntax:**
-\`\`\`bash
 function_name() {
     commands
     return value
 }
-\`\`\`
 
 **Alternative Syntax:**
-\`\`\`bash
 function function_name {
     commands
     return value
 }
-\`\`\`
+
 
 **Function Features:**
-- Accept arguments: `$1, $2, ...`
-- Return exit status: `return 0` (success) or `return 1` (failure)
-- Local variables: `local var=value`
+- Accept arguments: $1, $2, ...
+- Return exit status: return 0 (success) or return 1 (failure)
+- Local variables: local var=value
 - Can call other functions
 
 **Best Practices:**
@@ -423,14 +409,14 @@ file_exists "script.sh"`,
 - Shows each command before execution
 - Displays variable expansions
 - Traces script execution
-- `bash -x script.sh` or `set -x` in script
+- bash -x script.sh or set -x in script
 
 **set Options:**
-- `set -x`: Enable debug mode (trace execution)
-- `set -e`: Exit on error
-- `set -u`: Exit on undefined variable
-- `set -o pipefail`: Exit on pipe failure
-- `set +x`: Disable debug mode
+- set -x: Enable debug mode (trace execution)
+- set -e: Exit on error
+- set -u: Exit on undefined variable
+- set -o pipefail: Exit on pipe failure
+- set +x: Disable debug mode
 
 **Common Errors:**
 - **Syntax errors**: Missing quotes, brackets, semicolons
@@ -447,7 +433,7 @@ file_exists "script.sh"`,
 
 **Best Practices:**
 - Test scripts incrementally
-- Use `set -euo pipefail` for strict mode
+- Use set -euo pipefail for strict mode
 - Add echo statements for debugging
 - Check exit codes
 - Validate input`,
@@ -543,16 +529,16 @@ debug "Processing file: $FILE"
 					Content: `Arrays store multiple values. Useful for processing lists of items.
 
 **Array Declaration:**
-- `ARRAY=(item1 item2 item3)`
-- `ARRAY[0]=item1`
-- Access: `${ARRAY[0]}`
-- All elements: `${ARRAY[@]}` or `${ARRAY[*]}`
-- Length: `${#ARRAY[@]}`
+- ARRAY=(item1 item2 item3)
+- ARRAY[0]=item1
+- Access: ${ARRAY[0]}
+- All elements: ${ARRAY[@]} or ${ARRAY[*]}
+- Length: ${#ARRAY[@]}
 
 **Array Operations:**
-- Add element: `ARRAY+=("new")`
-- Slice: `${ARRAY[@]:start:length}`
-- Indices: `${!ARRAY[@]}``,
+- Add element: ARRAY+=("new")
+- Slice: ${ARRAY[@]:start:length}
+- Indices: ${!ARRAY[@]}`,
 					CodeExamples: `#!/bin/bash
 # Declare array
 FRUITS=("apple" "banana" "cherry")
@@ -588,13 +574,13 @@ echo ${!FRUITS[@]}  # 0 1 2 3`,
 					Content: `Bash provides powerful string manipulation capabilities.
 
 **String Operations:**
-- Length: `${#STRING}`
-- Substring: `${STRING:start:length}`
-- Replace: `${STRING/old/new}` (first) or `${STRING//old/new}` (all)
-- Remove prefix: `${STRING#pattern}` or `${STRING##pattern}`
-- Remove suffix: `${STRING%pattern}` or `${STRING%%pattern}`
-- Uppercase: `${STRING^^}`
-- Lowercase: `${STRING,,}``,
+- Length: ${#STRING}
+- Substring: ${STRING:start:length}
+- Replace: ${STRING/old/new} (first) or ${STRING//old/new} (all)
+- Remove prefix: ${STRING#pattern} or ${STRING##pattern}
+- Remove suffix: ${STRING%pattern} or ${STRING%%pattern}
+- Uppercase: ${STRING^^}
+- Lowercase: ${STRING,,}`,
 					CodeExamples: `#!/bin/bash
 STRING="Hello World"
 
@@ -628,17 +614,17 @@ echo ${TEXT,,}      # hello world`,
 					Content: `Proper error handling makes scripts robust and reliable.
 
 **Exit Codes:**
-- `0`: Success
+- 0: Success
 - Non-zero: Failure
-- Check with `$?`
+- Check with $?
 
 **Error Handling Options:**
-- `set -e`: Exit on error
-- `set -u`: Exit on undefined variable
-- `set -o pipefail`: Exit on pipe failure
-- `trap`: Handle errors and signals
-- `||`: Execute if command fails
-- `&&`: Execute if command succeeds`,
+- set -e: Exit on error
+- set -u: Exit on undefined variable
+- set -o pipefail: Exit on pipe failure
+- trap: Handle errors and signals
+- ||: Execute if command fails
+- &&: Execute if command succeeds`,
 					CodeExamples: `#!/bin/bash
 # Exit on error
 set -e
@@ -684,36 +670,36 @@ trap cleanup EXIT`,
 
 **read Command:**
 - Read input into variables
-- `read var`: Read into variable
-- `read -r`: Don't interpret backslashes
-- `read -a`: Read into array
+- read var: Read into variable
+- read -r: Don't interpret backslashes
+- read -a: Read into array
 
 **File Redirection:**
-- `< file`: Input redirection
-- `> file`: Output redirection (overwrite)
-- `>> file`: Append redirection
-- `<<`: Here document
+- < file: Input redirection
+- > file: Output redirection (overwrite)
+- >> file: Append redirection
+- <<: Here document
 
 **Writing Files:**
-- `echo > file`: Write (overwrite)
-- `echo >> file`: Append
-- `cat > file`: Write from stdin
-- `cat >> file`: Append from stdin
+- echo > file: Write (overwrite)
+- echo >> file: Append
+- cat > file: Write from stdin
+- cat >> file: Append from stdin
 
 **Here Documents:**
 - Multi-line input
-- `<< EOF`: Start here document
-- `EOF`: End marker (can be any word)
+- << EOF: Start here document
+- EOF: End marker (can be any word)
 
 **Here Strings:**
-- `<<< string`: Pass string as input
+- <<< string: Pass string as input
 - Shorthand for echo | command
 
 **File Descriptors:**
-- `0`: stdin
-- `1`: stdout
-- `2`: stderr
-- `3+`: Custom file descriptors`,
+- 0: stdin
+- 1: stdout
+- 2: stderr
+- 3+: Custom file descriptors`,
 					CodeExamples: `#!/bin/bash
 # Read file line by line
 while read line; do
@@ -817,25 +803,25 @@ echo "Hello, $name"`,
 					Content: `Managing users is fundamental to Linux administration.
 
 **User Management Commands:**
-- `useradd`: Create user
-- `usermod`: Modify user
-- `userdel`: Delete user
-- `passwd`: Change password
-- `id`: Show user ID and groups
-- `whoami`: Show current user
-- `w` or `who`: Show logged in users
+- useradd: Create user
+- usermod: Modify user
+- userdel: Delete user
+- passwd: Change password
+- id: Show user ID and groups
+- whoami: Show current user
+- w or who: Show logged in users
 
 **User Files:**
-- `/etc/passwd`: User accounts
-- `/etc/shadow`: Encrypted passwords
-- `/etc/group`: Groups
+- /etc/passwd: User accounts
+- /etc/shadow: Encrypted passwords
+- /etc/group: Groups
 
 **Common Operations:**
-- Create user: `useradd -m username`
-- Set password: `passwd username`
-- Add to group: `usermod -aG groupname username`
-- Lock account: `usermod -L username`
-- Unlock account: `usermod -U username``,
+- Create user: useradd -m username
+- Set password: passwd username
+- Add to group: usermod -aG groupname username
+- Lock account: usermod -L username
+- Unlock account: usermod -U username`,
 					CodeExamples: `# Create user
 sudo useradd -m -s /bin/bash newuser
 
@@ -875,14 +861,14 @@ sudo usermod -U username  # Unlock`,
 					Content: `systemd manages system services. Understanding it is essential for modern Linux administration.
 
 **systemctl Commands:**
-- `systemctl start service`: Start service
-- `systemctl stop service`: Stop service
-- `systemctl restart service`: Restart service
-- `systemctl reload service`: Reload configuration
-- `systemctl status service`: Check status
-- `systemctl enable service`: Enable at boot
-- `systemctl disable service`: Disable at boot
-- `systemctl list-units`: List all units
+- systemctl start service: Start service
+- systemctl stop service: Stop service
+- systemctl restart service: Restart service
+- systemctl reload service: Reload configuration
+- systemctl status service: Check status
+- systemctl enable service: Enable at boot
+- systemctl disable service: Disable at boot
+- systemctl list-units: List all units
 
 **Service States:**
 - **active**: Running
@@ -931,37 +917,37 @@ sudo journalctl -u nginx -f  # Follow logs`,
 - Query systemd journal
 - Centralized logging (systemd systems)
 - Binary format, indexed
-- `journalctl`: View logs
-- `journalctl -u service`: Service-specific logs
-- `journalctl -f`: Follow logs (like tail -f)
-- `journalctl --since "1 hour ago"`: Time-based filtering
+- journalctl: View logs
+- journalctl -u service: Service-specific logs
+- journalctl -f: Follow logs (like tail -f)
+- journalctl --since "1 hour ago": Time-based filtering
 
 **syslog (Traditional):**
-- `/var/log/syslog`: System messages (Debian/Ubuntu)
-- `/var/log/messages`: System messages (Red Hat)
-- `/var/log/auth.log`: Authentication logs
-- `/var/log/kern.log`: Kernel messages
+- /var/log/syslog: System messages (Debian/Ubuntu)
+- /var/log/messages: System messages (Red Hat)
+- /var/log/auth.log: Authentication logs
+- /var/log/kern.log: Kernel messages
 
 **Common Log Files:**
-- `/var/log/auth.log`: Authentication attempts
-- `/var/log/syslog`: General system logs
-- `/var/log/apache2/`: Apache web server logs
-- `/var/log/nginx/`: Nginx web server logs
-- `/var/log/mail.log`: Mail server logs
-- `/var/log/cron.log`: Cron job logs
+- /var/log/auth.log: Authentication attempts
+- /var/log/syslog: General system logs
+- /var/log/apache2/: Apache web server logs
+- /var/log/nginx/: Nginx web server logs
+- /var/log/mail.log: Mail server logs
+- /var/log/cron.log: Cron job logs
 
 **Log Rotation:**
 - Prevents logs from filling disk
-- Managed by `logrotate`
-- Configuration: `/etc/logrotate.conf`
-- Service configs: `/etc/logrotate.d/`
+- Managed by logrotate
+- Configuration: /etc/logrotate.conf
+- Service configs: /etc/logrotate.d/
 
 **Log Analysis:**
-- `grep`: Search logs
-- `tail -f`: Follow log in real-time
-- `less`: View logs page by page
-- `awk`: Process log entries
-- `journalctl`: Query systemd logs`,
+- grep: Search logs
+- tail -f: Follow log in real-time
+- less: View logs page by page
+- awk: Process log entries
+- journalctl: Query systemd logs`,
 					CodeExamples: `# View all system logs
 journalctl
 
@@ -1055,18 +1041,18 @@ awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn`,
 					Content: `APT (Advanced Package Tool) manages packages on Debian-based systems.
 
 **Common apt Commands:**
-- `apt update`: Update package lists
-- `apt upgrade`: Upgrade installed packages
-- `apt install package`: Install package
-- `apt remove package`: Remove package
-- `apt search keyword`: Search packages
-- `apt show package`: Show package info
-- `apt list --installed`: List installed packages
+- apt update: Update package lists
+- apt upgrade: Upgrade installed packages
+- apt install package: Install package
+- apt remove package: Remove package
+- apt search keyword: Search packages
+- apt show package: Show package info
+- apt list --installed: List installed packages
 
 **dpkg:**
 - Lower-level package tool
-- `dpkg -i package.deb`: Install .deb file
-- `dpkg -l`: List installed packages`,
+- dpkg -i package.deb: Install .deb file
+- dpkg -l: List installed packages`,
 					CodeExamples: `# Update package lists
 sudo apt update
 
@@ -1100,17 +1086,17 @@ sudo apt install -f  # Fix dependencies`,
 					Content: `YUM/DNF manages packages on Red Hat-based systems. DNF is the newer version.
 
 **Common dnf/yum Commands:**
-- `dnf update`: Update packages
-- `dnf install package`: Install package
-- `dnf remove package`: Remove package
-- `dnf search keyword`: Search packages
-- `dnf info package`: Show package info
-- `dnf list installed`: List installed packages
+- dnf update: Update packages
+- dnf install package: Install package
+- dnf remove package: Remove package
+- dnf search keyword: Search packages
+- dnf info package: Show package info
+- dnf list installed: List installed packages
 
 **rpm:**
 - Lower-level package tool
-- `rpm -i package.rpm`: Install .rpm file
-- `rpm -qa`: List installed packages`,
+- rpm -i package.rpm: Install .rpm file
+- rpm -qa: List installed packages`,
 					CodeExamples: `# Update packages
 sudo dnf update
 
@@ -1139,9 +1125,9 @@ sudo rpm -i package.rpm`,
 **APT Repositories (Debian/Ubuntu):**
 
 **Repository Sources:**
-- `/etc/apt/sources.list`: Main repository list
-- `/etc/apt/sources.list.d/`: Additional repository files
-- Format: `deb [options] URL distribution components`
+- /etc/apt/sources.list: Main repository list
+- /etc/apt/sources.list.d/: Additional repository files
+- Format: deb [options] URL distribution components
 
 **Repository Components:**
 - **main**: Officially supported software
@@ -1150,27 +1136,27 @@ sudo rpm -i package.rpm`,
 - **multiverse**: Not free software
 
 **Adding Repositories:**
-- `add-apt-repository`: Add repository (Ubuntu)
-- Edit `/etc/apt/sources.list` manually
-- Add `.list` file to `/etc/apt/sources.list.d/`
+- add-apt-repository: Add repository (Ubuntu)
+- Edit /etc/apt/sources.list manually
+- Add .list file to /etc/apt/sources.list.d/
 
 **GPG Keys:**
 - Repositories are signed with GPG keys
-- Keys stored in `/etc/apt/trusted.gpg.d/`
-- `apt-key`: Manage keys (deprecated, use signed-by)
+- Keys stored in /etc/apt/trusted.gpg.d/
+- apt-key: Manage keys (deprecated, use signed-by)
 
 **YUM/DNF Repositories (Red Hat/Fedora):**
 
 **Repository Files:**
-- `/etc/yum.repos.d/`: Repository configuration files
-- `.repo` files define repositories
-- Format: `[repository-id]` with options
+- /etc/yum.repos.d/: Repository configuration files
+- .repo files define repositories
+- Format: [repository-id] with options
 
 **Repository Options:**
-- `baseurl`: Repository URL
-- `gpgcheck`: Verify GPG signatures
-- `enabled`: Enable/disable repository
-- `gpgkey`: GPG key URL
+- baseurl: Repository URL
+- gpgcheck: Verify GPG signatures
+- enabled: Enable/disable repository
+- gpgkey: GPG key URL
 
 **Managing Repositories:**
 - Enable/disable repositories
@@ -1247,17 +1233,17 @@ sudo rpm --import http://example.com/RPM-GPG-KEY`,
 					Content: `Configuring network interfaces is essential for system administration.
 
 **Network Commands:**
-- `ip`: Modern network configuration tool
-- `ifconfig`: Legacy tool (may need installation)
-- `ping`: Test connectivity
-- `netstat`: Network connections
-- `ss`: Modern netstat replacement
+- ip: Modern network configuration tool
+- ifconfig: Legacy tool (may need installation)
+- ping: Test connectivity
+- netstat: Network connections
+- ss: Modern netstat replacement
 
 **ip Command:**
-- `ip addr`: Show IP addresses
-- `ip link`: Show network interfaces
-- `ip route`: Show routing table
-- `ip addr add`: Add IP address`,
+- ip addr: Show IP addresses
+- ip link: Show network interfaces
+- ip route: Show routing table
+- ip addr add: Add IP address`,
 					CodeExamples: `# Show IP addresses
 ip addr
 ip a
@@ -1295,10 +1281,10 @@ ss -tuln  # Modern alternative`,
 					Content: `SSH (Secure Shell) provides secure remote access to Linux systems.
 
 **SSH Basics:**
-- `ssh user@host`: Connect to remote host
-- `ssh -p port user@host`: Connect on specific port
-- `ssh-keygen`: Generate SSH keys
-- `ssh-copy-id`: Copy public key to remote host
+- ssh user@host: Connect to remote host
+- ssh -p port user@host: Connect on specific port
+- ssh-keygen: Generate SSH keys
+- ssh-copy-id: Copy public key to remote host
 
 **SSH Keys:**
 - More secure than passwords
@@ -1335,33 +1321,33 @@ rsync -avz directory/ user@host:/path/`,
 **Basic Troubleshooting Steps:**
 
 **1. Check Connectivity:**
-- `ping`: Test network connectivity
-- `ping -c 4 host`: Send 4 packets
-- `ping6`: IPv6 ping
+- ping: Test network connectivity
+- ping -c 4 host: Send 4 packets
+- ping6: IPv6 ping
 
 **2. Check DNS Resolution:**
-- `nslookup`: Query DNS
-- `dig`: DNS lookup tool
-- `host`: Simple DNS lookup
-- `/etc/resolv.conf`: DNS configuration
+- nslookup: Query DNS
+- dig: DNS lookup tool
+- host: Simple DNS lookup
+- /etc/resolv.conf: DNS configuration
 
 **3. Check Network Configuration:**
-- `ip addr`: Show IP addresses
-- `ip link`: Show interfaces
-- `ifconfig`: Legacy tool
-- `hostname -I`: Show IP addresses
+- ip addr: Show IP addresses
+- ip link: Show interfaces
+- ifconfig: Legacy tool
+- hostname -I: Show IP addresses
 
 **4. Check Routing:**
-- `ip route`: Show routing table
-- `route -n`: Legacy routing table
-- `traceroute`: Trace network path
-- `mtr`: Network diagnostic tool
+- ip route: Show routing table
+- route -n: Legacy routing table
+- traceroute: Trace network path
+- mtr: Network diagnostic tool
 
 **5. Check Ports and Connections:**
-- `netstat`: Network connections
-- `ss`: Modern netstat replacement
-- `lsof`: List open files/ports
-- `nmap`: Network scanner
+- netstat: Network connections
+- ss: Modern netstat replacement
+- lsof: List open files/ports
+- nmap: Network scanner
 
 **Common Issues:**
 - **No connectivity**: Check interface, routing, firewall

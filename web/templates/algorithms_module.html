@@ -3,9 +3,9 @@
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/algorithms" style="color: #3b82f6; text-decoration: none;">← Back to Algorithms</a>
+            <a href="/algorithms" class="back-link">← Back to Algorithms</a>
             <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
-            <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
+            <p class="module-description">{{.Module.Description}}</p>
         </div>
     </div>
 
@@ -57,15 +57,15 @@
 }
 
 .lessons-section, .problems-section {
-    background: #1e293b;
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #334155;
+    border: 1px solid var(--border-color);
 }
 
 .lesson-card {
-    background: #0f172a;
-    border: 1px solid #334155;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     margin-bottom: 15px;
     overflow: hidden;
@@ -77,33 +77,33 @@
     align-items: center;
     padding: 15px;
     cursor: pointer;
-    background: #1e293b;
+    background: var(--bg-secondary);
     transition: background 0.2s;
 }
 
 .lesson-header:hover {
-    background: #253347;
+    background: var(--bg-tertiary);
 }
 
 .lesson-header h4 {
     margin: 0;
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-size: 1.1em;
 }
 
 .lesson-toggle {
-    color: #3b82f6;
+    color: var(--accent-color);
     font-size: 0.9em;
     transition: transform 0.3s;
 }
 
 .lesson-content {
     padding: 20px;
-    border-top: 1px solid #334155;
+    border-top: 1px solid var(--border-color);
 }
 
 .lesson-text {
-    color: #ccc;
+    color: var(--text-secondary);
     line-height: 1.8;
     margin-bottom: 15px;
 }
@@ -123,13 +123,13 @@
 }
 
 .lesson-text strong {
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
 .lesson-code {
-    background: #0f172a;
-    border: 1px solid #334155;
+    background: var(--code-bg);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 15px;
     margin-top: 15px;
@@ -141,13 +141,13 @@
 }
 
 .lesson-code code {
-    color: #f8f8f2;
+    color: var(--code-text);
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
 }
 
 .problem-topic {
-    background: #3b82f6;
+    background: var(--accent-color);
     color: white;
     padding: 4px 8px;
     border-radius: 4px;

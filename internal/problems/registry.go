@@ -50,3 +50,10 @@ func RegisterLinuxModules(modules []CourseModule) {
 	defer linuxMu.Unlock()
 	allLinuxModules = append(allLinuxModules, modules...)
 }
+
+// RegisterNetworkingModules registers networking course modules
+func RegisterNetworkingModules(modules []CourseModule) {
+	networkingMu.Lock()
+	defer networkingMu.Unlock()
+	allNetworkingModules = append(allNetworkingModules, modules...)
+}

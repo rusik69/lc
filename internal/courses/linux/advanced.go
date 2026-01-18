@@ -25,7 +25,7 @@ func init() {
 **Process Groups:**
 - Processes organized into groups
 - Job control uses process groups
-- `ps -o pid,pgid,comm` shows process groups`,
+- ps -o pid,pgid,comm shows process groups`,
 					CodeExamples: `# Send signal
 kill -SIGTERM 12345
 kill -15 12345  # Same as above
@@ -44,20 +44,17 @@ kill -TERM -12345  # Negative PID = process group`,
 					Content: `Cron schedules commands to run automatically at specified times.
 
 **Cron Syntax:**
-\`\`\`
-* * * * * command
-│ │ │ │ │
-│ │ │ │ └── Day of week (0-7, 0 or 7 = Sunday)
-│ │ │ └──── Month (1-12)
-│ │ └────── Day of month (1-31)
-│ └──────── Hour (0-23)
-└────────── Minute (0-59)
-\`\`\`
+- Format: minute hour day month weekday command
+- Minute: 0-59
+- Hour: 0-23
+- Day of month: 1-31
+- Month: 1-12
+- Day of week: 0-7 (0 or 7 = Sunday)
 
 **Crontab:**
-- `crontab -e`: Edit crontab
-- `crontab -l`: List crontab
-- `crontab -r`: Remove crontab`,
+- crontab -e: Edit crontab
+- crontab -l: List crontab
+- crontab -r: Remove crontab`,
 					CodeExamples: `# Edit crontab
 crontab -e
 
@@ -196,24 +193,24 @@ esac
 **Service File Structure:**
 
 **Unit Section:**
-- `Description`: Service description
-- `After`: Start after these units
-- `Requires`: Hard dependency
-- `Wants`: Soft dependency
-- `Before`: Start before these units
+- Description: Service description
+- After: Start after these units
+- Requires: Hard dependency
+- Wants: Soft dependency
+- Before: Start before these units
 
 **Service Section:**
-- `Type`: Service type (simple, forking, oneshot, notify)
-- `ExecStart`: Command to start service
-- `ExecStop`: Command to stop service
-- `ExecReload`: Command to reload config
-- `Restart`: Restart policy
-- `User/Group`: Run as user/group
-- `WorkingDirectory`: Working directory
+- Type: Service type (simple, forking, oneshot, notify)
+- ExecStart: Command to start service
+- ExecStop: Command to stop service
+- ExecReload: Command to reload config
+- Restart: Restart policy
+- User/Group: Run as user/group
+- WorkingDirectory: Working directory
 
 **Install Section:**
-- `WantedBy`: Target that wants this service
-- `RequiredBy`: Target that requires this service
+- WantedBy: Target that wants this service
+- RequiredBy: Target that requires this service
 
 **Service Types:**
 - **simple**: Main process (default)
@@ -296,9 +293,9 @@ sudo systemctl unmask service-name`,
 **strace:**
 - Trace system calls and signals
 - Shows what system calls process makes
-- `strace command`: Trace command
-- `strace -p PID`: Attach to running process
-- `strace -e trace=open,read`: Trace specific calls
+- strace command: Trace command
+- strace -p PID: Attach to running process
+- strace -e trace=open,read: Trace specific calls
 
 **ltrace:**
 - Trace library calls
@@ -313,17 +310,17 @@ sudo systemctl unmask service-name`,
 - **/proc/PID**: Process information
 
 **Process Information:**
-- `/proc/PID/`: Process directory
-- `/proc/PID/cmdline`: Command line
-- `/proc/PID/environ`: Environment variables
-- `/proc/PID/fd/`: File descriptors
-- `/proc/PID/status`: Process status
+- /proc/PID/: Process directory
+- /proc/PID/cmdline: Command line
+- /proc/PID/environ: Environment variables
+- /proc/PID/fd/: File descriptors
+- /proc/PID/status: Process status
 
 **Monitoring Tools:**
-- `strace`: System call tracer
-- `ltrace`: Library call tracer
-- `lsof`: List open files
-- `fuser`: Identify processes using files`,
+- strace: System call tracer
+- ltrace: Library call tracer
+- lsof: List open files
+- fuser: Identify processes using files`,
 					CodeExamples: `# Trace system calls
 strace ls -l
 
@@ -390,16 +387,14 @@ gdb program core-file`,
 					Content: `Mounting makes filesystems accessible. /etc/fstab defines filesystems to mount at boot.
 
 **Mount Commands:**
-- `mount`: Mount filesystem
-- `umount`: Unmount filesystem
-- `mount -a`: Mount all in fstab
-- `df`: Show filesystem usage
-- `du`: Show directory usage
+- mount: Mount filesystem
+- umount: Unmount filesystem
+- mount -a: Mount all in fstab
+- df: Show filesystem usage
+- du: Show directory usage
 
 **fstab Format:**
-\`\`\`
-device mountpoint fstype options dump pass
-\`\`\``,
+device mountpoint fstype options dump pass`,
 					CodeExamples: `# Mount filesystem
 sudo mount /dev/sda1 /mnt
 
@@ -424,10 +419,10 @@ sudo mount -a`,
 					Content: `Managing disks and partitions is essential for system administration.
 
 **Disk Tools:**
-- `fdisk`: Partition table manipulator
-- `parted`: Advanced partitioning
-- `lsblk`: List block devices
-- `blkid`: Show block device attributes
+- fdisk: Partition table manipulator
+- parted: Advanced partitioning
+- lsblk: List block devices
+- blkid: Show block device attributes
 
 **Filesystem Types:**
 - ext4: Default Linux filesystem
@@ -470,19 +465,19 @@ sudo fsck /dev/sda1`,
 - Striping and mirroring
 
 **Common LVM Commands:**
-- `pvcreate`: Create physical volume
-- `vgcreate`: Create volume group
-- `lvcreate`: Create logical volume
-- `pvdisplay`, `vgdisplay`, `lvdisplay`: Show information
-- `lvextend`: Extend logical volume
-- `resize2fs`: Resize filesystem
+- pvcreate: Create physical volume
+- vgcreate: Create volume group
+- lvcreate: Create logical volume
+- pvdisplay, vgdisplay, lvdisplay: Show information
+- lvextend: Extend logical volume
+- resize2fs: Resize filesystem
 
 **LVM Workflow:**
-1. Create physical volume: `pvcreate /dev/sdb`
-2. Create volume group: `vgcreate vgname /dev/sdb`
-3. Create logical volume: `lvcreate -L 10G -n lvname vgname`
-4. Create filesystem: `mkfs.ext4 /dev/vgname/lvname`
-5. Mount: `mount /dev/vgname/lvname /mnt``,
+1. Create physical volume: pvcreate /dev/sdb
+2. Create volume group: vgcreate vgname /dev/sdb
+3. Create logical volume: lvcreate -L 10G -n lvname vgname
+4. Create filesystem: mkfs.ext4 /dev/vgname/lvname
+5. Mount: mount /dev/vgname/lvname /mnt`,
 					CodeExamples: `# Create physical volume
 sudo pvcreate /dev/sdb
 sudo pvcreate /dev/sdb1 /dev/sdb2
@@ -550,7 +545,7 @@ sudo pvremove /dev/sdb`,
 - Implemented in kernel
 - No special hardware needed
 - Flexible configuration
-- Managed with `mdadm` command
+- Managed with mdadm command
 
 **RAID Levels:**
 
@@ -584,10 +579,10 @@ sudo pvremove /dev/sdb`,
 - Requires minimum 4 disks (even number)
 
 **mdadm Commands:**
-- `mdadm --create`: Create RAID array
-- `mdadm --detail`: Show array details
-- `mdadm --manage`: Manage array (add/remove disks)
-- `/proc/mdstat`: Show RAID status`,
+- mdadm --create: Create RAID array
+- mdadm --detail: Show array details
+- mdadm --manage: Manage array (add/remove disks)
+- /proc/mdstat: Show RAID status`,
 					CodeExamples: `# Create RAID 1 (mirroring)
 sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
 
@@ -630,24 +625,24 @@ watch cat /proc/mdstat`,
 					Content: `Filesystem tuning optimizes performance and behavior for specific workloads.
 
 **Mount Options:**
-- `noatime`: Don't update access times (faster)
-- `nodiratime`: Don't update directory access times
-- `relatime`: Update access times relative to modify/change
-- `barrier`: Write barriers (safety vs performance)
-- `data=ordered`: Data ordering mode (ext3/ext4)
+- noatime: Don't update access times (faster)
+- nodiratime: Don't update directory access times
+- relatime: Update access times relative to modify/change
+- barrier: Write barriers (safety vs performance)
+- data=ordered: Data ordering mode (ext3/ext4)
 
 **Tuning Parameters:**
 
 **ext4 Tuning:**
-- `tune2fs`: Tune ext2/ext3/ext4 filesystems
-- `reserved-blocks-percent`: Reserve space for root
-- `max-mount-counts`: Force fsck after N mounts
-- `check-interval`: Force fsck after time period
+- tune2fs: Tune ext2/ext3/ext4 filesystems
+- reserved-blocks-percent: Reserve space for root
+- max-mount-counts: Force fsck after N mounts
+- check-interval: Force fsck after time period
 
 **XFS Tuning:**
-- `xfs_info`: Show XFS information
-- `xfs_growfs`: Grow XFS filesystem
-- `mkfs.xfs` options: inode size, block size
+- xfs_info: Show XFS information
+- xfs_growfs: Grow XFS filesystem
+- mkfs.xfs options: inode size, block size
 
 **Performance Considerations:**
 - **Block size**: Larger = better for large files
@@ -656,9 +651,9 @@ watch cat /proc/mdstat`,
 - **Write barriers**: Safety vs performance
 
 **Monitoring:**
-- `iostat`: I/O statistics
-- `iotop`: I/O by process
-- `dstat`: Combined statistics`,
+- iostat: I/O statistics
+- iotop: I/O by process
+- dstat: Combined statistics`,
 					CodeExamples: `# Mount with performance options
 sudo mount -o noatime,nodiratime /dev/sda1 /mnt
 
@@ -719,12 +714,12 @@ find / -type f -size +100M 2>/dev/null`,
 					Content: `Monitoring system performance helps identify bottlenecks and issues.
 
 **Monitoring Commands:**
-- `top`/`htop`: Process monitor
-- `iotop`: I/O monitoring
-- `nethogs`: Network usage by process
-- `free`: Memory usage
-- `vmstat`: Virtual memory statistics
-- `iostat`: I/O statistics`,
+- top/htop: Process monitor
+- iotop: I/O monitoring
+- nethogs: Network usage by process
+- free: Memory usage
+- vmstat: Virtual memory statistics
+- iostat: I/O statistics`,
 					CodeExamples: `# Memory usage
 free -h
 
@@ -748,10 +743,10 @@ iostat -d 1`,
 					Content: `ulimit controls resource limits for processes.
 
 **Common Limits:**
-- `ulimit -a`: Show all limits
-- `ulimit -n`: File descriptors
-- `ulimit -u`: Processes
-- `ulimit -v`: Virtual memory`,
+- ulimit -a: Show all limits
+- ulimit -n: File descriptors
+- ulimit -u: Processes
+- ulimit -v: Virtual memory`,
 					CodeExamples: `# Show limits
 ulimit -a
 
@@ -765,9 +760,9 @@ ulimit -n 4096
 					Content: `Performance tuning optimizes system behavior for specific workloads and requirements.
 
 **Kernel Parameters:**
-- `/proc/sys/`: Runtime kernel parameters
-- `sysctl`: View and modify kernel parameters
-- `/etc/sysctl.conf`: Persistent kernel parameters
+- /proc/sys/: Runtime kernel parameters
+- sysctl: View and modify kernel parameters
+- /etc/sysctl.conf: Persistent kernel parameters
 
 **Common Tuning Areas:**
 - **Network**: TCP buffer sizes, connection limits
@@ -776,10 +771,10 @@ ulimit -n 4096
 - **Process**: Process limits, scheduling
 
 **sysctl Parameters:**
-- `vm.swappiness`: Swap usage tendency (0-100)
-- `net.ipv4.tcp_fin_timeout`: TCP FIN timeout
-- `fs.file-max`: Maximum open files
-- `kernel.pid_max`: Maximum process ID
+- vm.swappiness: Swap usage tendency (0-100)
+- net.ipv4.tcp_fin_timeout: TCP FIN timeout
+- fs.file-max: Maximum open files
+- kernel.pid_max: Maximum process ID
 
 **Tuning Strategy:**
 1. Identify bottleneck
@@ -845,7 +840,7 @@ cat /proc/sys/fs/file-max`,
 
 **CPU Affinity:**
 - Bind process to specific CPUs
-- `taskset`: Set CPU affinity
+- taskset: Set CPU affinity
 - Useful for NUMA systems
 - Can improve cache performance
 
@@ -858,9 +853,9 @@ cat /proc/sys/fs/file-max`,
 
 **chrt Command:**
 - Set real-time scheduling
-- `chrt -f priority command`: FIFO scheduling
-- `chrt -r priority command`: Round Robin
-- `chrt -p PID`: Show policy
+- chrt -f priority command: FIFO scheduling
+- chrt -r priority command: Round Robin
+- chrt -p PID: Show policy
 
 **Performance Considerations:**
 - Real-time processes can starve others
@@ -917,22 +912,22 @@ numactl --membind=0 --cpunodebind=0 command`,
 - **Cache**: Page cache, buffer cache
 
 **Memory Statistics:**
-- `free`: Show memory usage
-- `/proc/meminfo`: Detailed memory info
-- `vmstat`: Virtual memory statistics
-- `top`/`htop`: Process memory usage
+- free: Show memory usage
+- /proc/meminfo: Detailed memory info
+- vmstat: Virtual memory statistics
+- top/htop: Process memory usage
 
 **Swap Management:**
 - **Swappiness**: Tendency to swap (0-100)
 - Lower = prefer RAM, higher = prefer swap
-- `swapoff`: Disable swap
-- `swapon`: Enable swap
+- swapoff: Disable swap
+- swapon: Enable swap
 
 **OOM Killer:**
 - Out-of-Memory killer
 - Kills processes when memory exhausted
-- `/proc/sys/vm/oom_kill_allocating_task`: Control behavior
-- `dmesg`: View OOM kills
+- /proc/sys/vm/oom_kill_allocating_task: Control behavior
+- dmesg: View OOM kills
 
 **Memory Tuning:**
 - Adjust swappiness
@@ -1018,10 +1013,10 @@ sudo systemctl restart sshd`,
 					Content: `Firewalls control network traffic. iptables and firewalld are common tools.
 
 **firewalld (Red Hat/Fedora):**
-- `firewall-cmd`: Configure firewall
-- `firewall-cmd --list-all`: Show rules
-- `firewall-cmd --add-service`: Add service
-- `firewall-cmd --reload`: Reload rules`,
+- firewall-cmd: Configure firewall
+- firewall-cmd --list-all: Show rules
+- firewall-cmd --add-service: Add service
+- firewall-cmd --reload: Reload rules`,
 					CodeExamples: `# List rules
 sudo firewall-cmd --list-all
 
@@ -1077,27 +1072,27 @@ EOF`,
 - **PCRE (Perl Compatible)**: More powerful, grep -P
 
 **Basic Patterns:**
-- `.`: Any character
-- `*`: Zero or more of previous
-- `+`: One or more (ERE)
-- `?`: Zero or one (ERE)
-- `^`: Start of line
-- `$`: End of line
-- `[]`: Character class
-- `|`: OR (ERE)
+- .: Any character
+- *: Zero or more of previous
+- +: One or more (ERE)
+- ?: Zero or one (ERE)
+- ^: Start of line
+- $: End of line
+- []: Character class
+- |: OR (ERE)
 
 **Character Classes:**
-- `[0-9]`: Digits
-- `[a-z]`: Lowercase letters
-- `[A-Z]`: Uppercase letters
-- `[[:digit:]]`: POSIX digit class
-- `[[:alpha:]]`: Letters
-- `[[:alnum:]]`: Alphanumeric
+- [0-9]: Digits
+- [a-z]: Lowercase letters
+- [A-Z]: Uppercase letters
+- [[:digit:]]: POSIX digit class
+- [[:alpha:]]: Letters
+- [[:alnum:]]: Alphanumeric
 
 **Bash Regex Matching:**
-- `[[ string =~ regex ]]`: Match regex
+- [[ string =~ regex ]]: Match regex
 - Capture groups in BASH_REMATCH array
-- `=~` operator uses ERE`,
+- =~ operator uses ERE`,
 					CodeExamples: `# Basic regex with grep
 grep "^Error" file.txt
 grep "error$" file.txt
@@ -1148,17 +1143,17 @@ awk '$1 ~ /^[A-Z]/ {print}' file.txt`,
 					Content: `Mastering advanced text processing enables complex data manipulation and extraction.
 
 **sed Advanced:**
-- Multiple commands: `sed -e 'cmd1' -e 'cmd2'`
-- Script files: `sed -f script.sed`
-- In-place editing: `sed -i`
-- Address ranges: `sed '10,20d'`
+- Multiple commands: sed -e 'cmd1' -e 'cmd2'
+- Script files: sed -f script.sed
+- In-place editing: sed -i
+- Address ranges: sed '10,20d'
 - Hold space: Advanced pattern space manipulation
 
 **awk Advanced:**
 - Arrays: Associative arrays
 - Functions: Built-in and user-defined
-- Pattern ranges: `awk '/start/,/end/ {print}'`
-- Field manipulation: `$1=$1` (recalculate)
+- Pattern ranges: awk '/start/,/end/ {print}'
+- Field manipulation: $1=$1 (recalculate)
 - Output formatting: printf
 
 **Combining Tools:**
@@ -1222,17 +1217,17 @@ cat file.txt | \
 - Cache command output
 
 **Best Practices:**
-- Use `[[ ]]` instead of `[ ]` (faster)
-- Avoid `cat file | command`, use `command < file`
-- Use `$(command)` instead of backticks
+- Use [[ ]] instead of [ ] (faster)
+- Avoid cat file | command, use command < file
+- Use $(command) instead of backticks
 - Quote variables properly
-- Use `local` in functions
+- Use local in functions
 
 **Profiling:**
-- `time`: Measure execution time
-- `bash -x`: Trace execution
-- `set -x`: Enable tracing
-- Profile with `time` command
+- time: Measure execution time
+- bash -x: Trace execution
+- set -x: Enable tracing
+- Profile with time command
 
 **Common Optimizations:**
 - Reduce external commands
@@ -1300,11 +1295,11 @@ substring=${string:0:10}`,
 					Content: `Proper debugging and testing ensures script reliability and correctness.
 
 **Debugging Techniques:**
-- `bash -x`: Trace execution
-- `set -x`: Enable tracing
-- `set -euo pipefail`: Strict mode
-- `trap`: Error handling
-- `echo`: Print debugging info
+- bash -x: Trace execution
+- set -x: Enable tracing
+- set -euo pipefail: Strict mode
+- trap: Error handling
+- echo: Print debugging info
 
 **Testing Approaches:**
 - **Unit testing**: Test functions individually
@@ -1313,8 +1308,8 @@ substring=${string:0:10}`,
 - **Error cases**: Test error handling
 
 **Testing Tools:**
-- `shellcheck`: Static analysis
-- `bats`: Bash Automated Testing System
+- shellcheck: Static analysis
+- bats: Bash Automated Testing System
 - Manual testing with various inputs
 - Test with different shells
 
@@ -1395,11 +1390,11 @@ done`,
 					Content: `System calls are interfaces between user programs and the kernel.
 
 **Common System Calls:**
-- `open`, `read`, `write`, `close`: File operations
-- `fork`, `exec`: Process creation
-- `wait`: Wait for child process
-- `kill`: Send signal
-- `pipe`: Create pipe`,
+- open, read, write, close: File operations
+- fork, exec: Process creation
+- wait: Wait for child process
+- kill: Send signal
+- pipe: Create pipe`,
 					CodeExamples: `# C example (conceptual)
 #include <unistd.h>
 #include <sys/types.h>
@@ -1418,11 +1413,11 @@ if (pid == 0) {
 					Content: `File I/O system calls provide low-level file operations.
 
 **System Calls:**
-- `open`: Open file, returns file descriptor
-- `read`: Read from file descriptor
-- `write`: Write to file descriptor
-- `close`: Close file descriptor
-- `lseek`: Move file pointer
+- open: Open file, returns file descriptor
+- read: Read from file descriptor
+- write: Write to file descriptor
+- close: Close file descriptor
+- lseek: Move file pointer
 
 **File Descriptors:**
 - Small integer representing open file
@@ -1431,7 +1426,7 @@ if (pid == 0) {
 
 **Error Handling:**
 - System calls return -1 on error
-- `errno` contains error code
+- errno contains error code
 - Check return values always
 
 **File Operations:**
@@ -1485,19 +1480,19 @@ exec 4>&-`,
 
 **exec Family:**
 - Replaces current process image
-- `execl`, `execv`, `execle`, etc.
+- execl, execv, execle, etc.
 - Different argument formats
 - Process continues with new program
 
 **wait():**
 - Parent waits for child to exit
-- `wait(NULL)`: Wait for any child
-- `waitpid(pid, &status, 0)`: Wait for specific child
+- wait(NULL): Wait for any child
+- waitpid(pid, &status, 0): Wait for specific child
 - Returns child's exit status
 
 **Process Tree:**
 - Parent-child relationships
-- `pstree`: Show process tree
+- pstree: Show process tree
 - Orphan processes adopted by init
 - Zombie processes (exited but not waited)`,
 					CodeExamples: `# C fork/exec example
@@ -1538,8 +1533,8 @@ ps -ef --forest`,
 					Content: `Signals are software interrupts. Programming with signals requires careful handling.
 
 **Signal Handling:**
-- `signal()`: Simple signal handler (deprecated)
-- `sigaction()`: Advanced signal handling (preferred)
+- signal(): Simple signal handler (deprecated)
+- sigaction(): Advanced signal handling (preferred)
 - Handler function receives signal number
 - Some signals cannot be caught (SIGKILL, SIGSTOP)
 
@@ -1552,7 +1547,7 @@ ps -ef --forest`,
 
 **Signal Masking:**
 - Block signals during critical sections
-- `sigprocmask()`: Set signal mask
+- sigprocmask(): Set signal mask
 - Prevent signal delivery temporarily
 
 **Best Practices:**
@@ -1607,24 +1602,24 @@ trap - INT`,
 
 **Pipes:**
 - Unidirectional communication
-- `pipe()` creates pipe
+- pipe() creates pipe
 - Parent-child communication
 - Data flows one direction
 
 **FIFOs (Named Pipes):**
-- `mkfifo()` creates named pipe
+- mkfifo() creates named pipe
 - Unrelated processes can use
 - Appears as file in filesystem
 - Blocking I/O
 
 **Shared Memory:**
 - Fastest IPC method
-- `shmget()`, `shmat()`, `shmdt()`
+- shmget(), shmat(), shmdt()
 - Multiple processes access same memory
 - Requires synchronization
 
 **Message Queues:**
-- `msgget()`, `msgsnd()`, `msgrcv()`
+- msgget(), msgsnd(), msgrcv()
 - Structured messages
 - Type-based message selection
 
@@ -1685,10 +1680,10 @@ cat < mypipe
 					Content: `Kernel modules extend kernel functionality without rebooting.
 
 **Module Commands:**
-- `lsmod`: List loaded modules
-- `modinfo`: Show module info
-- `modprobe`: Load/unload modules
-- `insmod`/`rmmod`: Low-level module operations`,
+- lsmod: List loaded modules
+- modinfo: Show module info
+- modprobe: Load/unload modules
+- insmod/rmmod: Low-level module operations`,
 					CodeExamples: `# List modules
 lsmod
 
@@ -1707,14 +1702,14 @@ sudo modprobe -r module_name`,
 
 **/proc:**
 - Process and kernel information
-- `/proc/cpuinfo`: CPU information
-- `/proc/meminfo`: Memory information
-- `/proc/version`: Kernel version
+- /proc/cpuinfo: CPU information
+- /proc/meminfo: Memory information
+- /proc/version: Kernel version
 
 **/sys:**
 - Kernel and device information
-- `/sys/class`: Device classes
-- `/sys/devices`: Physical devices`,
+- /sys/class: Device classes
+- /sys/devices: Physical devices`,
 					CodeExamples: `# CPU info
 cat /proc/cpuinfo
 
@@ -1744,12 +1739,12 @@ ls /sys/class/`,
 					Content: `Git is essential for version control and DevOps workflows.
 
 **Basic Git Commands:**
-- `git init`: Initialize repository
-- `git add`: Stage changes
-- `git commit`: Commit changes
-- `git status`: Show status
-- `git log`: Show history
-- `git clone`: Clone repository`,
+- git init: Initialize repository
+- git add: Stage changes
+- git commit: Commit changes
+- git status: Show status
+- git log: Show history
+- git clone: Clone repository`,
 					CodeExamples: `# Initialize repo
 git init
 
@@ -1774,11 +1769,11 @@ git clone https://github.com/user/repo.git`,
 					Content: `Docker containers package applications with dependencies.
 
 **Docker Commands:**
-- `docker run`: Run container
-- `docker ps`: List containers
-- `docker images`: List images
-- `docker build`: Build image
-- `docker exec`: Execute in container`,
+- docker run: Run container
+- docker ps: List containers
+- docker images: List images
+- docker build: Build image
+- docker exec: Execute in container`,
 					CodeExamples: `# Run container
 docker run -d nginx
 
@@ -1807,10 +1802,10 @@ docker exec -it container_name bash`,
 - **Handlers**: Tasks triggered by events
 
 **Ansible Commands:**
-- `ansible`: Run ad-hoc commands
-- `ansible-playbook`: Run playbooks
-- `ansible-vault`: Encrypt sensitive data
-- `ansible-galaxy`: Install roles
+- ansible: Run ad-hoc commands
+- ansible-playbook: Run playbooks
+- ansible-vault: Encrypt sensitive data
+- ansible-galaxy: Install roles
 
 **Ad-hoc Commands:**
 - Quick one-off tasks
@@ -2054,11 +2049,11 @@ retry apt-get update`,
 					Content: `Advanced network troubleshooting skills are essential for system administrators.
 
 **Troubleshooting Tools:**
-- `tcpdump`: Packet capture
-- `wireshark`: GUI packet analyzer
-- `netstat`/`ss`: Connection info
-- `traceroute`: Trace network path
-- `mtr`: Network diagnostic tool`,
+- tcpdump: Packet capture
+- wireshark: GUI packet analyzer
+- netstat/ss: Connection info
+- traceroute: Trace network path
+- mtr: Network diagnostic tool`,
 					CodeExamples: `# Packet capture
 sudo tcpdump -i eth0
 
@@ -2082,10 +2077,10 @@ mtr google.com`,
 - **Policy routing**: Route based on rules
 
 **Routing Commands:**
-- `ip route`: Show/manage routes
-- `route`: Legacy routing commands
-- `ip rule`: Policy routing rules
-- `ip route show table`: Show specific table
+- ip route: Show/manage routes
+- route: Legacy routing commands
+- ip rule: Policy routing rules
+- ip route show table: Show specific table
 
 **Route Types:**
 - **Host route**: Route to specific host
@@ -2214,19 +2209,19 @@ sudo wg show`,
 - Isolated network stack
 - Own interfaces, routing tables, firewall rules
 - Useful for containers, virtualization
-- Created with `ip netns`
+- Created with ip netns
 
 **Namespace Operations:**
-- `ip netns add`: Create namespace
-- `ip netns list`: List namespaces
-- `ip netns exec`: Execute command in namespace
-- `ip netns delete`: Delete namespace
+- ip netns add: Create namespace
+- ip netns list: List namespaces
+- ip netns exec: Execute command in namespace
+- ip netns delete: Delete namespace
 
 **veth Pairs:**
 - Virtual Ethernet pairs
 - Connect namespaces
 - Like a virtual cable
-- Created with `ip link add type veth`
+- Created with ip link add type veth
 
 **Use Cases:**
 - Container networking
@@ -2353,10 +2348,10 @@ sudo ufw enable`,
 - Differential: Changes since last full
 
 **Backup Tools:**
-- `tar`: Archive files
-- `rsync`: Synchronize files
-- `dd`: Disk cloning
-- `borg`: Deduplicating backup`,
+- tar: Archive files
+- rsync: Synchronize files
+- dd: Disk cloning
+- borg: Deduplicating backup`,
 					CodeExamples: `# Create backup
 tar -czf backup.tar.gz /path/to/backup
 
@@ -2591,7 +2586,7 @@ fi
 - System logging daemon
 - Can forward logs
 - Filtering and processing
-- Configuration: `/etc/rsyslog.conf`
+- Configuration: /etc/rsyslog.conf
 
 **Centralized Logging:**
 - Collect logs from multiple sources

@@ -1136,5 +1136,692 @@ def deserialize(data: str) -> Optional[TreeNode]:
     return dp[m][n]`,
 		Explanation: "Classic DP (Levenshtein distance). dp[i][j] = min operations for word1[0...i-1] to word2[0...j-1]. Consider insert, delete, replace. Time: O(m*n), Space: O(m*n).",
 	},
+	{
+		ID:          61,
+		Title:       "Trapping Rain Water",
+		Description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+		Difficulty:  "Hard",
+		Topic:       "Two Pointers",
+		Signature:   "func trap(height []int) int",
+		TestCases: []TestCase{
+			{Input: "height = []int{0,1,0,2,1,0,1,3,2,1,2,1}", Expected: "6"},
+			{Input: "height = []int{4,2,0,3,2,5}", Expected: "9"},
+			{Input: "height = []int{3,0,2,0,4}", Expected: "7"},
+			{Input: "height = []int{1}", Expected: "0"},
+			{Input: "height = []int{1,0,1}", Expected: "1"},
+			{Input: "height = []int{5,4,3,2,1}", Expected: "0"},
+		},
+		Solution: `func trap(height []int) int {
+	if len(height) < 3 {
+		return 0
+	}
+	left, right := 0, len(height)-1
+	leftMax, rightMax := 0, 0
+	water := 0
+	for left < right {
+		if height[left] < height[right] {
+			if height[left] >= leftMax {
+				leftMax = height[left]
+			} else {
+				water += leftMax - height[left]
+			}
+			left++
+		} else {
+			if height[right] >= rightMax {
+				rightMax = height[right]
+			} else {
+				water += rightMax - height[right]
+			}
+			right--
+		}
+	}
+	return water
+}`,
+		PythonSolution: `def trap(height: List[int]) -> int:
+    if len(height) < 3:
+        return 0
+    left, right = 0, len(height) - 1
+    left_max, right_max = 0, 0
+    water = 0
+    while left < right:
+        if height[left] < height[right]:
+            if height[left] >= left_max:
+                left_max = height[left]
+            else:
+                water += left_max - height[left]
+            left += 1
+        else:
+            if height[right] >= right_max:
+                right_max = height[right]
+            else:
+                water += right_max - height[right]
+            right -= 1
+    return water`,
+		Explanation: "Two pointers approach. Track max heights from both sides. Water trapped = min(leftMax, rightMax) - current height. Move pointer with smaller height. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          62,
+		Title:       "Merge k Sorted Lists",
+		Description: "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+		Difficulty:  "Hard",
+		Topic:       "Linked Lists",
+		Signature:   "func mergeKLists(lists []*ListNode) *ListNode",
+		TestCases: []TestCase{
+			{Input: "lists = [[1,4,5],[1,3,4],[2,6]]", Expected: "[1 1 2 3 4 4 5 6]"},
+			{Input: "lists = []", Expected: "[]"},
+			{Input: "lists = [[]]", Expected: "[]"},
+			{Input: "lists = [[1],[2],[3]]", Expected: "[1 2 3]"},
+			{Input: "lists = [[1,2,3],[4,5,6]]", Expected: "[1 2 3 4 5 6]"},
+		},
+		Solution: `func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	for len(lists) > 1 {
+		merged := []*ListNode{}
+		for i := 0; i < len(lists); i += 2 {
+			l1 := lists[i]
+			var l2 *ListNode
+			if i+1 < len(lists) {
+				l2 = lists[i+1]
+			}
+			merged = append(merged, mergeTwoLists(l1, l2))
+		}
+		lists = merged
+	}
+	return lists[0]
+}
+
+func mergeTwoLists(l1, l2 *ListNode) *ListNode {
+	dummy := &ListNode{}
+	current := dummy
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			current.Next = l1
+			l1 = l1.Next
+		} else {
+			current.Next = l2
+			l2 = l2.Next
+		}
+		current = current.Next
+	}
+	if l1 != nil {
+		current.Next = l1
+	} else {
+		current.Next = l2
+	}
+	return dummy.Next
+}`,
+		PythonSolution: `def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+    if not lists:
+        return None
+    while len(lists) > 1:
+        merged = []
+        for i in range(0, len(lists), 2):
+            l1 = lists[i]
+            l2 = lists[i + 1] if i + 1 < len(lists) else None
+            merged.append(merge_two_lists(l1, l2))
+        lists = merged
+    return lists[0]
+
+def merge_two_lists(l1, l2):
+    dummy = ListNode()
+    current = dummy
+    while l1 and l2:
+        if l1.val < l2.val:
+            current.next = l1
+            l1 = l1.next
+        else:
+            current.next = l2
+            l2 = l2.next
+        current = current.next
+    current.next = l1 or l2
+    return dummy.next`,
+		Explanation: "Divide and conquer: merge pairs of lists iteratively until one remains. Merge two sorted lists helper function. Time: O(n log k) where n is total nodes, Space: O(1).",
+	},
+	{
+		ID:          63,
+		Title:       "Serialize and Deserialize Binary Tree",
+		Description: "Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.",
+		Difficulty:  "Hard",
+		Topic:       "Trees",
+		Signature:   "type Codec struct{}\nfunc Constructor() Codec\nfunc (this *Codec) serialize(root *TreeNode) string\nfunc (this *Codec) deserialize(data string) *TreeNode",
+		TestCases: []TestCase{
+			{Input: "root = [1,2,3,null,null,4,5]", Expected: "[1 2 3 null null 4 5]"},
+			{Input: "root = []", Expected: "[]"},
+			{Input: "root = [1]", Expected: "[1]"},
+			{Input: "root = [1,2]", Expected: "[1 2]"},
+		},
+		Solution: `import (
+	"strconv"
+	"strings"
+)
+
+type Codec struct{}
+
+func Constructor() Codec {
+	return Codec{}
+}
+
+func (this *Codec) serialize(root *TreeNode) string {
+	if root == nil {
+		return "null"
+	}
+	return strconv.Itoa(root.Val) + "," + this.serialize(root.Left) + "," + this.serialize(root.Right)
+}
+
+func (this *Codec) deserialize(data string) *TreeNode {
+	values := strings.Split(data, ",")
+	index := 0
+	return this.deserializeHelper(&index, values)
+}
+
+func (this *Codec) deserializeHelper(index *int, values []string) *TreeNode {
+	if *index >= len(values) || values[*index] == "null" {
+		(*index)++
+		return nil
+	}
+	val, _ := strconv.Atoi(values[*index])
+	(*index)++
+	node := &TreeNode{Val: val}
+	node.Left = this.deserializeHelper(index, values)
+	node.Right = this.deserializeHelper(index, values)
+	return node
+}`,
+		PythonSolution: `class Codec:
+    def serialize(self, root):
+        if not root:
+            return "null"
+        return str(root.val) + "," + self.serialize(root.left) + "," + self.serialize(root.right)
+    
+    def deserialize(self, data):
+        values = data.split(",")
+        self.index = 0
+        return self.deserialize_helper(values)
+    
+    def deserialize_helper(self, values):
+        if self.index >= len(values) or values[self.index] == "null":
+            self.index += 1
+            return None
+        val = int(values[self.index])
+        self.index += 1
+        node = TreeNode(val)
+        node.left = self.deserialize_helper(values)
+        node.right = self.deserialize_helper(values)
+        return node`,
+		Explanation: "Preorder traversal serialization. Use comma-separated values, \"null\" for nil nodes. Deserialize by reading values in preorder. Time: O(n), Space: O(n).",
+	},
+	{
+		ID:          64,
+		Title:       "Word Ladder",
+		Description: "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that: Every adjacent pair of words differs by a single letter, and every si for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList. Return the number of words in the shortest transformation sequence from beginWord to endWord, or 0 if no such sequence exists.",
+		Difficulty:  "Hard",
+		Topic:       "Graphs",
+		Signature:   "func ladderLength(beginWord string, endWord string, wordList []string) int",
+		TestCases: []TestCase{
+			{Input: "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]", Expected: "5"},
+			{Input: "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]", Expected: "0"},
+			{Input: "beginWord = \"a\", endWord = \"c\", wordList = [\"a\",\"b\",\"c\"]", Expected: "2"},
+			{Input: "beginWord = \"hot\", endWord = \"dog\", wordList = [\"hot\",\"dog\"]", Expected: "0"},
+		},
+		Solution: `func ladderLength(beginWord string, endWord string, wordList []string) int {
+	wordSet := make(map[string]bool)
+	for _, word := range wordList {
+		wordSet[word] = true
+	}
+	if !wordSet[endWord] {
+		return 0
+	}
+	queue := []string{beginWord}
+	level := 1
+	visited := make(map[string]bool)
+	visited[beginWord] = true
+	for len(queue) > 0 {
+		size := len(queue)
+		for i := 0; i < size; i++ {
+			word := queue[0]
+			queue = queue[1:]
+			if word == endWord {
+				return level
+			}
+			chars := []byte(word)
+			for j := 0; j < len(chars); j++ {
+				original := chars[j]
+				for c := 'a'; c <= 'z'; c++ {
+					if byte(c) == original {
+						continue
+					}
+					chars[j] = byte(c)
+					nextWord := string(chars)
+					if wordSet[nextWord] && !visited[nextWord] {
+						visited[nextWord] = true
+						queue = append(queue, nextWord)
+					}
+				}
+				chars[j] = original
+			}
+		}
+		level++
+	}
+	return 0
+}`,
+		PythonSolution: `def ladderLength(beginWord: str, endWord: str, wordList: List[str]) -> int:
+    word_set = set(wordList)
+    if endWord not in word_set:
+        return 0
+    queue = [beginWord]
+    level = 1
+    visited = {beginWord}
+    while queue:
+        size = len(queue)
+        for _ in range(size):
+            word = queue.pop(0)
+            if word == endWord:
+                return level
+            chars = list(word)
+            for i in range(len(chars)):
+                original = chars[i]
+                for c in 'abcdefghijklmnopqrstuvwxyz':
+                    if c == original:
+                        continue
+                    chars[i] = c
+                    next_word = ''.join(chars)
+                    if next_word in word_set and next_word not in visited:
+                        visited.add(next_word)
+                        queue.append(next_word)
+                chars[i] = original
+        level += 1
+    return 0`,
+		Explanation: "BFS: Each word is a node, edges connect words differing by one letter. Use BFS to find shortest path. Time: O(M*N) where M is word length, N is word list size, Space: O(N).",
+	},
+	{
+		ID:          65,
+		Title:       "Find Median from Data Stream",
+		Description: "The median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value and the median is the mean of the two middle values. Implement the MedianFinder class: MedianFinder() initializes the MedianFinder object. void addNum(int num) adds the integer num from the data stream to the data structure. double findMedian() returns the median of all elements so far.",
+		Difficulty:  "Hard",
+		Topic:       "Heaps",
+		Signature:   "type MedianFinder struct{}\nfunc Constructor() MedianFinder\nfunc (this *MedianFinder) AddNum(num int)\nfunc (this *MedianFinder) FindMedian() float64",
+		TestCases: []TestCase{
+			{Input: "MedianFinder, addNum(1), addNum(2), findMedian(), addNum(3), findMedian()", Expected: "1.5, 2.0"},
+			{Input: "MedianFinder, addNum(1), addNum(2), addNum(3), addNum(4), findMedian()", Expected: "2.5"},
+			{Input: "MedianFinder, addNum(5), findMedian()", Expected: "5.0"},
+		},
+		Solution: `import "container/heap"
+
+type IntHeap []int
+
+func (h IntHeap) Len() int           { return len(h) }
+func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *IntHeap) Push(x interface{}) { *h = append(*h, x.(int)) }
+func (h *IntHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+type MedianFinder struct {
+	small *IntHeap // max heap (negate for min heap behavior)
+	large *IntHeap // min heap
+}
+
+func Constructor() MedianFinder {
+	small := &IntHeap{}
+	large := &IntHeap{}
+	heap.Init(small)
+	heap.Init(large)
+	return MedianFinder{small: small, large: large}
+}
+
+func (this *MedianFinder) AddNum(num int) {
+	if this.small.Len() == 0 || num <= -(*this.small)[0] {
+		heap.Push(this.small, -num)
+	} else {
+		heap.Push(this.large, num)
+	}
+	if this.small.Len() > this.large.Len()+1 {
+		val := heap.Pop(this.small).(int)
+		heap.Push(this.large, -val)
+	} else if this.large.Len() > this.small.Len() {
+		val := heap.Pop(this.large).(int)
+		heap.Push(this.small, -val)
+	}
+}
+
+func (this *MedianFinder) FindMedian() float64 {
+	if this.small.Len() > this.large.Len() {
+		return float64(-(*this.small)[0])
+	}
+	return float64(-(*this.small)[0]+(*this.large)[0]) / 2.0
+}`,
+		PythonSolution: `import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.small = []  # max heap (negate values)
+        self.large = []  # min heap
+    
+    def addNum(self, num: int) -> None:
+        if not self.small or num <= -self.small[0]:
+            heapq.heappush(self.small, -num)
+        else:
+            heapq.heappush(self.large, num)
+        if len(self.small) > len(self.large) + 1:
+            val = heapq.heappop(self.small)
+            heapq.heappush(self.large, -val)
+        elif len(self.large) > len(self.small):
+            val = heapq.heappop(self.large)
+            heapq.heappush(self.small, -val)
+    
+    def findMedian(self) -> float:
+        if len(self.small) > len(self.large):
+            return float(-self.small[0])
+        return (-self.small[0] + self.large[0]) / 2.0`,
+		Explanation: "Two heaps: small (max heap) for smaller half, large (min heap) for larger half. Keep sizes balanced. Median is top of small (if odd) or average of both tops (if even). Time: O(log n) per addNum, O(1) findMedian, Space: O(n).",
+	},
+	{
+		ID:          66,
+		Title:       "N-Queens",
+		Description: "The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other. Given an integer n, return all distinct solutions to the n-queens puzzle. You may return the answer in any order.",
+		Difficulty:  "Hard",
+		Topic:       "Backtracking",
+		Signature:   "func solveNQueens(n int) [][]string",
+		TestCases: []TestCase{
+			{Input: "n = 4", Expected: "[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]"},
+			{Input: "n = 1", Expected: "[[\"Q\"]]"},
+			{Input: "n = 2", Expected: "[]"},
+			{Input: "n = 3", Expected: "[]"},
+		},
+		Solution: `func solveNQueens(n int) [][]string {
+	result := [][]string{}
+	board := make([][]byte, n)
+	for i := range board {
+		board[i] = make([]byte, n)
+		for j := range board[i] {
+			board[i][j] = '.'
+		}
+	}
+	cols := make(map[int]bool)
+	diag1 := make(map[int]bool) // row - col
+	diag2 := make(map[int]bool) // row + col
+	var backtrack func(row int)
+	backtrack = func(row int) {
+		if row == n {
+			solution := make([]string, n)
+			for i := 0; i < n; i++ {
+				solution[i] = string(board[i])
+			}
+			result = append(result, solution)
+			return
+		}
+		for col := 0; col < n; col++ {
+			if cols[col] || diag1[row-col] || diag2[row+col] {
+				continue
+			}
+			board[row][col] = 'Q'
+			cols[col] = true
+			diag1[row-col] = true
+			diag2[row+col] = true
+			backtrack(row + 1)
+			board[row][col] = '.'
+			delete(cols, col)
+			delete(diag1, row-col)
+			delete(diag2, row+col)
+		}
+	}
+	backtrack(0)
+	return result
+}`,
+		PythonSolution: `def solveNQueens(n: int) -> List[List[str]]:
+    result = []
+    board = [['.'] * n for _ in range(n)]
+    cols = set()
+    diag1 = set()  # row - col
+    diag2 = set()  # row + col
+    def backtrack(row):
+        if row == n:
+            result.append([''.join(row) for row in board])
+            return
+        for col in range(n):
+            if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                continue
+            board[row][col] = 'Q'
+            cols.add(col)
+            diag1.add(row - col)
+            diag2.add(row + col)
+            backtrack(row + 1)
+            board[row][col] = '.'
+            cols.remove(col)
+            diag1.remove(row - col)
+            diag2.remove(row + col)
+    backtrack(0)
+    return result`,
+		Explanation: "Backtracking: Place queen row by row. Track columns and diagonals (two types) to check attacks. Time: O(n!), Space: O(n²) for board.",
+	},
+	{
+		ID:          67,
+		Title:       "Sudoku Solver",
+		Description: "Write a program to solve a Sudoku puzzle by filling the empty cells. A sudoku solution must satisfy all of the following rules: Each of the digits 1-9 must occur exactly once in each row, each column, and each of the nine 3x3 sub-boxes of the grid. The '.' character indicates empty cells.",
+		Difficulty:  "Hard",
+		Topic:       "Backtracking",
+		Signature:   "func solveSudoku(board [][]byte)",
+		TestCases: []TestCase{
+			{Input: "board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]", Expected: "Solved board"},
+		},
+		Solution: `func solveSudoku(board [][]byte) {
+	solve(board)
+}
+
+func solve(board [][]byte) bool {
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if board[i][j] == '.' {
+				for c := byte('1'); c <= '9'; c++ {
+					if isValid(board, i, j, c) {
+						board[i][j] = c
+						if solve(board) {
+							return true
+						}
+						board[i][j] = '.'
+					}
+				}
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func isValid(board [][]byte, row, col int, c byte) bool {
+	for i := 0; i < 9; i++ {
+		if board[row][i] == c {
+			return false
+		}
+		if board[i][col] == c {
+			return false
+		}
+		if board[3*(row/3)+i/3][3*(col/3)+i%3] == c {
+			return false
+		}
+	}
+	return true
+}`,
+		PythonSolution: `def solveSudoku(board: List[List[str]]) -> None:
+    def solve():
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == '.':
+                    for c in '123456789':
+                        if is_valid(i, j, c):
+                            board[i][j] = c
+                            if solve():
+                                return True
+                            board[i][j] = '.'
+                    return False
+        return True
+    
+    def is_valid(row, col, c):
+        for i in range(9):
+            if board[row][i] == c:
+                return False
+            if board[i][col] == c:
+                return False
+            if board[3 * (row // 3) + i // 3][3 * (col // 3) + i % 3] == c:
+                return False
+        return True
+    
+    solve()`,
+		Explanation: "Backtracking: Try digits 1-9 for each empty cell. Check row, column, and 3x3 box. Backtrack if invalid. Time: O(9^m) where m is empty cells, Space: O(1).",
+	},
+	{
+		ID:          68,
+		Title:       "First Missing Positive",
+		Description: "Given an unsorted integer array nums, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses O(1) extra space.",
+		Difficulty:  "Hard",
+		Topic:       "Arrays",
+		Signature:   "func firstMissingPositive(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{1,2,0}", Expected: "3"},
+			{Input: "nums = []int{3,4,-1,1}", Expected: "2"},
+			{Input: "nums = []int{7,8,9,11,12}", Expected: "1"},
+			{Input: "nums = []int{1}", Expected: "2"},
+			{Input: "nums = []int{1,2,3}", Expected: "4"},
+			{Input: "nums = []int{-1,-2,-3}", Expected: "1"},
+		},
+		Solution: `func firstMissingPositive(nums []int) int {
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		for nums[i] > 0 && nums[i] <= n && nums[nums[i]-1] != nums[i] {
+			nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]
+		}
+	}
+	for i := 0; i < n; i++ {
+		if nums[i] != i+1 {
+			return i + 1
+		}
+	}
+	return n + 1
+}`,
+		PythonSolution: `def firstMissingPositive(nums: List[int]) -> int:
+    n = len(nums)
+    for i in range(n):
+        while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:
+            nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1
+    return n + 1`,
+		Explanation: "Cyclic sort: Place each number at its correct index (nums[i] should be at index nums[i]-1). First position where nums[i] != i+1 is the answer. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          69,
+		Title:       "Wildcard Matching",
+		Description: "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*' where: '?' Matches any single character. '*' Matches any sequence of characters (including the empty sequence). The matching should cover the entire input string (not partial).",
+		Difficulty:  "Hard",
+		Topic:       "Dynamic Programming",
+		Signature:   "func isMatch(s string, p string) bool",
+		TestCases: []TestCase{
+			{Input: "s = \"aa\", p = \"a\"", Expected: "false"},
+			{Input: "s = \"aa\", p = \"*\"", Expected: "true"},
+			{Input: "s = \"cb\", p = \"?a\"", Expected: "false"},
+			{Input: "s = \"adceb\", p = \"*a*b\"", Expected: "true"},
+			{Input: "s = \"acdcb\", p = \"a*c?b\"", Expected: "false"},
+			{Input: "s = \"\", p = \"*\"", Expected: "true"},
+		},
+		Solution: `func isMatch(s string, p string) bool {
+	m, n := len(s), len(p)
+	dp := make([][]bool, m+1)
+	for i := range dp {
+		dp[i] = make([]bool, n+1)
+	}
+	dp[0][0] = true
+	for j := 1; j <= n; j++ {
+		if p[j-1] == '*' {
+			dp[0][j] = dp[0][j-1]
+		}
+	}
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if p[j-1] == '*' {
+				dp[i][j] = dp[i][j-1] || dp[i-1][j]
+			} else if p[j-1] == '?' || s[i-1] == p[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			}
+		}
+	}
+	return dp[m][n]
+}`,
+		PythonSolution: `def isMatch(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(1, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]
+            elif p[j - 1] == '?' or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]`,
+		Explanation: "DP: dp[i][j] = match s[0..i-1] with p[0..j-1]. '*' matches empty (dp[i][j-1]) or any sequence (dp[i-1][j]). '?' or match: dp[i-1][j-1]. Time: O(m*n), Space: O(m*n).",
+	},
+	{
+		ID:          70,
+		Title:       "Regular Expression Matching",
+		Description: "Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where: '.' Matches any single character. '*' Matches zero or more of the preceding element. The matching should cover the entire input string (not partial).",
+		Difficulty:  "Hard",
+		Topic:       "Dynamic Programming",
+		Signature:   "func isMatch(s string, p string) bool",
+		TestCases: []TestCase{
+			{Input: "s = \"aa\", p = \"a\"", Expected: "false"},
+			{Input: "s = \"aa\", p = \"a*\"", Expected: "true"},
+			{Input: "s = \"ab\", p = \".*\"", Expected: "true"},
+			{Input: "s = \"aab\", p = \"c*a*b\"", Expected: "true"},
+			{Input: "s = \"mississippi\", p = \"mis*is*p*.\"", Expected: "false"},
+			{Input: "s = \"\", p = \"a*\"", Expected: "true"},
+		},
+		Solution: `func isMatch(s string, p string) bool {
+	m, n := len(s), len(p)
+	dp := make([][]bool, m+1)
+	for i := range dp {
+		dp[i] = make([]bool, n+1)
+	}
+	dp[0][0] = true
+	for j := 2; j <= n; j++ {
+		if p[j-1] == '*' {
+			dp[0][j] = dp[0][j-2]
+		}
+	}
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if p[j-1] == '*' {
+				dp[i][j] = dp[i][j-2] || (dp[i-1][j] && (s[i-1] == p[j-2] || p[j-2] == '.'))
+			} else if p[j-1] == '.' || s[i-1] == p[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			}
+		}
+	}
+	return dp[m][n]
+}`,
+		PythonSolution: `def isMatch(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(2, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 2]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i][j - 2] or (dp[i - 1][j] and (s[i - 1] == p[j - 2] or p[j - 2] == '.'))
+            elif p[j - 1] == '.' or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]`,
+		Explanation: "DP: dp[i][j] = match s[0..i-1] with p[0..j-1]. '*' matches zero (dp[i][j-2]) or one+ (dp[i-1][j] if char matches). '.' or match: dp[i-1][j-1]. Time: O(m*n), Space: O(m*n).",
+	},
 }
 

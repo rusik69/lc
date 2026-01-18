@@ -216,17 +216,25 @@ python3.11 -m venv myenv311
    - Execute code line by line
    - See results immediately
    - Perfect for experimentation and quick tests
+   - Use exit() or Ctrl+D to quit
+   - History available (up arrow)
+   - IPython provides enhanced REPL with autocomplete, syntax highlighting
 
 2. **Script Files**
    - Save code in .py files
    - Run with: python script.py or python3 script.py
    - Full programs and applications
    - Can be imported as modules
+   - Use shebang line: #!/usr/bin/env python3 for direct execution
+   - Make executable: chmod +x script.py
 
 3. **Jupyter Notebooks**
    - Interactive cells for data science
    - Mix code, markdown, and visualizations
    - Great for exploratory analysis
+   - Install: pip install jupyter
+   - Run: jupyter notebook or jupyter lab
+   - Save as .ipynb files
 
 **Basic Program Structure:**
 - **No semicolons**: Python uses newlines to end statements
@@ -238,14 +246,90 @@ python3.11 -m venv myenv311
 **Indentation Rules:**
 - Python uses indentation to define code blocks (unlike braces in C/Java)
 - Consistent indentation is required (mixing tabs and spaces causes errors)
-- Standard is 4 spaces per indentation level
+- Standard is 4 spaces per indentation level (PEP 8)
 - Indentation level determines scope
+- Same indentation level = same scope
+- Increased indentation = new scope (function, class, if, for, etc.)
+
+**Why Indentation Matters:**
+- Makes code more readable
+- Enforces consistent style
+- Reduces need for braces/brackets
+- Pythonic way of structuring code
 
 **Common Pitfalls:**
-- **IndentationError**: Mixing tabs and spaces, inconsistent indentation
-- **SyntaxError**: Missing colons after if/for/def statements
-- **NameError**: Using variable before assignment
-- **ImportError**: Module not found (check PYTHONPATH, virtual environment)`,
+
+**1. IndentationError:**
+- Mixing tabs and spaces (Python 3 disallows this)
+- Inconsistent indentation levels
+- Solution: Use 4 spaces consistently, configure editor to show whitespace
+- Use: python -tt script.py to detect mixed tabs/spaces
+
+**2. SyntaxError:**
+- Missing colons after if/for/def/while/class statements
+- Unclosed parentheses, brackets, or quotes
+- Solution: Check for colons, match brackets/quotes
+
+**3. NameError:**
+- Using variable before assignment
+- Typo in variable name
+- Variable not in scope
+- Solution: Check variable names, ensure assignment before use
+
+**4. ImportError:**
+- Module not found
+- Wrong PYTHONPATH
+- Virtual environment not activated
+- Solution: Check PYTHONPATH, activate venv, install package
+
+**5. Indentation Confusion:**
+- Not understanding scope
+- Wrong indentation level
+- Solution: Use consistent 4-space indentation, understand scope rules
+
+**Best Practices:**
+
+**1. Use Consistent Indentation:**
+- Always use 4 spaces (PEP 8)
+- Configure editor to insert spaces, not tabs
+- Use python -tt to detect mixed indentation
+
+**2. Use Main Guard:**
+- Allows script to be imported or run
+- Prevents code execution on import
+- Enables testing and reuse
+
+**3. Write Docstrings:**
+- Document modules, functions, classes
+- Use triple-quoted strings
+- Follow PEP 257 conventions
+
+**4. Follow PEP 8:**
+- Python style guide
+- Use linters (flake8, pylint, black)
+- Format code consistently
+
+**5. Use Type Hints (Python 3.5+):**
+- Improves code clarity
+- Enables static type checking
+- Better IDE support
+
+**Real-World Examples:**
+
+**Simple Script:**
+- Hello world program
+- Command-line utility
+- Data processing script
+
+**Module Design:**
+- Reusable code
+- Can be imported
+- Contains functions/classes
+
+**Package Structure:**
+- Multiple modules
+- __init__.py file
+- Organized codebase`,
 					CodeExamples: `# hello.py - Your first program
 """
 Module docstring - describes what this module does.

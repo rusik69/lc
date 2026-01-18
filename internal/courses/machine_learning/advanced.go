@@ -24,7 +24,59 @@ func init() {
 - Input: xₜ (current input)
 - Hidden State: hₜ (current state)
 - Output: yₜ (current output)
-- Recurrence: hₜ = f(W·xₜ + U·hₜ₋₁ + b)
+- Recurrence: hₜ = tanh(W·xₜ + U·hₜ₋₁ + b)
+
+**Forward Pass - Detailed:**
+
+**Unrolled Network:**
+RNN can be "unrolled" through time:
+- t=0: h₀ = tanh(W·x₀ + U·h₋₁ + b), y₀ = V·h₀
+- t=1: h₁ = tanh(W·x₁ + U·h₀ + b), y₁ = V·h₁
+- t=2: h₂ = tanh(W·x₂ + U·h₁ + b), y₂ = V·h₂
+- ...
+
+**Key Insight:**
+- Same weights W, U, V used at each time step
+- Hidden state hₜ carries information from previous steps
+- Can theoretically remember information from beginning
+
+**Backpropagation Through Time (BPTT):**
+
+**The Challenge:**
+Need to backpropagate gradients through time steps.
+
+**Process:**
+1. Forward pass: Compute hₜ and yₜ for all t
+2. Compute loss: L = Σ Lₜ(yₜ, ŷₜ)
+3. Backward pass: Compute gradients w.r.t. all time steps
+4. Update: Average gradients across time steps
+
+**Gradient Flow:**
+∂L/∂U = Σₜ (∂L/∂hₜ) × (∂hₜ/∂U)
+- Gradient depends on all future time steps
+- Must unroll network backward through time
+
+**Vanishing Gradient Problem - Mathematical Derivation:**
+
+**The Problem:**
+When backpropagating through time, gradients can vanish exponentially.
+
+**Why It Happens:**
+Consider gradient w.r.t. hidden state at time t-k:
+∂L/∂hₜ₋ₖ = (∂L/∂hₜ) × (∂hₜ/∂hₜ₋₁) × ... × (∂hₜ₋ₖ₊₁/∂hₜ₋ₖ)
+
+Each term: ∂hₜ/∂hₜ₋₁ = Uᵀ × diag(tanh'(zₜ))
+- If |tanh'(z)| < 1 (which it is for most values)
+- After k steps: gradient ≈ (small_value)ᵏ → 0
+
+**Result:**
+- Early time steps receive very small gradients
+- Can't learn long-term dependencies
+- Network "forgets" information from far past
+
+**Exploding Gradient:**
+- If weights U are large, gradients can explode
+- Solution: Gradient clipping
 
 **Applications:**
 - Natural Language Processing
@@ -33,9 +85,10 @@ func init() {
 - Machine Translation
 
 **Limitations:**
-- Vanishing gradient problem
+- Vanishing gradient problem (can't learn long dependencies)
 - Difficulty learning long-term dependencies
-- Sequential processing (slow)`,
+- Sequential processing (slow, can't parallelize)
+- Limited memory (hidden state has fixed size)`,
 					CodeExamples: `import torch
 import torch.nn as nn
 
@@ -59,21 +112,78 @@ class SimpleRNN(nn.Module):
 **LSTM Components:**
 - **Forget Gate**: Decides what to forget from cell state
 - **Input Gate**: Decides what new information to store
-- **Cell State**: Long-term memory
+- **Cell State**: Long-term memory (main information highway)
 - **Output Gate**: Decides what parts of cell state to output
 
-**Gates:**
-- fₜ = σ(Wf·[hₜ₋₁, xₜ] + bf)  # Forget gate
-- iₜ = σ(Wi·[hₜ₋₁, xₜ] + bi)  # Input gate
-- C̃ₜ = tanh(WC·[hₜ₋₁, xₜ] + bC)  # Candidate values
-- Cₜ = fₜ * Cₜ₋₁ + iₜ * C̃ₜ  # Cell state
-- oₜ = σ(Wo·[hₜ₋₁, xₜ] + bo)  # Output gate
-- hₜ = oₜ * tanh(Cₜ)  # Hidden state
+**Gate-by-Gate Explanation:**
+
+**1. Forget Gate:**
+fₜ = σ(Wf·[hₜ₋₁, xₜ] + bf)
+- Output: [0, 1] for each element in cell state
+- 0 = "completely forget", 1 = "completely keep"
+- **Purpose**: Remove irrelevant information from cell state
+
+**2. Input Gate:**
+iₜ = σ(Wi·[hₜ₋₁, xₜ] + bi)  # How much to update
+C̃ₜ = tanh(WC·[hₜ₋₁, xₜ] + bC)  # New candidate values
+- **Purpose**: Decide what new information to add to cell state
+- iₜ: How much of candidate to add
+- C̃ₜ: New values to potentially add
+
+**3. Cell State Update:**
+Cₜ = fₜ * Cₜ₋₁ + iₜ * C̃ₜ
+- **Key**: Additive update (not multiplicative like RNN!)
+- fₜ * Cₜ₋₁: Keep relevant parts of old state
+- iₜ * C̃ₜ: Add new information
+- **Why this works**: Gradient flows through addition (no vanishing!)
+
+**4. Output Gate:**
+oₜ = σ(Wo·[hₜ₋₁, xₜ] + bo)
+hₜ = oₜ * tanh(Cₜ)
+- **Purpose**: Control what parts of cell state become hidden state
+- oₜ: Filter for cell state
+- hₜ: Output to next time step and for prediction
+
+**How LSTM Solves Vanishing Gradient:**
+
+**Key Insight:**
+Cell state update: Cₜ = fₜ * Cₜ₋₁ + iₜ * C̃ₜ
+
+**Gradient Flow:**
+∂Cₜ/∂Cₜ₋₁ = fₜ (plus terms from gates)
+- Gradient can flow through cell state with minimal attenuation
+- Forget gate can be ≈ 1, allowing gradient to pass through
+- Additive update preserves gradient magnitude
+
+**Cell State Flow:**
+- Cell state Cₜ is the "information highway"
+- Information can flow unchanged if forget gate ≈ 1
+- Allows learning long-term dependencies
+
+**Forget Gate Importance:**
+- If fₜ ≈ 0: Forget everything (reset)
+- If fₜ ≈ 1: Keep everything (remember)
+- Learns when to remember vs forget
 
 **Advantages:**
-- Handles long-term dependencies
-- Prevents vanishing gradients
-- Better than vanilla RNN`,
+- Handles long-term dependencies (cell state preserves information)
+- Prevents vanishing gradients (additive updates)
+- Better than vanilla RNN (gates control information flow)
+- Can learn when to remember/forget (adaptive memory)
+
+**GRU (Gated Recurrent Unit) - Simplified LSTM:**
+
+**Differences from LSTM:**
+- Combines forget and input gates into update gate
+- No separate cell state (hidden state serves both purposes)
+- Fewer parameters (faster training)
+- Often performs similarly to LSTM
+
+**GRU Gates:**
+- Update gate: zₜ = σ(Wz·[hₜ₋₁, xₜ])
+- Reset gate: rₜ = σ(Wr·[hₜ₋₁, xₜ])
+- Candidate: h̃ₜ = tanh(W·[rₜ * hₜ₋₁, xₜ])
+- Hidden: hₜ = (1-zₜ) * hₜ₋₁ + zₜ * h̃ₜ`,
 					CodeExamples: `import torch
 import torch.nn as nn
 
@@ -107,20 +217,67 @@ class LSTMModel(nn.Module):
 - Learn which tokens to attend to
 - Weighted combination of values based on relevance
 
-**Attention Formula:**
+**Attention Formula - Step-by-Step:**
+
+**Scaled Dot-Product Attention:**
 Attention(Q, K, V) = softmax(QKᵀ/√dₖ) · V
 
-Where:
-- **Q (Query)**: What we're looking for
-- **K (Key)**: What each position offers
-- **V (Value)**: Actual content at each position
-- **dₖ**: Dimension of keys (scaling factor)
+**Step 1: Compute Attention Scores**
+Scores = QKᵀ
+- Dot product between query and key
+- Measures similarity/relevance
+- Higher score = more relevant
+
+**Step 2: Scale Scores**
+Scores_scaled = Scores / √dₖ
+- Prevents dot products from becoming too large
+- Large values → softmax saturates → small gradients
+- √dₖ: Normalization factor
+
+**Step 3: Apply Softmax**
+Attention_weights = softmax(Scores_scaled)
+- Converts scores to probabilities
+- Sum to 1 (probability distribution)
+- Higher scores → higher weights
+
+**Step 4: Weighted Sum**
+Output = Attention_weights · V
+- Weighted combination of values
+- Positions with high attention weights contribute more
+
+**Detailed Example:**
+
+**Input**: "The cat sat on the mat"
+**Query**: "What did the cat do?" (position 3: "sat")
+
+**Step-by-Step:**
+1. Compute QKᵀ for "sat" with all positions:
+   - "The": score = 0.1
+   - "cat": score = 0.8 (high - subject)
+   - "sat": score = 1.0 (self-attention)
+   - "on": score = 0.6 (preposition)
+   - "the": score = 0.2
+   - "mat": score = 0.7 (object)
+
+2. Scale: Divide by √dₖ (e.g., √64 = 8)
+
+3. Softmax: [0.05, 0.25, 0.35, 0.15, 0.06, 0.14]
+   - "sat" gets highest weight (0.35)
+   - "cat" gets high weight (0.25)
+
+4. Weighted sum: 0.35×V("sat") + 0.25×V("cat") + ...
+
+**Where:**
+- **Q (Query)**: What we're looking for (e.g., "What is the action?")
+- **K (Key)**: What each position offers (e.g., "I am a noun", "I am a verb")
+- **V (Value)**: Actual content at each position (embedding vectors)
+- **dₖ**: Dimension of keys (scaling factor, typically 64)
 
 **Why Attention?**
-- Captures long-range dependencies
-- Parallelizable (unlike RNNs)
+- Captures long-range dependencies (can attend to any position)
+- Parallelizable (unlike RNNs, all positions processed simultaneously)
 - Interpretable (attention weights show what model focuses on)
-- Flexible (can attend to any position)`,
+- Flexible (can attend to any position, not just previous ones)`,
 					CodeExamples: `import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -198,18 +355,51 @@ class MultiHeadAttention(nn.Module):
 					Title: "Positional Encoding",
 					Content: `Transformers need positional information since they process all tokens in parallel (unlike RNNs).
 
-**Sinusoidal Positional Encoding:**
-- Add positional encodings to input embeddings
-- Uses sin/cos functions of different frequencies
-- Allows model to learn relative positions
+**Why Positional Encoding?**
+- RNNs: Process sequentially (position is implicit)
+- Transformers: Process in parallel (no inherent position)
+- Need to inject positional information
+
+**Sinusoidal Positional Encoding - Derivation:**
 
 **Formula:**
 PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
 PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
-**Alternative:**
-- Learned positional embeddings (trainable)
-- Often works better in practice`,
+Where:
+- pos: Position in sequence (0, 1, 2, ...)
+- i: Dimension index (0, 1, 2, ..., d_model/2)
+- d_model: Embedding dimension
+
+**Properties:**
+- **Unique**: Each position has unique encoding
+- **Relative**: Can compute relative positions via addition
+- **Extrapolation**: Can handle sequences longer than training
+- **Deterministic**: Not learned, fixed function
+
+**Intuition:**
+- Different frequencies (2i/d_model) capture different scales
+- Low frequencies: Long-range patterns
+- High frequencies: Short-range patterns
+- Sin/cos: Allows model to learn relative positions
+
+**Example:**
+For pos=0, d_model=512:
+- PE(0, 0) = sin(0 / 10000^0) = sin(0) = 0
+- PE(0, 1) = cos(0 / 10000^0) = cos(0) = 1
+- PE(0, 2) = sin(0 / 10000^(2/512)) = sin(0) = 0
+- ...
+
+**Relative Position Property:**
+PE(pos+k) can be expressed as linear function of PE(pos)
+- Allows model to learn "k positions apart"
+- Important for understanding relationships
+
+**Alternative: Learned Positional Embeddings**
+- Trainable parameters: E[pos] (learned embedding for position pos)
+- Often works better in practice
+- But can't extrapolate beyond training length
+- Used in many modern models (BERT, GPT)`,
 					CodeExamples: `import torch
 import torch.nn as nn
 import math
@@ -233,22 +423,91 @@ class PositionalEncoding(nn.Module):
 					Title: "Transformer Architecture",
 					Content: `Transformer architecture combines attention with feed-forward networks and residual connections.
 
-**Transformer Block:**
-1. **Multi-Head Self-Attention**
-2. **Add & Norm** (residual connection + layer norm)
-3. **Feed-Forward Network**
-4. **Add & Norm**
+**Transformer Block - Detailed Flow:**
+
+**Input**: X (sequence of embeddings)
+
+**1. Multi-Head Self-Attention:**
+- Compute Q, K, V from X
+- Apply attention: Attention(Q, K, V)
+- Multiple heads in parallel
+- Output: X_attn
+
+**2. Add & Norm (First):**
+- Residual: X_attn + X
+- Layer Norm: LayerNorm(X_attn + X)
+- Output: X_norm1
+
+**3. Feed-Forward Network:**
+- Two linear layers with ReLU: FFN(x) = ReLU(xW₁ + b₁)W₂ + b₂
+- Expands then contracts dimension
+- Output: X_ffn
+
+**4. Add & Norm (Second):**
+- Residual: X_ffn + X_norm1
+- Layer Norm: LayerNorm(X_ffn + X_norm1)
+- Output: Final output
+
+**Layer Normalization:**
+
+**Purpose:**
+- Normalize activations within each sample
+- Stabilizes training
+- Allows higher learning rates
+
+**Formula:**
+LayerNorm(x) = γ × (x - μ) / √(σ² + ε) + β
+Where:
+- μ: Mean of x
+- σ²: Variance of x
+- γ, β: Learnable parameters
+- ε: Small constant (numerical stability)
+
+**Why Layer Norm?**
+- Normalizes across features (not batch)
+- Works well with variable-length sequences
+- Better than batch norm for sequences
+
+**Residual Connections:**
+
+**Purpose:**
+- Helps gradient flow (solves vanishing gradient)
+- Enables deeper networks
+- Allows identity mapping (if needed)
+
+**Formula:**
+Output = LayerNorm(Sublayer(x) + x)
+
+**Why They Work:**
+- Gradient can flow directly through addition
+- Network can learn residual (difference) rather than full mapping
+- Easier optimization
+
+**Feed-Forward Network:**
+
+**Architecture:**
+FFN(x) = max(0, xW₁ + b₁)W₂ + b₂
+
+**Typical Dimensions:**
+- Input: d_model (e.g., 512)
+- Hidden: d_ff (e.g., 2048) - 4× expansion
+- Output: d_model
+
+**Purpose:**
+- Adds non-linearity
+- Processes information independently per position
+- "Thinking" step after attention
 
 **Full Transformer:**
-- **Encoder**: Processes input sequence
-- **Decoder**: Generates output sequence (with masked attention)
-- **Stacked Layers**: Multiple transformer blocks
+- **Encoder**: Processes input sequence (bidirectional attention)
+- **Decoder**: Generates output sequence (masked self-attention + encoder-decoder attention)
+- **Stacked Layers**: Multiple transformer blocks (typically 6-12 layers)
 
 **Key Components:**
-- **Layer Normalization**: Stabilizes training
-- **Residual Connections**: Helps with gradient flow
-- **Feed-Forward**: Two linear layers with ReLU
-- **Masking**: Prevents attention to future tokens (decoder)`,
+- **Layer Normalization**: Stabilizes training (normalizes activations)
+- **Residual Connections**: Helps with gradient flow (enables deep networks)
+- **Feed-Forward**: Two linear layers with ReLU (adds non-linearity)
+- **Masking**: Prevents attention to future tokens (decoder, for autoregressive generation)`,
 					CodeExamples: `import torch
 import torch.nn as nn
 
@@ -330,25 +589,122 @@ print(generated_text)`,
 					Title: "Pre-training vs Fine-tuning",
 					Content: `Understanding the difference between pre-training and fine-tuning is crucial for working with LLMs.
 
-**Pre-training:**
-- **Objective**: Learn general language patterns
-- **Data**: Massive unlabeled text corpus (web, books, etc.)
-- **Task**: Next token prediction (autoregressive) or masked language modeling
-- **Scale**: Requires massive compute (weeks/months on thousands of GPUs)
-- **Result**: General-purpose language understanding
+**Pre-training - Detailed Pipeline:**
 
-**Fine-tuning:**
-- **Objective**: Adapt to specific task/domain
-- **Data**: Smaller, task-specific labeled dataset
-- **Task**: Classification, QA, summarization, etc.
-- **Scale**: Much smaller compute (hours/days on single GPU)
-- **Result**: Task-specific model
+**Objective**: Learn general language patterns from massive text data
+
+**Data Pipeline:**
+1. **Data Collection**: Web crawl, books, articles (terabytes of text)
+2. **Cleaning**: Remove duplicates, filter low-quality content
+3. **Tokenization**: Convert text to tokens (subwords/words)
+4. **Shuffling**: Randomize order for better learning
+5. **Batching**: Create batches for training
+
+**Training Objective:**
+- **Autoregressive (GPT-style)**: Predict next token given previous tokens
+  - Loss: L = -Σ log P(xₜ | x₁, ..., xₜ₋₁)
+  - Learns to generate text
+- **Masked Language Modeling (BERT-style)**: Predict masked tokens
+  - Loss: L = -Σ log P(x_masked | context)
+  - Learns bidirectional understanding
+
+**Distributed Training:**
+
+**Why Distributed?**
+- Models too large for single GPU (175B+ parameters)
+- Need parallelization across many GPUs
+
+**Data Parallelism:**
+- Split batch across GPUs
+- Each GPU computes gradients
+- Average gradients across GPUs
+- All GPUs update same model
+
+**Model Parallelism:**
+- Split model across GPUs
+- Each GPU holds part of model
+- Forward/backward pass across GPUs
+- For very large models
+
+**Pipeline Parallelism:**
+- Split model into stages
+- Process different batches in parallel
+- Like assembly line
+
+**Mixed Precision Training:**
+
+**Purpose:**
+- Reduce memory usage
+- Speed up training
+
+**How It Works:**
+- **FP32**: Full precision (32-bit floats) - for gradients
+- **FP16/BF16**: Half precision (16-bit) - for forward pass
+- **Automatic**: Framework converts between precisions
+
+**Benefits:**
+- 2× memory reduction
+- 1.5-2× speedup
+- Minimal accuracy loss
+
+**Challenges:**
+- Gradient underflow (too small)
+- Solution: Gradient scaling (scale up, then scale down)
+
+**Fine-tuning - Detailed:**
+
+**Objective**: Adapt pre-trained model to specific task/domain
+
+**Data Requirements:**
+- Smaller dataset (thousands to millions of examples)
+- Task-specific labels
+- Can be domain-specific (medical, legal, etc.)
 
 **Fine-tuning Approaches:**
-- **Full Fine-tuning**: Update all parameters
-- **Parameter-Efficient Fine-tuning (PEFT)**: Update subset (LoRA, Adapters)
-- **Prompt Tuning**: Learn soft prompts
-- **Instruction Tuning**: Fine-tune on instruction-following`,
+
+**1. Full Fine-tuning:**
+- Update all model parameters
+- **Pros**: Best performance, full adaptation
+- **Cons**: Expensive, risk of catastrophic forgetting
+- **Use**: When you have sufficient compute and data
+
+**2. Parameter-Efficient Fine-tuning (PEFT):**
+
+**LoRA (Low-Rank Adaptation):**
+- Add low-rank matrices to attention layers
+- Freeze original weights, train only new matrices
+- **Pros**: Much fewer parameters, faster training
+- **Cons**: Slightly lower performance
+- **Use**: When compute/memory limited
+
+**Adapters:**
+- Add small adapter layers between transformer blocks
+- Train only adapters
+- **Pros**: Modular, can stack adapters
+- **Cons**: Adds inference latency
+
+**3. Prompt Tuning:**
+- Learn soft prompts (trainable embeddings)
+- Prepend to input, freeze model
+- **Pros**: Very efficient, no model changes
+- **Cons**: Limited expressiveness
+
+**4. Instruction Tuning:**
+- Fine-tune on instruction-following format
+- Format: "Instruction: ... Input: ... Output: ..."
+- **Purpose**: Make model follow instructions better
+- **Result**: Better zero-shot performance
+
+**Fine-tuning Process:**
+1. Load pre-trained weights
+2. (Optional) Add task-specific head
+3. Train on task-specific data
+4. Use lower learning rate (1e-5 to 1e-3)
+5. Monitor validation performance
+
+**Catastrophic Forgetting:**
+- Model forgets pre-training knowledge
+- **Prevention**: Lower learning rate, gradual unfreezing, regularization`,
 					CodeExamples: `# Full Fine-tuning Example
 from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments
 from datasets import Dataset
@@ -859,7 +1215,8 @@ Review: "It was okay, nothing special."
 Sentiment: Neutral
 
 Review: "Absolutely loved it! Highly recommend."
-Sentiment:""",
+Sentiment: Positive
+"""`,
 				},
 				{
 					Title: "Chain-of-Thought",

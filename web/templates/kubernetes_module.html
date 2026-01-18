@@ -3,9 +3,9 @@
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/kubernetes" style="color: #326ce5; text-decoration: none;">← Back to Kubernetes Course</a>
+            <a href="/kubernetes" class="back-link">← Back to Kubernetes Course</a>
             <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
-            <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
+            <p class="module-description">{{.Module.Description}}</p>
         </div>
     </div>
 
@@ -46,7 +46,7 @@
                 {{end}}
             </ul>
             {{else}}
-            <p style="color: #888; font-style: italic;">No practice problems available yet.</p>
+            <p class="module-description">No practice problems available yet.</p>
             {{end}}
         </div>
     </div>
@@ -67,14 +67,14 @@
 
 .lessons-section h3,
 .problems-section h3 {
-    color: #f8f8f2;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 1.3em;
 }
 
 .lesson-card {
-    background: #2d2d2d;
-    border: 1px solid #444;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     margin-bottom: 15px;
     overflow: hidden;
@@ -86,22 +86,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #353535;
+    background: var(--bg-tertiary);
     transition: background 0.2s;
 }
 
 .lesson-header:hover {
-    background: #3d3d3d;
+    background: var(--bg-tertiary);
 }
 
 .lesson-header h4 {
     margin: 0;
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-size: 1.1em;
 }
 
 .lesson-toggle {
-    color: #326ce5;
+    color: var(--accent-color);
     font-size: 0.9em;
     transition: transform 0.3s;
 }
@@ -111,13 +111,13 @@
 }
 
 .lesson-text {
-    color: #e0e0e0;
+    color: var(--text-primary);
     line-height: 1.6;
     margin-bottom: 20px;
 }
 
 .lesson-text h1, .lesson-text h2, .lesson-text h3 {
-    color: #f8f8f2;
+    color: var(--text-primary);
     margin-top: 20px;
     margin-bottom: 10px;
 }
@@ -137,21 +137,21 @@
 }
 
 .lesson-text strong {
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
 .lesson-text code {
-    background: #1e1e1e;
+    background: var(--bg-card);
     padding: 2px 6px;
     border-radius: 3px;
-    color: #d4d4d4;
+    color: var(--code-text);
     font-family: 'Courier New', monospace;
 }
 
 .lesson-code {
-    background: #1e1e1e;
-    border: 1px solid #444;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 15px;
     margin-top: 15px;
@@ -166,7 +166,7 @@
 }
 
 .lesson-code code {
-    color: #d4d4d4;
+    color: var(--code-text);
     background: transparent;
     padding: 0;
     border-radius: 0;
@@ -187,28 +187,28 @@
     align-items: center;
     gap: 15px;
     padding: 12px 15px;
-    background: #2d2d2d;
-    border: 1px solid #444;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     text-decoration: none;
-    color: #e0e0e0;
+    color: var(--text-primary);
     transition: all 0.2s;
 }
 
 .problem-list a:hover {
-    background: #353535;
-    border-color: #326ce5;
+    background: var(--bg-tertiary);
+    border-color: var(--accent-color);
 }
 
 .problem-id {
-    color: #888;
+    color: var(--text-muted);
     font-family: monospace;
     min-width: 50px;
 }
 
 .problem-title {
     flex: 1;
-    color: #e0e0e0;
+    color: var(--text-primary);
 }
 
 .difficulty {
@@ -219,13 +219,14 @@
 }
 
 .difficulty-Easy {
-    background: #28a745;
+    background: var(--success-bg);
     color: white;
 }
 
 .difficulty-Medium {
-    background: #ffc107;
-    color: #000;
+    background: rgba(255, 200, 112, 0.3);
+    color: #ffc870;
+    border: 1px solid #ffc870;
 }
 
 .difficulty-Hard {
@@ -234,7 +235,7 @@
 }
 
 .problem-topic {
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.9em;
 }
 </style>

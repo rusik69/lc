@@ -1041,4 +1041,571 @@ func isPalindromeRange(s string, i, j int) bool {
     return True`,
 		Explanation: "Sort cards and use greedy approach. For each card, try to form a group starting from it. Use hash map to track counts. Time: O(n log n), Space: O(n).",
 	},
+	{
+		ID:          41,
+		Title:       "Longest Substring Without Repeating Characters",
+		Description: "Given a string s, find the length of the longest substring without repeating characters.",
+		Difficulty:  "Medium",
+		Topic:       "Sliding Window",
+		Signature:   "func lengthOfLongestSubstring(s string) int",
+		TestCases: []TestCase{
+			{Input: "s = \"abcabcbb\"", Expected: "3"},
+			{Input: "s = \"bbbbb\"", Expected: "1"},
+			{Input: "s = \"pwwkew\"", Expected: "3"},
+			{Input: "s = \"\"", Expected: "0"},
+			{Input: "s = \"dvdf\"", Expected: "3"},
+			{Input: "s = \"abcdef\"", Expected: "6"},
+		},
+		Solution: `func lengthOfLongestSubstring(s string) int {
+	charMap := make(map[byte]int)
+	maxLen := 0
+	left := 0
+	for right := 0; right < len(s); right++ {
+		if idx, exists := charMap[s[right]]; exists && idx >= left {
+			left = idx + 1
+		}
+		charMap[s[right]] = right
+		if right-left+1 > maxLen {
+			maxLen = right - left + 1
+		}
+	}
+	return maxLen
+}`,
+		PythonSolution: `def lengthOfLongestSubstring(s: str) -> int:
+    char_map = {}
+    max_len = 0
+    left = 0
+    for right in range(len(s)):
+        if s[right] in char_map and char_map[s[right]] >= left:
+            left = char_map[s[right]] + 1
+        char_map[s[right]] = right
+        max_len = max(max_len, right - left + 1)
+    return max_len`,
+		Explanation: "Sliding window with hash map. Track last occurrence of each character. When duplicate found, move left pointer past last occurrence. Time: O(n), Space: O(min(n,m)) where m is charset size.",
+	},
+	{
+		ID:          42,
+		Title:       "Container With Most Water",
+		Description: "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]). Find two lines that together with the x-axis form a container, such that the container contains the most water. Return the maximum amount of water a container can store.",
+		Difficulty:  "Medium",
+		Topic:       "Two Pointers",
+		Signature:   "func maxArea(height []int) int",
+		TestCases: []TestCase{
+			{Input: "height = []int{1,8,6,2,5,4,8,3,7}", Expected: "49"},
+			{Input: "height = []int{1,1}", Expected: "1"},
+			{Input: "height = []int{1,2,1}", Expected: "2"},
+			{Input: "height = []int{2,3,4,5,18,17,6}", Expected: "17"},
+			{Input: "height = []int{1,3,2,5,25,24,5}", Expected: "24"},
+			{Input: "height = []int{10,9,8,7,6,5,4,3,2,1}", Expected: "25"},
+		},
+		Solution: `func maxArea(height []int) int {
+	left, right := 0, len(height)-1
+	maxArea := 0
+	for left < right {
+		width := right - left
+		area := width * min(height[left], height[right])
+		if area > maxArea {
+			maxArea = area
+		}
+		if height[left] < height[right] {
+			left++
+		} else {
+			right--
+		}
+	}
+	return maxArea
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}`,
+		PythonSolution: `def maxArea(height: List[int]) -> int:
+    left, right = 0, len(height) - 1
+    max_area = 0
+    while left < right:
+        width = right - left
+        area = width * min(height[left], height[right])
+        max_area = max(max_area, area)
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return max_area`,
+		Explanation: "Two pointers from both ends. Calculate area with current heights, move pointer with smaller height (can't improve by keeping it). Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          43,
+		Title:       "3Sum",
+		Description: "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0. Notice that the solution set must not contain duplicate triplets.",
+		Difficulty:  "Medium",
+		Topic:       "Two Pointers",
+		Signature:   "func threeSum(nums []int) [][]int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{-1,0,1,2,-1,-4}", Expected: "[[-1 -1 2] [-1 0 1]]"},
+			{Input: "nums = []int{0,1,1}", Expected: "[]"},
+			{Input: "nums = []int{0,0,0}", Expected: "[[0 0 0]]"},
+			{Input: "nums = []int{-2,0,1,1,2}", Expected: "[[-2 0 2] [-2 1 1]]"},
+			{Input: "nums = []int{-1,0,1}", Expected: "[[-1 0 1]]"},
+			{Input: "nums = []int{}", Expected: "[]"},
+		},
+		Solution: `import "sort"
+
+func threeSum(nums []int) [][]int {
+	sort.Ints(nums)
+	result := [][]int{}
+	for i := 0; i < len(nums)-2; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		left, right := i+1, len(nums)-1
+		for left < right {
+			sum := nums[i] + nums[left] + nums[right]
+			if sum == 0 {
+				result = append(result, []int{nums[i], nums[left], nums[right]})
+				for left < right && nums[left] == nums[left+1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
+				left++
+				right--
+			} else if sum < 0 {
+				left++
+			} else {
+				right--
+			}
+		}
+	}
+	return result
+}`,
+		PythonSolution: `def threeSum(nums: List[int]) -> List[List[int]]:
+    nums.sort()
+    result = []
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+        left, right = i + 1, len(nums) - 1
+        while left < right:
+            s = nums[i] + nums[left] + nums[right]
+            if s == 0:
+                result.append([nums[i], nums[left], nums[right]])
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+                left += 1
+                right -= 1
+            elif s < 0:
+                left += 1
+            else:
+                right -= 1
+    return result`,
+		Explanation: "Sort array, fix first number, use two pointers for remaining two. Skip duplicates. Time: O(n²), Space: O(1) excluding output.",
+	},
+	{
+		ID:          44,
+		Title:       "Set Matrix Zeroes",
+		Description: "Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0's. You must do it in place.",
+		Difficulty:  "Medium",
+		Topic:       "Arrays",
+		Signature:   "func setZeroes(matrix [][]int)",
+		TestCases: []TestCase{
+			{Input: "matrix = [[1,1,1],[1,0,1],[1,1,1]]", Expected: "[[1 0 1] [0 0 0] [1 0 1]]"},
+			{Input: "matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]", Expected: "[[0 0 0 0] [0 4 5 0] [0 3 1 0]]"},
+			{Input: "matrix = [[1,0,1],[1,1,1],[1,1,1]]", Expected: "[[0 0 0] [1 0 1] [1 0 1]]"},
+			{Input: "matrix = [[1]]", Expected: "[[1]]"},
+			{Input: "matrix = [[0]]", Expected: "[[0]]"},
+		},
+		Solution: `func setZeroes(matrix [][]int) {
+	m, n := len(matrix), len(matrix[0])
+	firstRowZero := false
+	firstColZero := false
+	for j := 0; j < n; j++ {
+		if matrix[0][j] == 0 {
+			firstRowZero = true
+			break
+		}
+	}
+	for i := 0; i < m; i++ {
+		if matrix[i][0] == 0 {
+			firstColZero = true
+			break
+		}
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][j] == 0 {
+				matrix[i][0] = 0
+				matrix[0][j] = 0
+			}
+		}
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][0] == 0 || matrix[0][j] == 0 {
+				matrix[i][j] = 0
+			}
+		}
+	}
+	if firstRowZero {
+		for j := 0; j < n; j++ {
+			matrix[0][j] = 0
+		}
+	}
+	if firstColZero {
+		for i := 0; i < m; i++ {
+			matrix[i][0] = 0
+		}
+	}
+}`,
+		PythonSolution: `def setZeroes(matrix: List[List[int]]) -> None:
+    m, n = len(matrix), len(matrix[0])
+    first_row_zero = any(matrix[0][j] == 0 for j in range(n))
+    first_col_zero = any(matrix[i][0] == 0 for i in range(m))
+    for i in range(1, m):
+        for j in range(1, n):
+            if matrix[i][j] == 0:
+                matrix[i][0] = 0
+                matrix[0][j] = 0
+    for i in range(1, m):
+        for j in range(1, n):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if first_row_zero:
+        for j in range(n):
+            matrix[0][j] = 0
+    if first_col_zero:
+        for i in range(m):
+            matrix[i][0] = 0`,
+		Explanation: "Use first row and column as markers. Mark rows/columns to zero, then set zeros. Handle first row/column separately. Time: O(m*n), Space: O(1).",
+	},
+	{
+		ID:          45,
+		Title:       "Spiral Matrix",
+		Description: "Given an m x n matrix, return all elements of the matrix in spiral order.",
+		Difficulty:  "Medium",
+		Topic:       "Arrays",
+		Signature:   "func spiralOrder(matrix [][]int) []int",
+		TestCases: []TestCase{
+			{Input: "matrix = [[1,2,3],[4,5,6],[7,8,9]]", Expected: "[1 2 3 6 9 8 7 4 5]"},
+			{Input: "matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]", Expected: "[1 2 3 4 8 12 11 10 9 5 6 7]"},
+			{Input: "matrix = [[1]]", Expected: "[1]"},
+			{Input: "matrix = [[1,2],[3,4]]", Expected: "[1 2 4 3]"},
+			{Input: "matrix = [[1,2,3]]", Expected: "[1 2 3]"},
+			{Input: "matrix = [[1],[2],[3]]", Expected: "[1 2 3]"},
+		},
+		Solution: `func spiralOrder(matrix [][]int) []int {
+	if len(matrix) == 0 {
+		return []int{}
+	}
+	m, n := len(matrix), len(matrix[0])
+	result := make([]int, 0, m*n)
+	top, bottom, left, right := 0, m-1, 0, n-1
+	for top <= bottom && left <= right {
+		for j := left; j <= right; j++ {
+			result = append(result, matrix[top][j])
+		}
+		top++
+		for i := top; i <= bottom; i++ {
+			result = append(result, matrix[i][right])
+		}
+		right--
+		if top <= bottom {
+			for j := right; j >= left; j-- {
+				result = append(result, matrix[bottom][j])
+			}
+			bottom--
+		}
+		if left <= right {
+			for i := bottom; i >= top; i-- {
+				result = append(result, matrix[i][left])
+			}
+			left++
+		}
+	}
+	return result
+}`,
+		PythonSolution: `def spiralOrder(matrix: List[List[int]]) -> List[int]:
+    if not matrix:
+        return []
+    m, n = len(matrix), len(matrix[0])
+    result = []
+    top, bottom, left, right = 0, m - 1, 0, n - 1
+    while top <= bottom and left <= right:
+        for j in range(left, right + 1):
+            result.append(matrix[top][j])
+        top += 1
+        for i in range(top, bottom + 1):
+            result.append(matrix[i][right])
+        right -= 1
+        if top <= bottom:
+            for j in range(right, left - 1, -1):
+                result.append(matrix[bottom][j])
+            bottom -= 1
+        if left <= right:
+            for i in range(bottom, top - 1, -1):
+                result.append(matrix[i][left])
+            left += 1
+    return result`,
+		Explanation: "Use four boundaries (top, bottom, left, right). Traverse right, down, left, up in order. Shrink boundaries after each direction. Time: O(m*n), Space: O(1) excluding output.",
+	},
+	{
+		ID:          46,
+		Title:       "Rotate Image",
+		Description: "You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise). You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.",
+		Difficulty:  "Medium",
+		Topic:       "Arrays",
+		Signature:   "func rotate(matrix [][]int)",
+		TestCases: []TestCase{
+			{Input: "matrix = [[1,2,3],[4,5,6],[7,8,9]]", Expected: "[[7 4 1] [8 5 2] [9 6 3]]"},
+			{Input: "matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]", Expected: "[[15 13 2 5] [14 3 4 1] [12 6 8 9] [16 7 10 11]]"},
+			{Input: "matrix = [[1]]", Expected: "[[1]]"},
+			{Input: "matrix = [[1,2],[3,4]]", Expected: "[[3 1] [4 2]]"},
+		},
+		Solution: `func rotate(matrix [][]int) {
+	n := len(matrix)
+	for i := 0; i < n/2; i++ {
+		for j := i; j < n-i-1; j++ {
+			temp := matrix[i][j]
+			matrix[i][j] = matrix[n-1-j][i]
+			matrix[n-1-j][i] = matrix[n-1-i][n-1-j]
+			matrix[n-1-i][n-1-j] = matrix[j][n-1-i]
+			matrix[j][n-1-i] = temp
+		}
+	}
+}`,
+		PythonSolution: `def rotate(matrix: List[List[int]]) -> None:
+    n = len(matrix)
+    for i in range(n // 2):
+        for j in range(i, n - i - 1):
+            temp = matrix[i][j]
+            matrix[i][j] = matrix[n - 1 - j][i]
+            matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j]
+            matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i]
+            matrix[j][n - 1 - i] = temp`,
+		Explanation: "Rotate in layers. For each layer, rotate four corners: (i,j) -> (n-1-j,i) -> (n-1-i,n-1-j) -> (j,n-1-i) -> (i,j). Time: O(n²), Space: O(1).",
+	},
+	{
+		ID:          47,
+		Title:       "Word Search",
+		Description: "Given an m x n grid of characters board and a string word, return true if word exists in the grid. The word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.",
+		Difficulty:  "Medium",
+		Topic:       "Backtracking",
+		Signature:   "func exist(board [][]byte, word string) bool",
+		TestCases: []TestCase{
+			{Input: "board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"", Expected: "true"},
+			{Input: "board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"SEE\"", Expected: "true"},
+			{Input: "board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCB\"", Expected: "false"},
+			{Input: "board = [[\"A\"]], word = \"A\"", Expected: "true"},
+			{Input: "board = [[\"A\",\"B\"],[\"C\",\"D\"]], word = \"ABCD\"", Expected: "false"},
+		},
+		Solution: `func exist(board [][]byte, word string) bool {
+	m, n := len(board), len(board[0])
+	visited := make([][]bool, m)
+	for i := range visited {
+		visited[i] = make([]bool, n)
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if dfs(board, word, i, j, 0, visited) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func dfs(board [][]byte, word string, i, j, idx int, visited [][]bool) bool {
+	if idx == len(word) {
+		return true
+	}
+	if i < 0 || i >= len(board) || j < 0 || j >= len(board[0]) || visited[i][j] || board[i][j] != word[idx] {
+		return false
+	}
+	visited[i][j] = true
+	directions := [][]int{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
+	for _, dir := range directions {
+		if dfs(board, word, i+dir[0], j+dir[1], idx+1, visited) {
+			return true
+		}
+	}
+	visited[i][j] = false
+	return false
+}`,
+		PythonSolution: `def exist(board: List[List[str]], word: str) -> bool:
+    m, n = len(board), len(board[0])
+    visited = [[False] * n for _ in range(m)]
+    def dfs(i, j, idx):
+        if idx == len(word):
+            return True
+        if i < 0 or i >= m or j < 0 or j >= n or visited[i][j] or board[i][j] != word[idx]:
+            return False
+        visited[i][j] = True
+        for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            if dfs(i + di, j + dj, idx + 1):
+                return True
+        visited[i][j] = False
+        return False
+    for i in range(m):
+        for j in range(n):
+            if dfs(i, j, 0):
+                return True
+    return False`,
+		Explanation: "DFS backtracking. Start from each cell, explore all directions. Mark visited, backtrack if path doesn't lead to solution. Time: O(m*n*4^L) where L is word length, Space: O(L) for recursion.",
+	},
+	{
+		ID:          48,
+		Title:       "House Robber",
+		Description: "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.",
+		Difficulty:  "Medium",
+		Topic:       "Dynamic Programming",
+		Signature:   "func rob(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{1,2,3,1}", Expected: "4"},
+			{Input: "nums = []int{2,7,9,3,1}", Expected: "12"},
+			{Input: "nums = []int{2,1,1,2}", Expected: "4"},
+			{Input: "nums = []int{1}", Expected: "1"},
+			{Input: "nums = []int{1,2}", Expected: "2"},
+			{Input: "nums = []int{2,1}", Expected: "2"},
+		},
+		Solution: `func rob(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	prev2, prev1 := nums[0], max(nums[0], nums[1])
+	for i := 2; i < len(nums); i++ {
+		curr := max(prev1, prev2+nums[i])
+		prev2, prev1 = prev1, curr
+	}
+	return prev1
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}`,
+		PythonSolution: `def rob(nums: List[int]) -> int:
+    if not nums:
+        return 0
+    if len(nums) == 1:
+        return nums[0]
+    prev2, prev1 = nums[0], max(nums[0], nums[1])
+    for i in range(2, len(nums)):
+        curr = max(prev1, prev2 + nums[i])
+        prev2, prev1 = prev1, curr
+    return prev1`,
+		Explanation: "DP: rob[i] = max(rob[i-1], rob[i-2] + nums[i]). Either skip current house (take prev) or rob it (take prev2 + current). Use two variables. Time: O(n), Space: O(1).",
+	},
+	{
+		ID:          49,
+		Title:       "Coin Change",
+		Description: "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1. You may assume that you have an infinite number of each kind of coin.",
+		Difficulty:  "Medium",
+		Topic:       "Dynamic Programming",
+		Signature:   "func coinChange(coins []int, amount int) int",
+		TestCases: []TestCase{
+			{Input: "coins = []int{1,2,5}, amount = 11", Expected: "3"},
+			{Input: "coins = []int{2}, amount = 3", Expected: "-1"},
+			{Input: "coins = []int{1}, amount = 0", Expected: "0"},
+			{Input: "coins = []int{1}, amount = 1", Expected: "1"},
+			{Input: "coins = []int{1}, amount = 2", Expected: "2"},
+			{Input: "coins = []int{2,5,10,1}, amount = 27", Expected: "4"},
+		},
+		Solution: `func coinChange(coins []int, amount int) int {
+	dp := make([]int, amount+1)
+	dp[0] = 0
+	for i := 1; i <= amount; i++ {
+		dp[i] = amount + 1
+	}
+	for i := 1; i <= amount; i++ {
+		for _, coin := range coins {
+			if coin <= i {
+				dp[i] = min(dp[i], dp[i-coin]+1)
+			}
+		}
+	}
+	if dp[amount] > amount {
+		return -1
+	}
+	return dp[amount]
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}`,
+		PythonSolution: `def coinChange(coins: List[int], amount: int) -> int:
+    dp = [amount + 1] * (amount + 1)
+    dp[0] = 0
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if coin <= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    return dp[amount] if dp[amount] <= amount else -1`,
+		Explanation: "DP: dp[i] = minimum coins for amount i. For each amount, try each coin. dp[i] = min(dp[i], dp[i-coin] + 1). Time: O(amount * len(coins)), Space: O(amount).",
+	},
+	{
+		ID:          50,
+		Title:       "Longest Increasing Subsequence",
+		Description: "Given an integer array nums, return the length of the longest strictly increasing subsequence.",
+		Difficulty:  "Medium",
+		Topic:       "Dynamic Programming",
+		Signature:   "func lengthOfLIS(nums []int) int",
+		TestCases: []TestCase{
+			{Input: "nums = []int{10,9,2,5,3,7,101,18}", Expected: "4"},
+			{Input: "nums = []int{0,1,0,3,2,3}", Expected: "4"},
+			{Input: "nums = []int{7,7,7,7,7,7,7}", Expected: "1"},
+			{Input: "nums = []int{1}", Expected: "1"},
+			{Input: "nums = []int{1,3,6,7,9,4,10,5,6}", Expected: "6"},
+			{Input: "nums = []int{4,10,4,3,8,9}", Expected: "3"},
+		},
+		Solution: `func lengthOfLIS(nums []int) int {
+	tails := []int{}
+	for _, num := range nums {
+		pos := binarySearch(tails, num)
+		if pos == len(tails) {
+			tails = append(tails, num)
+		} else {
+			tails[pos] = num
+		}
+	}
+	return len(tails)
+}
+
+func binarySearch(tails []int, target int) int {
+	left, right := 0, len(tails)
+	for left < right {
+		mid := (left + right) / 2
+		if tails[mid] < target {
+			left = mid + 1
+		} else {
+			right = mid
+		}
+	}
+	return left
+}`,
+		PythonSolution: `import bisect
+
+def lengthOfLIS(nums: List[int]) -> int:
+    tails = []
+    for num in nums:
+        pos = bisect.bisect_left(tails, num)
+        if pos == len(tails):
+            tails.append(num)
+        else:
+            tails[pos] = num
+    return len(tails)`,
+		Explanation: "Patience sorting: tails[i] = smallest tail of all increasing subsequences of length i+1. Use binary search to find position. Time: O(n log n), Space: O(n).",
+	},
 }

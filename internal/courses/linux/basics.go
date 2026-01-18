@@ -336,20 +336,20 @@ lsmod | head
 - **sh**: Basic shell (POSIX compliant)
 
 **Terminal Components:**
-- **Prompt**: Shows current directory and user (e.g., `user@host:~$`)
+- **Prompt**: Shows current directory and user (e.g., user@host:~$)
 - **Command**: What you type
 - **Arguments**: Options and parameters
 - **Output**: Results displayed
 
 **Command Structure:**
-\`\`\`
-command [options] [arguments]
-\`\`\`
 
-Example: `ls -l /home`
-- `ls`: command
-- `-l`: option (long format)
-- `/home`: argument (directory)`,
+command [options] [arguments]
+
+
+Example: ls -l /home
+- ls: command
+- -l: option (long format)
+- /home: argument (directory)`,
 					CodeExamples: `# Check current shell
 echo $SHELL
 # Output: /bin/bash
@@ -388,22 +388,22 @@ ls -lah /home        # Multiple options combined
 
 **cd (Change Directory):**
 - Move to different directories
-- `cd` or `cd ~`: Go to home directory
-- `cd ..`: Go up one level
-- `cd -`: Go to previous directory
-- `cd /`: Go to root directory
+- cd or cd ~: Go to home directory
+- cd ..: Go up one level
+- cd -: Go to previous directory
+- cd /: Go to root directory
 
 **ls (List):**
 - List files and directories
-- `ls`: Basic listing
-- `ls -l`: Long format (detailed)
-- `ls -a`: Show hidden files
-- `ls -h`: Human-readable sizes
-- `ls -R`: Recursive (show subdirectories)
+- ls: Basic listing
+- ls -l: Long format (detailed)
+- ls -a: Show hidden files
+- ls -h: Human-readable sizes
+- ls -R: Recursive (show subdirectories)
 
 **Path Types:**
-- **Absolute**: Full path from root (`/home/user/documents`)
-- **Relative**: Path relative to current directory (`./documents` or `../parent`)
+- **Absolute**: Full path from root (/home/user/documents)
+- **Relative**: Path relative to current directory (./documents or ../parent)
 - **~**: Shortcut for home directory
 - **.**: Current directory
 - **..**: Parent directory`,
@@ -468,34 +468,34 @@ cd ~/documents      # Home directory's documents folder`,
 
 **cp (Copy):**
 - Copy files and directories
-- `cp source destination`
-- `cp -r`: Copy directories recursively
-- `cp -i`: Interactive (prompt before overwrite)
-- `cp -v`: Verbose (show what's being copied)
+- cp source destination
+- cp -r: Copy directories recursively
+- cp -i: Interactive (prompt before overwrite)
+- cp -v: Verbose (show what's being copied)
 
 **mv (Move/Rename):**
 - Move files to different location
 - Rename files
-- `mv source destination`
+- mv source destination
 - Can move multiple files
 
 **rm (Remove):**
 - Delete files and directories
 - **Warning**: Permanent deletion (no trash)
-- `rm file`: Delete file
-- `rm -r`: Delete directory recursively
-- `rm -f`: Force (no prompts)
-- `rm -i`: Interactive (safer)
+- rm file: Delete file
+- rm -r: Delete directory recursively
+- rm -f: Force (no prompts)
+- rm -i: Interactive (safer)
 
 **mkdir (Make Directory):**
 - Create new directories
-- `mkdir dirname`
-- `mkdir -p`: Create parent directories if needed
+- mkdir dirname
+- mkdir -p: Create parent directories if needed
 
 **touch:**
 - Create empty file
 - Update file timestamp
-- `touch filename`
+- touch filename
 
 **File Naming:**
 - Case-sensitive (File.txt ≠ file.txt)
@@ -564,7 +564,7 @@ ls -l`,
 **Keyboard Shortcuts:**
 - **Ctrl+C**: Cancel/interrupt current command
 - **Ctrl+D**: Exit shell or end input
-- **Ctrl+L**: Clear screen (same as `clear`)
+- **Ctrl+L**: Clear screen (same as clear)
 - **Ctrl+A**: Move cursor to beginning of line
 - **Ctrl+E**: Move cursor to end of line
 - **Ctrl+U**: Delete from cursor to beginning of line
@@ -575,16 +575,16 @@ ls -l`,
 
 **Command Aliases:**
 - Create shortcuts for long commands
-- `alias ll='ls -lah'`
-- `alias ..='cd ..'`
-- View aliases: `alias`
-- Remove alias: `unalias name`
+- alias ll='ls -lah'
+- alias ..='cd ..'
+- View aliases: alias
+- Remove alias: unalias name
 
 **Environment Variables:**
-- `$HOME`: Home directory path
-- `$USER`: Current username
-- `$PATH`: Directories searched for commands
-- `$PWD`: Current directory`,
+- $HOME: Home directory path
+- $USER: Current username
+- $PATH: Directories searched for commands
+- $PWD: Current directory`,
 					CodeExamples: `# View command history
 history
 
@@ -653,25 +653,25 @@ source ~/.bashrc`,
 - Can include options and arguments
 
 **Creating Aliases:**
-- `alias name='command'`: Create alias
-- `alias`: List all aliases
-- `unalias name`: Remove alias
+- alias name='command': Create alias
+- alias: List all aliases
+- unalias name: Remove alias
 - Temporary: Lost when session ends
 - Permanent: Add to shell config file
 
 **Common Aliases:**
-- `alias ll='ls -lah'`: Long listing with details
-- `alias la='ls -A'`: List all including hidden
-- `alias ..='cd ..'`: Go up one directory
-- `alias ...='cd ../..'`: Go up two directories
-- `alias grep='grep --color=auto'`: Colorized grep
-- `alias vi='vim'`: Use vim instead of vi
+- alias ll='ls -lah': Long listing with details
+- alias la='ls -A': List all including hidden
+- alias ..='cd ..': Go up one directory
+- alias ...='cd ../..': Go up two directories
+- alias grep='grep --color=auto': Colorized grep
+- alias vi='vim': Use vim instead of vi
 
 **Shell Configuration Files:**
-- `~/.bashrc`: Bash config (runs for interactive shells)
-- `~/.bash_profile`: Login shell config
-- `~/.profile`: General profile (all shells)
-- `~/.bash_aliases`: Dedicated alias file (sourced by .bashrc)
+- ~/.bashrc: Bash config (runs for interactive shells)
+- ~/.bash_profile: Login shell config
+- ~/.profile: General profile (all shells)
+- ~/.bash_aliases: Dedicated alias file (sourced by .bashrc)
 
 **Shell Customization:**
 - **Prompt (PS1)**: Customize command prompt
@@ -883,10 +883,10 @@ cd /usr/bin    # User executables`,
 - **777**: rwxrwxrwx (all permissions - dangerous!)
 
 **Viewing Permissions:**
-\`\`\`
+
 ls -l filename
 -rwxr-xr-x 1 user group 1234 Jan 1 12:00 filename
-\`\`\`
+
 - First 10 characters: permissions and type
 - Next: number of links, owner, group, size, date, name`,
 					CodeExamples: `# View file permissions
@@ -936,13 +936,13 @@ chmod 700 .ssh/          # SSH directory (owner only)`,
 **chown (Change Owner):**
 - Change file/directory owner
 - Usually requires root privileges
-- `chown user file`
-- `chown user:group file`
-- `chown -R`: Recursive (for directories)
+- chown user file
+- chown user:group file
+- chown -R: Recursive (for directories)
 
 **chgrp (Change Group):**
 - Change group ownership
-- `chgrp groupname file`
+- chgrp groupname file
 
 **whoami**: Show current user
 **id**: Show user and group IDs
@@ -950,7 +950,7 @@ chmod 700 .ssh/          # SSH directory (owner only)`,
 
 **sudo:**
 - Execute command as another user (usually root)
-- `sudo command`
+- sudo command
 - Requires password (unless configured otherwise)
 - Use sparingly and carefully!`,
 					CodeExamples: `# Check current user
@@ -1024,8 +1024,8 @@ find / -group groupname 2>/dev/null`,
 - **Symbolic links**: Cross filesystem, directories, or want to see target clearly
 
 **Creating Links:**
-- `ln target linkname`: Create hard link
-- `ln -s target linkname`: Create symbolic link`,
+- ln target linkname: Create hard link
+- ln -s target linkname: Create symbolic link`,
 					CodeExamples: `# Create a file
 echo "Hello World" > original.txt
 
@@ -1084,7 +1084,7 @@ find /usr -type l ! -exec test -e {} \;`,
 - Each file/directory has unique inode number
 - Contains: permissions, owner, size, timestamps, location on disk
 - Limited number per filesystem (inode limit)
-- View with `ls -i` or `stat` command
+- View with ls -i or stat command
 
 **Inode Information:**
 - **Inode Number**: Unique identifier
@@ -1100,9 +1100,9 @@ find /usr -type l ! -exec test -e {} \;`,
 
 **Device Files:**
 - Represent hardware devices
-- **Block devices** (`/dev/sda`): Storage devices (b in ls -l)
-- **Character devices** (`/dev/tty`): Serial devices (c in ls -l)
-- Created with `mknod` (usually automatic)
+- **Block devices** (/dev/sda): Storage devices (b in ls -l)
+- **Character devices** (/dev/tty): Serial devices (c in ls -l)
+- Created with mknod (usually automatic)
 
 **Sockets:**
 - Inter-process communication
@@ -1114,7 +1114,7 @@ find /usr -type l ! -exec test -e {} \;`,
 **Named Pipes (FIFOs):**
 - First In, First Out
 - One-way communication
-- Created with `mkfifo`
+- Created with mkfifo
 - Shown as 'p' in ls -l
 
 **stat Command:**
@@ -1199,8 +1199,8 @@ find / -inum $(stat -c %i file.txt) 2>/dev/null`,
 - Display entire file
 - Simple, fast
 - Good for small files
-- `cat file.txt`
-- `cat file1 file2`: Concatenate multiple files
+- cat file.txt
+- cat file1 file2: Concatenate multiple files
 
 **less/more:**
 - View file page by page
@@ -1211,20 +1211,20 @@ find / -inum $(stat -c %i file.txt) 2>/dev/null`,
 
 **head:**
 - Show first N lines (default: 10)
-- `head -n 20 file.txt`
-- `head -20 file.txt`
+- head -n 20 file.txt
+- head -20 file.txt
 
 **tail:**
 - Show last N lines (default: 10)
-- `tail -n 20 file.txt`
-- `tail -f file.txt`: Follow file (watch for new lines) - great for logs!
+- tail -n 20 file.txt
+- tail -f file.txt: Follow file (watch for new lines) - great for logs!
 
 **wc (word count):**
 - Count lines, words, characters
-- `wc file.txt`: Shows lines, words, bytes
-- `wc -l`: Lines only
-- `wc -w`: Words only
-- `wc -c`: Bytes only`,
+- wc file.txt: Shows lines, words, bytes
+- wc -l: Lines only
+- wc -w: Words only
+- wc -c: Bytes only`,
 					CodeExamples: `# View entire file
 cat file.txt
 
@@ -1281,34 +1281,34 @@ wc -m file.txt`,
 					Content: `grep is one of the most powerful text search tools. It finds lines matching a pattern.
 
 **Basic Usage:**
-- `grep pattern file`
+- grep pattern file
 - Searches for pattern in file
 - Prints matching lines
 
 **Common Options:**
-- `-i`: Case-insensitive search
-- `-v`: Invert match (show non-matching lines)
-- `-r`: Recursive (search in directories)
-- `-n`: Show line numbers
-- `-c`: Count matches
-- `-l`: Show only filenames with matches
-- `-E`: Extended regex (or use egrep)
-- `-w`: Match whole words only
-- `--color`: Highlight matches
+- -i: Case-insensitive search
+- -v: Invert match (show non-matching lines)
+- -r: Recursive (search in directories)
+- -n: Show line numbers
+- -c: Count matches
+- -l: Show only filenames with matches
+- -E: Extended regex (or use egrep)
+- -w: Match whole words only
+- --color: Highlight matches
 
 **Pattern Types:**
-- **Literal**: `grep "error" file.txt`
-- **Regex**: `grep "^Error" file.txt` (lines starting with Error)
-- **Character classes**: `grep "[0-9]" file.txt` (lines with digits)
+- **Literal**: grep "error" file.txt
+- **Regex**: grep "^Error" file.txt (lines starting with Error)
+- **Character classes**: grep "[0-9]" file.txt (lines with digits)
 
 **Common Patterns:**
-- `^`: Start of line
-- `$`: End of line
-- `.`: Any character
-- `*`: Zero or more of previous
-- `+`: One or more of previous
-- `[]`: Character class
-- `|`: OR (with -E)`,
+- ^: Start of line
+- $: End of line
+- .: Any character
+- *: Zero or more of previous
+- +: One or more of previous
+- []: Character class
+- |: OR (with -E)`,
 					CodeExamples: `# Basic search
 grep "error" logfile.txt
 
@@ -1362,27 +1362,27 @@ cat file.txt | grep "error" | grep -v "debug"`,
 					Content: `sed is a stream editor for filtering and transforming text. It's powerful for batch editing.
 
 **Basic Usage:**
-- `sed 's/old/new/' file`: Substitute first occurrence per line
-- `sed 's/old/new/g' file`: Substitute all occurrences (global)
-- `sed -i`: Edit file in-place (modify file)
+- sed 's/old/new/' file: Substitute first occurrence per line
+- sed 's/old/new/g' file: Substitute all occurrences (global)
+- sed -i: Edit file in-place (modify file)
 
 **Common Operations:**
-- **Substitute**: `s/pattern/replacement/`
-- **Delete**: `d` (delete lines)
-- **Print**: `p` (print lines)
-- **Insert**: `i` (insert before line)
-- **Append**: `a` (append after line)
+- **Substitute**: s/pattern/replacement/
+- **Delete**: d (delete lines)
+- **Print**: p (print lines)
+- **Insert**: i (insert before line)
+- **Append**: a (append after line)
 
 **Addresses:**
-- Line numbers: `sed '5d' file` (delete line 5)
-- Ranges: `sed '1,5d' file` (delete lines 1-5)
-- Patterns: `sed '/pattern/d' file` (delete matching lines)
-- Last line: `$`
+- Line numbers: sed '5d' file (delete line 5)
+- Ranges: sed '1,5d' file (delete lines 1-5)
+- Patterns: sed '/pattern/d' file (delete matching lines)
+- Last line: $
 
 **Common Options:**
-- `-i`: In-place editing
-- `-n`: Suppress default output
-- `-e`: Multiple expressions`,
+- -i: In-place editing
+- -n: Suppress default output
+- -e: Multiple expressions`,
 					CodeExamples: `# Substitute first occurrence per line
 sed 's/old/new/' file.txt
 
@@ -1431,28 +1431,28 @@ sed 's/  */ /g' file.txt        # Replace multiple spaces with single space`,
 					Content: `awk is a powerful programming language for text processing. It's excellent for column-based data.
 
 **Basic Usage:**
-- `awk 'pattern {action}' file`
+- awk 'pattern {action}' file
 - Processes file line by line
 - Splits lines into fields (columns)
 - Fields accessed as $1, $2, $3, etc.
 - $0 = entire line
 
 **Built-in Variables:**
-- `NR`: Current record (line) number
-- `NF`: Number of fields in current line
-- `FS`: Field separator (default: space)
-- `OFS`: Output field separator
+- NR: Current record (line) number
+- NF: Number of fields in current line
+- FS: Field separator (default: space)
+- OFS: Output field separator
 
 **Common Patterns:**
-- `/pattern/`: Lines matching pattern
-- `NR==1`: First line
-- `$1=="value"`: First field equals value
-- `$NF`: Last field
+- /pattern/: Lines matching pattern
+- NR==1: First line
+- $1=="value": First field equals value
+- $NF: Last field
 
 **Common Actions:**
-- `print`: Print line or fields
-- `print $1`: Print first field
-- `print $NF`: Print last field`,
+- print: Print line or fields
+- print $1: Print first field
+- print $NF: Print last field`,
 					CodeExamples: `# Print entire file
 awk '{print}' file.txt
 
@@ -1505,35 +1505,35 @@ awk '$1~/pattern/ {print}' file.txt      # First field matches pattern`,
 
 **sort:**
 - Sort lines
-- `sort file.txt`: Alphabetical sort
-- `sort -n`: Numeric sort
-- `sort -r`: Reverse sort
-- `sort -u`: Unique lines only
-- `sort -k2`: Sort by second field
+- sort file.txt: Alphabetical sort
+- sort -n: Numeric sort
+- sort -r: Reverse sort
+- sort -u: Unique lines only
+- sort -k2: Sort by second field
 
 **uniq:**
 - Remove duplicate consecutive lines
-- `uniq file.txt`
-- `uniq -c`: Count occurrences
-- `uniq -d`: Show only duplicates
-- Usually used with sort: `sort file.txt | uniq`
+- uniq file.txt
+- uniq -c: Count occurrences
+- uniq -d: Show only duplicates
+- Usually used with sort: sort file.txt | uniq
 
 **cut:**
 - Extract columns/fields
-- `cut -d: -f1 file.txt`: Field 1, delimiter ':'
-- `cut -c1-5 file.txt`: Characters 1-5
-- `cut -f1,3 file.txt`: Fields 1 and 3
+- cut -d: -f1 file.txt: Field 1, delimiter ':'
+- cut -c1-5 file.txt: Characters 1-5
+- cut -f1,3 file.txt: Fields 1 and 3
 
 **paste:**
 - Merge lines from files
-- `paste file1.txt file2.txt`
-- `paste -d: file1 file2`: Custom delimiter
+- paste file1.txt file2.txt
+- paste -d: file1 file2: Custom delimiter
 
 **tr (translate):**
 - Translate or delete characters
-- `tr 'a-z' 'A-Z'`: Convert to uppercase
-- `tr -d ' '`: Delete spaces
-- `tr -s ' '`: Squeeze multiple spaces`,
+- tr 'a-z' 'A-Z': Convert to uppercase
+- tr -d ' ': Delete spaces
+- tr -s ' ': Squeeze multiple spaces`,
 					CodeExamples: `# Sort alphabetically
 sort file.txt
 
@@ -1612,15 +1612,15 @@ cat file.txt | grep "error" | sort | uniq -c
 **Common Patterns:**
 
 **Filter and Process:**
-- `command | grep | sort | uniq`
+- command | grep | sort | uniq
 - Filter, then organize results
 
 **Extract and Transform:**
-- `command | cut | sed | awk`
+- command | cut | sed | awk
 - Extract fields, transform, process
 
 **Count and Summarize:**
-- `command | grep | wc`
+- command | grep | wc
 - Filter then count
 
 **Multi-step Processing:**
@@ -1758,11 +1758,11 @@ ps aux
 					Content: `ps displays information about running processes. It's one of the most important process management tools.
 
 **Common ps Commands:**
-- `ps`: Show current terminal's processes
-- `ps aux`: Show all processes (BSD style)
-- `ps -ef`: Show all processes (Unix style)
-- `ps -u username`: Show user's processes
-- `ps -p PID`: Show specific process
+- ps: Show current terminal's processes
+- ps aux: Show all processes (BSD style)
+- ps -ef: Show all processes (Unix style)
+- ps -u username: Show user's processes
+- ps -p PID: Show specific process
 
 **ps aux Output Columns:**
 - **USER**: Process owner
@@ -1778,11 +1778,11 @@ ps aux
 - **COMMAND**: Command line
 
 **Useful Options:**
-- `-f`: Full format (more details)
-- `-l`: Long format
-- `-e`: All processes
-- `-u`: User-specific
-- `--sort`: Sort output`,
+- -f: Full format (more details)
+- -l: Long format
+- -e: All processes
+- -u: User-specific
+- --sort: Sort output`,
 					CodeExamples: `# Show current terminal processes
 ps
 
@@ -1843,7 +1843,7 @@ ps -eo pid,user,comm,etime
 - Enhanced version of top
 - Better interface (colors, bars)
 - Easier navigation
-- May need installation: `apt install htop`
+- May need installation: apt install htop
 
 **top Interactive Commands:**
 - **q**: Quit
@@ -1905,9 +1905,9 @@ htop
 
 **kill:**
 - Send signals to processes
-- `kill PID`: Send TERM signal (graceful termination)
-- `kill -9 PID`: Send KILL signal (force kill)
-- `kill -15 PID`: Send TERM signal (default)
+- kill PID: Send TERM signal (graceful termination)
+- kill -9 PID: Send KILL signal (force kill)
+- kill -15 PID: Send TERM signal (default)
 
 **Common Signals:**
 - **SIGTERM (15)**: Terminate gracefully (default)
@@ -1919,20 +1919,20 @@ htop
 
 **killall:**
 - Kill processes by name
-- `killall processname`
-- `killall -9 processname`: Force kill
+- killall processname
+- killall -9 processname: Force kill
 
 **pkill:**
 - Kill processes by pattern
-- `pkill firefox`
-- `pkill -9 -u username processname`
+- pkill firefox
+- pkill -9 -u username processname
 
 **jobs, fg, bg:**
 - Manage background jobs
-- `jobs`: List background jobs
-- `fg %1`: Bring job 1 to foreground
-- `bg %1`: Run job 1 in background
-- `&`: Run command in background`,
+- jobs: List background jobs
+- fg %1: Bring job 1 to foreground
+- bg %1: Run job 1 in background
+- &: Run command in background`,
 					CodeExamples: `# Kill process gracefully
 kill 12345
 
@@ -2012,18 +2012,18 @@ disown %1`,
 
 **nice Command:**
 - Run command with specified nice value
-- `nice -n 10 command`: Run with nice +10
-- `nice -n -10 command`: Run with nice -10 (requires root)
+- nice -n 10 command: Run with nice +10
+- nice -n -10 command: Run with nice -10 (requires root)
 
 **renice Command:**
 - Change nice value of running process
-- `renice +10 PID`: Increase nice (lower priority)
-- `renice -10 PID`: Decrease nice (higher priority, requires root)
+- renice +10 PID: Increase nice (lower priority)
+- renice -10 PID: Decrease nice (higher priority, requires root)
 
 **chrt Command:**
 - Set real-time scheduling policy
-- `chrt -f 50 command`: FIFO scheduling, priority 50
-- `chrt -r 50 command`: Round-robin scheduling
+- chrt -f 50 command: FIFO scheduling, priority 50
+- chrt -r 50 command: Round-robin scheduling
 
 **Scheduling Policies:**
 - **SCHED_NORMAL (CFS)**: Default, fair scheduling

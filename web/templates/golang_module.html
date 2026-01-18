@@ -3,9 +3,9 @@
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/golang" style="color: #00add8; text-decoration: none;">← Back to Golang Course</a>
+            <a href="/golang" class="back-link">← Back to Golang Course</a>
             <h2 style="margin-top: 10px;">{{.Module.Title}}</h2>
-            <p style="color: #ccc; margin-top: 10px;">{{.Module.Description}}</p>
+            <p class="module-description">{{.Module.Description}}</p>
         </div>
     </div>
 
@@ -46,7 +46,7 @@
                 {{end}}
             </ul>
             {{else}}
-            <p style="color: #888; font-style: italic;">No practice problems available yet.</p>
+            <p class="module-description">No practice problems available yet.</p>
             {{end}}
         </div>
     </div>
@@ -61,15 +61,15 @@
 }
 
 .lessons-section, .problems-section {
-    background: #1e293b;
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #334155;
+    border: 1px solid var(--border-color);
 }
 
 .lesson-card {
-    background: #0f172a;
-    border: 1px solid #334155;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     margin-bottom: 15px;
     overflow: hidden;
@@ -81,17 +81,17 @@
     align-items: center;
     padding: 15px;
     cursor: pointer;
-    background: #1e293b;
+    background: var(--bg-secondary);
     transition: background 0.2s;
 }
 
 .lesson-header:hover {
-    background: #253347;
+    background: var(--bg-tertiary);
 }
 
 .lesson-header h4 {
     margin: 0;
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-size: 1.1em;
 }
 
@@ -103,11 +103,11 @@
 
 .lesson-content {
     padding: 20px;
-    border-top: 1px solid #334155;
+    border-top: 1px solid var(--border-color);
 }
 
 .lesson-text {
-    color: #ccc;
+    color: var(--text-secondary);
     line-height: 1.8;
     margin-bottom: 15px;
 }
@@ -127,13 +127,13 @@
 }
 
 .lesson-text strong {
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
 .lesson-code {
-    background: #0f172a;
-    border: 1px solid #334155;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 15px;
     margin-top: 15px;
@@ -145,7 +145,7 @@
 }
 
 .lesson-code code {
-    color: #f8f8f2;
+    color: var(--text-primary);
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
 }

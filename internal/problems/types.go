@@ -59,10 +59,12 @@ var (
 	machineLearningMu        sync.RWMutex
 	allLinuxModules          []CourseModule
 	linuxMu                  sync.RWMutex
+	allNetworkingModules     []CourseModule
+	networkingMu             sync.RWMutex
 )
 
 func init() {
-	allProblems = make([]Problem, 0, 60)
+	allProblems = make([]Problem, 0, 90)
 	allProblems = append(allProblems, EasyProblems...)
 	allProblems = append(allProblems, MediumProblems...)
 	allProblems = append(allProblems, HardProblems...)
@@ -381,6 +383,27 @@ func GetLinuxModuleByID(id int) *CourseModule {
 	for i := range allLinuxModules {
 		if allLinuxModules[i].ID == id {
 			return &allLinuxModules[i]
+		}
+	}
+	return nil
+}
+
+// GetNetworkingModules returns all networking course modules
+func GetNetworkingModules() []CourseModule {
+	networkingMu.RLock()
+	defer networkingMu.RUnlock()
+	result := make([]CourseModule, len(allNetworkingModules))
+	copy(result, allNetworkingModules)
+	return result
+}
+
+// GetNetworkingModuleByID returns a networking module by its ID
+func GetNetworkingModuleByID(id int) *CourseModule {
+	networkingMu.RLock()
+	defer networkingMu.RUnlock()
+	for i := range allNetworkingModules {
+		if allNetworkingModules[i].ID == id {
+			return &allNetworkingModules[i]
 		}
 	}
 	return nil

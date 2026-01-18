@@ -79,47 +79,155 @@ kubectl describe pod <pod-name>    # Detailed pod information`,
 					Title: "Container Orchestration Concepts",
 					Content: `**Container Orchestration** is the automated management of containerized applications, including deployment, scaling, networking, and availability.
 
+**Why Container Orchestration?**
+
+**Challenges Without Orchestration:**
+- Manual container management is error-prone
+- Difficult to scale applications
+- No automatic recovery from failures
+- Complex networking between containers
+- Resource management is manual
+- Rolling updates are complex
+
+**Benefits of Orchestration:**
+- Automated deployment and scaling
+- Self-healing (restarts failed containers)
+- Load balancing and service discovery
+- Rolling updates and rollbacks
+- Resource management and limits
+- Health monitoring and logging
+
 **Key Concepts:**
 
 **Pods:**
 - Smallest deployable unit in Kubernetes
 - Contains one or more containers
-- Share network and storage
+- Share network and storage namespaces
 - Ephemeral (can be created/destroyed)
+- Each pod gets unique IP address
+- Containers in pod share localhost
+- **Use cases**: Co-located containers (app + sidecar), tight coupling
+- **Best practice**: One container per pod usually, unless containers are tightly coupled
 
 **Services:**
 - Stable network endpoint for pods
-- Provides service discovery
+- Provides service discovery (DNS)
 - Load balances traffic to pods
-- Abstracts pod IP addresses
+- Abstracts pod IP addresses (pods are ephemeral)
+- Types: ClusterIP, NodePort, LoadBalancer, ExternalName
+- **Use cases**: Expose pods to other pods or external traffic
+- **Best practice**: Always use services, never access pods directly
 
 **Deployments:**
 - Manages ReplicaSets and Pods
-- Declarative updates
+- Declarative updates (describe desired state)
 - Rolling updates and rollbacks
-- Desired state management
+- Desired state management (reconciliation loop)
+- **Use cases**: Stateless applications, web servers, APIs
+- **Best practice**: Use Deployments for most stateless workloads
+
+**ReplicaSets:**
+- Ensures specified number of pod replicas
+- Created and managed by Deployments
+- Can be used directly (rare)
+- **Use cases**: Ensuring pod availability
+- **Best practice**: Let Deployments manage ReplicaSets
 
 **Namespaces:**
 - Virtual clusters within a physical cluster
-- Resource isolation
-- Access control boundaries
+- Resource isolation (not security isolation)
+- Access control boundaries (RBAC)
 - Organization and management
+- Default namespaces: default, kube-system, kube-public, kube-node-lease
+- **Use cases**: Multi-tenant clusters, environment separation (dev/staging/prod)
+- **Best practice**: Use namespaces for organization, not security
 
 **Labels & Selectors:**
 - Key-value pairs attached to objects
 - Used for identification and selection
 - Enable flexible organization
-- Core to Kubernetes operations
+- Core to Kubernetes operations (how objects find each other)
+- **Examples**: app=frontend, env=production, version=v1.2.3
+- **Best practice**: Use consistent labeling strategy
 
 **Controllers:**
 - Control loops that watch cluster state
 - Make changes to move current state to desired state
-- Examples: Deployment, ReplicaSet, StatefulSet
+- Examples: Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, CronJob
+- **How they work**: Watch API server, compare desired vs actual, make changes
+- **Best practice**: Use appropriate controller for workload type
 
 **Declarative vs Imperative:**
-- **Declarative**: Describe desired state (YAML files)
-- **Imperative**: Give commands to change state (kubectl commands)
-- Kubernetes prefers declarative approach`,
+
+**Declarative (Preferred):**
+- Describe desired state (YAML files)
+- Kubernetes figures out how to achieve it
+- Idempotent (can apply multiple times)
+- Version controlled
+- Example: kubectl apply -f deployment.yaml
+
+**Imperative:**
+- Give commands to change state (kubectl commands)
+- Useful for quick testing/debugging
+- Not idempotent
+- Example: kubectl create deployment nginx --image=nginx
+
+**Best Practice:** Use declarative approach for production, imperative for quick tests
+
+**Common Pitfalls:**
+
+**1. Not Using Services:**
+- Accessing pods directly by IP
+- Pods are ephemeral, IPs change
+- Solution: Always use Services
+
+**2. Wrong Controller Choice:**
+- Using Deployment for stateful workloads
+- Using StatefulSet for stateless workloads
+- Solution: Understand workload requirements
+
+**3. Ignoring Resource Limits:**
+- Not setting requests/limits
+- Can cause resource exhaustion
+- Solution: Always set resource requests and limits
+
+**4. Not Using Labels:**
+- Hard to organize and select resources
+- Difficult to manage at scale
+- Solution: Use consistent labeling strategy
+
+**5. Mixing Declarative and Imperative:**
+- Applying YAML then using imperative commands
+- Can cause conflicts
+- Solution: Stick to one approach
+
+**Best Practices:**
+
+**1. Use Declarative Configuration:**
+- Store YAML in version control
+- Use kubectl apply, not create
+- Review changes before applying
+
+**2. Set Resource Limits:**
+- Define requests and limits
+- Prevent resource exhaustion
+- Enable better scheduling
+
+**3. Use Appropriate Controllers:**
+- Deployment for stateless
+- StatefulSet for stateful
+- DaemonSet for node-level services
+- Job/CronJob for batch work
+
+**4. Implement Health Checks:**
+- Liveness probes (restart unhealthy)
+- Readiness probes (traffic routing)
+- Startup probes (slow-starting apps)
+
+**5. Use Namespaces:**
+- Organize resources
+- Separate environments
+- Apply RBAC policies`,
 					CodeExamples: `# Declarative approach (preferred)
 # Create a deployment from YAML
 kubectl apply -f deployment.yaml

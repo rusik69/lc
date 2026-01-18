@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{block "title" .}}LeetCode Clone{{end}}</title>
+    <script>
+        // Apply theme immediately to prevent flash
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch(e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
@@ -87,19 +98,86 @@
         }
         // Also highlight when lessons are toggled
         window.highlightCode = highlightCode;
+
+        // Theme toggle functionality
+        (function() {
+            'use strict';
+            
+            function applyTheme(theme) {
+                const html = document.documentElement;
+                html.setAttribute('data-theme', theme);
+                try {
+                    localStorage.setItem('theme', theme);
+                } catch(e) {}
+                
+                const toggle = document.getElementById('theme-toggle-switch');
+                if (toggle) {
+                    toggle.checked = (theme === 'light');
+                }
+                
+                // Update CodeMirror
+                if (typeof CodeMirror !== 'undefined') {
+                    setTimeout(function() {
+                        document.querySelectorAll('.CodeMirror').forEach(function(el) {
+                            try {
+                                const cm = el.CodeMirror;
+                                if (cm) {
+                                    cm.setOption('theme', theme === 'light' ? 'default' : 'monokai');
+                                }
+                            } catch(e) {}
+                        });
+                    }, 50);
+                }
+            }
+            
+            function initTheme() {
+                const toggle = document.getElementById('theme-toggle-switch');
+                if (!toggle) {
+                    setTimeout(initTheme, 50);
+                    return;
+                }
+                
+                const savedTheme = (function() {
+                    try {
+                        return localStorage.getItem('theme') || 'dark';
+                    } catch(e) {
+                        return 'dark';
+                    }
+                })();
+                
+                applyTheme(savedTheme);
+                
+                toggle.addEventListener('change', function() {
+                    applyTheme(this.checked ? 'light' : 'dark');
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTheme);
+            } else {
+                initTheme();
+            }
+        })();
     </script>
 </head>
 <body>
     <header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h1>LeetCode Clone</h1>
-            <nav style="display: flex; gap: 10px;">
-                <a href="/" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Problems</a>
-                <a href="/algorithms" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Algorithms</a>
-                <a href="/systems-design" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Systems Design</a>
-                <a href="/golang" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Golang</a>
-                <a href="/python" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Python</a>
-                <a href="/kubernetes" style="color: #e0e0e0; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='transparent'">Kubernetes</a>
+            <nav style="display: flex; gap: 10px; align-items: center;">
+                <label class="theme-switch" for="theme-toggle-switch" title="Toggle dark/light theme">
+                    <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle theme">
+                    <span class="slider"></span>
+                </label>
+                <a href="/" class="nav-link">Problems</a>
+                <a href="/algorithms" class="nav-link">Algorithms</a>
+                <a href="/systems-design" class="nav-link">Systems Design</a>
+                <a href="/golang" class="nav-link">Golang</a>
+                <a href="/python" class="nav-link">Python</a>
+                <a href="/kubernetes" class="nav-link">Kubernetes</a>
+                <a href="/linux" class="nav-link">Linux</a>
+                <a href="/machine-learning" class="nav-link">Machine Learning</a>
+                <a href="/networking" class="nav-link">Networking</a>
             </nav>
         </div>
     </header>

@@ -1,12 +1,12 @@
-{{define "title"}}Golang Course - LeetCode Clone{{end}}
+{{define "title"}}Networking Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
-    <h2>Golang Course</h2>
-    <p class="course-description">Master Go programming from basics to advanced topics. Learn syntax, concurrency, best practices, and build production-ready applications.</p>
+    <h2>Networking Course</h2>
+    <p class="course-description">Master computer networking from fundamentals to advanced topics. Learn OSI model, TCP/IP, routing, switching, security, VPNs, and network automation with comprehensive theory and practical examples.</p>
     
     <div class="course-modules">
         {{range .}}
-        <div class="module-card" onclick="window.location.href='/golang/{{.ID}}'">
+        <div class="module-card" onclick="window.location.href='/networking/{{.ID}}'">
             <div class="module-header">
                 <h3>{{.Title}}</h3>
                 <span class="module-order">Module {{.Order}}</span>

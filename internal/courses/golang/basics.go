@@ -49,31 +49,329 @@ func main() {
 					Title: "Installation and Setup",
 					Content: `**Installing Go:**
 
+**Official Installation:**
 1. Download from https://go.dev/dl/
-2. Install the package for your OS
-3. Verify installation: go version
+2. Choose version (latest stable recommended)
+3. Install the package for your OS
+4. Verify installation: go version
+
+**Platform-Specific Instructions:**
+
+**Linux:**
+- Download .tar.gz archive
+- Extract to /usr/local: sudo tar -C /usr/local -xzf go1.21.x.linux-amd64.tar.gz
+- Add to PATH: export PATH=$PATH:/usr/local/go/bin
+- Add to ~/.bashrc or ~/.zshrc for persistence
+
+**macOS:**
+- Download .pkg installer (recommended)
+- Or use Homebrew: brew install go
+- Verify: go version
+
+**Windows:**
+- Download .msi installer
+- Run installer (adds to PATH automatically)
+- Or use Chocolatey: choco install golang
+- Verify in PowerShell: go version
+
+**Version Management:**
+- Use g (golang.org/x/website/cmd/g) for version switching
+- Or use gvm (Go Version Manager)
+- Or manually manage multiple versions
 
 **Go Workspace:**
-- GOPATH: Legacy workspace directory (deprecated)
-- Go Modules: Modern dependency management (Go 1.11+)
+
+**Legacy GOPATH (Deprecated):**
+- GOPATH: Workspace directory (deprecated in Go 1.11+)
+- Required all Go code under $GOPATH/src
+- Made dependency management difficult
+- Still works but not recommended for new projects
+
+**Modern Go Modules (Recommended):**
+- Introduced in Go 1.11 (2018)
+- Each project is independent module
+- No GOPATH requirement
+- Better dependency management
+- Standard for all new projects
 
 **Environment Variables:**
-- GOROOT: Go installation directory
-- GOPATH: Workspace directory (legacy)
-- GO111MODULE: Enable/disable modules (auto/on/off)
+
+**GOROOT:**
+- Go installation directory
+- Usually /usr/local/go (Linux/macOS) or C:\Program Files\Go (Windows)
+- Rarely needs to be set manually
+- Used by Go toolchain to find standard library
+
+**GOPATH (Legacy):**
+- Workspace directory (deprecated)
+- Was required for Go < 1.11
+- Not needed with Go modules
+- Still used by some tools (golangci-lint, etc.)
+
+**GO111MODULE:**
+- Controls module behavior (auto/on/off)
+- auto: Use modules if go.mod exists (default)
+- on: Always use modules
+- off: Never use modules (legacy mode)
+- Usually don't need to set (auto is fine)
+
+**GOBIN:**
+- Where go install puts binaries
+- Defaults to $GOPATH/bin (if GOPATH set) or $HOME/go/bin
+- Add to PATH to use installed tools
+
+**GOPROXY:**
+- Proxy for module downloads
+- Default: https://proxy.golang.org,direct
+- Can use private proxies: GOPROXY=https://proxy.company.com,direct
+- direct: Bypass proxy, fetch directly
+
+**GOSUMDB:**
+- Checksum database for module verification
+- Default: sum.golang.org
+- Can disable: GOSUMDB=off (not recommended)
+
+**GOPRIVATE:**
+- Modules that should not be fetched from public proxy
+- Example: GOPRIVATE=*.company.com,github.com/company/*
+- Used for private repositories
 
 **Creating a New Project:**
+
+**Basic Module:**
 go mod init example.com/myproject
 
-This creates a go.mod file for dependency management.`,
-					CodeExamples: `// go.mod file
-module example.com/myproject
+**With Git Repository:**
+go mod init github.com/username/project
+
+**Module Path Best Practices:**
+- Use reverse domain notation
+- Match repository location (GitHub, GitLab, etc.)
+- Use descriptive names
+- Avoid generic names (utils, common, etc.)
+
+**go.mod File:**
+- Defines module name and Go version
+- Lists direct dependencies
+- Can specify minimum Go version
+- Can exclude problematic versions
+
+**go.sum File:**
+- Contains checksums for dependencies
+- Ensures reproducible builds
+- Should be committed to version control
+- Prevents dependency tampering
+
+**Common Pitfalls:**
+
+**1. Wrong Module Path:**
+- Using incorrect path causes import issues
+- Should match repository location
+- Hard to fix after project starts
+- Solution: Set correct path from start
+
+**2. Not Committing go.sum:**
+- Missing checksums cause build issues
+- Breaks reproducible builds
+- Solution: Always commit go.sum
+
+**3. Mixing GOPATH and Modules:**
+- Confusion about which to use
+- Can cause import errors
+- Solution: Use modules for all new projects
+
+**4. Wrong Go Version:**
+- Using outdated Go version
+- Missing new features
+- Security issues
+- Solution: Use latest stable version
+
+**5. Not Setting GOPRIVATE:**
+- Private modules fetched from public proxy
+- Causes authentication errors
+- Solution: Set GOPRIVATE for private repos
+
+**Best Practices:**
+
+**1. Use Latest Stable Go:**
+- Get latest features
+- Security fixes
+- Performance improvements
+- Check: https://go.dev/doc/devel/release
+
+**2. Use Go Modules:**
+- Standard for all projects
+- Better dependency management
+- Easier to work with
+- No GOPATH needed
+
+**3. Set Up IDE:**
+- Install Go extension/plugin
+- Enable format on save
+- Enable goimports on save
+- Set up debugging
+
+**4. Configure Git:**
+- Add go.sum to repository
+- Don't commit vendor/ (unless needed)
+- Use .gitignore for build artifacts
+
+**5. Use goimports:**
+- Automatically adds/removes imports
+- Better than go fmt for imports
+- Install: go install golang.org/x/tools/cmd/goimports@latest
+
+**Verification Steps:**
+
+1. Check Go version: go version
+2. Check GOROOT: go env GOROOT
+3. Check GOPATH: go env GOPATH
+4. Check module support: go env GO111MODULE
+5. Test compilation: go build ./...
+6. Test installation: go install example.com/cmd/tool`,
+					CodeExamples: `// Installation verification
+// Check Go version
+$ go version
+go version go1.21.5 linux/amd64
+
+// Check environment
+$ go env
+GOARCH="amd64"
+GOOS="linux"
+GOROOT="/usr/local/go"
+GOPATH="/home/user/go"
+GO111MODULE="auto"
+GOPROXY="https://proxy.golang.org,direct"
+GOSUMDB="sum.golang.org"
+
+// Create new project
+$ mkdir myproject && cd myproject
+$ go mod init github.com/username/myproject
+go: creating new go.mod: module github.com/username/myproject
+
+// go.mod file created
+module github.com/username/myproject
+
+go 1.21
+
+// Add dependency
+$ go get github.com/gin-gonic/gin
+go: downloading github.com/gin-gonic/gin v1.9.1
+go: added github.com/gin-gonic/gin v1.9.1
+
+// go.mod updated
+module github.com/username/myproject
 
 go 1.21
 
 require (
-    github.com/example/package v1.2.3
-)`,
+    github.com/gin-gonic/gin v1.9.1
+)
+
+// go.sum created automatically with checksums
+
+// Example: Setting up private repository
+// Set GOPRIVATE
+$ export GOPRIVATE=github.com/company/*
+
+// Or in .bashrc/.zshrc
+export GOPRIVATE=github.com/company/*,*.company.com
+
+// Configure Git for private repos
+$ git config --global url."git@github.com:company/".insteadOf "https://github.com/company/"
+
+// Example: Project structure
+myproject/
+├── go.mod
+├── go.sum
+├── cmd/
+│   └── app/
+│       └── main.go
+├── internal/
+│   ├── handlers/
+│   │   └── handlers.go
+│   └── services/
+│       └── service.go
+├── pkg/
+│   └── utils/
+│       └── utils.go
+└── README.md
+
+// Example: Multiple binaries
+// cmd/server/main.go
+package main
+func main() { /* server code */ }
+
+// cmd/cli/main.go
+package main
+func main() { /* CLI code */ }
+
+// Build specific binary
+$ go build ./cmd/server
+$ go build ./cmd/cli
+
+// Example: Using goimports
+// Before (missing import)
+package main
+func main() {
+    fmt.Println("Hello")
+}
+
+// After goimports (auto-added)
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello")
+}
+
+// Install goimports
+$ go install golang.org/x/tools/cmd/goimports@latest
+
+// Use in editor or manually
+$ goimports -w .
+
+// Example: Troubleshooting common issues
+
+// Issue: Cannot find package
+// Solution: Run go mod tidy
+$ go mod tidy
+
+// Issue: Checksum mismatch
+// Solution: Clear module cache and re-download
+$ go clean -modcache
+$ go mod download
+
+// Issue: Private repo authentication
+// Solution: Set up Git credentials or GOPRIVATE
+$ export GOPRIVATE=github.com/company/*
+$ git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+// Issue: Wrong Go version
+// Solution: Update Go or adjust go.mod
+// In go.mod: go 1.21 (minimum version)
+
+// Example: IDE setup (VS Code)
+// Install Go extension
+// Settings:
+// - "go.formatTool": "goimports"
+// - "go.lintTool": "golangci-lint"
+// - "go.useLanguageServer": true
+
+// Example: Docker setup
+FROM golang:1.21-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o app ./cmd/server
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/app .
+CMD ["./app"]`,
 				},
 				{
 					Title: "Go Toolchain",
@@ -194,27 +492,25 @@ go install golang.org/x/tools/cmd/goimports@latest`,
 - Dependencies in go.mod and go.sum
 
 **Project Structure:**
-```
-myproject/
-  go.mod              # Module definition
-  go.sum              # Dependency checksums
-  cmd/                # Application entry points
-    app1/
-      main.go
-    app2/
-      main.go
-  internal/           # Private application code
-    handlers/
-    services/
-    models/
-  pkg/                # Public library code
-    utils/
-  api/                # API definitions
-  web/                # Web assets
-  configs/            # Configuration files
-  scripts/            # Build scripts
-  tests/              # Integration tests
-```
+- myproject/
+  - go.mod              # Module definition
+  - go.sum              # Dependency checksums
+  - cmd/                # Application entry points
+    - app1/
+      - main.go
+    - app2/
+      - main.go
+  - internal/           # Private application code
+    - handlers/
+    - services/
+    - models/
+  - pkg/                # Public library code
+    - utils/
+  - api/                # API definitions
+  - web/                # Web assets
+  - configs/            # Configuration files
+  - scripts/            # Build scripts
+  - tests/              # Integration tests
 
 **Directory Conventions:**
 - **cmd/**: Main applications (each subdirectory is an executable)
@@ -296,19 +592,12 @@ go build ./...           # Build everything`,
 - Version: Semantic versioning (v1.2.3)
 
 **go.mod File Structure:**
-```
-module module-path
-
-go version
-
-require (
-    dependency-path version
-)
-
-exclude dependency-path version  // Exclude specific version
-replace dependency-path => replacement-path  // Replace dependency
-retract version  // Retract version
-```
+- module module-path
+- go version
+- require section lists dependencies
+- exclude excludes specific versions
+- replace replaces dependencies
+- retract retracts versions
 
 **Module Commands:**
 
@@ -1038,13 +1327,11 @@ func main() {
 					Content: `Go's error handling is explicit and requires checking errors after each operation that can fail.
 
 **Error Handling Pattern:**
-```go
 result, err := function()
 if err != nil {
     return err  // or handle error
 }
 // Use result
-```
 
 **Common Patterns:**
 
