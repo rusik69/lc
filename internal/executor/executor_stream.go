@@ -21,6 +21,14 @@ func ExecuteCodeStream(problem *problems.Problem, userCode string, runAllTests b
 func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, runAllTests bool, w io.Writer, language string) *ExecutionResult {
 	start := time.Now()
 
+	// Write initial message to establish stream connection
+	if httpW, ok := w.(http.ResponseWriter); ok {
+		fmt.Fprintf(httpW, "data: %s\n\n", escapeSSE("Preparing execution..."))
+		if flusher, ok := httpW.(http.Flusher); ok {
+			flusher.Flush()
+		}
+	}
+
 	// Detect language if not provided
 	if language == "" {
 		language = DetectLanguage(userCode)
@@ -29,15 +37,46 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 	var testCode string
 	var fileExt string
 	var execCmd string
+	var genErr error
 
-	if language == "python" {
-		testCode = GeneratePythonTestCode(problem, userCode, runAllTests)
-		fileExt = "py"
-		execCmd = "python3"
-	} else {
-		testCode = GenerateTestCode(problem, userCode, runAllTests)
-		fileExt = "go"
-		execCmd = "go run"
+	// Generate test code with error handling
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				genErr = fmt.Errorf("panic during test code generation: %v", r)
+				errorMsg := genErr.Error()
+				if httpW, ok := w.(http.ResponseWriter); ok {
+					fmt.Fprintf(httpW, "data: %s\n\n", escapeSSE("[ERROR] "+errorMsg))
+					if flusher, ok := httpW.(http.Flusher); ok {
+						flusher.Flush()
+					}
+				}
+			}
+		}()
+		if language == "python" {
+			testCode = GeneratePythonTestCode(problem, userCode, runAllTests)
+			fileExt = "py"
+			execCmd = "python3"
+		} else {
+			testCode = GenerateTestCode(problem, userCode, runAllTests)
+			fileExt = "go"
+			execCmd = "go run"
+		}
+	}()
+
+	// If test code generation failed, return error
+	if genErr != nil || testCode == "" {
+		errorMsg := "Failed to generate test code"
+		if genErr != nil {
+			errorMsg = genErr.Error()
+		}
+		// Write error to stream (ignore if connection closed)
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{
+			Success: false,
+			Error:   errorMsg,
+			Results: []TestResult{},
+		}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -50,6 +89,67 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 	// Get sandbox container name
 	container := GetSandboxContainer()
 
+	// Check if container exists and is running
+	// First try: docker ps with filter
+	checkCmd := exec.CommandContext(ctx, "docker", "ps", "--format", "{{.Names}}", "--filter", "name=^"+container+"$")
+	var checkErr bytes.Buffer
+	checkCmd.Stderr = &checkErr
+	checkOutput, err := checkCmd.Output()
+	checkOutputStr := strings.TrimSpace(string(checkOutput))
+	
+	containerRunning := err == nil && checkOutputStr == container
+	
+	// Second try: docker inspect (more reliable)
+	if !containerRunning {
+		inspectCmd := exec.CommandContext(ctx, "docker", "inspect", "--format", "{{.State.Running}}", container)
+		var inspectErrBuf bytes.Buffer
+		inspectCmd.Stderr = &inspectErrBuf
+		inspectOutput, inspectErr := inspectCmd.Output()
+		if inspectErr == nil && strings.TrimSpace(string(inspectOutput)) == "true" {
+			containerRunning = true
+		} else {
+			// Try to get more info about what containers are available
+			listCmd := exec.CommandContext(ctx, "docker", "ps", "--format", "{{.Names}}")
+			listOutput, _ := listCmd.Output()
+			checkErr.WriteString(fmt.Sprintf("\nAvailable containers: %s", strings.TrimSpace(string(listOutput))))
+			if inspectErrBuf.Len() > 0 {
+				checkErr.WriteString(fmt.Sprintf("\nInspect error: %s", inspectErrBuf.String()))
+			}
+			if inspectErr != nil {
+				checkErr.WriteString(fmt.Sprintf("\nInspect command error: %v", inspectErr))
+			}
+		}
+	}
+	
+	if !containerRunning {
+		errorDetails := checkErr.String()
+		if errorDetails == "" {
+			errorDetails = "Container not found"
+		}
+		errorMsg := fmt.Sprintf("Sandbox container '%s' is not accessible.\nDetails: %s\n\nTroubleshooting:\n1. Check if container exists: docker ps -a | grep %s\n2. Start container: docker compose up -d sandbox\n3. Verify Docker socket access from app container", container, errorDetails, container)
+		// Write error to stream (ignore if connection closed)
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{
+			Success: false,
+			Error:   errorMsg,
+			Results: []TestResult{},
+		}
+	}
+
+	// Test connection to sandbox container first
+	testCmd := exec.CommandContext(ctx, "docker", "exec", container, "echo", "test")
+	var testErr bytes.Buffer
+	testCmd.Stderr = &testErr
+	if err := testCmd.Run(); err != nil {
+		errorMsg := fmt.Sprintf("Cannot connect to sandbox container '%s'. Test command failed: %v\n%s\n\nThis usually means:\n1. Container is not running\n2. App container cannot access Docker socket\n3. Container name mismatch\n\nTry: docker compose ps", container, err, testErr.String())
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{
+			Success: false,
+			Error:   errorMsg,
+			Results: []TestResult{},
+		}
+	}
+
 	// Write code to sandbox container
 	writeCmd := exec.CommandContext(ctx, "docker", "exec", "-i", container,
 		"sh", "-c", fmt.Sprintf("cat > %s", filename))
@@ -58,9 +158,13 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 	writeCmd.Stderr = &writeErr
 	
 	if err := writeCmd.Run(); err != nil {
+		errorMsg := fmt.Sprintf("Failed to write code to container '%s': %v\n%s", container, err, writeErr.String())
+		// Write error to stream (ignore if connection closed)
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
 		return &ExecutionResult{
 			Success: false,
-			Error:   fmt.Sprintf("Failed to write code to container: %v\n%s", err, writeErr.String()),
+			Error:   errorMsg,
+			Results: []TestResult{},
 		}
 	}
 
@@ -77,16 +181,22 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
-		return &ExecutionResult{Success: false, Error: err.Error()}
+		errorMsg := "Failed to create stdout pipe: " + err.Error()
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{Success: false, Error: errorMsg}
 	}
 
 	stderrPipe, err := cmd.StderrPipe()
 	if err != nil {
-		return &ExecutionResult{Success: false, Error: err.Error()}
+		errorMsg := "Failed to create stderr pipe: " + err.Error()
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{Success: false, Error: errorMsg}
 	}
 
 	if err := cmd.Start(); err != nil {
-		return &ExecutionResult{Success: false, Error: err.Error()}
+		errorMsg := "Failed to start command: " + err.Error()
+		safeWriteSSE(w, "[ERROR] "+errorMsg)
+		return &ExecutionResult{Success: false, Error: errorMsg}
 	}
 
 	var output strings.Builder
@@ -96,38 +206,48 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 	// Stream stdout
 	go func() {
 		defer func() {
+			if r := recover(); r != nil {
+				errorOutput.WriteString(fmt.Sprintf("Stdout goroutine panic: %v\n", r))
+			}
 			doneChan <- true
 		}()
 		scanner := bufio.NewScanner(stdoutPipe)
 		for scanner.Scan() {
 			line := scanner.Text()
 			output.WriteString(line + "\n")
-			fmt.Fprintf(w, "data: %s\n\n", escapeSSE(line))
-			if f, ok := w.(http.Flusher); ok {
-				f.Flush()
+			// Stop streaming if connection is closed
+			if !safeWriteSSE(w, line) {
+				break
 			}
 		}
 		if err := scanner.Err(); err != nil {
-			errorOutput.WriteString("Stdout scanner error: " + err.Error() + "\n")
+			errorMsg := "Stdout scanner error: " + err.Error()
+			errorOutput.WriteString(errorMsg + "\n")
+			safeWriteSSE(w, "[ERROR] "+errorMsg)
 		}
 	}()
 
 	// Stream stderr
 	go func() {
 		defer func() {
+			if r := recover(); r != nil {
+				errorOutput.WriteString(fmt.Sprintf("Stderr goroutine panic: %v\n", r))
+			}
 			doneChan <- true
 		}()
 		scanner := bufio.NewScanner(stderrPipe)
 		for scanner.Scan() {
 			line := scanner.Text()
 			errorOutput.WriteString(line + "\n")
-			fmt.Fprintf(w, "data: %s\n\n", escapeSSE("[STDERR] "+line))
-			if f, ok := w.(http.Flusher); ok {
-				f.Flush()
+			// Stop streaming if connection is closed
+			if !safeWriteSSE(w, "[STDERR] "+line) {
+				break
 			}
 		}
 		if err := scanner.Err(); err != nil {
-			errorOutput.WriteString("Stderr scanner error: " + err.Error() + "\n")
+			errorMsg := "Stderr scanner error: " + err.Error()
+			errorOutput.WriteString(errorMsg + "\n")
+			safeWriteSSE(w, "[ERROR] "+errorMsg)
 		}
 	}()
 
@@ -195,6 +315,9 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 
 		result.Error = errorMsg.String()
 		result.Success = false
+		
+		// Write error to stream (ignore if connection closed)
+		safeWriteSSE(w, "[ERROR] "+result.Error)
 	}
 
 	if errorStr != "" && err == nil {
@@ -203,6 +326,9 @@ func ExecuteCodeStreamWithLanguage(problem *problems.Problem, userCode string, r
 			result.Error += "\n" + outputStr
 		}
 		result.Success = false
+		
+		// Write error to stream (ignore if connection closed)
+		safeWriteSSE(w, "[ERROR] "+result.Error)
 	}
 
 	// Success should be true only if all tests passed and there were no errors
@@ -226,4 +352,20 @@ func escapeSSE(s string) string {
 	s = strings.ReplaceAll(s, "\r", "\\r")
 	s = strings.ReplaceAll(s, "\\", "\\\\")
 	return s
+}
+
+// safeWriteSSE safely writes SSE data to the response writer, handling closed connections
+func safeWriteSSE(w io.Writer, message string) bool {
+	if httpW, ok := w.(http.ResponseWriter); ok {
+		_, err := fmt.Fprintf(httpW, "data: %s\n\n", escapeSSE(message))
+		if err != nil {
+			// Connection closed or timed out - don't try to write more
+			return false
+		}
+		if flusher, ok := httpW.(http.Flusher); ok {
+			flusher.Flush()
+		}
+		return true
+	}
+	return false
 }

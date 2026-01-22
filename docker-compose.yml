@@ -12,7 +12,8 @@ services:
     environment:
       - SANDBOX_CONTAINER=lc-sandbox
     depends_on:
-      - sandbox
+      sandbox:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - lc-network
@@ -57,6 +58,12 @@ services:
     restart: unless-stopped
     networks:
       - lc-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "test -f /tmp || mkdir -p /tmp"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
 volumes:
   go-mod-cache:

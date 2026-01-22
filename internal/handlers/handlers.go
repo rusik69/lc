@@ -378,7 +378,46 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result := executor.ExecuteCodeStreamWithLanguage(problem, userCode, runAllTests, w, language)
+		// Send initial comment to establish connection
+		fmt.Fprintf(w, ": connection established\n\n")
+		flusher.Flush()
+
+		// Ensure we always send the done event, even on panic
+		defer func() {
+			if r := recover(); r != nil {
+				// Write error to stream before sending done event
+				fmt.Fprintf(w, "data: %s\n\n", "[ERROR] Internal server error: "+fmt.Sprintf("%v", r))
+				flusher.Flush()
+				fmt.Fprintf(w, "event: done\ndata: {\"success\":false,\"passed\":0,\"total\":0}\n\n")
+				flusher.Flush()
+			}
+		}()
+
+		var result *executor.ExecutionResult
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Write panic error to stream
+					fmt.Fprintf(w, "data: %s\n\n", "[ERROR] Execution panic: "+fmt.Sprintf("%v", r))
+					flusher.Flush()
+					result = &executor.ExecutionResult{
+						Success: false,
+						Error:   fmt.Sprintf("Execution panic: %v", r),
+						Results: []executor.TestResult{},
+					}
+				}
+			}()
+			result = executor.ExecuteCodeStreamWithLanguage(problem, userCode, runAllTests, w, language)
+		}()
+
+		// Ensure result is not nil
+		if result == nil {
+			result = &executor.ExecutionResult{
+				Success: false,
+				Error:   "Execution returned nil result",
+				Results: []executor.TestResult{},
+			}
+		}
 
 		passed := 0
 		for _, r := range result.Results {
@@ -387,7 +426,15 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fmt.Fprintf(w, "event: done\ndata: {\"success\":%t,\"passed\":%d,\"total\":%d}\n\n", result.Success, passed, len(result.Results))
+		// Always send done event, even if there were errors
+		// Check if connection is still open before writing
+		doneMsg := fmt.Sprintf("event: done\ndata: {\"success\":%t,\"passed\":%d,\"total\":%d}\n\n", result.Success, passed, len(result.Results))
+		if _, err := fmt.Fprintf(w, doneMsg); err != nil {
+			// Connection closed or timed out - log but don't fail
+			// This is expected if client disconnects
+			return
+		}
+		// Only flush if write succeeded
 		flusher.Flush()
 		return
 	}
