@@ -48,8 +48,17 @@
         <script>
             // Global function to load solution with language
             function loadSolution(id, lang) {
-                fetch('/solution/' + id + '?lang=' + lang)
-                    .then(response => response.text())
+                // #region agent log
+                var url = '/solution/' + id + '?lang=' + lang;
+                fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:51',message:'loadSolution fetch start',data:{url:url,id:id,lang:lang},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
+                fetch(url)
+                    .then(response => {
+                        // #region agent log
+                        fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:53',message:'loadSolution response received',data:{url:url,status:response.status,statusText:response.statusText,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                        // #endregion
+                        return response.text();
+                    })
                     .then(html => {
                         // The response includes the full solution div, so we extract its innerHTML
                         var tempDiv = document.createElement('div');
@@ -81,6 +90,9 @@
                         }
                     })
                     .catch(function(error) {
+                        // #region agent log
+                        fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:83',message:'loadSolution fetch error',data:{url:url,errorName:error.name,errorMessage:error.message,errorStack:error.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                        // #endregion
                         console.error('Error loading solution:', error);
                     });
             }
@@ -103,8 +115,17 @@
                 } else {
                     // Open solution - use current language selection
                     var lang = document.getElementById('language-select').value;
-                    fetch('/solution/' + problemId + '?lang=' + lang)
-                        .then(function(response) { return response.text(); })
+                    // #region agent log
+                    var url2 = '/solution/' + problemId + '?lang=' + lang;
+                    fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:106',message:'toggleSolution fetch start',data:{url:url2,problemId:problemId,lang:lang},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+                    // #endregion
+                    fetch(url2)
+                        .then(function(response) {
+                            // #region agent log
+                            fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:107',message:'toggleSolution response received',data:{url:url2,status:response.status,statusText:response.statusText,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+                            // #endregion
+                            return response.text();
+                        })
                         .then(function(html) {
                             solutionPanel.innerHTML = html;
                             content.classList.add('solution-open');
@@ -114,6 +135,9 @@
                             highlightCode();
                         })
                         .catch(function(error) {
+                            // #region agent log
+                            fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:116',message:'toggleSolution fetch error',data:{url:url2,errorName:error.name,errorMessage:error.message,errorStack:error.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+                            // #endregion
                             console.error('Error loading solution:', error);
                         });
                 }
@@ -230,8 +254,17 @@
                 }
                 // If solution is open, reload it with new language
                 if (solutionOpen && solutionProblemId === {{.ID}}) {
-                    fetch('/solution/{{.ID}}?lang=' + lang)
-                        .then(function(response) { return response.text(); })
+                    // #region agent log
+                    var url3 = '/solution/{{.ID}}?lang=' + lang;
+                    fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:233',message:'language change fetch start',data:{url:url3,problemId:{{.ID}},lang:lang},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+                    // #endregion
+                    fetch(url3)
+                        .then(function(response) {
+                            // #region agent log
+                            fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:234',message:'language change response received',data:{url:url3,status:response.status,statusText:response.statusText,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+                            // #endregion
+                            return response.text();
+                        })
                         .then(function(html) {
                             var tempDiv = document.createElement('div');
                             tempDiv.innerHTML = html;
@@ -260,6 +293,9 @@
                             }
                         })
                         .catch(function(error) {
+                            // #region agent log
+                            fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:262',message:'language change fetch error',data:{url:url3,errorName:error.name,errorMessage:error.message,errorStack:error.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+                            // #endregion
                             console.error('Error reloading solution:', error);
                         });
                 }
@@ -304,11 +340,18 @@
                 }, 60000); // 60 second timeout
                 
                 // Fetch with streaming
-                fetch('/run/' + problemId + '?stream=true', {
+                // #region agent log
+                var url4 = '/run/' + problemId + '?stream=true';
+                fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:307',message:'run button fetch start',data:{url:url4,problemId:problemId,method:'POST',hasSignal:!!controller.signal},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+                // #endregion
+                fetch(url4, {
                     method: 'POST',
                     body: formData,
                     signal: controller.signal
                 }).then(function(response) {
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:311',message:'run button response received',data:{url:url4,status:response.status,statusText:response.statusText,ok:response.ok,contentType:response.headers.get('content-type')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+                    // #endregion
                     clearTimeout(timeoutId);
                     if (!response.ok) {
                         return response.text().then(function(text) {
@@ -377,6 +420,9 @@
                     
                     readStream();
                 }).catch(function(error) {
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/cc6be576-614c-48cb-ab78-fc47ce9cf38e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'problem.html:379',message:'run button fetch error',data:{url:url4,errorName:error.name,errorMessage:error.message,errorStack:error.stack,isAbortError:error.name==='AbortError'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+                    // #endregion
                     clearTimeout(timeoutId);
                     var errorMsg = error.message;
                     if (error.name === 'AbortError') {
