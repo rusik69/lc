@@ -305,28 +305,24 @@ $colors: red, blue, green;
 					CodeExamples: `// styled-components
 import styled from 'styled-components';
 
-const Button = styled.button\`
-    background-color: \${props => props.primary ? 'blue' : 'gray'};
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    
-    &:hover {
-        opacity: 0.8;
-    }
-\`;
+// Note: styled-components uses template literals (backticks) in JavaScript
+// const Button = styled.button(template literal)
+//     background-color: props => props.primary ? 'blue' : 'gray';
+//     color: white;
+//     padding: 10px 20px;
+//     border: none;
+//     border-radius: 4px;
+//     cursor: pointer;
+//     &:hover { opacity: 0.8; }
 
 // Usage
 <Button primary>Primary Button</Button>
 <Button>Secondary Button</Button>
 
 // With theme
-const ThemedButton = styled.button\`
-    background-color: \${props => props.theme.primary};
-    color: \${props => props.theme.text};
-\`;
+// const ThemedButton = styled.button(template literal)
+//     background-color: props => props.theme.primary;
+//     color: props => props.theme.text;
 
 // Theme provider
 const theme = {
@@ -341,21 +337,20 @@ const theme = {
 // Emotion
 import { css } from '@emotion/react';
 
-const buttonStyle = css\`
-    background-color: blue;
-    color: white;
-    padding: 10px 20px;
-\`;
+// const buttonStyle = css(template literal)
+//     background-color: blue;
+//     color: white;
+//     padding: 10px 20px;
 
 <button css={buttonStyle}>Button</button>
 
 // Styled-jsx (Next.js)
-<style jsx>{\`
-    .button {
-        background-color: blue;
-        color: white;
-    }
-\`}</style>`,
+// <style jsx>{template literal}
+//     .button {
+//         background-color: blue;
+//         color: white;
+//     }
+// }</style>`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -467,7 +462,7 @@ function Person(name, age) {
 }
 
 Person.prototype.greet = function() {
-    return `Hello, I'm ${this.name}`;
+    return 'Hello, I\'m ' + this.name;
 };
 
 const john = new Person("John", 30);
@@ -481,7 +476,7 @@ class Person {
     }
     
     greet() {
-        return `Hello, I'm ${this.name}`;
+        return 'Hello, I\'m ' + this.name;
     }
     
     static create(name) {
@@ -496,7 +491,7 @@ class Student extends Person {
     }
     
     study() {
-        return `${this.name} is studying`;
+        return this.name + ' is studying';
     }
 }
 
@@ -716,7 +711,7 @@ id = 123;
 
 // Optional
 function greet(name?: string) {
-    return name ? `Hello, ${name}` : "Hello";
+    return name ? 'Hello, ' + name : "Hello";
 }
 
 // Type inference
@@ -821,7 +816,7 @@ if (isString(value)) {
 function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = function(...args: any[]) {
-        console.log(\`Calling \${propertyKey}\`);
+        console.log('Calling ' + propertyKey);
         return originalMethod.apply(this, args);
     };
 }
@@ -1240,7 +1235,7 @@ function DataFetcher({ userId }) {
     const [data, setData] = useState(null);
     
     useEffect(() => {
-        fetch(`/api/users/${userId}`)
+        fetch('/api/users/' + userId)
             .then(res => res.json())
             .then(setData);
     }, [userId]); // Run when userId changes
@@ -1316,7 +1311,7 @@ function useFetch(url) {
 
 // Usage
 function UserProfile({ userId }) {
-    const { data, loading, error } = useFetch(`/api/users/${userId}`);
+    const { data, loading, error } = useFetch('/api/users/' + userId);
     
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -1813,7 +1808,7 @@ export default {
 function Button({ label, onClick, variant = "primary" }) {
     return (
         <button 
-            className={`btn btn-${variant}`}
+            className={'btn btn-' + variant}
             onClick={onClick}
         >
             {label}

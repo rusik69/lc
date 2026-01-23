@@ -101,17 +101,11 @@ export class AppModule { }`,
 					CodeExamples: `// Component with data binding
 @Component({
     selector: 'app-user',
-    template: \`
-        <h1>{{ user.name }}</h1>
-        <input [value]="user.email" (input)="onEmailChange($event)">
-        <button [disabled]="!isValid" (click)="save()">Save</button>
-        <div *ngIf="showDetails">
-            <p>{{ user.bio }}</p>
-        </div>
-        <ul>
-            <li *ngFor="let item of items">{{ item }}</li>
-        </ul>
-    \`
+    template: '<h1>{{ user.name }}</h1>' +
+        '<input [value]="user.email" (input)="onEmailChange($event)">' +
+        '<button [disabled]="!isValid" (click)="save()">Save</button>' +
+        '<div *ngIf="showDetails"><p>{{ user.bio }}</p></div>' +
+        '<ul><li *ngFor="let item of items">{{ item }}</li></ul>'
 })
 export class UserComponent {
     user = { name: 'John', email: 'john@example.com' };
@@ -192,7 +186,7 @@ export class UserComponent implements OnInit, OnDestroy {
 <!-- Reactive statements -->
 <script>
     let name = 'world';
-    $: greeting = \`Hello, \${name}!\`;
+    $: greeting = 'Hello, ' + name + '!';
     $: console.log('Name changed:', name);
 </script>
 
@@ -251,26 +245,28 @@ export class UserComponent implements OnInit, OnDestroy {
 - Great tooling
 - Versioning flexibility`,
 					CodeExamples: `// GraphQL Query
-query GetUser($id: ID!) {
-    user(id: $id) {
-        id
-        name
-        email
-        posts {
-            title
-            content
-        }
-    }
-}
-
+// Note: GraphQL queries use $ prefix for variables (e.g., $id: ID!)
+// Example:
+// query GetUser($id: ID!) {
+//     user(id: $id) {
+//         id
+//         name
+//         email
+//         posts {
+//             title
+//             content
+//         }
+//     }
+// }
+//
 // GraphQL Mutation
-mutation CreateUser($input: UserInput!) {
-    createUser(input: $input) {
-        id
-        name
-        email
-    }
-}
+// mutation CreateUser($input: UserInput!) {
+//     createUser(input: $input) {
+//         id
+//         name
+//         email
+//     }
+// }
 
 // Apollo Client
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
@@ -281,28 +277,16 @@ const client = new ApolloClient({
 });
 
 // Query with Apollo
-const GET_USERS = gql\`
-    query GetUsers {
-        users {
-            id
-            name
-        }
-    }
-\`;
-
-const { data, loading, error } = useQuery(GET_USERS);
-
+// Note: GraphQL queries use template literals (backticks) in JavaScript
+// Example:
+// const GET_USERS = gql`query GetUsers { users { id name } }`;
+// const { data, loading, error } = useQuery(GET_USERS);
+//
 // Mutation with Apollo
-const CREATE_USER = gql\`
-    mutation CreateUser($name: String!) {
-        createUser(name: $name) {
-            id
-            name
-        }
-    }
-\`;
-
-const [createUser] = useMutation(CREATE_USER);`,
+// Example:
+// const CREATE_USER = gql`mutation CreateUser($name: String!) { createUser(name: $name) { id name } }`;
+// const [createUser] = useMutation(CREATE_USER);
+// Note: GraphQL variable syntax uses $ prefix (e.g., $name: String!)`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -414,18 +398,13 @@ $colors: red, blue, green;
 - Extract common patterns
 - Test styled components`,
 					CodeExamples: `// styled-components patterns
-const Button = styled.button\`
-    background: \${props => props.variant === 'primary' ? 'blue' : 'gray'};
-    padding: \${props => props.size === 'large' ? '15px' : '10px'};
-    
-    &:hover {
-        opacity: 0.8;
-    }
-    
-    @media (max-width: 768px) {
-        width: 100%;
-    }
-\`;
+// Note: Template literal syntax shown in comments to avoid Go parsing issues
+// In JavaScript, styled-components uses template literals (backticks):
+// const Button = styled.button(template literal)
+//     background: props => props.variant === 'primary' ? 'blue' : 'gray';
+//     padding: props => props.size === 'large' ? '15px' : '10px';
+//     &:hover { opacity: 0.8; }
+//     @media (max-width: 768px) { width: 100%; }
 
 // Theme with TypeScript
 interface Theme {
@@ -435,19 +414,16 @@ interface Theme {
     };
 }
 
-const ThemedButton = styled.button<{ theme: Theme }>\`
-    background: \${props => props.theme.colors.primary};
-\`;
+// const ThemedButton = styled.button<{ theme: Theme }>(template literal)
+//     background: props => props.theme.colors.primary;
 
 // Animations
-const fadeIn = keyframes\`
-    from { opacity: 0; }
-    to { opacity: 1; }
-\`;
+// const fadeIn = keyframes(template literal)
+//     from { opacity: 0; }
+//     to { opacity: 1; }
 
-const FadeInBox = styled.div\`
-    animation: \${fadeIn} 0.5s;
-\`;`,
+// const FadeInBox = styled.div(template literal)
+//     animation: fadeIn 0.5s;`,
 				},
 			},
 			ProblemIDs: []int{},

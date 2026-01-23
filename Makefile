@@ -3,6 +3,8 @@
 # Build the application
 build:
 	@echo "Building application..."
+	@go mod download
+	@mkdir -p bin
 	@go build -o bin/lc ./cmd/lc
 
 # Run the application

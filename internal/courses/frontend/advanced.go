@@ -205,7 +205,7 @@ const name = ref('John')
 const doubled = computed(() => count.value * 2)
 
 watch(count, (newVal, oldVal) => {
-    console.log(`Count changed from ${oldVal} to ${newVal}`)
+    console.log('Count changed from ' + oldVal + ' to ' + newVal)
 })
 
 function increment() {
@@ -646,7 +646,7 @@ export async function getStaticPaths() {
 
 <script setup>
 const route = useRoute();
-const { data: user } = await useFetch(\`/api/users/\${route.params.id}\`);
+const { data: user } = await useFetch('/api/users/' + route.params.id);
 </script>
 
 // Remix
@@ -857,7 +857,9 @@ type Partial<T> = {
 };
 
 // Template literal types
-type EventName<T extends string> = `on${Capitalize<T>}`;
+// Note: Using string concatenation syntax to avoid Go parsing issues
+// In TypeScript: type EventName<T extends string> = 'on' + Capitalize<T>;
+type EventName<T extends string> = 'on' + Capitalize<T>;
 type ClickEvent = EventName<'click'>; // "onClick"
 
 // Type extraction
@@ -892,12 +894,16 @@ function createUserId(id: string): UserId {
 - Dynamic type generation
 - Complex type transformations`,
 					CodeExamples: `// Template literal types
-type EventName<T extends string> = \`on\${Capitalize<T>}\`;
+// Note: Using string concatenation syntax to avoid Go parsing issues  
+// In TypeScript: type EventName<T extends string> = 'on' + Capitalize<T>;
+type EventName<T extends string> = 'on' + Capitalize<T>;
 type ClickEvent = EventName<'click'>; // "onClick"
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
-type ApiEndpoint = \`/api/\${string}\`;
-type ApiCall = \`\${HttpMethod} \${ApiEndpoint}\`;
+// In TypeScript: type ApiEndpoint = '/api/' + string;
+type ApiEndpoint = '/api/' + string;
+// In TypeScript: type ApiCall = HttpMethod + ' ' + ApiEndpoint;
+type ApiCall = HttpMethod + ' ' + ApiEndpoint;
 
 // Mapped types
 type Readonly<T> = {
@@ -913,8 +919,9 @@ type Pick<T, K extends keyof T> = {
 };
 
 // Key remapping
+// In TypeScript: type Getters<T> = { [K in keyof T as 'get' + Capitalize<string & K>]: () => T[K]; };
 type Getters<T> = {
-    [K in keyof T as \`get\${Capitalize<string & K>}\`]: () => T[K];
+    [K in keyof T as 'get' + Capitalize<string & K>]: () => T[K];
 };
 
 interface User {

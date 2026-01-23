@@ -255,22 +255,22 @@ uint32_t value = 0x12345678;
 **Addressing Modes:**
 
 1. **Immediate**: Operand is in instruction
-   - Example: `ADD R1, R2, #5` (add 5 to R2)
+   - Example: ADD R1, R2, #5 (add 5 to R2)
 
 2. **Register**: Operand is in register
-   - Example: `ADD R1, R2, R3` (add R2 and R3)
+   - Example: ADD R1, R2, R3 (add R2 and R3)
 
 3. **Direct**: Address is in instruction
-   - Example: `LOAD R1, [0x1000]` (load from address 0x1000)
+   - Example: LOAD R1, [0x1000] (load from address 0x1000)
 
 4. **Indirect**: Register contains address
-   - Example: `LOAD R1, [R2]` (load from address in R2)
+   - Example: LOAD R1, [R2] (load from address in R2)
 
 5. **Indexed**: Address = base + offset
-   - Example: `LOAD R1, [R2 + #4]` (load from R2 + 4)
+   - Example: LOAD R1, [R2 + #4] (load from R2 + 4)
 
 6. **Relative**: Address = PC + offset
-   - Example: `JMP #100` (jump to PC + 100)`,
+   - Example: JMP #100 (jump to PC + 100)`,
 					CodeExamples: `// Example: RISC instruction format
 // ADD R1, R2, R3
 // Opcode: ADD (000000)

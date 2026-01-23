@@ -854,7 +854,7 @@ function greet(name) {
 
 // Arrow function (ES6)
 const greetArrow = (name) => {
-    return `Hello, ${name}`;
+    return 'Hello, ' + name;
 };
 
 // Shorter arrow function
@@ -884,8 +884,8 @@ console.warn("Warning message");`,
 - Use === for strict equality
 
 **Template Literals:**
-- Backticks (`) for strings
-- ${} for variable interpolation
+- Backticks for strings (use backtick character)
+- Variable interpolation with ${}
 - Multi-line strings
 
 **Type Checking:**
@@ -925,12 +925,11 @@ console.log(Array.isArray([1,2]));  // true
 
 // Template literals
 const name = "John";
-const greeting = `Hello, ${name}!`;
-const multiLine = `
-    Line 1
-    Line 2
-    Line 3
-`;
+const greeting = 'Hello, ' + name + '!';
+const multiLine = 
+    'Line 1\n' +
+    'Line 2\n' +
+    'Line 3';
 
 // Type coercion
 console.log("5" + 3);    // "53" (string concatenation)
@@ -978,7 +977,7 @@ const divide = (a, b) => a / b;
 
 // Default parameters
 function greet(name = "Guest") {
-    return `Hello, ${name}`;
+    return 'Hello, ' + name;
 }
 
 // Rest parameters
@@ -1067,7 +1066,7 @@ const person = {
     age: 30,
     city: "NYC",
     greet() {
-        return `Hello, I'm ${this.name}`;
+        return 'Hello, I\'m ' + this.name;
     }
 };
 
@@ -1191,7 +1190,7 @@ async function fetchData() {
     try {
         const response = await fetch("/api/data");
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('HTTP error! status: ' + response.status);
         }
         const data = await response.json();
         return data;
@@ -1451,7 +1450,7 @@ container.innerHTML = "";
 const fragment = document.createDocumentFragment();
 for (let i = 0; i < 100; i++) {
     const li = document.createElement("li");
-    li.textContent = `Item ${i}`;
+    li.textContent = 'Item ' + i;
     fragment.appendChild(li);
 }
 document.getElementById("list").appendChild(fragment);
@@ -1602,7 +1601,7 @@ walkDOM(document.body, (node) => {
 
 **Viewport Meta Tag:**
 Essential for mobile devices:
-\`<meta name="viewport" content="width=device-width, initial-scale=1.0">\`
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 **Breakpoints:**
 Common device widths:
@@ -1673,7 +1672,7 @@ Common device widths:
 					Content: `Media queries allow CSS to apply styles based on device characteristics.
 
 **Media Query Syntax:**
-\`@media media-type and (condition) { styles }\`
+@media media-type and (condition) { styles }
 
 **Media Types:**
 - all: All devices (default)
@@ -2308,12 +2307,12 @@ input:valid {
 const fileInput = document.getElementById("fileInput");
 fileInput.addEventListener("change", (e) => {
     const files = e.target.files;
-    console.log(`Selected ${files.length} file(s)`);
+    console.log('Selected ' + files.length + ' file(s)');
     
     Array.from(files).forEach(file => {
-        console.log(`Name: ${file.name}`);
-        console.log(`Size: ${file.size} bytes`);
-        console.log(`Type: ${file.type}`);
+        console.log('Name: ' + file.name);
+        console.log('Size: ' + file.size + ' bytes');
+        console.log('Type: ' + file.type);
     });
 });
 
@@ -2389,7 +2388,7 @@ function uploadWithProgress(file) {
     xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
             const percentComplete = (e.loaded / e.total) * 100;
-            console.log(`Upload progress: ${percentComplete}%`);
+            console.log('Upload progress: ' + percentComplete + '%');
         }
     });
     
@@ -2655,7 +2654,7 @@ const sessionId = sessionStorage.getItem("sessionId");
 function setCookie(name, value, days) {
     const expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
 }
 
 function getCookie(name) {
@@ -2711,7 +2710,7 @@ async function fetchData() {
     try {
         const response = await fetch("https://api.example.com/data");
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('HTTP error! status: ' + response.status);
         }
         const data = await response.json();
         return data;
@@ -2751,7 +2750,7 @@ async function safeFetch(url) {
             } else if (response.status === 500) {
                 throw new Error("Server error");
             }
-            throw new Error(`HTTP ${response.status}`);
+            throw new Error('HTTP ' + response.status);
         }
         
         const data = await response.json();
@@ -2897,7 +2896,7 @@ const PI = 3.14159;
 // Arrow functions
 const add = (a, b) => a + b;
 
-const greet = name => `Hello, ${name}`;
+const greet = name => 'Hello, ' + name;
 
 const process = (data) => {
     // Multiple statements
@@ -2907,11 +2906,9 @@ const process = (data) => {
 
 // Template literals
 const name = "John";
-const message = `Hello, ${name}!
-This is a multi-line
-string.`;
+const message = 'Hello, ' + name + '!\nThis is a multi-line\nstring.';
 
-const calculation = `2 + 2 = ${2 + 2}`;
+const calculation = '2 + 2 = ' + (2 + 2);
 
 // Destructuring arrays
 const [first, second, ...rest] = [1, 2, 3, 4, 5];
@@ -2923,7 +2920,7 @@ const { name, age } = person;
 const { name: personName, age: personAge } = person;
 
 // Default values
-const greetUser = (name = "Guest") => `Hello, ${name}`;
+const greetUser = (name = "Guest") => 'Hello, ' + name;
 
 function createUser({ name, age = 18, city = "Unknown" }) {
     return { name, age, city };
@@ -3022,7 +3019,7 @@ class Person {
     }
     
     greet() {
-        return `Hello, I'm ${this.name}`;
+        return 'Hello, I\'m ' + this.name;
     }
     
     static create(name) {

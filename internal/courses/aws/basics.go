@@ -3517,10 +3517,10 @@ print(f"Distribution ID: {distribution['Distribution']['Id']}")`,
 - Profiles for multiple accounts
 
 **Common Commands:**
-- `aws configure`: Set up credentials
-- `aws s3 ls`: List S3 buckets
-- `aws ec2 describe-instances`: List EC2 instances
-- `aws lambda invoke`: Invoke Lambda function
+- aws configure: Set up credentials
+- aws s3 ls: List S3 buckets
+- aws ec2 describe-instances: List EC2 instances
+- aws lambda invoke: Invoke Lambda function
 
 **Best Practices:**
 - Use IAM roles instead of access keys
