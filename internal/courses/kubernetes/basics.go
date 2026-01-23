@@ -12,41 +12,358 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Kubernetes?",
-					Content: `Kubernetes (often abbreviated as K8s) is an open-source container orchestration platform originally developed by Google. It automates the deployment, scaling, and management of containerized applications.
+					Content: `Kubernetes (often abbreviated as K8s, where "8" represents the 8 letters between "K" and "s") is an open-source container orchestration platform that has become the de facto standard for deploying and managing containerized applications at scale. Originally developed by Google based on their internal Borg system, Kubernetes automates the complex tasks of deploying, scaling, and managing containerized applications across clusters of machines.
 
-**History:**
-- Originally developed at Google based on their internal Borg system
-- Open-sourced in 2014
-- Donated to Cloud Native Computing Foundation (CNCF) in 2015
-- Now one of the most popular container orchestration platforms
+**Historical Context:**
+
+**The Google Connection:**
+- Kubernetes was born from Google's internal container orchestration system called Borg
+- Google ran Borg for over a decade, managing billions of containers
+- Kubernetes represents Google's distilled knowledge of running containers at massive scale
+- Open-sourced in 2014 to help the broader community
+
+**Evolution:**
+- 2014: Initial open-source release by Google
+- 2015: Donated to Cloud Native Computing Foundation (CNCF)
+- 2016: First stable release (v1.0)
+- 2018: Graduated from CNCF incubation (production-ready)
+- Today: Most widely adopted container orchestration platform
+
+**Why Kubernetes Exists:**
+
+**The Container Problem:**
+- Containers solved "works on my machine" problem
+- But managing containers at scale is complex
+- Need: Deployment, scaling, networking, storage, monitoring
+- Manual management doesn't scale
+
+**What Kubernetes Solves:**
+- Automates container deployment and management
+- Handles scaling based on demand
+- Manages networking between containers
+- Provides storage orchestration
+- Ensures high availability
+- Enables self-healing systems
 
 **Key Capabilities:**
-- **Service Discovery & Load Balancing**: Automatically expose containers using DNS or IP
-- **Storage Orchestration**: Mount storage systems (local, cloud, network)
-- **Automated Rollouts & Rollbacks**: Gradually update application instances
-- **Automatic Bin Packing**: Place containers based on resource requirements
-- **Self-Healing**: Restart failed containers, replace and reschedule containers
-- **Secret & Configuration Management**: Store and manage sensitive information
+
+**1. Service Discovery & Load Balancing:**
+
+**What It Does:**
+- Automatically assigns IP addresses and DNS names to containers
+- Distributes traffic across multiple container instances
+- Provides stable endpoints even as containers come and go
+
+**How It Works:**
+- Services provide stable IP and DNS name
+- Load balancer distributes requests
+- Health checks ensure only healthy containers receive traffic
+- Automatic failover when containers fail
+
+**Real-World:**
+- Microservices can find each other by name
+- External traffic routed to appropriate containers
+- No manual IP management needed
+
+**2. Storage Orchestration:**
+
+**What It Does:**
+- Mounts storage systems to containers
+- Supports local storage, cloud storage, network storage
+- Manages storage lifecycle
+
+**Storage Types:**
+- Local volumes: Node-local storage
+- Cloud volumes: AWS EBS, Azure Disk, GCE Persistent Disk
+- Network storage: NFS, Ceph, GlusterFS
+- Distributed storage: Ceph, MinIO
+
+**Benefits:**
+- Containers can persist data
+- Storage survives container restarts
+- Can share storage between containers
+- Automatic provisioning and cleanup
+
+**3. Automated Rollouts & Rollbacks:**
+
+**What It Does:**
+- Deploys new versions gradually
+- Monitors health during deployment
+- Automatically rolls back if issues detected
+
+**Deployment Strategies:**
+- Rolling update: Gradually replace old with new
+- Blue-green: Switch between two identical environments
+- Canary: Deploy to subset, then expand
+- A/B testing: Route traffic to different versions
+
+**Benefits:**
+- Zero-downtime deployments
+- Automatic rollback on failure
+- Gradual risk reduction
+- Easy to test new versions
+
+**4. Automatic Bin Packing:**
+
+**What It Does:**
+- Places containers on nodes based on resource requirements
+- Maximizes resource utilization
+- Considers CPU, memory, storage, and custom resources
+
+**How It Works:**
+- Scheduler evaluates resource requests
+- Finds nodes with available resources
+- Considers constraints and preferences
+- Optimizes for efficiency and availability
+
+**Benefits:**
+- Better resource utilization
+- Cost optimization
+- Automatic placement decisions
+- Handles complex scheduling requirements
+
+**5. Self-Healing:**
+
+**What It Does:**
+- Automatically restarts failed containers
+- Replaces unresponsive containers
+- Reschedules containers when nodes fail
+- Kills containers that don't respond to health checks
+
+**Health Checks:**
+- Liveness probes: Is container running?
+- Readiness probes: Is container ready to serve traffic?
+- Startup probes: Has container started?
+
+**Benefits:**
+- High availability without manual intervention
+- Automatic recovery from failures
+- Reduced operational overhead
+- More reliable systems
+
+**6. Secret & Configuration Management:**
+
+**What It Does:**
+- Stores sensitive data (passwords, API keys, certificates)
+- Manages configuration data
+- Provides secure access to secrets
+- Can integrate with external secret managers
+
+**Secret Management:**
+- Encrypted at rest (in etcd)
+- Base64 encoded (not encrypted, but obfuscated)
+- Can integrate with Vault, AWS Secrets Manager, etc.
+- Mounted as files or environment variables
+
+**Configuration Management:**
+- ConfigMaps for non-sensitive configuration
+- Environment-specific configurations
+- Dynamic configuration updates
+- Version control for configurations
 
 **Why Use Kubernetes?**
-- **Scalability**: Scale applications up or down automatically
-- **High Availability**: Distribute workloads across multiple nodes
-- **Portability**: Run anywhere (cloud, on-premises, hybrid)
-- **Ecosystem**: Rich ecosystem of tools and extensions
-- **Industry Standard**: Widely adopted by enterprises
+
+**1. Scalability:**
+
+**Automatic Scaling:**
+- Horizontal Pod Autoscaler (HPA): Scale based on CPU/memory
+- Vertical Pod Autoscaler (VPA): Adjust resource requests
+- Cluster Autoscaler: Add/remove nodes automatically
+- Custom metrics: Scale based on application metrics
+
+**Benefits:**
+- Handle traffic spikes automatically
+- Scale down during low usage (save costs)
+- No manual intervention needed
+- Responds to demand in real-time
+
+**2. High Availability:**
+
+**Fault Tolerance:**
+- Distributes workloads across multiple nodes
+- Replicates applications for redundancy
+- Automatic failover when nodes/containers fail
+- Health checks ensure only healthy instances serve traffic
+
+**Benefits:**
+- 99.9%+ uptime achievable
+- Survives node failures
+- Survives container crashes
+- Reduces downtime significantly
+
+**3. Portability:**
+
+**Run Anywhere:**
+- Public clouds: AWS, Azure, GCP, etc.
+- Private clouds: OpenStack, VMware
+- On-premises: Bare metal, virtualized
+- Hybrid: Mix of cloud and on-premises
+- Edge: Lightweight distributions for edge computing
+
+**Benefits:**
+- Avoid vendor lock-in
+- Move workloads between environments
+- Consistent experience across platforms
+- Future-proof your infrastructure
+
+**4. Rich Ecosystem:**
+
+**Extensibility:**
+- Custom Resource Definitions (CRDs)
+- Operators for complex applications
+- Helm charts for package management
+- Thousands of third-party tools
+
+**Tools & Integrations:**
+- Monitoring: Prometheus, Grafana, Datadog
+- Logging: ELK stack, Loki, Fluentd
+- CI/CD: Jenkins, GitLab CI, GitHub Actions
+- Service Mesh: Istio, Linkerd
+- Security: Falco, OPA Gatekeeper
+
+**5. Industry Standard:**
+
+**Wide Adoption:**
+- Used by most Fortune 500 companies
+- Standard in cloud-native development
+- Large talent pool
+- Extensive documentation and community
+
+**Benefits:**
+- Easy to hire talent
+- Abundant learning resources
+- Strong community support
+- Long-term viability
 
 **Kubernetes vs Alternatives:**
-- **Docker Swarm**: Simpler but less feature-rich
-- **Apache Mesos**: More complex, better for heterogeneous workloads
-- **Nomad**: Simpler, good for multi-cloud deployments
-- **Kubernetes**: Most features, largest ecosystem, industry standard
+
+**1. Docker Swarm:**
+
+**Swarm Advantages:**
+- Simpler to learn and use
+- Built into Docker
+- Lower resource overhead
+- Good for small to medium deployments
+
+**Kubernetes Advantages:**
+- More features and capabilities
+- Better for large-scale deployments
+- Larger ecosystem
+- More production-ready features
+
+**When to Choose:**
+- Swarm: Simple deployments, Docker-native teams
+- Kubernetes: Complex requirements, large scale, enterprise needs
+
+**2. Apache Mesos:**
+
+**Mesos Advantages:**
+- Better for heterogeneous workloads (containers + VMs + bare metal)
+- More flexible resource management
+- Good for data processing workloads
+
+**Kubernetes Advantages:**
+- More focused on containers
+- Larger ecosystem
+- Easier to use
+- Better developer experience
+
+**When to Choose:**
+- Mesos: Mixed workloads, data processing focus
+- Kubernetes: Container-focused, modern applications
+
+**3. Nomad:**
+
+**Nomad Advantages:**
+- Simpler architecture
+- Multi-cloud friendly
+- Supports containers, VMs, and binaries
+- Lower operational complexity
+
+**Kubernetes Advantages:**
+- More features
+- Larger ecosystem
+- More integrations
+- Industry standard
+
+**When to Choose:**
+- Nomad: Simplicity, multi-cloud, mixed workloads
+- Kubernetes: Feature-rich, large ecosystem, enterprise needs
 
 **Common Use Cases:**
-- Microservices architectures
-- CI/CD pipelines
-- Multi-cloud deployments
-- Machine learning workloads
-- Edge computing`,
+
+**1. Microservices Architectures:**
+- Deploy and manage many small services
+- Service discovery between services
+- Independent scaling of services
+- Isolated failures (one service failure doesn't cascade)
+
+**2. CI/CD Pipelines:**
+- Deploy applications automatically
+- Run build and test containers
+- Manage deployment environments
+- Enable continuous deployment
+
+**3. Multi-Cloud Deployments:**
+- Run same application across clouds
+- Avoid vendor lock-in
+- Disaster recovery across clouds
+- Geographic distribution
+
+**4. Machine Learning Workloads:**
+- Train models on GPU clusters
+- Serve models at scale
+- Manage training jobs
+- Auto-scale inference services
+
+**5. Edge Computing:**
+- Deploy to edge locations
+- Lightweight Kubernetes distributions (K3s, MicroK8s)
+- Manage distributed edge deployments
+- Process data closer to source
+
+**6. Legacy Application Modernization:**
+- Containerize existing applications
+- Gradual migration to containers
+- Run alongside new containerized apps
+- Modernize infrastructure incrementally
+
+**Kubernetes Architecture:**
+
+**Control Plane (Master Nodes):**
+- API Server: Entry point for all operations
+- etcd: Distributed key-value store (cluster state)
+- Scheduler: Assigns pods to nodes
+- Controller Manager: Runs controllers (replication, endpoints, etc.)
+
+**Worker Nodes:**
+- kubelet: Agent that communicates with control plane
+- kube-proxy: Network proxy for services
+- Container Runtime: Runs containers (Docker, containerd, CRI-O)
+
+**Key Concepts:**
+- Pods: Smallest deployable units (one or more containers)
+- Services: Stable network endpoints
+- Deployments: Manage pod replicas
+- Namespaces: Virtual clusters within cluster
+
+**Getting Started:**
+
+**Learning Path:**
+1. Understand containers (Docker)
+2. Learn Kubernetes basics (pods, services, deployments)
+3. Practice with local cluster (minikube, kind)
+4. Learn kubectl commands
+5. Understand YAML manifests
+6. Explore advanced topics (networking, storage, security)
+
+**Tools:**
+- kubectl: Command-line tool
+- minikube: Local Kubernetes cluster
+- kind: Kubernetes in Docker
+- k9s: Terminal UI for Kubernetes
+
+Understanding Kubernetes deeply is essential for modern cloud-native development. It's not just a tool - it's a platform that enables you to build scalable, reliable, and portable applications. The investment in learning Kubernetes pays off with more reliable deployments, better resource utilization, and the ability to scale applications effortlessly.`,
 					CodeExamples: `# Check Kubernetes version
 kubectl version --client
 

@@ -403,49 +403,361 @@ if __name__ == "__main__":
 			Lessons: []problems.Lesson{
 				{
 					Title: "Variables and Naming",
-					Content: `**Variables in Python:**
+					Content: `Variables are fundamental to programming - they allow us to store and manipulate data. Python's approach to variables is unique compared to many languages, emphasizing simplicity and flexibility. Understanding how variables work in Python, including their reference semantics and naming conventions, is crucial for writing effective Python code.
+
+**Understanding Python Variables:**
+
+**Python's Unique Approach:**
+
+Unlike statically-typed languages like C++ or Java, Python variables don't require type declarations. This makes Python code more concise and flexible, but also requires understanding how Python handles variable assignment and references.
 
 **Key Characteristics:**
-- **No declaration needed**: Variables are created when first assigned
-- **Dynamically typed**: Type is inferred from value, not declared
-- **Type can change**: Variable can be reassigned to different types
-- **References, not values**: Variables hold references to objects
+
+**1. No Declaration Needed:**
+- Variables are created automatically when first assigned
+- No need to declare type or allocate memory explicitly
+- Assignment creates the variable: x = 10 creates variable x
+
+**2. Dynamically Typed:**
+- Type is determined by the value assigned, not declared
+- Python infers type from the value
+- Type checking happens at runtime, not compile time
+
+**3. Type Can Change:**
+- Same variable can hold different types over time
+- x = 10 (int), then x = "hello" (str) is perfectly valid
+- This flexibility is powerful but requires discipline
+
+**4. References, Not Values:**
+- Variables hold references to objects, not the objects themselves
+- This is crucial for understanding mutable vs immutable types
+- Multiple variables can reference the same object
 
 **Variable Assignment:**
-- Simple: name = "Alice"
-- Multiple: x, y, z = 1, 2, 3 (tuple unpacking)
-- Chained: x = y = z = 0 (all reference same object - be careful with mutable types!)
+
+**Simple Assignment:**
+- Basic syntax: variable_name = value
+- Creates variable if it doesn't exist
+- Updates reference if variable exists
+- Example: name = "Alice", age = 30, is_active = True
+
+**Multiple Assignment (Tuple Unpacking):**
+- Assign multiple values in one statement
+- Syntax: x, y, z = 1, 2, 3
+- Right side is tuple (parentheses optional)
+- Number of variables must match number of values
+
+**Advanced Unpacking:**
+- Extended unpacking: x, *rest = [1, 2, 3, 4] (x=1, rest=[2,3,4])
+- Ignore values: x, _, z = (1, 2, 3) (ignore middle value)
+- Nested unpacking: (x, y), z = ((1, 2), 3)
+
+**Chained Assignment:**
+- Syntax: x = y = z = 0
+- All variables reference the same object
+- **Critical**: For mutable types, this shares the object!
+- Example: x = y = z = [] means all three reference the same list
+
+**Why References Matter:**
+
+**Immutable Types (int, str, tuple):**
+- Chained assignment is safe: x = y = 10
+- Changing x doesn't affect y (creates new object)
+- Each variable can be modified independently
+
+**Mutable Types (list, dict, set):**
+- Chained assignment shares object: x = y = []
+- Modifying x affects y (same object)
+- Solution: Create separate objects: x = [], y = []
 
 **Naming Rules:**
-- Must start with letter (a-z, A-Z) or underscore (_)
-- Can contain letters, digits (0-9), and underscores
-- **Case-sensitive**: name, Name, NAME are different variables
-- Cannot use Python keywords (if, for, def, class, etc.)
-- Cannot use special characters (@, #, $, %, etc.)
 
-**Python Keywords (cannot use as variable names):**
-False, None, True, and, as, assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, return, try, while, with, yield
+**1. Must Start with Letter or Underscore:**
+- Valid: name, _internal, user123
+- Invalid: 123name, @variable, $price
+- Underscore is considered a letter for naming
+
+**2. Can Contain Letters, Digits, Underscores:**
+- Valid: user_name, item2, MAX_SIZE
+- Invalid: user-name, item.price, user@name
+- No spaces allowed (use underscores)
+
+**3. Case-Sensitive:**
+- name, Name, NAME are three different variables
+- Python distinguishes uppercase and lowercase
+- Be consistent to avoid confusion
+
+**4. Cannot Use Keywords:**
+- Keywords are reserved words with special meaning
+- Cannot use: if, for, def, class, import, etc.
+- Use keyword module to check: import keyword; keyword.iskeyword('if')
+
+**5. Cannot Use Special Characters:**
+- No @, #, $, %, &, *, etc.
+- Underscore (_) is the only special character allowed
+- Use underscores to separate words
+
+**Python Keywords (Complete List):**
+
+**Control Flow:** if, elif, else, for, while, break, continue, pass
+
+**Functions:** def, return, lambda, yield
+
+**Classes:** class
+
+**Modules:** import, from, as
+
+**Exceptions:** try, except, finally, raise, assert
+
+**Scope:** global, nonlocal
+
+**Operators:** and, or, not, in, is
+
+**Async:** async, await
+
+**Constants:** True, False, None
+
+**Other:** del, with, try
 
 **Naming Conventions (PEP 8):**
-- **snake_case**: Variables, functions, methods, modules, packages
-  - Example: user_name, calculate_total, my_module
-- **UPPER_CASE**: Constants (convention, Python has no true constants)
-  - Example: MAX_SIZE, DEFAULT_TIMEOUT, PI
-- **PascalCase**: Classes
-  - Example: UserAccount, DatabaseConnection
-- **Single leading underscore (_name)**: Internal use, "protected"
-  - Signals "internal implementation, don't use directly"
-- **Double leading underscore (__name)**: Name mangling (rarely used)
-  - Python mangles the name to avoid conflicts in inheritance
-- **Trailing underscore (name_)**: Avoid conflict with keywords
-  - Example: class_ (if class is a keyword conflict)
+
+**1. snake_case (Variables, Functions, Methods, Modules, Packages):**
+
+**When to Use:**
+- Variable names: user_name, total_count, is_valid
+- Function names: calculate_total(), get_user_data()
+- Method names: process_payment(), validate_input()
+- Module names: user_management.py, data_processor.py
+- Package names: my_package (directory name)
+
+**Examples:**
+- Good: calculate_total_price(), user_account_balance
+- Bad: CalculateTotalPrice(), userAccountBalance
+
+**2. UPPER_CASE (Constants):**
+
+**When to Use:**
+- Constants (values that shouldn't change)
+- Module-level constants
+- Configuration values
+
+**Note:** Python doesn't enforce constants - this is convention only. Values can still be changed, but UPPER_CASE signals intent.
+
+**Examples:**
+- MAX_RETRIES = 3
+- DEFAULT_TIMEOUT = 30
+- PI = 3.14159
+- API_BASE_URL = "https://api.example.com"
+
+**3. PascalCase (Classes):**
+
+**When to Use:**
+- Class names only
+- Exception classes
+- Named tuples
+
+**Examples:**
+- class UserAccount:
+- class DatabaseConnection:
+- class ValidationError(Exception):
+
+**4. Single Leading Underscore (_name):**
+
+**Meaning:** "Internal use" - signals that this is implementation detail
+
+**When to Use:**
+- Internal methods/attributes not part of public API
+- Signals "use at your own risk"
+- Not imported by "from module import *"
+
+**Examples:**
+- _internal_method()
+- _cache_data
+- _validate_input()
+
+**5. Double Leading Underscore (__name):**
+
+**Meaning:** Name mangling - Python mangles the name
+
+**When to Use:**
+- Rarely needed
+- Prevents accidental overriding in inheritance
+- Python changes __name to _Class__name
+
+**Examples:**
+- __private_attribute (becomes _MyClass__private_attribute)
+- Usually avoid unless you understand name mangling
+
+**6. Trailing Underscore (name_):**
+
+**When to Use:**
+- Avoid conflict with keywords
+- When keyword would be perfect name
+
+**Examples:**
+- class_ (if 'class' conflicts with keyword)
+- type_ (if 'type' conflicts with built-in)
+- import_ (if 'import' conflicts)
 
 **Best Practices:**
-- Use descriptive names: user_count not uc
-- Avoid single letters except for loop counters: for i in range(10)
-- Use verbs for functions: calculate_total(), get_user()
-- Use nouns for variables: user_name, total_price
-- Be consistent with naming style throughout project`,
+
+**1. Use Descriptive Names:**
+- Good: user_count, calculate_total_price, is_valid_email
+- Bad: uc, calc, flag
+- Names should explain purpose, not require comments
+
+**2. Avoid Abbreviations:**
+- Good: user_account, database_connection
+- Bad: usr_acct, db_conn
+- Exceptions: Common abbreviations (id, url, api) are acceptable
+
+**3. Use Verbs for Functions:**
+- Good: calculate_total(), process_payment(), validate_input()
+- Bad: total(), payment(), input()
+- Functions do things - names should reflect actions
+
+**4. Use Nouns for Variables:**
+- Good: user_name, total_price, item_count
+- Bad: get_user_name, calculate_total_price, count_items()
+- Variables hold values - names should reflect what they store
+
+**5. Be Consistent:**
+- Use same naming style throughout project
+- Follow team/project conventions
+- Consistency is more important than perfection
+
+**6. Avoid Single Letters (Except Loop Counters):**
+- Good: for i in range(10), for item in items
+- Bad: x = calculate_total(), d = get_data()
+- Single letters are acceptable for: loop counters (i, j, k), mathematical variables (x, y, z), generic iterators
+
+**7. Use Boolean Naming Conventions:**
+- Prefix with is_, has_, can_, should_
+- Good: is_valid, has_permission, can_edit, should_retry
+- Bad: valid, permission, edit, retry
+- Makes boolean nature clear
+
+**Common Naming Mistakes:**
+
+**1. Using Keywords:**
+- Bad: class = "Python 101" (class is keyword)
+- Good: class_name = "Python 101" or class_ = "Python 101"
+
+**2. Inconsistent Casing:**
+- Bad: userName, user_name, UserName mixed
+- Good: user_name consistently (following snake_case)
+
+**3. Too Short:**
+- Bad: x, y, z for meaningful variables
+- Good: x, y, z only for mathematical/coordinate variables
+
+**4. Too Long:**
+- Bad: number_of_users_in_the_current_active_session
+- Good: active_session_user_count
+
+**5. Misleading Names:**
+- Bad: list = [1, 2, 3] (shadows built-in list)
+- Good: numbers = [1, 2, 3] or items = [1, 2, 3]
+
+**6. Hungarian Notation:**
+- Bad: strName, intCount, bIsValid (type in name)
+- Good: name, count, is_valid (Python doesn't need type hints in names)
+
+**Variable Scope:**
+
+**Understanding Scope:**
+- Variables have scope (where they're accessible)
+- Local scope: Inside function
+- Global scope: Module level
+- Enclosing scope: Nested functions
+
+**Global Variables:**
+- Defined at module level
+- Accessible throughout module
+- Can be modified with global keyword
+
+**Local Variables:**
+- Defined inside function
+- Only accessible within function
+- Shadows global variables with same name
+
+**Nonlocal Variables:**
+- Used in nested functions
+- Refers to variable in enclosing (non-global) scope
+- Modified with nonlocal keyword
+
+**Memory and Performance:**
+
+**Variable Storage:**
+- Variables are stored in namespaces (dictionaries)
+- Local namespace: function's local variables
+- Global namespace: module's global variables
+- Built-in namespace: Python's built-in functions/types
+
+**Memory Considerations:**
+- Variables hold references (small, fixed size)
+- Actual objects stored separately
+- Multiple variables can reference same object (saves memory)
+
+**Performance Tips:**
+- Local variable access is faster than global
+- Avoid creating unnecessary variables
+- Reuse variables when appropriate (but don't sacrifice readability)
+
+**Type Hints (Python 3.5+):**
+
+**What Are Type Hints:**
+- Optional annotations indicating expected types
+- Don't affect runtime (Python ignores them)
+- Tools like mypy can check types statically
+
+**Syntax:**
+- Basic: name: str = "Alice"
+- Functions: def process(data: list[int]) -> bool:
+- Variables: count: int = 0
+
+**Benefits:**
+- Better IDE support (autocomplete, error detection)
+- Documentation (types are self-documenting)
+- Static type checking with mypy
+- Easier refactoring
+
+**Example:**
+Python code example:
+def calculate_total(items: list[float], tax_rate: float = 0.08) -> float:
+    """Calculate total with tax."""
+    subtotal = sum(items)
+    return subtotal * (1 + tax_rate)
+
+
+**Real-World Examples:**
+
+**1. Configuration Variables:**
+- Use UPPER_CASE for configuration
+- Example: DATABASE_URL, API_KEY, MAX_RETRIES
+- Makes configuration obvious
+
+**2. Function Parameters:**
+- Use descriptive names
+- Example: def create_user(username: str, email: str, is_admin: bool)
+- Parameter names are part of API
+
+**3. Loop Variables:**
+- Use meaningful names when possible
+- Example: for user in users, for item in shopping_cart
+- Single letters acceptable for simple loops: for i in range(10)
+
+**4. Boolean Variables:**
+- Use is_/has_/can_ prefixes
+- Example: is_authenticated, has_permission, can_edit
+- Makes boolean nature immediately clear
+
+**5. Temporary Variables:**
+- Can use shorter names for temporary values
+- Example: temp, tmp, val (but still be clear)
+- Prefer descriptive names when variable is used multiple times
+
+Understanding variables and naming in Python deeply helps you write more maintainable, readable code. Good naming is one of the most important aspects of clean code - it makes your code self-documenting and easier to understand.`,
 					CodeExamples: `# Basic variable assignment
 name = "Alice"
 age = 30
@@ -508,67 +820,323 @@ print(keyword.iskeyword("name"))   # False`,
 				},
 				{
 					Title: "Basic Types",
-					Content: `**Python's Built-in Types:**
+					Content: `Python provides a rich set of built-in data types that form the foundation of all Python programming. Understanding these types deeply - their characteristics, behaviors, and when to use each - is essential for writing effective Python code. Python's type system is dynamic but well-designed, offering both flexibility and power.
+
+**Python's Type System:**
+
+**Dynamic Typing:**
+- Types are determined at runtime, not compile time
+- Variables don't have fixed types - they reference typed objects
+- Type checking happens when operations are performed
+- This flexibility enables rapid development but requires discipline
+
+**Everything is an Object:**
+- In Python, everything is an object
+- Even types are objects (classes)
+- This unified model simplifies the language
+- Enables powerful metaprogramming capabilities
 
 **Numeric Types:**
 
-**int (Integer):**
-- Unlimited precision in Python 3 (no overflow!)
-- Can be arbitrarily large: 2**1000 works perfectly
-- Supports binary (0b), octal (0o), hexadecimal (0x) literals
-- Underscores for readability: 1_000_000
+**1. int (Integer):**
 
-**float (Floating-Point):**
-- Double precision (64-bit) by default
-- Approximations - be careful with equality comparisons!
-- Scientific notation: 1.5e10 = 15000000000.0
-- Special values: float('inf'), float('-inf'), float('nan')
+**Unlimited Precision:**
+- Python 3 integers have unlimited precision
+- No overflow errors (unlike C/C++/Java)
+- Can represent arbitrarily large numbers
+- Only limited by available memory
 
-**complex (Complex Numbers):**
-- Format: 3 + 4j or complex(3, 4)
-- Used in scientific computing, signal processing
-- Access real/imaginary parts: .real, .imag
+**Examples:**
+- Small: 42, -10, 0
+- Large: 999999999999999999999999999999999
+- Huge: 2**1000, 10**1000 (works perfectly!)
+
+**Why Unlimited Precision Matters:**
+- Cryptography: Need large integers for encryption
+- Scientific computing: Arbitrary precision calculations
+- No need to worry about integer overflow
+- Simplifies many algorithms
+
+**Integer Literals:**
+
+**Decimal (Base 10):**
+- Standard: 42, 100, -5
+- With underscores: 1_000_000 (improves readability)
+- Underscores ignored by Python: 1_000_000 == 1000000
+
+**Binary (Base 2):**
+- Prefix: 0b or 0B
+- Example: 0b1010 = 10, 0b1111 = 15
+- Useful for: Bit manipulation, flags, binary data
+
+**Octal (Base 8):**
+- Prefix: 0o or 0O
+- Example: 0o755 = 493
+- Useful for: File permissions (Unix), legacy systems
+
+**Hexadecimal (Base 16):**
+- Prefix: 0x or 0X
+- Example: 0xFF = 255, 0x1A = 26
+- Useful for: Memory addresses, color codes, low-level programming
+
+**Integer Operations:**
+- Arithmetic: +, -, *, / (returns float), // (floor division), % (modulo), ** (exponentiation)
+- Bitwise: &, |, ^, ~, <<, >>
+- Comparisons: ==, !=, <, >, <=, >=
+
+**2. float (Floating-Point):**
+
+**IEEE 754 Double Precision:**
+- 64-bit floating-point numbers
+- Approximately 15-17 decimal digits of precision
+- Range: ~1.7e-308 to ~1.7e+308
+
+**Precision Limitations:**
+- Floats are approximations, not exact
+- 0.1 + 0.2 ≠ 0.3 (due to binary representation)
+- Cannot represent all decimal numbers exactly
+- Important for financial calculations (use Decimal instead)
+
+**Float Literals:**
+- Standard: 3.14, -0.5, 100.0
+- Scientific notation: 1.5e10 = 15000000000.0, 1e-5 = 0.00001
+- Can omit leading zero: .5 = 0.5
+- Can omit trailing zero: 5. = 5.0
+
+**Special Float Values:**
+- Infinity: float('inf'), float('-inf')
+- Not a Number: float('nan')
+- Check with: math.isinf(), math.isnan()
+
+**Float Comparison:**
+- Never use == for float comparison!
+- Use: abs(a - b) < epsilon (small tolerance)
+- Or: math.isclose(a, b)
+
+**When to Use Decimal:**
+- Financial calculations (money)
+- When exact decimal representation needed
+- Use decimal.Decimal instead of float
+
+**3. complex (Complex Numbers):**
+
+**Format:**
+- a + bj or complex(a, b)
+- j (or J) is imaginary unit (not i like in mathematics)
+- Example: 3 + 4j, complex(3, 4)
+
+**Accessing Parts:**
+- .real: Real part (float)
+- .imag: Imaginary part (float)
+- abs(): Magnitude (distance from origin)
+
+**Operations:**
+- Arithmetic: +, -, *, /, **
+- Conjugate: .conjugate()
+- Magnitude: abs() or math.sqrt(real² + imag²)
+
+**Use Cases:**
+- Scientific computing (physics, engineering)
+- Signal processing (Fourier transforms)
+- Graphics (2D rotations)
+- Quantum computing simulations
 
 **Text Type:**
 
 **str (String):**
-- Immutable sequence of Unicode characters
-- Can use single quotes, double quotes, or triple quotes
-- Triple quotes preserve newlines and formatting
-- Raw strings: r"C:\\path" (backslashes not escaped)
-- f-strings: f"Hello {name}" (Python 3.6+)
+
+**Immutable Unicode Sequences:**
+- Strings are immutable (cannot be modified in place)
+- Sequence of Unicode characters (not bytes)
+- Supports all Unicode characters (emojis, Chinese, Arabic, etc.)
+
+**String Literals:**
+
+**Single Quotes:**
+- 'Hello, World!'
+- Use when string contains double quotes
+- Example: 'He said "Hello"'
+
+**Double Quotes:**
+- "Hello, World!"
+- Use when string contains single quotes
+- Example: "It's a beautiful day"
+
+**Triple Quotes (Multi-line):**
+- """Multi-line string""" or '''Multi-line string'''
+- Preserves newlines and formatting
+- Useful for: Docstrings, multi-line text, SQL queries
+
+**Raw Strings:**
+- r"C:\\path" or r'C:\path'
+- Backslashes are literal (not escape characters)
+- Useful for: File paths, regex patterns, Windows paths
+
+**f-strings (Formatted String Literals, Python 3.6+):**
+- f"Hello {name}, you are {age} years old"
+- Evaluates expressions inside {}
+- Fastest string formatting method
+- Most readable and recommended
+
+**String Operations:**
+- Concatenation: "hello" + "world"
+- Repetition: "hello" * 3 = "hellohellohello"
+- Indexing: s[0], s[-1] (first, last character)
+- Slicing: s[1:4], s[:5], s[3:]
+- Membership: 'a' in "hello", 'x' not in "hello"
+
+**String Methods:**
+- .upper(), .lower(), .title(), .capitalize()
+- .strip(), .lstrip(), .rstrip()
+- .split(), .join()
+- .find(), .index(), .replace()
+- .startswith(), .endswith()
+- .isalpha(), .isdigit(), .isalnum()
 
 **Boolean Type:**
 
 **bool:**
-- Only two values: True and False (capitalized!)
-- Subclass of int: True == 1, False == 0
-- Truthiness: All values can be evaluated as True/False
-- Falsy values: False, None, 0, 0.0, empty string, empty list, empty dict, empty tuple, empty set
+
+**Only Two Values:**
+- True (capitalized!)
+- False (capitalized!)
+- Not true/false (lowercase doesn't work)
+
+**Subclass of int:**
+- bool is subclass of int
+- True == 1, False == 0
+- Can use in arithmetic: True + True = 2
+- But use booleans for boolean logic, not arithmetic
+
+**Truthiness:**
+
+**All Values Are Truthy or Falsy:**
+- Every value can be evaluated as True or False
+- Used in if statements, while loops, boolean operations
+
+**Falsy Values (Evaluate to False):**
+- False itself
+- None
+- Zero: 0, 0.0, 0j
+- Empty sequences: "", [], (), {}
+- Empty sets: set()
+- Custom classes can define __bool__() or __len__()
+
+**Truthy Values (Evaluate to True):**
+- Everything else!
+- Non-empty strings, lists, dicts, etc.
+- Non-zero numbers
+- Most objects
+
+**Common Mistakes:**
+- if x == True: (redundant, use if x:)
+- if x is True: (checks identity, usually not needed)
+- if x: (preferred - uses truthiness)
 
 **None Type:**
 
 **None:**
-- Represents absence of value (like null in other languages)
+
+**Absence of Value:**
+- Represents "no value" or "null"
 - Only one None object exists (singleton)
-- Common default return value for functions
-- Use is None or is not None for comparison (not ==)
+- All None references point to same object
+
+**Use Cases:**
+- Default return value for functions that don't return anything
+- Default parameter values (when None means "not provided")
+- Placeholder for optional values
+- Signal "no result" or "not found"
+
+**Comparison:**
+- Use is None or is not None (not ==)
+- None is None: True (identity check)
+- None == None: True (but use is preferred)
+- Why? is checks identity, == checks equality
 
 **Type Checking:**
 
-**type() function:**
-- Returns the exact type of an object
-- Returns a type object: <class 'int'>
+**type() Function:**
+- Returns exact type of object
+- Returns type object: <class 'int'>
+- Less flexible (doesn't handle inheritance)
 
-**isinstance() function (preferred):**
+**isinstance() Function (Preferred):**
 - Checks if object is instance of type or subclass
-- More flexible: isinstance(x, (int, float)) checks multiple types
+- More flexible: isinstance(x, (int, float))
 - Handles inheritance correctly
+- Recommended for type checking
+
+**Example:**
+- type(x) == int: Checks exact type
+- isinstance(x, int): Checks type or subclass (better)
 
 **Type Hints (Python 3.5+):**
-- Optional annotations for better code documentation
-- Use typing module for complex types
-- Tools like mypy can check types statically`,
+
+**What Are Type Hints:**
+- Optional annotations indicating expected types
+- Don't affect runtime behavior
+- Tools like mypy can check types statically
+- Improve IDE support and documentation
+
+**Basic Syntax:**
+- Variables: name: str = "Alice"
+- Functions: def process(data: list[int]) -> bool:
+- Multiple types: value: int | float = 0 (Python 3.10+)
+
+**Benefits:**
+- Better IDE autocomplete and error detection
+- Self-documenting code
+- Static type checking with mypy
+- Easier refactoring and maintenance
+
+**Real-World Type Usage:**
+
+**1. Choosing Numeric Types:**
+- int: Whole numbers, counts, indices
+- float: Measurements, calculations, scientific data
+- Decimal: Money, exact decimal arithmetic
+- complex: Scientific computing, signal processing
+
+**2. String Best Practices:**
+- Use f-strings for formatting (Python 3.6+)
+- Use raw strings for paths and regex
+- Use triple quotes for multi-line text
+- Be aware of Unicode vs bytes distinction
+
+**3. Boolean Logic:**
+- Use truthiness naturally: if items: (not if len(items) > 0:)
+- Be explicit when needed: if x is not None:
+- Use boolean names: is_valid, has_permission
+
+**4. None Handling:**
+- Check with is None (not == None)
+- Use None as default for optional parameters
+- Return None to indicate "no result"
+
+**Performance Considerations:**
+
+**Integer Operations:**
+- Very fast (hardware-accelerated)
+- Unlimited precision has some overhead for large numbers
+- Still fast enough for most use cases
+
+**Float Operations:**
+- Fast but beware precision issues
+- Use Decimal for exact decimal arithmetic
+- Consider performance vs precision tradeoff
+
+**String Operations:**
+- Immutability means operations create new strings
+- String concatenation can be slow (use join() for many strings)
+- f-strings are fastest formatting method
+
+**Type Conversion Overhead:**
+- Converting between types has cost
+- Avoid unnecessary conversions
+- Cache converted values when reused
+
+Understanding Python's basic types deeply helps you write more efficient, correct code. Each type has its strengths and use cases - choosing the right type for your data is an important skill.`,
 					CodeExamples: `# Integers - unlimited precision!
 small = 42
 large = 999999999999999999999999999999999999999999999999999999999999
