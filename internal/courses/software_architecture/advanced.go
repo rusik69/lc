@@ -444,6 +444,7 @@ class OrderSaga {
         }
     }
 }`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -2913,6 +2914,8 @@ Event Sourcing Migration:
 // Capture events from monolith
 class EventCapture:
     def capture_order_created(self, order):
+        # Create event with parameters
+        # Create event with all parameters
         event = OrderCreatedEvent(
             orderId=order.id,
             customerId=order.customerId,

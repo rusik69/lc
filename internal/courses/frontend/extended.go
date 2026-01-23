@@ -277,16 +277,16 @@ const client = new ApolloClient({
 });
 
 // Query with Apollo
-// Note: GraphQL queries use template literals (backticks) in JavaScript
-// Example:
-// const GET_USERS = gql`query GetUsers { users { id name } }`;
+// Note: GraphQL queries use template literals in JavaScript
+// Example (using template literal syntax):
+// const GET_USERS = gql(template literal)query GetUsers { users { id name } };
 // const { data, loading, error } = useQuery(GET_USERS);
 //
 // Mutation with Apollo
-// Example:
-// const CREATE_USER = gql`mutation CreateUser($name: String!) { createUser(name: $name) { id name } }`;
+// Example (using template literal syntax):
+// const CREATE_USER = gql(template literal)mutation CreateUser(nameParam: String!) { createUser(name: nameParam) { id name } };
 // const [createUser] = useMutation(CREATE_USER);
-// Note: GraphQL variable syntax uses $ prefix (e.g., $name: String!)`,
+// Note: GraphQL variable syntax uses $ prefix for variables (e.g., $name: String!)`,
 				},
 			},
 			ProblemIDs: []int{},

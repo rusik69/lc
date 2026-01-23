@@ -71,6 +71,8 @@ var (
 	awsMu                    sync.RWMutex
 	allComputerArchitectureModules []CourseModule
 	computerArchitectureMu   sync.RWMutex
+	allAzureModules          []CourseModule
+	azureMu                  sync.RWMutex
 )
 
 func init() {
@@ -519,6 +521,27 @@ func GetComputerArchitectureModuleByID(id int) *CourseModule {
 	for i := range allComputerArchitectureModules {
 		if allComputerArchitectureModules[i].ID == id {
 			return &allComputerArchitectureModules[i]
+		}
+	}
+	return nil
+}
+
+// GetAzureModules returns all Azure course modules
+func GetAzureModules() []CourseModule {
+	azureMu.RLock()
+	defer azureMu.RUnlock()
+	result := make([]CourseModule, len(allAzureModules))
+	copy(result, allAzureModules)
+	return result
+}
+
+// GetAzureModuleByID returns an Azure module by its ID
+func GetAzureModuleByID(id int) *CourseModule {
+	azureMu.RLock()
+	defer azureMu.RUnlock()
+	for i := range allAzureModules {
+		if allAzureModules[i].ID == id {
+			return &allAzureModules[i]
 		}
 	}
 	return nil

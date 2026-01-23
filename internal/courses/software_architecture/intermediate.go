@@ -1217,6 +1217,7 @@ Read Side:
 - Optimized for queries
 - Can use different database (NoSQL)
 - Eventually consistent`,
+				},
 			},
 			ProblemIDs: []int{},
 		},

@@ -274,12 +274,7 @@
     <header>
         <div>
             <h1>LeetCode Clone</h1>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <nav class="desktop-nav">
+            <div class="header-controls">
                 <div class="theme-switch-container">
                     <span class="theme-switch-label">Theme</span>
                     <label class="theme-switch" for="theme-toggle-switch" title="Toggle dark/light theme">
@@ -287,6 +282,17 @@
                         <span class="slider"></span>
                     </label>
                 </div>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <div class="app-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
                 <a href="/" class="nav-link">Problems</a>
                 <a href="/algorithms" class="nav-link">Algorithms</a>
                 <a href="/systems-design" class="nav-link">Systems Design</a>
@@ -298,10 +304,16 @@
                 <a href="/networking" class="nav-link">Networking</a>
                 <a href="/frontend" class="nav-link">Frontend</a>
                 <a href="/devops" class="nav-link">DevOps</a>
+                <a href="/software-architecture" class="nav-link">Software Architecture</a>
+                <a href="/aws" class="nav-link">AWS</a>
+                <a href="/azure" class="nav-link">Azure</a>
                 <a href="/computer-architecture" class="nav-link">Computer Architecture</a>
             </nav>
-        </div>
-    </header>
+        </aside>
+        <main class="main-content">
+            {{block "content" .}}{{end}}
+        </main>
+    </div>
     <div class="mobile-overlay" id="mobile-overlay"></div>
     <nav class="mobile-nav" id="mobile-nav">
         <div class="theme-switch-container">
@@ -322,10 +334,10 @@
         <a href="/networking" class="nav-link">Networking</a>
         <a href="/frontend" class="nav-link">Frontend</a>
         <a href="/devops" class="nav-link">DevOps</a>
+        <a href="/software-architecture" class="nav-link">Software Architecture</a>
+        <a href="/aws" class="nav-link">AWS</a>
+        <a href="/azure" class="nav-link">Azure</a>
         <a href="/computer-architecture" class="nav-link">Computer Architecture</a>
     </nav>
-    <main>
-        {{block "content" .}}{{end}}
-    </main>
 </body>
 </html>

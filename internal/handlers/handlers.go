@@ -46,6 +46,8 @@ var (
 	awsModuleTemplate           *template.Template
 	computerArchitectureTemplate *template.Template
 	computerArchitectureModuleTemplate *template.Template
+	azureTemplate               *template.Template
+	azureModuleTemplate         *template.Template
 )
 
 const (
@@ -249,6 +251,18 @@ func InitTemplates(templateDir string) error {
 
 	// Parse Computer Architecture module template
 	computerArchitectureModuleTemplate, err = template.New("computer_architecture_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/computer_architecture_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Azure course template
+	azureTemplate, err = template.New("azure").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/azure_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Azure module template
+	azureModuleTemplate, err = template.New("azure_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/azure_module.html")
 	if err != nil {
 		return err
 	}
@@ -1412,6 +1426,72 @@ func HandleAWSModule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := awsModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleAzureCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/azure" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetAzureModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := azureTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleAzureModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetAzureModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := azureModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

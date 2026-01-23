@@ -669,19 +669,342 @@ def get_user(id: int) -> Optional[Dict[str, str]]:
 				},
 				{
 					Title: "Type Conversion",
-					Content: `**Type Conversion:**
-- Use built-in functions: int(), float(), str(), bool()
-- Some conversions may raise ValueError
+					Content: `Type conversion (also called type casting) is the process of converting a value from one data type to another. Python provides built-in functions for explicit type conversion and performs implicit conversions automatically in certain situations. Understanding type conversion is crucial for working with user input, data processing, and ensuring your code handles different data types correctly.
 
-**Common Conversions:**
-- int() converts to integer
-- float() converts to float
-- str() converts to string
-- bool() converts to boolean (truthiness)
+**Why Type Conversion Matters:**
 
-**Implicit Conversion:**
-- Python automatically converts types in some operations
-- Example: int + float = float`,
+**1. User Input Handling:**
+- User input from input() is always a string
+- Need to convert to numbers for calculations
+- Example: age = int(input("Enter age: "))
+
+**2. Data Processing:**
+- APIs return strings, need numbers for calculations
+- Database values may be strings, need conversion
+- File reading returns strings, need type conversion
+
+**3. Type Safety:**
+- Ensure operations work with correct types
+- Prevent type-related errors
+- Make code more robust and predictable
+
+**4. Interoperability:**
+- Convert between Python types and external formats (JSON, XML)
+- Interface with C libraries (ctypes)
+- Work with databases (SQL types)
+
+**Explicit Type Conversion Functions:**
+
+**1. int() - Convert to Integer:**
+
+**Basic Usage:**
+- Converts numbers (float, complex) to integer
+- Truncates decimal part (doesn't round)
+- Converts strings containing valid integers
+- Can specify base for string conversion (binary, octal, hex)
+
+**Examples:**
+- int(3.14) → 3 (truncates, not rounds)
+- int(3.9) → 3 (still truncates)
+- int("42") → 42 (string to int)
+- int("1010", 2) → 10 (binary string to int)
+- int("FF", 16) → 255 (hex string to int)
+
+**When It Fails:**
+- ValueError: Invalid string (e.g., int("hello"))
+- ValueError: Float string without conversion (e.g., int("3.14"))
+- TypeError: Cannot convert complex numbers directly
+
+**Real-World Use Cases:**
+- Converting user input: age = int(input("Age: "))
+- Parsing command-line arguments: port = int(sys.argv[1])
+- Converting database IDs: user_id = int(db_result)
+- Processing numeric strings from files/APIs
+
+**2. float() - Convert to Float:**
+
+**Basic Usage:**
+- Converts integers to floats
+- Converts strings containing valid float representations
+- Handles scientific notation
+- Returns float even from integer input
+
+**Examples:**
+- float(42) → 42.0
+- float("3.14") → 3.14
+- float("1e-3") → 0.001 (scientific notation)
+- float("inf") → inf (infinity)
+- float("nan") → nan (not a number)
+
+**When It Fails:**
+- ValueError: Invalid string format
+- TypeError: Cannot convert complex numbers directly
+
+**Real-World Use Cases:**
+- Converting prices: price = float(input("Price: "))
+- Parsing scientific data: value = float(data_line.split()[1])
+- Converting percentages: rate = float("12.5")
+- Processing measurements: weight = float(measurement_string)
+
+**3. str() - Convert to String:**
+
+**Basic Usage:**
+- Converts any Python object to string representation
+- Uses object's __str__() method
+- Always succeeds (everything has string representation)
+- Creates human-readable representation
+
+**Examples:**
+- str(42) → "42"
+- str(3.14) → "3.14"
+- str([1, 2, 3]) → "[1, 2, 3]"
+- str(None) → "None"
+- str(True) → "True"
+
+**Real-World Use Cases:**
+- Formatting output: print("Value: " + str(value))
+- Logging: logger.info("Processing " + str(count) + " items")
+- Building messages: message = "User " + str(user_id) + " logged in"
+- File writing: file.write(str(data))
+
+**4. bool() - Convert to Boolean:**
+
+**Basic Usage:**
+- Converts any value to True or False
+- Uses Python's truthiness rules
+- Only False, None, 0, empty collections are False
+- Everything else is True
+
+**Truthiness Rules:**
+- False: False, None, 0, 0.0, 0j, "", (), [], {}, set()
+- True: Everything else (including negative numbers, non-empty strings, etc.)
+
+**Examples:**
+- bool(1) → True
+- bool(0) → False
+- bool("") → False
+- bool("hello") → True
+- bool([]) → False
+- bool([1, 2]) → True
+- bool(None) → False
+
+**Real-World Use Cases:**
+- Validating input: if bool(user_input): process()
+- Checking if list is empty: if bool(items): process_items()
+- Converting to boolean for APIs: send_data({"active": bool(status)})
+
+**5. Complex Type Conversions:**
+
+**Converting to Complex:**
+- complex(3, 4) → (3+4j)
+- complex("3+4j") → (3+4j)
+- Used in scientific computing, signal processing
+
+**Converting Collections:**
+- list("hello") → ['h', 'e', 'l', 'l', 'o']
+- tuple([1, 2, 3]) → (1, 2, 3)
+- set([1, 2, 2, 3]) → {1, 2, 3}
+- dict([('a', 1), ('b', 2)]) → {'a': 1, 'b': 2}
+
+**Implicit Type Conversion (Coercion):**
+
+**When Python Converts Automatically:**
+- Arithmetic operations: int + float = float
+- Comparisons: Can compare int and float directly
+- Mixed numeric types in expressions
+
+**Examples:**
+- 5 + 3.14 → 8.14 (int promoted to float)
+- 10 / 2 → 5.0 (division always returns float in Python 3)
+- 10 // 2 → 5 (floor division returns int)
+- 2 ** 3.0 → 8.0 (exponentiation promotes to float)
+
+**Important Notes:**
+- Python 3: / always returns float (use // for integer division)
+- Python 2: / returns int for integer operands (different behavior)
+- Mixed arithmetic promotes to "higher" type (int → float → complex)
+
+**Common Conversion Patterns:**
+
+**1. String to Number:**
+Python code example:
+# Safe conversion with error handling
+def safe_int(s, default=0):
+    try:
+        return int(s)
+    except ValueError:
+        return default
+
+age = safe_int(input("Age: "), 0)
+
+**2. Number to String Formatting:**
+Python code example:
+# Using f-strings (Python 3.6+)
+value = 42
+message = f"Value: {value}"
+
+# Using format()
+message = "Value: {}".format(value)
+
+# Using % formatting (older style)
+message = "Value: %d" % value
+
+**3. Handling Invalid Conversions:**
+Python code example:
+# Always handle conversion errors
+try:
+    number = int(user_input)
+except ValueError:
+    print("Invalid number!")
+    number = None
+
+**Best Practices:**
+
+**1. Always Validate Input:**
+- Don't assume conversion will succeed
+- Use try-except for user input
+- Provide meaningful error messages
+
+**2. Be Explicit:**
+- Prefer explicit conversion over relying on implicit
+- Makes code more readable and predictable
+- Easier to debug type-related issues
+
+**3. Handle Edge Cases:**
+- Empty strings: int("") raises ValueError
+- None values: int(None) raises TypeError
+- Whitespace: int("  42  ") works (strips whitespace)
+- Scientific notation: float("1e10") works
+
+**4. Use Appropriate Types:**
+- Don't convert unnecessarily
+- Use int for whole numbers, float for decimals
+- Consider using Decimal for financial calculations (precision)
+
+**5. Performance Considerations:**
+- Type conversion has overhead
+- Avoid converting in tight loops if possible
+- Cache converted values when reused
+
+**Common Pitfalls:**
+
+**1. Assuming Rounding:**
+- int(3.9) is 3, not 4 (truncates, doesn't round)
+- Use round() first if rounding needed: int(round(3.9)) → 4
+
+**2. String to Float Issues:**
+- int("3.14") raises ValueError (use float() first)
+- Need two-step: int(float("3.14")) → 3
+
+**3. Truthiness Confusion:**
+- bool("False") is True (non-empty string)
+- bool(0.0) is False (zero is falsy)
+- Check actual values, not just truthiness
+
+**4. Implicit Conversion Surprises:**
+- 10 / 2 is 5.0 in Python 3 (not 5)
+- Use // for integer division: 10 // 2 → 5
+
+**5. None Handling:**
+- int(None) raises TypeError
+- Check for None before converting
+- Use: value = int(x) if x is not None else 0
+
+**Advanced Techniques:**
+
+**1. Custom Conversion Functions:**
+Python code example:
+def to_int_safe(value, default=0):
+    """Safely convert to int with default."""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default
+
+**2. Type Checking Before Conversion:**
+Python code example:
+if isinstance(value, str) and value.isdigit():
+    number = int(value)
+else:
+    number = None
+
+**3. Converting with Validation:**
+Python code example:
+def convert_percentage(s):
+    """Convert string percentage to float."""
+    s = s.strip().rstrip('%')
+    value = float(s)
+    if 0 <= value <= 100:
+        return value / 100
+    raise ValueError("Percentage out of range")
+
+**Real-World Examples:**
+
+**1. Processing CSV Data:**
+Python code example:
+# CSV values are strings, need conversion
+for row in csv_reader:
+    name = row[0]  # Already string
+    age = int(row[1])  # Convert to int
+    salary = float(row[2])  # Convert to float
+
+**2. API Response Processing:**
+Python code example:
+# JSON returns strings for numbers sometimes
+response = api.get_data()
+user_id = int(response['id'])  # Convert string to int
+price = float(response['price'])  # Convert to float
+
+**3. Command-Line Arguments:**
+Python code example:
+import sys
+# sys.argv are always strings
+port = int(sys.argv[1])  # Convert to int
+timeout = float(sys.argv[2])  # Convert to float
+
+**4. Database Value Handling:**
+Python code example:
+# Database may return strings or numbers
+result = db.fetchone()
+user_id = int(result[0]) if isinstance(result[0], str) else result[0]
+created_at = datetime.fromisoformat(str(result[1]))
+
+**Performance Considerations:**
+
+**Conversion Speed:**
+- int() and float() are fast for valid inputs
+- String parsing has overhead (especially for invalid strings)
+- Type checking before conversion can be slower than try-except
+- Cache conversions when values are reused
+
+**Memory Considerations:**
+- Converting creates new objects (Python objects are immutable for numbers)
+- String conversion creates new string objects
+- Consider if conversion is necessary or if you can work with original type
+
+**Type Conversion in Different Contexts:**
+
+**1. Mathematical Operations:**
+- Automatic promotion in arithmetic
+- Be aware of precision loss (int → float)
+- Use Decimal for financial calculations
+
+**2. String Formatting:**
+- f-strings automatically convert: f"{number}"
+- format() handles conversion
+- % formatting requires matching types
+
+**3. JSON Serialization:**
+- JSON only supports: str, int, float, bool, None, list, dict
+- Custom objects need conversion
+- Use json.dumps() which handles conversion
+
+**4. Database Operations:**
+- ORMs handle conversion automatically
+- Raw SQL may require explicit conversion
+- Database drivers convert Python types to SQL types
+
+Understanding type conversion deeply helps you write more robust Python code that handles different data sources, user input, and external APIs correctly. Always validate and handle conversion errors gracefully.`,
 					CodeExamples: `# Explicit conversion
 x = int(3.14)      # 3
 y = float(42)     # 42.0
@@ -706,20 +1029,491 @@ result = 5 + 3.14  # 8.14 (float)`,
 				},
 				{
 					Title: "Comments and Docstrings",
-					Content: `**Comments:**
-- Single-line: # comment
-- Multi-line: Use multiple # lines
-- Comments are ignored by interpreter
+					Content: `Comments and docstrings are essential tools for writing maintainable, understandable Python code. While both serve to document code, they have different purposes and conventions. Understanding when and how to use each effectively is a hallmark of professional Python development.
 
-**Docstrings:**
-- Triple-quoted strings used for documentation
-- First statement in module, function, or class
+**The Philosophy of Documentation:**
+
+Good documentation makes code self-explanatory. As the famous saying goes: "Code is read more often than it's written." Well-documented code reduces cognitive load, helps new team members understand the codebase quickly, and prevents bugs by clarifying intent.
+
+**Comments - Explaining the "Why" and "How":**
+
+**What Are Comments?**
+Comments are lines in your code that are ignored by the Python interpreter. They exist solely for human readers to understand the code's purpose, logic, or implementation details.
+
+**Types of Comments:**
+
+**1. Single-Line Comments:**
+- Start with # symbol
+- Everything after # on that line is ignored
+- Can be on its own line or at end of code line
+- Most common type of comment
+
+**2. Inline Comments:**
+- Comments on the same line as code
+- Should be used sparingly
+- Keep them short and relevant
+- Place at least 2 spaces after code, then #
+
+**3. Block Comments:**
+- Multiple lines, each starting with #
+- Used for longer explanations
+- Should explain the "why" behind code
+- Can describe algorithms or complex logic
+
+**When to Use Comments:**
+
+**1. Explain Complex Logic:**
+- Algorithms that aren't immediately obvious
+- Business rules that might seem counterintuitive
+- Workarounds for bugs or limitations
+- Performance optimizations that sacrifice readability
+
+**2. Document "Why" Not "What":**
+- Don't state the obvious: # Increment counter (bad)
+- Do explain reasoning: # Use binary search because data is sorted (good)
+- Explain business decisions: # Round down to prevent overcharging
+- Document non-obvious choices: # Use list instead of set to preserve order
+
+**3. Mark TODOs and FIXMEs:**
+- Mark incomplete work: # TODO: Add error handling
+- Note known issues: # FIXME: This breaks with negative numbers
+- Reference tickets: # See JIRA-1234 for context
+- Note temporary solutions: # HACK: Remove after API v2 is stable
+
+**4. Section Headers:**
+- Organize large files: # ==== Data Processing ====
+- Mark logical sections: # Authentication Logic
+- Help navigate complex files
+
+**Comment Best Practices:**
+
+**1. Keep Comments Up-to-Date:**
+- Outdated comments are worse than no comments
+- Update comments when code changes
+- Remove comments for code that no longer exists
+- Review comments during code reviews
+
+**2. Write Clear, Concise Comments:**
+- Use proper grammar and spelling
+- Be concise but complete
+- Avoid abbreviations unless standard
+- Write in the same language as codebase (usually English)
+
+**3. Don't Over-Comment:**
+- Self-documenting code is better than excessive comments
+- If code needs many comments, consider refactoring
+- Comments shouldn't repeat what code obviously does
+- Let code speak for itself when possible
+
+**4. Use Comments for Context:**
+- Explain historical context: # This was added for GDPR compliance
+- Note dependencies: # Requires numpy >= 1.20.0
+- Document assumptions: # Assumes input is already validated
+- Explain performance characteristics: # O(n log n) due to sorting
+
+**Docstrings - Documenting the "What":**
+
+**What Are Docstrings?**
+Docstrings are triple-quoted strings (""" or ''') placed as the first statement in a module, function, class, or method. They serve as official documentation that can be accessed programmatically and are used by documentation generators and IDEs.
+
+**Why Docstrings Matter:**
 - Accessible via __doc__ attribute
-- Follow PEP 257 conventions
+- Used by help() function
+- Integrated into IDEs for autocomplete hints
+- Can be extracted by documentation tools (Sphinx, pydoc)
+- Follow standard conventions (PEP 257)
 
-**When to Use:**
-- Comments: Explain why or how
-- Docstrings: Document what functions/classes do`,
+**Types of Docstrings:**
+
+**1. One-Line Docstrings:**
+- Brief summary on single line
+- Should fit on one line (72-79 characters)
+- No period needed if it's a phrase
+- Use for simple functions
+
+**2. Multi-Line Docstrings:**
+- Summary line (like one-liner)
+- Blank line
+- Detailed description
+- Sections for Args, Returns, Raises, Examples
+- Follow Google, NumPy, or reStructuredText style
+
+**Docstring Conventions (PEP 257):**
+
+**1. Summary Line:**
+- First line should be a concise summary
+- Stand alone as a description
+- Use imperative mood: "Return" not "Returns"
+- End with period
+
+**2. Detailed Description:**
+- Blank line after summary
+- More detailed explanation
+- Explain behavior, edge cases, usage
+
+**3. Sections (for functions/methods):**
+- **Args/Parameters**: List each parameter with type and description
+- **Returns**: Describe return value and type
+- **Raises**: List exceptions that might be raised
+- **Examples**: Show usage examples
+- **Note**: Additional important information
+- **See Also**: Related functions/classes
+
+**Docstring Styles:**
+
+**1. Google Style (Popular):**
+Python code example:
+def calculate_total(items, tax_rate=0.08):
+    """Calculate total price including tax.
+    
+    Args:
+        items: List of item prices (floats).
+        tax_rate: Tax rate as decimal (default 0.08).
+    
+    Returns:
+        Total price as float.
+    
+    Raises:
+        ValueError: If tax_rate is negative.
+    
+    Example:
+        >>> calculate_total([10.0, 20.0], 0.1)
+        33.0
+    """
+
+
+**2. NumPy Style:**
+Python code example:
+def calculate_total(items, tax_rate=0.08):
+    """Calculate total price including tax.
+    
+    Parameters
+    ----------
+    items : list of float
+        List of item prices.
+    tax_rate : float, optional
+        Tax rate as decimal (default is 0.08).
+    
+    Returns
+    -------
+    float
+        Total price including tax.
+    
+    Raises
+    ------
+    ValueError
+        If tax_rate is negative.
+    """
+
+
+**3. reStructuredText Style:**
+Python code example:
+def calculate_total(items, tax_rate=0.08):
+    """Calculate total price including tax.
+    
+    :param items: List of item prices
+    :type items: list of float
+    :param tax_rate: Tax rate as decimal
+    :type tax_rate: float
+    :returns: Total price including tax
+    :rtype: float
+    :raises: ValueError if tax_rate is negative
+    """
+
+
+**When to Use Docstrings:**
+
+**1. All Public Functions:**
+- Functions meant to be used by others
+- Part of your API/interface
+- Should have complete docstrings
+
+**2. All Classes:**
+- Document class purpose and usage
+- Document public methods
+- Document class-level attributes if significant
+
+**3. Modules:**
+- Module-level docstring explains module purpose
+- Lists main classes/functions
+- Provides usage examples
+
+**4. Complex Private Functions:**
+- Even private functions benefit from docstrings
+- Helps maintainers understand code
+- Can be less formal than public API docs
+
+**Docstring Best Practices:**
+
+**1. Write for Users, Not Implementers:**
+- Focus on how to use, not how it's implemented
+- Describe behavior, not implementation details
+- Provide examples of common use cases
+
+**2. Keep Docstrings Current:**
+- Update when function signature changes
+- Update when behavior changes
+- Remove outdated information
+
+**3. Include Examples:**
+- Show typical usage
+- Show edge cases
+- Use doctest format for testable examples
+
+**4. Be Consistent:**
+- Choose one style and stick with it
+- Follow project conventions
+- Use same format throughout codebase
+
+**5. Document Edge Cases:**
+- What happens with None?
+- What about empty inputs?
+- Behavior with invalid inputs?
+- Side effects or state changes?
+
+**Accessing Documentation:**
+
+**1. __doc__ Attribute:**
+Python code example:
+print(calculate_total.__doc__)
+
+
+**2. help() Function:**
+Python code example:
+help(calculate_total)
+
+
+**3. IDE Integration:**
+- Hover over function name
+- Autocomplete shows docstring
+- Documentation panels
+
+**4. Documentation Generators:**
+- Sphinx: Generates HTML/PDF docs
+- pydoc: Command-line documentation
+- AutoAPI: Auto-generate from docstrings
+
+**Common Patterns:**
+
+**1. Function Docstrings:**
+Python code example:
+def process_data(data, validate=True):
+    """Process input data with optional validation.
+    
+    This function takes raw data and processes it according to
+    business rules. Validation can be skipped for performance
+    when data is known to be valid.
+    
+    Args:
+        data: Raw data dictionary.
+        validate: Whether to validate data (default True).
+    
+    Returns:
+        Processed data dictionary.
+    
+    Raises:
+        ValueError: If validation fails and validate=True.
+        TypeError: If data is not a dictionary.
+    
+    Example:
+        >>> data = {"name": "John", "age": 30}
+        >>> process_data(data)
+        {"name": "John", "age": 30, "processed": True}
+    """
+
+
+**2. Class Docstrings:**
+Python code example:
+class UserManager:
+    """Manages user operations and authentication.
+    
+    This class handles user creation, authentication, and
+    session management. It provides a high-level interface
+    for user-related operations.
+    
+    Attributes:
+        users: Dictionary mapping usernames to User objects.
+        active_sessions: Set of active session IDs.
+    
+    Example:
+        >>> manager = UserManager()
+        >>> manager.create_user("alice", "password123")
+        >>> manager.authenticate("alice", "password123")
+        True
+    """
+
+
+**3. Module Docstrings:**
+Python code example:
+"""User management module.
+
+This module provides classes and functions for managing users,
+authentication, and authorization. It integrates with the
+database layer and provides a clean API for user operations.
+
+Classes:
+    User: Represents a single user.
+    UserManager: Manages user operations.
+
+Functions:
+    hash_password: Hash password securely.
+    validate_email: Validate email format.
+
+Example:
+    >>> from user_management import UserManager
+    >>> manager = UserManager()
+    >>> manager.create_user("alice", "password")
+"""
+
+
+**Comments vs Docstrings - When to Use What:**
+
+**Use Comments For:**
+- Explaining complex algorithms or logic
+- Documenting "why" decisions were made
+- Marking TODOs and temporary code
+- Explaining non-obvious implementation details
+- Providing context for future maintainers
+
+**Use Docstrings For:**
+- Documenting what functions/classes do
+- Describing parameters and return values
+- Providing usage examples
+- Creating API documentation
+- Explaining public interfaces
+
+**Anti-Patterns to Avoid:**
+
+**1. Commenting Obvious Code:**
+Python code example:
+# Bad
+x = x + 1  # Increment x by 1
+
+# Good
+x += 1  # Account for off-by-one in indexing
+
+
+**2. Outdated Comments:**
+Python code example:
+# Bad - comment doesn't match code
+# Sort the list
+data.reverse()  # Actually reverses now!
+
+# Good - update or remove
+data.reverse()  # Reverse to process in LIFO order
+
+
+**3. Missing Docstrings:**
+Python code example:
+# Bad
+def calculate(x, y):
+    return x * y + 10
+
+# Good
+def calculate(x, y):
+    """Calculate value using formula: x * y + 10.
+    
+    Args:
+        x: First operand.
+        y: Second operand.
+    
+    Returns:
+        Calculated result.
+    """
+    return x * y + 10
+
+
+**4. Docstrings That Repeat Code:**
+Python code example:
+# Bad
+def add(a, b):
+    """Add a and b."""
+    return a + b
+
+# Good
+def add(a, b):
+    """Add two numbers, handling integer overflow.
+    
+    This function adds two numbers and automatically
+    promotes to float if result exceeds integer range.
+    """
+    return a + b
+
+
+**Tools and Linting:**
+
+**1. pylint:**
+- Checks for missing docstrings
+- Enforces docstring conventions
+- Configurable rules
+
+**2. pydocstyle (pep257):**
+- Checks PEP 257 compliance
+- Validates docstring format
+- Can be integrated into CI/CD
+
+**3. Sphinx:**
+- Generates documentation from docstrings
+- Supports multiple docstring styles
+- Creates professional documentation
+
+**Real-World Examples:**
+
+**1. Well-Documented Function:**
+Python code example:
+def binary_search(arr, target):
+    """Search for target in sorted array using binary search.
+    
+    This function implements the classic binary search algorithm
+    to find the index of target in a sorted array. The array
+    must be sorted in ascending order for correct results.
+    
+    Args:
+        arr: Sorted list of comparable elements.
+        target: Element to search for.
+    
+    Returns:
+        Index of target if found, -1 otherwise.
+    
+    Raises:
+        ValueError: If array is not sorted.
+    
+    Time Complexity:
+        O(log n) where n is array length.
+    
+    Example:
+        >>> binary_search([1, 3, 5, 7, 9], 5)
+        2
+        >>> binary_search([1, 3, 5, 7, 9], 4)
+        -1
+    """
+
+
+**2. Well-Commented Algorithm:**
+Python code example:
+def quicksort(arr):
+    """Sort array using quicksort algorithm."""
+    # Base case: arrays with 0 or 1 elements are already sorted
+    if len(arr) <= 1:
+        return arr
+    
+    # Choose pivot (median of first, middle, last for better performance)
+    # This helps avoid worst-case O(n²) performance on sorted arrays
+    pivot_idx = len(arr) // 2
+    pivot = arr[pivot_idx]
+    
+    # Partition: elements < pivot go left, > pivot go right
+    # This is the key step that makes quicksort efficient
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    
+    # Recursively sort partitions and combine
+    # The recursion depth is O(log n) on average
+    return quicksort(left) + middle + quicksort(right)
+
+
+Effective use of comments and docstrings makes your code more maintainable, easier to understand, and more professional. Invest time in good documentation - it pays dividends in reduced bugs and faster onboarding of new team members.`,
 					CodeExamples: `# Single-line comment
 x = 10  # This is a comment
 
@@ -976,21 +1770,497 @@ else:
 				},
 				{
 					Title: "Break, Continue, and Pass",
-					Content: `**Break:**
-- Exits the innermost loop immediately
-- Skips remaining iterations
-- Can break out of nested loops with labels (Python 3.10+)
+					Content: `Python provides three control flow statements that give you fine-grained control over loop execution and code structure: break, continue, and pass. Understanding when and how to use these statements effectively is crucial for writing clean, efficient Python code.
 
-**Continue:**
-- Skips current iteration
-- Continues with next iteration
-- Useful for filtering or skipping certain cases
+**Break - Exiting Loops Early:**
 
-**Pass:**
-- Placeholder statement
-- Does nothing
-- Used when syntax requires a statement but no action needed
-- Common in empty functions, classes, or exception handlers`,
+**What Break Does:**
+The break statement immediately terminates the innermost loop (for or while) and transfers control to the statement immediately following the loop. It's Python's way of saying "I'm done with this loop, exit now."
+
+**Basic Usage:**
+- Exits only the innermost loop
+- Skips all remaining iterations
+- Control passes to code after the loop
+- Commonly used with conditional statements
+
+**When to Use Break:**
+
+**1. Search Operations:**
+- Stop searching once target is found
+- Avoid unnecessary iterations
+- Improve performance by early exit
+- Example: Finding first matching item
+
+**2. Input Validation:**
+- Exit loop when valid input received
+- Common in interactive programs
+- Example: Retry until valid input
+
+**3. Error Conditions:**
+- Exit when error detected
+- Prevent further processing
+- Example: Stop processing on invalid data
+
+**4. Performance Optimization:**
+- Exit early when condition met
+- Avoid processing unnecessary items
+- Example: Stop when threshold reached
+
+**Break Examples:**
+
+**1. Finding First Match:**
+Python code example:
+# Search for first even number
+numbers = [1, 3, 5, 7, 8, 9, 11]
+first_even = None
+for num in numbers:
+    if num % 2 == 0:
+        first_even = num
+        break  # Found it, no need to continue
+print(first_even)  # 8
+
+
+**2. Input Validation Loop:**
+Python code example:
+# Keep asking until valid input
+while True:
+    age = input("Enter your age: ")
+    try:
+        age = int(age)
+        if 0 <= age <= 120:
+            break  # Valid input, exit loop
+        else:
+            print("Age must be between 0 and 120")
+    except ValueError:
+        print("Please enter a valid number")
+print(f"Your age is {age}")
+
+
+**3. Processing Until Condition:**
+Python code example:
+# Process items until sum exceeds threshold
+items = [10, 20, 30, 40, 50]
+total = 0
+processed = []
+for item in items:
+    total += item
+    processed.append(item)
+    if total > 50:
+        break  # Stop when threshold exceeded
+print(processed)  # [10, 20, 30]
+
+
+**4. Nested Loops:**
+Python code example:
+# Break only exits innermost loop
+for i in range(3):
+    for j in range(5):
+        if j == 2:
+            break  # Only breaks inner loop
+        print(f"i={i}, j={j}")
+# Output: i=0,j=0 i=0,j=1 i=1,j=0 i=1,j=1 i=2,j=0 i=2,j=1
+
+
+**Breaking Out of Nested Loops:**
+
+**Method 1: Using Flags (Traditional):**
+Python code example:
+found = False
+for i in range(3):
+    for j in range(3):
+        if some_condition(i, j):
+            found = True
+            break
+    if found:
+        break
+
+
+**Method 2: Using Exception (Less Common):**
+Python code example:
+class BreakOuterLoop(Exception):
+    pass
+
+try:
+    for i in range(3):
+        for j in range(3):
+            if some_condition(i, j):
+                raise BreakOuterLoop
+except BreakOuterLoop:
+    pass
+
+
+**Method 3: Using Functions (Cleanest):**
+Python code example:
+def find_item():
+    for i in range(3):
+        for j in range(3):
+            if some_condition(i, j):
+                return i, j  # Exits all loops
+    return None
+
+result = find_item()
+
+
+**Method 4: Using Labels (Python 3.10+):**
+Python code example:
+# Python 3.10+ supports breaking to labels
+for i in range(3):
+    for j in range(3):
+        if some_condition(i, j):
+            break  # Still only breaks inner loop
+    else:
+        continue  # Only executed if inner loop didn't break
+    break  # Break outer loop
+
+
+**Continue - Skipping Iterations:**
+
+**What Continue Does:**
+The continue statement skips the rest of the current loop iteration and immediately starts the next iteration. It's Python's way of saying "skip this one, move to the next."
+
+**Basic Usage:**
+- Skips remaining code in current iteration
+- Starts next iteration immediately
+- Only affects innermost loop
+- Commonly used for filtering
+
+**When to Use Continue:**
+
+**1. Filtering Data:**
+- Skip items that don't meet criteria
+- Process only valid items
+- Cleaner than nested if statements
+- Example: Process only non-empty strings
+
+**2. Error Handling:**
+- Skip items that cause errors
+- Continue processing remaining items
+- Log errors but don't stop
+- Example: Process valid files, skip invalid
+
+**3. Early Validation:**
+- Skip items that fail validation
+- Avoid deep nesting
+- Improve readability
+- Example: Skip invalid user input
+
+**4. Performance:**
+- Skip expensive operations when not needed
+- Early exit from iteration logic
+- Example: Skip processing for already-processed items
+
+**Continue Examples:**
+
+**1. Filtering Invalid Data:**
+Python code example:
+# Process only positive numbers
+numbers = [5, -2, 8, -1, 10, -3]
+positive_sum = 0
+for num in numbers:
+    if num <= 0:
+        continue  # Skip negative numbers
+    positive_sum += num
+print(positive_sum)  # 23
+
+
+**2. Processing Valid Items:**
+Python code example:
+# Process only valid email addresses
+emails = ["alice@example.com", "invalid", "bob@test.com", "bad@"]
+valid_emails = []
+for email in emails:
+    if "@" not in email or "." not in email.split("@")[1]:
+        continue  # Skip invalid emails
+    valid_emails.append(email)
+print(valid_emails)  # ['alice@example.com', 'bob@test.com']
+
+
+**3. Error Handling in Loops:**
+Python code example:
+# Process files, skip ones that fail
+files = ["file1.txt", "file2.txt", "file3.txt"]
+results = []
+for filename in files:
+    try:
+        with open(filename) as f:
+            data = f.read()
+            results.append(process(data))
+    except FileNotFoundError:
+        continue  # Skip missing files, continue with others
+    except Exception as e:
+        print(f"Error processing {filename}: {e}")
+        continue  # Log error but continue
+
+
+**4. Avoiding Deep Nesting:**
+Python code example:
+# Without continue (nested)
+for item in items:
+    if item.is_valid():
+        if item.is_ready():
+            if item.has_permission():
+                process(item)
+
+# With continue (flatter)
+for item in items:
+    if not item.is_valid():
+        continue
+    if not item.is_ready():
+        continue
+    if not item.has_permission():
+        continue
+    process(item)  # Only reached if all checks pass
+
+
+**Continue vs. If-Else:**
+
+**When Continue is Better:**
+- Multiple conditions to skip
+- Reduces nesting levels
+- Makes "happy path" clearer
+- Early validation checks
+
+**When If-Else is Better:**
+- Simple single condition
+- Both branches need processing
+- More readable for simple cases
+
+**Pass - The Placeholder Statement:**
+
+**What Pass Does:**
+The pass statement is a null operation - it does nothing when executed. It's a placeholder that satisfies Python's syntax requirement that certain code blocks cannot be empty.
+
+**Basic Usage:**
+- Syntactically required but does nothing
+- Used where code is required but action isn't
+- Common in stubs, placeholders, minimal implementations
+- Allows code to run without errors
+
+**When to Use Pass:**
+
+**1. Placeholder Functions:**
+- Function signature defined but not implemented
+- To be implemented later
+- Allows code to run without errors
+- Example: Stub functions for testing
+
+**2. Empty Classes:**
+- Class structure defined but no methods yet
+- Minimal class definition
+- Placeholder for future implementation
+- Example: Exception classes, data classes
+
+**3. Exception Handlers:**
+- Catch exception but take no action
+- Suppress specific errors intentionally
+- Logging handled elsewhere
+- Example: Ignoring expected errors
+
+**4. Conditional Blocks:**
+- Empty if/else blocks
+- Placeholder for future logic
+- Maintains code structure
+- Example: Future feature placeholders
+
+**Pass Examples:**
+
+**1. Placeholder Functions:**
+Python code example:
+# Function to be implemented later
+def process_data(data):
+    """Process data - implementation pending."""
+    pass  # TODO: Implement data processing
+
+# Allows code to run
+result = process_data(my_data)  # Returns None but doesn't error
+
+
+**2. Empty Classes:**
+Python code example:
+# Base class with no implementation
+class BaseProcessor:
+    """Base class for data processors."""
+    pass  # To be subclassed
+
+# Custom exception
+class ValidationError(Exception):
+    """Raised when validation fails."""
+    pass  # Inherits Exception behavior, no custom logic needed
+
+
+**3. Exception Handling:**
+Python code example:
+# Suppress specific expected errors
+try:
+    result = risky_operation()
+except ExpectedError:
+    pass  # Ignore this specific error, continue execution
+except Exception as e:
+    logger.error(f"Unexpected error: {e}")
+    raise  # Re-raise unexpected errors
+
+
+**4. Conditional Placeholders:**
+Python code example:
+# Placeholder for future feature
+if feature_enabled:
+    # TODO: Implement new feature
+    pass
+else:
+    use_old_feature()
+
+
+**Pass vs. Other Approaches:**
+
+**Pass vs. Comment:**
+Python code example:
+# Pass - syntactically valid
+def function():
+    pass
+
+# Comment - syntax error!
+def function():
+    # To be implemented
+
+
+**Pass vs. Return None:**
+Python code example:
+# Pass - implicit None return
+def function():
+    pass  # Returns None
+
+# Explicit None - clearer intent
+def function():
+    return None  # More explicit
+
+
+**Pass vs. Ellipsis:**
+Python code example:
+# Pass - does nothing
+def function():
+    pass
+
+# Ellipsis - also valid placeholder
+def function():
+    ...  # Also does nothing, sometimes used for same purpose
+
+
+**Best Practices:**
+
+**1. Use Break Sparingly:**
+- Consider if loop structure can be improved
+- Sometimes refactoring is better than break
+- Document why break is necessary
+- Prefer for early exit patterns
+
+**2. Use Continue for Clarity:**
+- Reduces nesting
+- Makes "happy path" obvious
+- Better than deeply nested if statements
+- Use when filtering is clearer than processing
+
+**3. Use Pass Intentionally:**
+- Not a substitute for implementation
+- Mark with TODO comments
+- Use in stubs and placeholders
+- Remove when implementing
+
+**4. Avoid Excessive Use:**
+- Too many breaks/continues can indicate design issues
+- Consider refactoring complex loops
+- Extract logic into functions
+- Use list comprehensions when filtering
+
+**Common Patterns:**
+
+**1. Search Pattern (Break):**
+Python code example:
+def find_first_match(items, predicate):
+    for item in items:
+        if predicate(item):
+            return item  # Early return instead of break
+    return None
+
+
+**2. Filter Pattern (Continue):**
+Python code example:
+# Using continue
+valid_items = []
+for item in items:
+    if not is_valid(item):
+        continue
+    valid_items.append(process(item))
+
+# Using list comprehension (often better)
+valid_items = [process(item) for item in items if is_valid(item)]
+
+
+**3. Stub Pattern (Pass):**
+Python code example:
+class API:
+    def authenticate(self, credentials):
+        """Authenticate user - to be implemented."""
+        pass  # TODO: Implement OAuth2 flow
+    
+    def get_data(self):
+        """Get data - to be implemented."""
+        pass  # TODO: Implement API call
+
+
+**Anti-Patterns:**
+
+**1. Break in Finally Blocks:**
+Python code example:
+# Bad - break in finally doesn't work as expected
+for item in items:
+    try:
+        process(item)
+    finally:
+        break  # This breaks, but finally always runs
+
+
+**2. Continue After Break:**
+Python code example:
+# Bad - unreachable code
+for item in items:
+    if condition:
+        break
+    continue  # Never reached if break happens
+
+
+**3. Pass as Implementation:**
+Python code example:
+# Bad - pass is not implementation
+def critical_function():
+    pass  # This doesn't do anything!
+
+# Good - at least raise NotImplementedError
+def critical_function():
+    raise NotImplementedError("Must be implemented")
+
+
+**4. Excessive Break/Continue:**
+Python code example:
+# Bad - too many control flow statements
+for item in items:
+    if condition1:
+        continue
+    if condition2:
+        break
+    if condition3:
+        continue
+    # Hard to follow logic
+
+# Better - refactor into function
+def should_process(item):
+    return condition1 and not condition2 and condition3
+
+for item in items:
+    if should_process(item):
+        process(item)
+
+
+Understanding break, continue, and pass gives you fine-grained control over loop execution and code structure. Use them judiciously to write clearer, more maintainable code. Remember: the best code often uses these statements sparingly, preferring clear structure and well-designed loops.`,
 					CodeExamples: `# Break example
 for i in range(10):
     if i == 5:

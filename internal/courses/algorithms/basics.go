@@ -1477,30 +1477,248 @@ def compare_growth_rates():
 				},
 				{
 					Title: "Logarithm",
-					Content: `Logarithms appear frequently in algorithm analysis, especially in divide-and-conquer algorithms.
+					Content: `Logarithms are fundamental mathematical concepts that appear frequently in algorithm analysis, especially in divide-and-conquer algorithms, tree-based data structures, and efficient search algorithms. Understanding logarithms deeply is crucial for analyzing algorithm complexity and recognizing when logarithmic time complexity is achievable.
 
 **What is a Logarithm?**
+
+A logarithm answers the question: "What power must we raise the base to get a certain number?" Formally, if bˣ = n, then log_b(n) = x. The logarithm is the inverse operation of exponentiation.
+
+**Mathematical Definition:**
 - log₂(n) = "What power of 2 equals n?"
 - log₂(8) = 3 because 2³ = 8
 - log₂(16) = 4 because 2⁴ = 16
+- log₁₀(100) = 2 because 10² = 100
+- log_e(n) = ln(n) (natural logarithm, base e ≈ 2.718)
 
-**Why Logarithms Matter:**
-- Binary search: O(log n) - cuts problem in half each step
-- Balanced trees: O(log n) operations
-- Divide-and-conquer: Often O(n log n)
+**Common Bases:**
+- **Base 2 (log₂)**: Most common in computer science (binary systems, divide-by-two algorithms)
+- **Base 10 (log₁₀)**: Common in general mathematics and scientific notation
+- **Base e (ln)**: Natural logarithm, appears in calculus and growth models
+- **Base doesn't matter for Big O**: All logarithmic bases are equivalent in Big O notation (differ by constant factor)
 
-**Key Properties:**
+**Why Logarithms Matter in Algorithms:**
+
+**1. Divide-and-Conquer Algorithms:**
+- Many efficient algorithms work by repeatedly dividing the problem in half
+- Each division reduces problem size by factor of 2
+- After k divisions: problem size = n / 2ᵏ
+- When n / 2ᵏ = 1: k = log₂(n) divisions needed
+- Examples: Binary search, merge sort, quick sort (average case)
+
+**2. Tree-Based Data Structures:**
+- Balanced binary trees have height ≈ log₂(n)
+- Each level doubles the number of nodes
+- Height determines search/insert/delete complexity
+- Examples: Binary search trees, AVL trees, red-black trees, B-trees
+
+**3. Recursive Algorithms:**
+- Recursive algorithms that reduce problem size by constant factor
+- Depth of recursion = log(n)
+- Examples: Binary search, tree traversals, divide-and-conquer
+
+**4. Efficient Search:**
+- Logarithmic search is incredibly efficient
+- Can search billions of items in ~30 comparisons
+- Much better than linear O(n) search
+- Examples: Binary search, searching in sorted arrays
+
+**Key Logarithmic Properties:**
+
+**1. Product Rule:**
 - log(ab) = log(a) + log(b)
+- Example: log₂(8 × 16) = log₂(8) + log₂(16) = 3 + 4 = 7
+- Useful for: Analyzing nested loops, multiplying complexities
+
+**2. Quotient Rule:**
 - log(a/b) = log(a) - log(b)
+- Example: log₂(16/4) = log₂(16) - log₂(4) = 4 - 2 = 2
+- Useful for: Analyzing divide operations
+
+**3. Power Rule:**
 - log(aᵇ) = b × log(a)
-- log base doesn't matter for Big O (all bases are equivalent)
+- Example: log₂(8²) = 2 × log₂(8) = 2 × 3 = 6
+- Useful for: Analyzing exponential growth, nested exponentials
 
-**Visual Intuition:**
-- log₂(1,000) ≈ 10
-- log₂(1,000,000) ≈ 20
-- log₂(1,000,000,000) ≈ 30
+**4. Change of Base:**
+- log_b(n) = log_c(n) / log_c(b)
+- Example: log₂(n) = log₁₀(n) / log₁₀(2) ≈ log₁₀(n) / 0.301
+- Useful for: Converting between bases, calculator computations
 
-Notice how slowly logarithms grow! This is why O(log n) algorithms are so efficient.`,
+**5. Base Doesn't Matter for Big O:**
+- log₂(n), log₁₀(n), ln(n) all differ by constant factors
+- In Big O notation: O(log n) regardless of base
+- Constant factors are ignored in asymptotic analysis
+
+**Visual Intuition - How Slowly Logarithms Grow:**
+
+**Real-World Scale Examples:**
+- log₂(1,000) ≈ 10 (can search 1,000 items in ~10 steps)
+- log₂(1,000,000) ≈ 20 (can search 1 million items in ~20 steps)
+- log₂(1,000,000,000) ≈ 30 (can search 1 billion items in ~30 steps)
+- log₂(1,000,000,000,000) ≈ 40 (can search 1 trillion items in ~40 steps)
+
+**Key Insight:** Notice how slowly logarithms grow! Doubling the input size only adds 1 to the logarithm. This is why O(log n) algorithms are so incredibly efficient - they scale extremely well.
+
+**Comparison with Other Growth Rates:**
+- n = 1,000,000
+- log₂(n) ≈ 20 (logarithmic - excellent!)
+- √n ≈ 1,000 (square root - good)
+- n = 1,000,000 (linear - acceptable)
+- n log n ≈ 20,000,000 (linearithmic - good for sorting)
+- n² = 1,000,000,000,000 (quadratic - poor for large n)
+
+**Real-World Applications:**
+
+**1. Binary Search:**
+- Searching sorted array: O(log n)
+- Each comparison eliminates half the remaining elements
+- Can find item in sorted array of 1 billion elements in ~30 comparisons
+- Used in: Search engines, databases, sorted data structures
+
+**2. Database Indexing:**
+- B-trees use logarithmic height for efficient lookups
+- Database indexes allow O(log n) record retrieval
+- Critical for database performance at scale
+- Examples: MySQL indexes, PostgreSQL B-tree indexes
+
+**3. Balanced Tree Operations:**
+- AVL trees, red-black trees maintain O(log n) height
+- All operations (insert, delete, search) are O(log n)
+- Used in: Standard library implementations (Java TreeMap, C++ std::map)
+- Examples: Maintaining sorted data with efficient operations
+
+**4. Divide-and-Conquer Sorting:**
+- Merge sort: O(n log n) time complexity
+- Quick sort (average case): O(n log n)
+- Heap sort: O(n log n)
+- The log n factor comes from the divide step (tree height)
+
+**5. Exponentiation:**
+- Fast exponentiation: O(log n) multiplications
+- Compute aⁿ by repeated squaring
+- Much faster than naive O(n) multiplication
+- Used in: Cryptography, modular arithmetic
+
+**6. Number of Digits:**
+- Number of digits in base-b representation: ⌊log_b(n)⌋ + 1
+- Example: 1000 in base 10 has 4 digits, log₁₀(1000) = 3, so 3 + 1 = 4
+- Useful for: String conversion, number formatting
+
+**7. Binary Representation:**
+- Number of bits needed: ⌈log₂(n)⌉
+- Example: Represent 1000 requires 10 bits (2¹⁰ = 1024 > 1000)
+- Useful for: Bit manipulation, memory allocation
+
+**Common Logarithmic Patterns in Algorithms:**
+
+**1. Binary Search Pattern:**
+- Repeatedly divide search space in half
+- Each iteration eliminates half the possibilities
+- Total iterations: log₂(n)
+- Time complexity: O(log n)
+
+**2. Tree Traversal:**
+- Balanced tree height: O(log n)
+- Traversing from root to leaf: O(log n)
+- All tree operations depend on height
+- Time complexity: O(log n) for balanced trees
+
+**3. Divide-and-Conquer:**
+- Divide problem into smaller subproblems
+- Solve recursively
+- Combine solutions
+- Depth of recursion: O(log n) if dividing by constant factor
+- Time complexity: Often O(n log n)
+
+**Best Practices:**
+
+**1. Recognize Logarithmic Opportunities:**
+- Sorted data → binary search (O(log n))
+- Balanced trees → O(log n) operations
+- Divide-by-two patterns → O(log n) depth
+- Repeated halving → logarithmic complexity
+
+**2. Understand When Logarithmic is Achievable:**
+- Requires structure (sorted, hierarchical, balanced)
+- Not always possible (unsorted data, arbitrary graphs)
+- Often requires preprocessing (sorting, building tree)
+
+**3. Appreciate the Efficiency:**
+- O(log n) is incredibly efficient
+- Scales extremely well to large inputs
+- Often worth preprocessing to achieve logarithmic access
+
+**Common Pitfalls:**
+
+**1. Confusing log(n) with n:**
+- log(n) grows MUCH slower than n
+- O(log n) is excellent, O(n) is acceptable
+- Don't underestimate logarithmic efficiency
+
+**2. Assuming Logarithmic Without Structure:**
+- Unsorted array: O(n) search, not O(log n)
+- Unbalanced tree: O(n) worst case, not O(log n)
+- Need sorted data or balanced structure for O(log n)
+
+**3. Ignoring Base in Non-Big-O Context:**
+- Base matters for actual performance (constants)
+- log₂(n) vs log₁₀(n) differs by ~3.3x
+- Only ignore base in Big O analysis
+
+**4. Forgetting Preprocessing Cost:**
+- Sorting for binary search: O(n log n) preprocessing
+- Building balanced tree: O(n log n) construction
+- Logarithmic operations assume structure exists
+
+**Performance Characteristics:**
+
+**Why Logarithmic is So Efficient:**
+- Grows extremely slowly with input size
+- Practical for very large datasets
+- 30 comparisons can search 1 billion items
+- 40 comparisons can search 1 trillion items
+- Essentially constant for practical purposes
+
+**When Logarithmic Complexity Matters:**
+- Large datasets (millions to billions of items)
+- Frequent search/access operations
+- Real-time systems requiring fast lookups
+- Systems where preprocessing cost is amortized
+
+**Mathematical Deep Dive:**
+
+**Relationship to Exponentials:**
+- Logarithm is inverse of exponentiation
+- If 2ˣ = n, then x = log₂(n)
+- This inverse relationship is key to understanding logarithmic growth
+
+**Relationship to Binary:**
+- log₂(n) = number of bits needed to represent n
+- Binary representation directly relates to base-2 logarithm
+- Computer systems naturally use base-2 logarithms
+
+**Relationship to Trees:**
+- Complete binary tree with n nodes has height ⌊log₂(n)⌋
+- Each level doubles the number of nodes
+- Height determines path length and operation complexity
+
+**Advanced Concepts:**
+
+**Iterated Logarithm:**
+- log*(n) = number of times log must be applied to get ≤ 1
+- Grows even slower than log(n)
+- Appears in: Union-find with path compression, some graph algorithms
+
+**Polylogarithmic:**
+- O(polylog(n)) = O((log n)ᵏ) for some constant k
+- Still grows very slowly
+- Examples: Parallel algorithms, some graph algorithms
+
+**Logarithmic in Practice:**
+- Most efficient search algorithms use logarithmic complexity
+- Tree-based data structures achieve logarithmic operations
+- Divide-and-conquer algorithms often have logarithmic depth
+- Understanding logarithms is essential for algorithm analysis`,
 					CodeExamples: `// Example: Why binary search is O(log n)
 
 // Each iteration eliminates half the remaining elements
@@ -7551,42 +7769,314 @@ def rearrange_by_sign_ordered(nums):
 				},
 				{
 					Title: "Merge Sorted Arrays",
-					Content: `Merging sorted arrays is a fundamental operation in many algorithms, especially merge sort and when combining data from multiple sorted sources.
+					Content: `Merging sorted arrays is one of the most fundamental operations in computer science, appearing in countless algorithms and real-world applications. This operation is the cornerstone of merge sort, external sorting algorithms, database merge operations, and distributed systems that combine sorted data from multiple sources. Understanding how to efficiently merge sorted arrays is essential for any serious programmer.
 
-**Problem Types:**
+**What is Merging?**
 
-**1. Merge Two Sorted Arrays:**
-- Given two sorted arrays, merge into one sorted array
-- Can merge in-place if one array has enough space
-- Time: O(m + n), Space: O(1) if in-place, O(m + n) otherwise
+Merging combines two or more sorted sequences into a single sorted sequence while maintaining the sorted order. The key insight is that when both input sequences are already sorted, we can efficiently combine them by comparing elements and selecting the smallest remaining element at each step.
 
-**2. Merge K Sorted Arrays:**
-- Merge k sorted arrays into one sorted array
-- Approaches: divide and conquer, heap/priority queue
-- Time: O(n log k) where n is total elements
+**Why Merging Matters:**
 
-**3. Merge Sorted Lists:**
-- Merge two sorted linked lists
-- Simpler than arrays (no space issues)
-- Time: O(m + n), Space: O(1)
+**1. Fundamental Algorithm Building Block:**
+- Core operation in merge sort (divide-and-conquer)
+- Used in external sorting (sorting data too large for memory)
+- Basis for many advanced algorithms
+- Appears frequently in coding interviews
 
-**Algorithm for Two Arrays:**
-1. Use two pointers, one for each array
-2. Compare elements at both pointers
-3. Add smaller element to result, advance its pointer
-4. Continue until one array is exhausted
-5. Add remaining elements from other array
+**2. Real-World Applications:**
+- **Database Systems**: Merging results from multiple sorted indexes, combining sorted query results
+- **Distributed Systems**: Merging sorted data from multiple servers/nodes
+- **Time-Series Data**: Combining sorted time-series data from multiple sources
+- **Log Processing**: Merging sorted log files from multiple servers
+- **Search Engines**: Merging sorted document lists from multiple indexes
+- **Social Media**: Merging sorted feeds from multiple users or sources
+- **Financial Systems**: Merging sorted transaction records
+- **Version Control**: Merging sorted change lists (like in Git)
 
-**In-Place Merging:**
-- If one array has enough space at end
-- Start from end (largest elements) to avoid overwriting
-- Fill from right to left
+**3. Performance Characteristics:**
+- Optimal time complexity: O(m + n) for two arrays
+- Can be done in-place with O(1) extra space
+- Very cache-friendly (sequential access pattern)
+- Highly parallelizable (can merge multiple pairs simultaneously)
 
-**Key Insights:**
-- Always compare current elements, not next elements
-- Handle remaining elements after main loop
-- For in-place: work backwards to avoid overwriting
-- For k arrays: use heap to always get minimum element`,
+**Problem Variations:**
+
+**1. Merge Two Sorted Arrays (Basic):**
+- **Input**: Two sorted arrays of sizes m and n
+- **Output**: One sorted array containing all elements
+- **Time Complexity**: O(m + n) - must examine every element
+- **Space Complexity**: O(m + n) for new array, O(1) if in-place possible
+- **Key Challenge**: Maintaining sorted order while combining
+
+**2. Merge Two Sorted Arrays In-Place:**
+- **Constraint**: One array has enough space at the end
+- **Challenge**: Avoid overwriting unprocessed elements
+- **Solution**: Work backwards from the end
+- **Time Complexity**: O(m + n)
+- **Space Complexity**: O(1) - no extra space needed
+- **Real-World**: Common in memory-constrained systems
+
+**3. Merge K Sorted Arrays:**
+- **Input**: K sorted arrays (potentially different sizes)
+- **Output**: One sorted array containing all elements
+- **Approaches**: 
+  - Divide and conquer: O(n log k) time, O(n) space
+  - Heap/Priority Queue: O(n log k) time, O(k) space
+  - Pairwise merging: O(nk) time (inefficient)
+- **Best Approach**: Heap for optimal time complexity
+- **Real-World**: Merging results from multiple database shards
+
+**4. Merge Sorted Linked Lists:**
+- **Advantage**: No space issues (can modify in-place easily)
+- **Time Complexity**: O(m + n)
+- **Space Complexity**: O(1) - just rearrange pointers
+- **Easier**: No need to worry about overwriting elements
+- **Common**: Used in merge sort for linked lists
+
+**5. Merge with Duplicates:**
+- **Variation**: Handle duplicate elements
+- **Options**: Keep all duplicates, keep unique only, count occurrences
+- **Complexity**: Same as basic merge, just different comparison logic
+
+**Algorithm for Merging Two Arrays:**
+
+**Standard Approach (Using Extra Space):**
+
+**Step-by-Step Process:**
+1. **Initialize**: Create result array of size m + n, initialize two pointers (i, j) at start of both arrays
+2. **Compare**: Compare elements at current positions in both arrays
+3. **Select**: Add the smaller element to result array
+4. **Advance**: Move pointer of array from which element was taken
+5. **Repeat**: Continue until one array is exhausted
+6. **Append**: Add all remaining elements from non-exhausted array
+
+**Key Observations:**
+- Each element is examined exactly once
+- Total comparisons: at most m + n - 1 (when one array finishes, rest are appended)
+- Maintains stability if equal elements are handled consistently
+- Very cache-friendly (sequential access)
+
+**In-Place Merging Technique:**
+
+**The Challenge:**
+When merging in-place, we risk overwriting elements we haven't processed yet. The solution is elegant: work backwards from the end.
+
+**Why Backwards Works:**
+- Largest elements go at the end first
+- End of array has space (by problem constraint)
+- No risk of overwriting unprocessed elements
+- Can fill positions from right to left safely
+
+**Algorithm:**
+1. **Initialize**: Start pointers at ends: i = m-1, j = n-1, k = m+n-1 (write position)
+2. **Compare**: Compare elements at current positions
+3. **Place**: Put larger element at position k
+4. **Advance**: Move appropriate pointer and write pointer backwards
+5. **Repeat**: Continue until one array is exhausted
+6. **Append**: Copy remaining elements from non-exhausted array
+
+**Key Insight**: By working backwards, we ensure that positions we're writing to are either empty or contain elements we've already processed.
+
+**Merging K Sorted Arrays:**
+
+**Approach 1: Divide and Conquer (Optimal Time, More Space)**
+- Recursively merge pairs of arrays
+- Merge first half, merge second half, then merge the two halves
+- Time: O(n log k) - log k levels, n elements per level
+- Space: O(n) - need space for intermediate results
+- **Best for**: When memory is available, want optimal time
+
+**Approach 2: Heap/Priority Queue (Optimal Time, Less Space)**
+- Use min-heap to always get smallest element
+- Initialize heap with first element from each array
+- Extract min, add next element from same array
+- Time: O(n log k) - n extractions, heap size k
+- Space: O(k) - only heap space needed
+- **Best for**: Memory-constrained, optimal time needed
+
+**Approach 3: Pairwise Merging (Simple but Inefficient)**
+- Merge arrays one by one: merge arr1+arr2, then result+arr3, etc.
+- Time: O(nk) - each merge is O(n), k merges
+- Space: O(n) - intermediate results
+- **Avoid**: Only use if k is very small
+
+**Real-World Use Cases:**
+
+**1. Database Query Processing:**
+- Multiple indexes return sorted results
+- Need to merge for intersection/union operations
+- Example: "Find users who liked post A AND post B" (intersection of sorted user IDs)
+- Performance critical: databases handle billions of records
+
+**2. Distributed Systems:**
+- Multiple servers return sorted results
+- Coordinator merges results for client
+- Example: Search across multiple sharded databases
+- Challenge: Handle different result sizes, network delays
+
+**3. External Sorting:**
+- Data too large to fit in memory
+- Sort chunks, then merge sorted chunks
+- Example: Sorting 1TB file with 10GB RAM
+- Critical: Efficient merging reduces I/O operations
+
+**4. Time-Series Data Aggregation:**
+- Multiple sensors produce sorted time-series data
+- Merge to create unified timeline
+- Example: Combining stock prices from multiple exchanges
+- Challenge: Handle timestamps, align data points
+
+**5. Log Processing:**
+- Multiple servers produce sorted log files
+- Merge for centralized analysis
+- Example: Combining web server logs chronologically
+- Real-world: Used in log aggregation systems (ELK stack, Splunk)
+
+**6. Social Media Feeds:**
+- Multiple users' posts are sorted by time
+- Merge to create unified feed
+- Example: Facebook news feed algorithm
+- Challenge: Real-time merging, ranking, filtering
+
+**Best Practices:**
+
+**1. Handle Edge Cases:**
+- Empty arrays (one or both)
+- Single element arrays
+- Arrays with all elements smaller/larger than other array
+- Duplicate elements (decide on handling strategy)
+
+**2. Optimize for Your Use Case:**
+- Memory-constrained: Use in-place merging
+- Time-critical: Use heap approach for k arrays
+- Simple case: Standard two-pointer approach
+- Large k: Use divide-and-conquer
+
+**3. Consider Stability:**
+- Stable merge: Maintains relative order of equal elements
+- Important for: Multi-key sorting, maintaining insertion order
+- Implementation: When equal, prefer element from first array
+
+**4. Cache Optimization:**
+- Merging is cache-friendly (sequential access)
+- Prefer arrays over linked lists for merging
+- Consider block-based merging for very large arrays
+
+**5. Parallelization Opportunities:**
+- Can merge multiple pairs in parallel
+- Divide k arrays into groups, merge groups in parallel
+- Useful for: Multi-core systems, distributed merging
+
+**Common Pitfalls:**
+
+**1. Off-by-One Errors:**
+- Incorrect pointer initialization
+- Forgetting to handle remaining elements
+- Index out of bounds when one array finishes
+- **Solution**: Carefully trace through examples, test edge cases
+
+**2. In-Place Merging Mistakes:**
+- Working forwards instead of backwards
+- Overwriting unprocessed elements
+- Incorrect pointer management
+- **Solution**: Always work backwards, verify no overwrites
+
+**3. K-Array Merging Inefficiency:**
+- Using pairwise merging (O(nk)) instead of heap (O(n log k))
+- Not considering divide-and-conquer approach
+- **Solution**: Understand time complexity, choose appropriate approach
+
+**4. Memory Issues:**
+- Not pre-allocating result array (causes reallocations)
+- Creating unnecessary intermediate arrays
+- **Solution**: Pre-allocate, reuse arrays when possible
+
+**5. Stability Issues:**
+- Not maintaining relative order of equal elements
+- Inconsistent handling of duplicates
+- **Solution**: Define comparison clearly, test with duplicates
+
+**Performance Analysis:**
+
+**Time Complexity:**
+- Two arrays: O(m + n) - optimal, must examine every element
+- K arrays (heap): O(n log k) - optimal for comparison-based merging
+- K arrays (divide-conquer): O(n log k) - same complexity, different approach
+- **Cannot do better**: Must compare elements to determine order
+
+**Space Complexity:**
+- Standard merge: O(m + n) for result array
+- In-place merge: O(1) extra space (if space available)
+- K arrays (heap): O(k) for heap
+- K arrays (divide-conquer): O(n) for intermediate results
+
+**Cache Performance:**
+- Excellent: Sequential access pattern
+- Both input arrays accessed sequentially
+- Result array written sequentially
+- Very cache-friendly, good real-world performance
+
+**Advanced Techniques:**
+
+**1. Adaptive Merging:**
+- Detect when one array is much smaller
+- Use binary search to find insertion points
+- Can be faster when size difference is large
+- Time: O(m log n) when m << n
+
+**2. Block-Based Merging:**
+- Process arrays in blocks for cache efficiency
+- Useful for very large arrays that don't fit in cache
+- Reduces cache misses
+
+**3. Parallel Merging:**
+- Divide arrays into segments
+- Merge segments in parallel
+- Combine parallel results
+- Useful for multi-core systems
+
+**4. Streaming Merge:**
+- Merge arrays as elements arrive (streaming)
+- Don't need full arrays in memory
+- Useful for: Real-time systems, large datasets
+- Challenge: Handle different arrival rates
+
+**Comparison with Alternatives:**
+
+**Merging vs. Concatenation + Sorting:**
+- Concatenate: O(m + n) time
+- Sort: O((m+n) log(m+n)) time
+- **Merging wins**: O(m + n) vs O((m+n) log(m+n))
+- **When merging is better**: When inputs are already sorted
+
+**Merging vs. Heap for K Arrays:**
+- Merging (divide-conquer): O(n log k) time, O(n) space
+- Heap: O(n log k) time, O(k) space
+- **Heap wins on space**: O(k) vs O(n)
+- **When to use**: Memory-constrained environments
+
+**Implementation Considerations:**
+
+**Language-Specific Optimizations:**
+- **Go**: Use slices efficiently, pre-allocate capacity
+- **Python**: List comprehensions can be slower, prefer explicit loops
+- **Java**: ArrayList vs arrays, consider memory overhead
+- **C++**: Use std::merge, highly optimized
+
+**Testing Strategy:**
+- Test with empty arrays
+- Test with single elements
+- Test with all elements from one array smaller
+- Test with duplicates
+- Test with very large arrays
+- Test in-place merging edge cases
+
+**Debugging Tips:**
+- Print array states at each iteration
+- Verify pointers don't go out of bounds
+- Check that all elements are included
+- Verify sorted order is maintained
+- For in-place: Check no overwrites occur`,
 					CodeExamples: `// Go: Merge two sorted arrays
 func merge(nums1 []int, m int, nums2 []int, n int) {
     // Merge in-place from end

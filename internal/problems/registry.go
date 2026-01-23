@@ -92,3 +92,10 @@ func RegisterComputerArchitectureModules(modules []CourseModule) {
 	defer computerArchitectureMu.Unlock()
 	allComputerArchitectureModules = append(allComputerArchitectureModules, modules...)
 }
+
+// RegisterAzureModules registers Azure course modules
+func RegisterAzureModules(modules []CourseModule) {
+	azureMu.Lock()
+	defer azureMu.Unlock()
+	allAzureModules = append(allAzureModules, modules...)
+}
