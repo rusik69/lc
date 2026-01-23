@@ -491,6 +491,65 @@ func init() {
 - Implement retry mechanisms with exponential backoff
 - Use idempotent operations
 - Implement proper error handling`,
+					CodeExamples: `Availability Calculation Examples:
+
+Single Server:
+- MTBF (Mean Time Between Failures): 720 hours
+- MTTR (Mean Time To Repair): 1 hour
+- Availability = MTBF / (MTBF + MTTR) = 720 / 721 = 99.86%
+
+Redundant System (2 servers):
+- If one server fails, system still operational
+- Availability = 1 - (1 - A1) × (1 - A2)
+- With 99.86% each: 1 - (0.0014 × 0.0014) = 99.9998%
+
+Redundancy Patterns:
+
+Active-Passive (Hot Standby):
+Primary Server (Active)
+    |
+    | (Heartbeat)
+    |
+Standby Server (Passive) - Ready to take over
+    |
+    | (On failure)
+    |
+Failover → Standby becomes Active
+
+Active-Active:
+Server 1 (Active) ←→ Load Balancer ←→ Server 2 (Active)
+    |                                          |
+    +---------- Shared State Store -----------+
+    
+Both servers handle traffic simultaneously
+Better resource utilization than active-passive
+
+Health Check Implementation:
+GET /health
+Response: {
+  "status": "healthy",
+  "timestamp": "2024-01-17T10:00:00Z",
+  "checks": {
+    "database": "ok",
+    "cache": "ok",
+    "external_api": "ok"
+  }
+}
+
+Failover Mechanism:
+1. Health check fails (3 consecutive failures)
+2. Load balancer removes server from pool
+3. Traffic routed to healthy servers
+4. Standby server activated (if active-passive)
+5. Failed server marked for repair
+
+Graceful Degradation Example:
+if database_unavailable:
+    serve_cached_data()
+    show_banner("Limited functionality")
+    log_error("DB unavailable, serving from cache")
+else:
+    serve_fresh_data()`,
 				},
 				{
 					Title: "Consistency Models",
@@ -517,6 +576,62 @@ You can only guarantee two out of three:
 - **Strong Consistency**: Financial systems, critical data
 - **Eventual Consistency**: Social media feeds, DNS, CDN content
 - **Weak Consistency**: Real-time analytics, logging`,
+					CodeExamples: `ACID Transaction Example:
+
+BEGIN TRANSACTION;
+  UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+  UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT;
+
+If any step fails, entire transaction rolls back (Atomicity)
+Database remains in valid state (Consistency)
+Other transactions don't see partial updates (Isolation)
+Changes persist after commit (Durability)
+
+CAP Theorem Scenarios:
+
+CP System (Consistency + Partition Tolerance):
+- Example: Traditional SQL databases with replication
+- On network partition: Stop accepting writes (sacrifice Availability)
+- Ensures all nodes see same data
+- Use case: Financial transactions, critical data
+
+AP System (Availability + Partition Tolerance):
+- Example: DNS, CDN, NoSQL databases (Cassandra, DynamoDB)
+- On network partition: Continue serving requests (sacrifice Consistency)
+- May serve stale data temporarily
+- Use case: Social media feeds, content delivery
+
+CA System (Consistency + Availability):
+- Not possible in distributed systems
+- Only works when no network partitions occur
+- Single-node systems only
+
+Consistency Level Comparison:
+
+Strong Consistency (Read-after-Write):
+Write: User updates profile
+Read: Immediately sees updated profile
+All replicas updated synchronously
+Latency: Higher (waits for all replicas)
+
+Eventual Consistency:
+Write: User posts tweet
+Read: May see tweet after few seconds
+Replicas updated asynchronously
+Latency: Lower (doesn't wait for all replicas)
+
+Example: Social Media Feed
+- User posts content → Write to primary database
+- Content replicated to followers' feeds asynchronously
+- User may see their own post immediately (strong consistency)
+- Followers may see it after replication delay (eventual consistency)
+
+Weak Consistency Example:
+- Real-time analytics dashboard
+- Data may be seconds/minutes old
+- Acceptable for non-critical metrics
+- Very low latency`,
 				},
 				{
 					Title: "Performance Metrics",
@@ -893,6 +1008,81 @@ Example 4: Cache Sizing
 - System continues with reduced functionality
 - Better than complete failure
 - Example: Show cached data when database is down`,
+					CodeExamples: `Active-Passive Architecture:
+
+Primary Server (Active)
+    |
+    | (Heartbeat every 5s)
+    |
+Standby Server (Passive) - Synchronized state
+    |
+    | (On Primary failure)
+    |
+Failover → Standby becomes Active (30-60s)
+
+Configuration:
+- Heartbeat timeout: 15 seconds
+- Failover time: 30-60 seconds
+- State synchronization: Continuous replication
+
+Active-Active Architecture:
+
+Load Balancer
+    /        \\
+Server 1    Server 2
+(Active)    (Active)
+    |          |
+    +----------+
+    Shared State (Redis/Database)
+
+Both servers handle traffic simultaneously
+No single point of failure
+Better resource utilization
+
+Multi-Region Deployment:
+
+Region 1 (US East)          Region 2 (EU)
+    |                          |
+    +-- Global Load Balancer --+
+              |
+         [Users]
+              |
+    Route to nearest region
+    Failover if region down
+
+Health Check Configuration:
+
+Liveness Probe:
+- Endpoint: /health/live
+- Interval: 30s
+- Timeout: 5s
+- Failure threshold: 3
+- Action: Restart container
+
+Readiness Probe:
+- Endpoint: /health/ready
+- Interval: 10s
+- Timeout: 3s
+- Failure threshold: 2
+- Action: Remove from load balancer
+
+Startup Probe:
+- Endpoint: /health/startup
+- Interval: 5s
+- Timeout: 2s
+- Success threshold: 1
+- Prevents readiness failures during startup
+
+Graceful Degradation Example:
+
+if database_available:
+    data = fetch_from_database()
+elif cache_available:
+    data = fetch_from_cache()
+    show_banner("Showing cached data")
+else:
+    data = get_default_data()
+    show_banner("Limited functionality")`,
 				},
 				{
 					Title: "Consistent Hashing Deep Dive",
@@ -1226,6 +1416,83 @@ Layers:
 - **TTL (Time To Live)**: Expire after time
 - **LRU (Least Recently Used)**: Evict least used items
 - **Manual**: Explicitly invalidate on updates`,
+					CodeExamples: `Cache-Aside (Lazy Loading) Pattern:
+
+def get_user(user_id):
+    # 1. Check cache
+    user = cache.get(f"user:{user_id}")
+    if user:
+        return user
+    
+    # 2. Cache miss - read from database
+    user = database.get_user(user_id)
+    
+    # 3. Write to cache
+    cache.set(f"user:{user_id}", user, ttl=3600)
+    
+    # 4. Return data
+    return user
+
+Pros: Simple, cache only what's accessed
+Cons: Cache miss penalty, potential stale data
+
+Write-Through Pattern:
+
+def update_user(user_id, data):
+    # 1. Write to cache
+    cache.set(f"user:{user_id}", data, ttl=3600)
+    
+    # 2. Write to database (synchronously)
+    database.update_user(user_id, data)
+    
+    # Both updated together
+    return data
+
+Pros: Cache always consistent with DB
+Cons: Slower writes (waits for DB)
+
+Write-Behind (Write-Back) Pattern:
+
+def update_user(user_id, data):
+    # 1. Write to cache immediately
+    cache.set(f"user:{user_id}", data, ttl=3600)
+    
+    # 2. Queue for async DB write
+    async_queue.enqueue(update_db, user_id, data)
+    
+    return data  # Return immediately
+
+# Background worker processes queue
+def background_worker():
+    while True:
+        task = async_queue.dequeue()
+        database.update_user(task.user_id, task.data)
+
+Pros: Fast writes, better performance
+Cons: Risk of data loss if cache fails before DB write
+
+Cache Invalidation Strategies:
+
+TTL (Time To Live):
+cache.set("key", "value", ttl=3600)  # Expires in 1 hour
+# Automatically removed after TTL
+
+LRU (Least Recently Used):
+# Evict least recently accessed items when cache full
+# Implementation: Use ordered dictionary or Redis with maxmemory-policy=allkeys-lru
+
+Manual Invalidation:
+def update_product(product_id, data):
+    database.update_product(product_id, data)
+    # Explicitly invalidate cache
+    cache.delete(f"product:{product_id}")
+
+Cache Warming:
+# Pre-populate cache with frequently accessed data
+def warm_cache():
+    popular_products = database.get_popular_products()
+    for product in popular_products:
+        cache.set(f"product:{product.id}", product, ttl=3600)`,
 				},
 				{
 					Title: "Redis & Memcached",
@@ -1316,6 +1583,115 @@ Layers:
 - Flexible schema
 - Horizontal scaling needed
 - Eventual consistency acceptable`,
+					CodeExamples: `SQL Database Example (PostgreSQL):
+
+Schema:
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    total DECIMAL(10,2),
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+Complex Query with Joins:
+SELECT u.name, o.total, o.status
+FROM users u
+JOIN orders o ON u.id = o.user_id
+WHERE o.created_at > '2024-01-01'
+ORDER BY o.total DESC;
+
+ACID Transaction:
+BEGIN;
+  UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+  UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT;
+
+NoSQL Document Store Example (MongoDB):
+
+Document Structure:
+{
+  "_id": ObjectId("..."),
+  "email": "user@example.com",
+  "name": "John Doe",
+  "orders": [
+    {
+      "order_id": 123,
+      "total": 99.99,
+      "status": "completed",
+      "created_at": ISODate("2024-01-15")
+    }
+  ],
+  "created_at": ISODate("2024-01-01")
+}
+
+Query:
+db.users.find({
+  "orders.total": { $gt: 50 },
+  "orders.status": "completed"
+})
+
+NoSQL Key-Value Store Example (Redis):
+
+SET user:123:name "John Doe"
+SET user:123:email "john@example.com"
+GET user:123:name
+
+Hash Structure:
+HSET user:123 name "John Doe" email "john@example.com"
+HGETALL user:123
+
+NoSQL Column Store Example (Cassandra):
+
+CREATE TABLE user_activity (
+    user_id UUID,
+    timestamp TIMESTAMP,
+    action TEXT,
+    details MAP<TEXT, TEXT>,
+    PRIMARY KEY (user_id, timestamp)
+) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+Query:
+SELECT * FROM user_activity 
+WHERE user_id = ? 
+AND timestamp > ?;
+
+Use Case Comparison:
+
+E-commerce System:
+- SQL: User accounts, orders, payments (ACID required)
+- NoSQL: Product catalog, reviews, recommendations (flexible schema)
+
+Social Media:
+- SQL: User profiles, authentication
+- NoSQL: Posts, feeds, activity streams (high volume, flexible)
+
+Analytics Platform:
+- SQL: User metadata, configuration
+- NoSQL: Time-series data, logs (high write volume)
+
+When to Choose:
+
+Choose SQL when:
+- Need complex queries with joins
+- ACID transactions required
+- Data relationships important
+- Strong consistency needed
+- Example: Banking, e-commerce orders
+
+Choose NoSQL when:
+- High write volume
+- Flexible schema needed
+- Horizontal scaling required
+- Eventual consistency acceptable
+- Example: Social feeds, IoT data, logs`,
 				},
 				{
 					Title: "Database Replication",
@@ -1482,6 +1858,122 @@ Layers:
 - **Apache Kafka**: High throughput, event streaming
 - **Amazon SQS**: Managed, simple
 - **Redis Pub/Sub**: Simple, fast`,
+					CodeExamples: `Point-to-Point Pattern:
+
+Producer → Queue → Consumer
+
+Example: Task Queue
+Producer sends task:
+queue.send("task_queue", {
+    "task_id": 123,
+    "type": "process_image",
+    "image_url": "https://..."
+})
+
+Consumer processes task:
+task = queue.receive("task_queue")
+process_image(task.image_url)
+queue.acknowledge(task)  # Remove from queue
+
+Only one consumer processes each message
+
+Pub/Sub Pattern:
+
+Producer → Topic → [Consumer 1, Consumer 2, Consumer 3]
+
+Example: Event Notifications
+Producer publishes event:
+pubsub.publish("user_events", {
+    "event": "user_registered",
+    "user_id": 123,
+    "timestamp": "2024-01-17T10:00:00Z"
+})
+
+Multiple consumers subscribe:
+pubsub.subscribe("user_events", email_service_handler)
+pubsub.subscribe("user_events", analytics_handler)
+pubsub.subscribe("user_events", notification_handler)
+
+Each consumer receives copy of message
+
+RabbitMQ Example:
+
+# Producer
+import pika
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+channel.queue_declare(queue='task_queue', durable=True)
+channel.basic_publish(
+    exchange='',
+    routing_key='task_queue',
+    body='{"task": "process"}',
+    properties=pika.BasicProperties(delivery_mode=2)  # Make message persistent
+)
+
+# Consumer
+def callback(ch, method, properties, body):
+    process_task(body)
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+channel.basic_consume(queue='task_queue', on_message_callback=callback)
+channel.start_consuming()
+
+Amazon SQS Example:
+
+# Producer
+import boto3
+sqs = boto3.client('sqs')
+queue_url = sqs.get_queue_url(QueueName='my-queue')['QueueUrl']
+sqs.send_message(
+    QueueUrl=queue_url,
+    MessageBody='{"task": "process"}'
+)
+
+# Consumer
+response = sqs.receive_message(
+    QueueUrl=queue_url,
+    MaxNumberOfMessages=10,
+    WaitTimeSeconds=20  # Long polling
+)
+for message in response.get('Messages', []):
+    process_task(message['Body'])
+    sqs.delete_message(
+        QueueUrl=queue_url,
+        ReceiptHandle=message['ReceiptHandle']
+    )
+
+Redis Pub/Sub Example:
+
+# Publisher
+import redis
+r = redis.Redis()
+r.publish('channel', '{"event": "user_login", "user_id": 123}')
+
+# Subscriber
+pubsub = r.pubsub()
+pubsub.subscribe('channel')
+for message in pubsub.listen():
+    if message['type'] == 'message':
+        handle_event(message['data'])
+
+Message Queue Architecture:
+
+[Service A] → [Message Queue] → [Service B]
+                |
+                +→ [Service C]
+                |
+                +→ [Service D]
+
+Benefits:
+- Decoupling: Services don't need to know about each other
+- Buffering: Handles traffic spikes
+- Reliability: Messages persist if consumer down
+- Scalability: Add more consumers easily
+
+Dead Letter Queue (DLQ):
+- Failed messages after max retries → DLQ
+- Allows manual inspection and reprocessing
+- Prevents message loss`,
 				},
 				{
 					Title: "Apache Kafka",

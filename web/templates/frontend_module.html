@@ -1,0 +1,77 @@
+{{define "title"}}{{.Module.Title}} - Frontend - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <div class="module-header">
+        <div>
+            <a href="/frontend" class="back-link">← Back to Frontend</a>
+            <h2 class="module-header-title">{{.Module.Title}}</h2>
+            <p class="module-description">{{.Module.Description}}</p>
+        </div>
+    </div>
+
+    <div class="module-content">
+        <div class="lessons-section">
+            <h3>Lessons</h3>
+            {{range $index, $lesson := .Module.Lessons}}
+            <div class="lesson-card">
+                <div class="lesson-header" onclick="toggleLesson({{$index}})">
+                    <h4>{{$lesson.Title}}</h4>
+                    <span class="lesson-toggle" id="toggle-{{$index}}">▼</span>
+                </div>
+                <div class="lesson-content" id="lesson-{{$index}}" style="display: none;">
+                    <div class="lesson-text">{{markdown $lesson.Content}}</div>
+                    {{if $lesson.CodeExamples}}
+                    <div class="lesson-code">
+                        <pre><code>{{$lesson.CodeExamples}}</code></pre>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+
+        {{if .Problems}}
+        <div class="problems-section">
+            <h3>Related Problems</h3>
+            <ul class="problem-list">
+                {{range .Problems}}
+                <li>
+                    <a href="/problem/{{.ID}}">
+                        <span class="problem-id">#{{.ID}}</span>
+                        <span class="problem-title">{{.Title}}</span>
+                        <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span>
+                    </a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
+        {{else}}
+        <div class="problems-section">
+            <h3>Related Problems</h3>
+            <p class="no-problems">No problems available for this module yet.</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<script>
+    function toggleLesson(index) {
+        const content = document.getElementById('lesson-' + index);
+        const toggle = document.getElementById('toggle-' + index);
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            toggle.textContent = '▲';
+        } else {
+            content.style.display = 'none';
+            toggle.textContent = '▼';
+        }
+    }
+    
+    // Highlight code when page loads
+    if (typeof highlightCode === 'function') {
+        highlightCode();
+    }
+</script>
+
+{{end}}

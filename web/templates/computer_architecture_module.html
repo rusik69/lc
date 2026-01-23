@@ -1,9 +1,9 @@
-{{define "title"}}{{.Module.Title}} - Kubernetes Course - LeetCode Clone{{end}}
+{{define "title"}}{{.Module.Title}} - Computer Architecture Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/kubernetes" class="back-link">← Back to Kubernetes Course</a>
+            <a href="/computer-architecture" class="back-link">← Back to Computer Architecture Course</a>
             <h2 class="module-header-title">{{.Module.Title}}</h2>
             <p class="module-description">{{.Module.Description}}</p>
         </div>
@@ -22,7 +22,7 @@
                     <div class="lesson-text">{{markdown $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
-                        <pre><code class="language-yaml">{{$lesson.CodeExamples}}</code></pre>
+                        <pre><code class="language-c">{{$lesson.CodeExamples}}</code></pre>
                     </div>
                     {{end}}
                 </div>
@@ -53,40 +53,35 @@
 </div>
 
 <style>
-.module-header {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #444;
-}
-
 .module-content {
     display: grid;
     grid-template-columns: 1fr;
     gap: 30px;
+    margin-top: 30px;
 }
 
-.lessons-section h3,
-.problems-section h3 {
-    color: var(--text-primary);
-    margin-bottom: 20px;
-    font-size: 1.3em;
+.lessons-section, .problems-section {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .lesson-card {
-    background: var(--bg-secondary);
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 6px;
     margin-bottom: 15px;
     overflow: hidden;
 }
 
 .lesson-header {
-    padding: 15px 20px;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--bg-tertiary);
+    padding: 15px;
+    cursor: pointer;
+    background: var(--bg-secondary);
     transition: background 0.2s;
 }
 
@@ -108,18 +103,13 @@
 
 .lesson-content {
     padding: 20px;
+    border-top: 1px solid var(--border-color);
 }
 
 .lesson-text {
-    color: var(--text-primary);
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.lesson-text h1, .lesson-text h2, .lesson-text h3 {
-    color: var(--text-primary);
-    margin-top: 20px;
-    margin-bottom: 10px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 15px;
 }
 
 .lesson-text ul,
@@ -141,102 +131,38 @@
     font-weight: bold;
 }
 
-.lesson-text code {
-    background: var(--bg-card);
-    padding: 2px 6px;
-    border-radius: 3px;
-    color: var(--code-text);
-    font-family: 'Courier New', monospace;
-}
-
 .lesson-code {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 4px;
     padding: 15px;
     margin-top: 15px;
-    overflow-x: auto;
 }
 
 .lesson-code pre {
     margin: 0;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9em;
-    line-height: 1.5;
+    overflow-x: auto;
 }
 
 .lesson-code code {
-    color: var(--code-text);
-    background: transparent;
-    padding: 0;
-    border-radius: 0;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
 }
 
-.problem-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.problem-list li {
-    margin-bottom: 10px;
+.problem-topic {
+    background: var(--accent-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-left: auto;
 }
 
 .problem-list a {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.2s;
-}
-
-.problem-list a:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--accent-color);
-}
-
-.problem-id {
-    color: var(--text-muted);
-    font-family: monospace;
-    min-width: 50px;
-}
-
-.problem-title {
-    flex: 1;
-    color: var(--text-primary);
-}
-
-.difficulty {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.85em;
-    font-weight: bold;
-}
-
-.difficulty-Easy {
-    background: var(--success-bg);
-    color: white;
-}
-
-.difficulty-Medium {
-    background: rgba(255, 200, 112, 0.3);
-    color: #ffc870;
-    border: 1px solid #ffc870;
-}
-
-.difficulty-Hard {
-    background: #dc3545;
-    color: white;
-}
-
-.problem-topic {
-    color: var(--text-muted);
-    font-size: 0.9em;
+    gap: 10px;
 }
 </style>
 
@@ -248,53 +174,57 @@ function toggleLesson(index) {
     if (content.style.display === 'none') {
         content.style.display = 'block';
         toggle.textContent = '▲';
-        
-        // Highlight code in this lesson
-        if (window.highlightCode) {
-            setTimeout(() => {
-                const codeBlocks = content.querySelectorAll('code');
-                codeBlocks.forEach(block => {
-                    if (!block.hasAttribute('data-highlighted')) {
-                        highlightKubernetesCode(block);
-                    }
-                });
-            }, 100);
-        }
+        // Highlight code when lesson is opened
+        setTimeout(function() {
+            highlightComputerArchitectureCode();
+            if (window.highlightCode) {
+                window.highlightCode();
+            }
+        }, 100);
     } else {
         content.style.display = 'none';
         toggle.textContent = '▼';
     }
 }
 
-function highlightKubernetesCode(block) {
+// Highlight code blocks on page load and when lessons are toggled
+function highlightComputerArchitectureCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
-        var text = block.textContent;
-        var lang = 'yaml'; // Default for Kubernetes
-        
-        // Detect language from content or context
-        if (text.includes('kubectl') || text.includes('# ')) {
-            lang = 'text/x-sh'; // Bash/shell
-        } else if (text.includes('apiVersion:') || text.includes('kind:')) {
-            lang = 'yaml';
-        }
-        
-        block.textContent = '';
-        try {
-            CodeMirror.runMode(text, lang, block);
-            block.setAttribute('data-highlighted', 'true');
-        } catch (e) {
-            block.textContent = text;
-            block.setAttribute('data-highlighted', 'true');
-        }
+        var codeBlocks = document.querySelectorAll('.lesson-code code');
+        codeBlocks.forEach(function(block) {
+            if (!block.hasAttribute('data-highlighted')) {
+                var text = block.textContent;
+                var lang = 'c'; // Default for computer architecture course
+                
+                // Check if code block has language class
+                if (block.className && block.className.includes('language-')) {
+                    if (block.className.includes('language-c')) {
+                        lang = 'c';
+                    } else if (block.className.includes('language-cpp')) {
+                        lang = 'cpp';
+                    } else if (block.className.includes('language-asm')) {
+                        lang = 'gas';
+                    }
+                }
+                
+                block.textContent = '';
+                try {
+                    CodeMirror.runMode(text, lang, block);
+                    block.setAttribute('data-highlighted', 'true');
+                } catch (e) {
+                    block.textContent = text;
+                    block.setAttribute('data-highlighted', 'true');
+                }
+            }
+        });
     }
 }
 
-// Highlight code on page load
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.highlightCode) {
-        window.highlightCode();
-    }
-});
+document.addEventListener('DOMContentLoaded', highlightComputerArchitectureCode);
+// Also highlight when global highlightCode is called
+if (window.highlightCode) {
+    window.highlightCode();
+}
 </script>
 {{end}}
 {{template "layout.html" .}}

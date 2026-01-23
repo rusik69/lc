@@ -1,0 +1,24 @@
+{{define "title"}}DevOps - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <h2>DevOps</h2>
+    <p class="course-description">Master DevOps practices: CI/CD, Docker, Kubernetes, cloud platforms, Infrastructure as Code, monitoring, and SRE principles.</p>
+    
+    <div class="course-modules">
+        {{range .}}
+        <div class="module-card" onclick="window.location.href='/devops/{{.ID}}'">
+            <div class="module-header">
+                <h3>{{.Title}}</h3>
+                <span class="module-order">Module {{.Order}}</span>
+            </div>
+            <p class="module-description">{{.Description}}</p>
+            <div class="module-stats">
+                <span>{{len .Lessons}} lessons</span>
+                <span>{{len .ProblemIDs}} problems</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+{{end}}

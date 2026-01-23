@@ -1551,5 +1551,1626 @@ def predict(text: str):
 			},
 			ProblemIDs: []int{},
 		},
+		{
+			ID:          110,
+			Title:       "Time Series Analysis",
+			Description: "Learn time series fundamentals, ARIMA models, forecasting, and deep learning approaches for sequential data.",
+			Order:       20,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Time Series Fundamentals",
+					Content: `Time series data consists of observations collected over time, where the order and timing of observations matter.
+
+**Key Characteristics:**
+- **Temporal Ordering**: Data points are ordered by time
+- **Dependencies**: Current values depend on past values
+- **Trend**: Long-term increase or decrease
+- **Seasonality**: Repeating patterns (daily, weekly, yearly)
+- **Cyclical**: Non-fixed period patterns
+- **Noise**: Random fluctuations
+
+**Components of Time Series:**
+- **Trend (T)**: Long-term direction
+- **Seasonality (S)**: Regular patterns
+- **Cyclical (C)**: Irregular cycles
+- **Irregular/Noise (I)**: Random variation
+
+**Decomposition:**
+Additive: Y(t) = T(t) + S(t) + C(t) + I(t)
+Multiplicative: Y(t) = T(t) × S(t) × C(t) × I(t)
+
+**Stationarity:**
+A time series is stationary if:
+- Mean is constant over time
+- Variance is constant over time
+- Autocorrelation doesn't depend on time
+
+**Why Stationarity Matters:**
+- Most time series models assume stationarity
+- Non-stationary series can be differenced to become stationary
+- Easier to model and forecast
+
+**Checking Stationarity:**
+- **Visual Inspection**: Plot shows constant mean/variance
+- **Augmented Dickey-Fuller (ADF) Test**: Statistical test for stationarity
+- **KPSS Test**: Alternative stationarity test
+
+**Differencing:**
+- First difference: Δy(t) = y(t) - y(t-1)
+- Removes trend
+- May need multiple differences
+
+**Applications:**
+- Stock price prediction
+- Weather forecasting
+- Sales forecasting
+- Energy demand prediction
+- Economic indicators`,
+					CodeExamples: `import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Generate sample time series
+dates = pd.date_range('2020-01-01', periods=365, freq='D')
+trend = np.linspace(100, 200, 365)
+seasonal = 10 * np.sin(2 * np.pi * np.arange(365) / 365.25)
+noise = np.random.normal(0, 5, 365)
+ts = pd.Series(trend + seasonal + noise, index=dates)
+
+# Plot time series
+plt.figure(figsize=(12, 6))
+plt.plot(ts)
+plt.title('Time Series with Trend and Seasonality')
+plt.xlabel('Date')
+plt.ylabel('Value')
+plt.show()
+
+# Decomposition
+decomposition = seasonal_decompose(ts, model='additive', period=365)
+decomposition.plot()
+plt.show()
+
+# Check stationarity
+def check_stationarity(timeseries):
+    result = adfuller(timeseries.dropna())
+    print('ADF Statistic:', result[0])
+    print('p-value:', result[1])
+    print('Critical Values:')
+    for key, value in result[4].items():
+        print(f'  {key}: {value}')
+    if result[1] <= 0.05:
+        print("Series is stationary")
+    else:
+        print("Series is non-stationary")
+
+check_stationarity(ts)
+
+# Make stationary through differencing
+ts_diff = ts.diff().dropna()
+check_stationarity(ts_diff)`,
+				},
+				{
+					Title: "ARIMA Models",
+					Content: `ARIMA (AutoRegressive Integrated Moving Average) is a powerful class of time series models.
+
+**ARIMA Components:**
+- **AR (p)**: AutoRegressive - uses p lagged values
+- **I (d)**: Integrated - differencing order d
+- **MA (q)**: Moving Average - uses q lagged forecast errors
+
+**ARIMA(p, d, q) Notation:**
+- p: Number of AR terms
+- d: Number of differences
+- q: Number of MA terms
+
+**AR Model:**
+y(t) = c + φ₁y(t-1) + φ₂y(t-2) + ... + φₚy(t-p) + ε(t)
+- Predicts current value using past values
+- φ: AR coefficients
+
+**MA Model:**
+y(t) = μ + ε(t) + θ₁ε(t-1) + θ₂ε(t-2) + ... + θₚε(t-q)
+- Predicts using past forecast errors
+- θ: MA coefficients
+
+**ARIMA Model:**
+Combines AR, differencing, and MA:
+- First difference d times to make stationary
+- Apply ARMA(p, q) to differenced series
+
+**SARIMA (Seasonal ARIMA):**
+ARIMA(p, d, q)(P, D, Q)ₛ
+- Handles seasonality
+- s: Seasonal period (e.g., 12 for monthly)
+- (P, D, Q): Seasonal components
+
+**Model Selection:**
+- **ACF/PACF Plots**: Identify p and q
+- **AIC/BIC**: Compare models (lower is better)
+- **Auto ARIMA**: Automatically select best parameters
+
+**ACF (Autocorrelation Function):**
+- Correlation between series and lagged versions
+- Helps identify MA order (q)
+
+**PACF (Partial Autocorrelation Function):**
+- Correlation controlling for intermediate lags
+- Helps identify AR order (p)
+
+**Forecasting with ARIMA:**
+1. Check stationarity
+2. Identify p, d, q using ACF/PACF
+3. Fit model
+4. Validate residuals
+5. Forecast future values`,
+					CodeExamples: `from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from sklearn.metrics import mean_squared_error
+
+# Load or generate data
+data = ts  # from previous example
+
+# Plot ACF and PACF
+fig, axes = plt.subplots(2, 1, figsize=(12, 8))
+plot_acf(data, lags=40, ax=axes[0])
+plot_pacf(data, lags=40, ax=axes[1])
+plt.show()
+
+# Fit ARIMA model
+model = ARIMA(data, order=(2, 1, 2))  # ARIMA(2,1,2)
+fitted_model = model.fit()
+print(fitted_model.summary())
+
+# Forecast
+forecast = fitted_model.forecast(steps=30)
+print(f"Forecast for next 30 periods:\n{forecast}")
+
+# Plot forecast
+plt.figure(figsize=(12, 6))
+plt.plot(data, label='Historical')
+plt.plot(forecast, label='Forecast')
+plt.legend()
+plt.title('ARIMA Forecast')
+plt.show()
+
+# Auto ARIMA (requires pmdarima)
+try:
+    from pmdarima import auto_arima
+    auto_model = auto_arima(data, seasonal=True, m=12, 
+                           stepwise=True, suppress_warnings=True)
+    print(f"Best model: {auto_model.order}")
+    print(f"Best seasonal: {auto_model.seasonal_order}")
+except ImportError:
+    print("Install pmdarima: pip install pmdarima")`,
+				},
+				{
+					Title: "Exponential Smoothing",
+					Content: `Exponential smoothing methods use weighted averages of past observations, with more weight on recent data.
+
+**Simple Exponential Smoothing:**
+- For data with no trend or seasonality
+- Formula: ŷ(t+1) = αy(t) + (1-α)ŷ(t)
+- α: Smoothing parameter (0 < α < 1)
+- Higher α: More weight on recent observations
+
+**Holt's Linear Trend:**
+- Handles trend
+- Two smoothing parameters:
+  - α: Level smoothing
+  - β: Trend smoothing
+- Forecast: Level + Trend
+
+**Holt-Winters (Triple Exponential Smoothing):**
+- Handles trend and seasonality
+- Three smoothing parameters:
+  - α: Level
+  - β: Trend
+  - γ: Seasonality
+- Additive: Seasonality constant magnitude
+- Multiplicative: Seasonality proportional to level
+
+**Why Exponential Smoothing:**
+- Simple and interpretable
+- Good for short-term forecasting
+- Handles trend and seasonality
+- No assumptions about data distribution
+
+**Parameter Selection:**
+- Grid search over α, β, γ
+- Minimize forecast error (MSE, MAE)
+- Cross-validation
+
+**Advantages:**
+- Fast computation
+- Easy to understand
+- Good baseline method
+- Handles missing values
+
+**Limitations:**
+- Assumes patterns continue
+- May not capture structural breaks
+- Less flexible than ARIMA`,
+					CodeExamples: `from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+# Simple Exponential Smoothing
+ses_model = ExponentialSmoothing(data, trend=None, seasonal=None)
+ses_fitted = ses_model.fit(smoothing_level=0.3)
+ses_forecast = ses_fitted.forecast(steps=30)
+
+# Holt's Linear Trend
+holt_model = ExponentialSmoothing(data, trend='add', seasonal=None)
+holt_fitted = holt_model.fit()
+holt_forecast = holt_fitted.forecast(steps=30)
+
+# Holt-Winters (Additive)
+hw_additive = ExponentialSmoothing(data, trend='add', seasonal='add', 
+                                   seasonal_periods=12)
+hw_add_fitted = hw_additive.fit()
+hw_add_forecast = hw_add_fitted.forecast(steps=30)
+
+# Holt-Winters (Multiplicative)
+hw_multiplicative = ExponentialSmoothing(data, trend='mul', seasonal='mul',
+                                        seasonal_periods=12)
+hw_mul_fitted = hw_multiplicative.fit()
+hw_mul_forecast = hw_mul_fitted.forecast(steps=30)
+
+# Compare models
+print("Simple ES Forecast:", ses_forecast[:5])
+print("Holt Forecast:", holt_forecast[:5])
+print("HW Additive Forecast:", hw_add_forecast[:5])
+
+# Plot comparisons
+plt.figure(figsize=(14, 8))
+plt.plot(data[-100:], label='Historical')
+plt.plot(ses_forecast, label='Simple ES')
+plt.plot(holt_forecast, label='Holt')
+plt.plot(hw_add_forecast, label='Holt-Winters Additive')
+plt.legend()
+plt.title('Exponential Smoothing Forecasts')
+plt.show()`,
+				},
+				{
+					Title: "LSTM for Time Series",
+					Content: `LSTM (Long Short-Term Memory) networks can capture complex patterns in time series data.
+
+**Why LSTM for Time Series:**
+- Handles long-term dependencies
+- Can learn non-linear patterns
+- Doesn't require stationarity assumptions
+- Can handle multiple input features
+
+**Architecture:**
+- Input: Sequence of past values
+- Hidden state: Maintains memory
+- Output: Next value prediction
+
+**Data Preparation:**
+- Create sequences: [x(t-n), ..., x(t-1)] → x(t)
+- Normalize data (important for neural networks)
+- Split into train/validation/test
+
+**Sequence Length:**
+- How many past values to use
+- Too short: May miss patterns
+- Too long: May include irrelevant data
+- Typical: 7-60 time steps
+
+**LSTM Architecture for Forecasting:**
+- Input layer: Sequence input
+- LSTM layers: 1-3 layers typically
+- Dense layers: Output prediction
+- Can be univariate or multivariate
+
+**Univariate Forecasting:**
+- Single time series
+- Predict next value(s) from past values
+
+**Multivariate Forecasting:**
+- Multiple related time series
+- Can include external features
+- More complex but potentially more accurate
+
+**Training Considerations:**
+- Loss function: MSE or MAE
+- Optimizer: Adam typically works well
+- Early stopping: Prevent overfitting
+- Learning rate: Usually 0.001-0.01
+
+**Advantages:**
+- Captures complex patterns
+- Handles non-linear relationships
+- Can use multiple features
+- No statistical assumptions
+
+**Limitations:**
+- Requires more data
+- Longer training time
+- Less interpretable
+- Hyperparameter tuning needed`,
+					CodeExamples: `import torch
+import torch.nn as nn
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+
+# Prepare data
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(data.values.reshape(-1, 1))
+
+# Create sequences
+def create_sequences(data, seq_length):
+    X, y = [], []
+    for i in range(len(data) - seq_length):
+        X.append(data[i:i+seq_length])
+        y.append(data[i+seq_length])
+    return np.array(X), np.array(y)
+
+seq_length = 30
+X, y = create_sequences(data_scaled, seq_length)
+
+# Split data
+train_size = int(len(X) * 0.8)
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]
+
+# Convert to tensors
+X_train = torch.FloatTensor(X_train).unsqueeze(-1)
+y_train = torch.FloatTensor(y_train)
+X_test = torch.FloatTensor(X_test).unsqueeze(-1)
+y_test = torch.FloatTensor(y_test)
+
+# Define LSTM model
+class LSTMForecaster(nn.Module):
+    def __init__(self, input_size=1, hidden_size=50, num_layers=2, output_size=1):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        lstm_out, _ = self.lstm(x)
+        last_output = lstm_out[:, -1, :]
+        prediction = self.fc(last_output)
+        return prediction
+
+# Initialize model
+model = LSTMForecaster(input_size=1, hidden_size=50, num_layers=2)
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# Training
+num_epochs = 100
+for epoch in range(num_epochs):
+    model.train()
+    outputs = model(X_train)
+    loss = criterion(outputs, y_train)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    
+    if (epoch + 1) % 20 == 0:
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+
+# Prediction
+model.eval()
+with torch.no_grad():
+    predictions = model(X_test)
+    predictions = scaler.inverse_transform(predictions.numpy())
+    y_test_actual = scaler.inverse_transform(y_test.numpy())
+
+# Evaluate
+mse = mean_squared_error(y_test_actual, predictions)
+print(f'Test MSE: {mse:.2f}')
+
+# Plot
+plt.figure(figsize=(12, 6))
+plt.plot(y_test_actual, label='Actual')
+plt.plot(predictions, label='Predicted')
+plt.legend()
+plt.title('LSTM Time Series Forecast')
+plt.show()`,
+				},
+				{
+					Title: "Time Series Forecasting",
+					Content: `Forecasting involves predicting future values of a time series.
+
+**Forecasting Approaches:**
+- **Statistical Methods**: ARIMA, Exponential Smoothing
+- **Machine Learning**: Random Forest, XGBoost
+- **Deep Learning**: LSTM, GRU, Transformers
+- **Hybrid**: Combine multiple methods
+
+**Forecast Horizon:**
+- **Short-term**: 1-7 periods ahead
+- **Medium-term**: 1-12 months
+- **Long-term**: 1+ years
+
+**Forecast Types:**
+- **Point Forecast**: Single value prediction
+- **Interval Forecast**: Range with confidence
+- **Probabilistic Forecast**: Full distribution
+
+**Evaluation Metrics:**
+- **MAE**: Mean Absolute Error
+- **RMSE**: Root Mean Squared Error
+- **MAPE**: Mean Absolute Percentage Error
+- **MASE**: Mean Absolute Scaled Error
+
+**Cross-Validation for Time Series:**
+- **Time Series Split**: Respect temporal order
+- **Walk-Forward Validation**: Train on past, test on future
+- **Expanding Window**: Growing training set
+- **Rolling Window**: Fixed-size sliding window
+
+**Feature Engineering:**
+- **Lag Features**: Past values
+- **Rolling Statistics**: Mean, std over window
+- **Time Features**: Day of week, month, etc.
+- **Difference Features**: Changes between periods
+
+**Challenges:**
+- **Non-stationarity**: Trends and seasonality
+- **Structural Breaks**: Sudden changes
+- **External Factors**: Events affecting series
+- **Uncertainty**: Future is inherently uncertain`,
+					CodeExamples: `from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+# Feature engineering
+def create_features(data, max_lag=7):
+    df = pd.DataFrame(data)
+    for lag in range(1, max_lag + 1):
+        df[f'lag_{lag}'] = df[0].shift(lag)
+    df['rolling_mean_7'] = df[0].rolling(window=7).mean()
+    df['rolling_std_7'] = df[0].rolling(window=7).std()
+    df['day_of_week'] = df.index.dayofweek
+    df['month'] = df.index.month
+    return df.dropna()
+
+# Create features
+feature_df = create_features(data)
+X = feature_df.drop(columns=[0])
+y = feature_df[0]
+
+# Split
+train_size = int(len(X) * 0.8)
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]
+
+# Train model
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Predictions
+y_pred = rf_model.predict(X_test)
+
+# Evaluate
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print(f'MAE: {mae:.2f}')
+print(f'RMSE: {rmse:.2f}')
+
+# Feature importance
+feature_importance = pd.DataFrame({
+    'feature': X.columns,
+    'importance': rf_model.feature_importances_
+}).sort_values('importance', ascending=False)
+print(feature_importance)`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          111,
+			Title:       "Reinforcement Learning",
+			Description: "Learn reinforcement learning fundamentals, MDPs, Q-learning, policy gradients, and deep RL algorithms.",
+			Order:       21,
+			Lessons: []problems.Lesson{
+				{
+					Title: "RL Fundamentals",
+					Content: `Reinforcement Learning (RL) is learning through interaction with an environment to maximize cumulative reward.
+
+**Key Components:**
+- **Agent**: Learner/decision maker
+- **Environment**: World agent interacts with
+- **State (s)**: Current situation
+- **Action (a)**: What agent can do
+- **Reward (r)**: Feedback signal
+- **Policy (π)**: Strategy for selecting actions
+
+**RL Process:**
+1. Agent observes state s(t)
+2. Agent selects action a(t) using policy π
+3. Environment transitions to s(t+1)
+4. Agent receives reward r(t+1)
+5. Repeat
+
+**Goal:**
+Maximize expected cumulative reward:
+R = Σ γᵗ r(t+1)
+Where γ (gamma) is discount factor (0 < γ ≤ 1)
+
+**Key Concepts:**
+- **Exploration vs Exploitation**: Balance trying new actions vs using known good actions
+- **Reward Shaping**: Design reward function carefully
+- **Credit Assignment**: Which actions led to reward?
+- **Temporal Credit Assignment**: Delayed rewards
+
+**Types of RL:**
+- **Model-Based**: Learn environment model, plan
+- **Model-Free**: Learn policy/value directly
+- **On-Policy**: Learn about policy being followed
+- **Off-Policy**: Learn about different policy
+
+**Applications:**
+- Game playing (Chess, Go, Atari)
+- Robotics (control, manipulation)
+- Autonomous vehicles
+- Recommendation systems
+- Resource allocation
+- Trading algorithms`,
+					CodeExamples: `import numpy as np
+import gym
+
+# Simple RL environment example
+class SimpleEnv:
+    def __init__(self):
+        self.state = 0
+        self.max_steps = 100
+        self.step_count = 0
+    
+    def reset(self):
+        self.state = 0
+        self.step_count = 0
+        return self.state
+    
+    def step(self, action):
+        self.step_count += 1
+        # Simple environment: move left (-1) or right (+1)
+        self.state += action
+        
+        # Reward: closer to target (5) is better
+        reward = -abs(self.state - 5)
+        
+        # Done if reached target or max steps
+        done = (self.state == 5) or (self.step_count >= self.max_steps)
+        
+        return self.state, reward, done, {}
+    
+    def render(self):
+        print(f"State: {self.state}, Steps: {self.step_count}")
+
+# Using OpenAI Gym
+env = gym.make('CartPole-v1')
+state = env.reset()
+
+# Random policy
+for _ in range(100):
+    action = env.action_space.sample()  # Random action
+    state, reward, done, info = env.step(action)
+    if done:
+        state = env.reset()
+env.close()`,
+				},
+				{
+					Title: "Markov Decision Processes",
+					Content: `MDPs provide the mathematical framework for RL problems.
+
+**MDP Components:**
+- **States (S)**: Set of possible states
+- **Actions (A)**: Set of possible actions
+- **Transition Probabilities P(s'|s,a)**: Probability of next state given current state and action
+- **Reward Function R(s,a,s')**: Expected reward
+- **Discount Factor γ**: Future reward importance
+
+**Markov Property:**
+Future depends only on current state, not history:
+P(s(t+1)|s(t), a(t), s(t-1), ...) = P(s(t+1)|s(t), a(t))
+
+**Value Functions:**
+- **State Value V^π(s)**: Expected return from state s following policy π
+- **Action Value Q^π(s,a)**: Expected return from state s, action a, then policy π
+
+**Bellman Equation:**
+V^π(s) = Σ_a π(a|s) Σ_{s'} P(s'|s,a) [R(s,a,s') + γV^π(s')]
+
+**Optimal Value Functions:**
+- **V*(s)**: Maximum value from state s
+- **Q*(s,a)**: Maximum value from state s, action a
+
+**Optimal Policy:**
+π*(s) = argmax_a Q*(s,a)
+Greedy policy with respect to Q*
+
+**Policy Evaluation:**
+Iteratively update V^π until convergence
+
+**Policy Improvement:**
+Update policy to be greedy with respect to current value function
+
+**Policy Iteration:**
+Alternate between evaluation and improvement until convergence
+
+**Value Iteration:**
+Directly compute optimal value function, then extract policy`,
+					CodeExamples: `import numpy as np
+
+# Simple Grid World MDP
+class GridWorld:
+    def __init__(self, size=4):
+        self.size = size
+        self.states = size * size
+        self.actions = 4  # up, down, left, right
+        self.gamma = 0.9
+        
+        # Transition probabilities (simplified: deterministic)
+        self.P = self._build_transitions()
+        self.R = self._build_rewards()
+    
+    def _build_transitions(self):
+        P = np.zeros((self.states, self.actions, self.states))
+        for s in range(self.states):
+            row, col = s // self.size, s % self.size
+            # Up
+            if row > 0:
+                P[s, 0, s - self.size] = 1.0
+            else:
+                P[s, 0, s] = 1.0
+            # Down
+            if row < self.size - 1:
+                P[s, 1, s + self.size] = 1.0
+            else:
+                P[s, 1, s] = 1.0
+            # Left
+            if col > 0:
+                P[s, 2, s - 1] = 1.0
+            else:
+                P[s, 2, s] = 1.0
+            # Right
+            if col < self.size - 1:
+                P[s, 3, s + 1] = 1.0
+            else:
+                P[s, 3, s] = 1.0
+        return P
+    
+    def _build_rewards(self):
+        R = np.zeros((self.states, self.actions, self.states))
+        # Goal at bottom-right
+        goal = self.states - 1
+        for s in range(self.states):
+            for a in range(self.actions):
+                for s_next in range(self.states):
+                    if s_next == goal and s != goal:
+                        R[s, a, s_next] = 1.0
+                    else:
+                        R[s, a, s_next] = -0.01
+        return R
+
+# Value Iteration
+def value_iteration(mdp, theta=1e-6):
+    V = np.zeros(mdp.states)
+    while True:
+        V_new = np.zeros(mdp.states)
+        for s in range(mdp.states):
+            q_values = []
+            for a in range(mdp.actions):
+                q = sum(mdp.P[s, a, s_next] * 
+                       (mdp.R[s, a, s_next] + mdp.gamma * V[s_next])
+                       for s_next in range(mdp.states))
+                q_values.append(q)
+            V_new[s] = max(q_values)
+        if np.max(np.abs(V_new - V)) < theta:
+            break
+        V = V_new
+    return V
+
+# Extract policy
+def extract_policy(mdp, V):
+    policy = np.zeros(mdp.states, dtype=int)
+    for s in range(mdp.states):
+        q_values = []
+        for a in range(mdp.actions):
+            q = sum(mdp.P[s, a, s_next] * 
+                   (mdp.R[s, a, s_next] + mdp.gamma * V[s_next])
+                   for s_next in range(mdp.states))
+            q_values.append(q)
+        policy[s] = np.argmax(q_values)
+    return policy
+
+# Run
+mdp = GridWorld()
+V = value_iteration(mdp)
+policy = extract_policy(mdp, V)
+print("Optimal Value Function:")
+print(V.reshape(4, 4))
+print("\nOptimal Policy:")
+print(policy.reshape(4, 4))`,
+				},
+				{
+					Title: "Q-Learning",
+					Content: `Q-Learning is a model-free, off-policy algorithm that learns action-value function Q(s,a).
+
+**Q-Learning Algorithm:**
+1. Initialize Q(s,a) arbitrarily
+2. For each episode:
+   - Initialize state s
+   - For each step:
+     - Choose action a using policy derived from Q (e.g., ε-greedy)
+     - Take action a, observe r, s'
+     - Update: Q(s,a) ← Q(s,a) + α[r + γ max Q(s',a') - Q(s,a)]
+     - s ← s'
+   - Until s is terminal
+
+**Update Rule:**
+Q(s,a) ← Q(s,a) + α[r + γ max_{a'} Q(s',a') - Q(s,a)]
+- α: Learning rate
+- r: Immediate reward
+- γ: Discount factor
+- max Q(s',a'): Best future value
+
+**ε-Greedy Policy:**
+- With probability ε: random action (exploration)
+- With probability 1-ε: best action (exploitation)
+- ε typically decays over time
+
+**Why Q-Learning Works:**
+- Off-policy: Can learn optimal policy while following different policy
+- Model-free: Doesn't need environment model
+- Converges to Q* under certain conditions
+
+**Convergence Conditions:**
+- All state-action pairs visited infinitely often
+- Learning rate satisfies: Σα = ∞, Σα² < ∞
+
+**Tabular Q-Learning:**
+- Store Q-table: Q[s, a] for each state-action pair
+- Works for discrete, small state/action spaces
+
+**Limitations:**
+- Doesn't scale to large state spaces
+- Requires discretization for continuous states
+- Memory grows with state space size`,
+					CodeExamples: `import numpy as np
+import random
+
+class QLearning:
+    def __init__(self, states, actions, learning_rate=0.1, gamma=0.9, epsilon=0.1):
+        self.states = states
+        self.actions = actions
+        self.alpha = learning_rate
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.Q = np.zeros((states, actions))
+    
+    def choose_action(self, state):
+        if random.random() < self.epsilon:
+            return random.randint(0, self.actions - 1)
+        else:
+            return np.argmax(self.Q[state])
+    
+    def update(self, state, action, reward, next_state, done):
+        if done:
+            target = reward
+        else:
+            target = reward + self.gamma * np.max(self.Q[next_state])
+        
+        self.Q[state, action] += self.alpha * (target - self.Q[state, action])
+    
+    def decay_epsilon(self, factor=0.99):
+        self.epsilon *= factor
+
+# Example: Simple environment
+class SimpleEnv:
+    def __init__(self):
+        self.state = 0
+        self.goal = 4
+    
+    def reset(self):
+        self.state = 0
+        return self.state
+    
+    def step(self, action):
+        if action == 0:  # Left
+            self.state = max(0, self.state - 1)
+        else:  # Right
+            self.state = min(4, self.state + 1)
+        
+        reward = 1.0 if self.state == self.goal else -0.1
+        done = (self.state == self.goal)
+        
+        return self.state, reward, done
+
+# Training
+env = SimpleEnv()
+agent = QLearning(states=5, actions=2, epsilon=0.2)
+
+for episode in range(100):
+    state = env.reset()
+    total_reward = 0
+    
+    while True:
+        action = agent.choose_action(state)
+        next_state, reward, done = env.step(action)
+        agent.update(state, action, reward, next_state, done)
+        total_reward += reward
+        state = next_state
+        
+        if done:
+            break
+    
+    agent.decay_epsilon()
+    
+    if episode % 20 == 0:
+        print(f"Episode {episode}, Total Reward: {total_reward:.2f}")
+
+print("\nLearned Q-table:")
+print(agent.Q)`,
+				},
+				{
+					Title: "Deep Q-Networks (DQN)",
+					Content: `DQN combines Q-learning with deep neural networks to handle large state spaces.
+
+**Key Innovation:**
+Use neural network Q(s,a;θ) instead of Q-table
+- Input: State s
+- Output: Q-values for all actions
+- Parameters: θ (network weights)
+
+**DQN Algorithm:**
+1. Initialize Q-network Q(s,a;θ)
+2. Initialize target network Q(s,a;θ⁻) = Q(s,a;θ)
+3. For each episode:
+   - For each step:
+     - Choose action a using ε-greedy
+     - Store transition (s,a,r,s',done) in replay buffer
+     - Sample batch from replay buffer
+     - Update Q-network using batch
+     - Every C steps: θ⁻ ← θ
+
+**Experience Replay:**
+- Store transitions in buffer
+- Sample random batches for training
+- Breaks correlation between consecutive samples
+- More stable learning
+
+**Target Network:**
+- Separate network for computing targets
+- Updated less frequently (every C steps)
+- Stabilizes training (reduces moving target problem)
+
+**Loss Function:**
+L(θ) = E[(r + γ max Q(s',a';θ⁻) - Q(s,a;θ))²]
+- Mean squared error between Q and target
+
+**DQN Improvements:**
+- **Double DQN**: Reduces overestimation bias
+- **Dueling DQN**: Separates value and advantage
+- **Prioritized Replay**: Sample important transitions more
+- **Rainbow DQN**: Combines multiple improvements
+
+**Advantages:**
+- Handles high-dimensional states (images)
+- Learns from raw pixels
+- Generalizes across similar states
+
+**Challenges:**
+- Requires careful hyperparameter tuning
+- Can be unstable
+- Needs large replay buffer`,
+					CodeExamples: `import torch
+import torch.nn as nn
+import torch.optim as optim
+import random
+from collections import deque
+
+class DQN(nn.Module):
+    def __init__(self, state_size, action_size):
+        super().__init__()
+        self.fc1 = nn.Linear(state_size, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, action_size)
+    
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        return self.fc3(x)
+
+class ReplayBuffer:
+    def __init__(self, capacity=10000):
+        self.buffer = deque(maxlen=capacity)
+    
+    def push(self, state, action, reward, next_state, done):
+        self.buffer.append((state, action, reward, next_state, done))
+    
+    def sample(self, batch_size):
+        batch = random.sample(self.buffer, batch_size)
+        states, actions, rewards, next_states, dones = zip(*batch)
+        return (torch.FloatTensor(states),
+                torch.LongTensor(actions),
+                torch.FloatTensor(rewards),
+                torch.FloatTensor(next_states),
+                torch.BoolTensor(dones))
+    
+    def __len__(self):
+        return len(self.buffer)
+
+class DQNAgent:
+    def __init__(self, state_size, action_size, lr=0.001, gamma=0.99, epsilon=1.0):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        
+        self.q_network = DQN(state_size, action_size)
+        self.target_network = DQN(state_size, action_size)
+        self.target_network.load_state_dict(self.q_network.state_dict())
+        
+        self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
+        self.memory = ReplayBuffer()
+    
+    def act(self, state, training=True):
+        if training and random.random() < self.epsilon:
+            return random.randrange(self.action_size)
+        
+        with torch.no_grad():
+            state_tensor = torch.FloatTensor(state).unsqueeze(0)
+            q_values = self.q_network(state_tensor)
+            return q_values.argmax().item()
+    
+    def remember(self, state, action, reward, next_state, done):
+        self.memory.push(state, action, reward, next_state, done)
+    
+    def replay(self, batch_size=32):
+        if len(self.memory) < batch_size:
+            return
+        
+        states, actions, rewards, next_states, dones = self.memory.sample(batch_size)
+        
+        current_q = self.q_network(states).gather(1, actions.unsqueeze(1))
+        next_q = self.target_network(next_states).max(1)[0].detach()
+        target_q = rewards + (self.gamma * next_q * ~dones)
+        
+        loss = nn.MSELoss()(current_q.squeeze(), target_q)
+        
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+        
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+    
+    def update_target_network(self):
+        self.target_network.load_state_dict(self.q_network.state_dict())
+
+# Usage example (conceptual)
+# agent = DQNAgent(state_size=4, action_size=2)
+# for episode in range(1000):
+#     state = env.reset()
+#     while not done:
+#         action = agent.act(state)
+#         next_state, reward, done = env.step(action)
+#         agent.remember(state, action, reward, next_state, done)
+#         agent.replay()
+#         state = next_state
+#     if episode % 10 == 0:
+#         agent.update_target_network()`,
+				},
+				{
+					Title: "Policy Gradient Methods",
+					Content: `Policy gradient methods directly optimize the policy π(a|s;θ) using gradient ascent.
+
+**Policy Gradient Theorem:**
+∇_θ J(θ) = E[∇_θ log π(a|s;θ) Q^π(s,a)]
+- J(θ): Expected return
+- Gradient points in direction of higher return
+
+**REINFORCE Algorithm:**
+1. Sample episode using policy π
+2. Compute returns G_t for each step
+3. Update: θ ← θ + α ∇_θ log π(a_t|s_t;θ) G_t
+
+**Advantages:**
+- Can handle continuous action spaces
+- Directly optimizes what we care about (return)
+- Can learn stochastic policies
+
+**Disadvantages:**
+- High variance in gradient estimates
+- Slow learning (many samples needed)
+- Can get stuck in local optima
+
+**Variance Reduction:**
+- **Baseline**: Subtract baseline from returns
+- **Actor-Critic**: Use value function as baseline
+- **Advantage Function**: A(s,a) = Q(s,a) - V(s)
+
+**Actor-Critic:**
+- **Actor**: Policy π(a|s;θ)
+- **Critic**: Value function V(s;w)
+- Actor improves policy
+- Critic evaluates policy
+
+**Advantage Actor-Critic (A2C):**
+- Uses advantage A(s,a) = Q(s,a) - V(s)
+- Lower variance than REINFORCE
+- More stable learning
+
+**Proximal Policy Optimization (PPO):**
+- Clips policy updates to prevent large changes
+- More stable than vanilla policy gradients
+- State-of-the-art for many RL tasks`,
+					CodeExamples: `import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+
+class PolicyNetwork(nn.Module):
+    def __init__(self, state_size, action_size):
+        super().__init__()
+        self.fc1 = nn.Linear(state_size, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, action_size)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return F.softmax(self.fc3(x), dim=-1)
+
+class ValueNetwork(nn.Module):
+    def __init__(self, state_size):
+        super().__init__()
+        self.fc1 = nn.Linear(state_size, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return self.fc3(x)
+
+class ActorCritic:
+    def __init__(self, state_size, action_size, lr_actor=0.001, lr_critic=0.01):
+        self.actor = PolicyNetwork(state_size, action_size)
+        self.critic = ValueNetwork(state_size)
+        self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=lr_actor)
+        self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=lr_critic)
+        self.gamma = 0.99
+    
+    def select_action(self, state):
+        state_tensor = torch.FloatTensor(state).unsqueeze(0)
+        probs = self.actor(state_tensor)
+        dist = torch.distributions.Categorical(probs)
+        action = dist.sample()
+        return action.item(), dist.log_prob(action)
+    
+    def update(self, states, actions, rewards, log_probs, next_states, dones):
+        # Compute returns
+        returns = []
+        G = 0
+        for reward, done in zip(reversed(rewards), reversed(dones)):
+            if done:
+                G = 0
+            G = reward + self.gamma * G
+            returns.insert(0, G)
+        
+        returns = torch.FloatTensor(returns)
+        states = torch.FloatTensor(states)
+        actions = torch.LongTensor(actions)
+        log_probs = torch.stack(log_probs)
+        
+        # Critic update
+        values = self.critic(states).squeeze()
+        critic_loss = nn.MSELoss()(values, returns)
+        self.critic_optimizer.zero_grad()
+        critic_loss.backward()
+        self.critic_optimizer.step()
+        
+        # Actor update
+        advantages = returns - values.detach()
+        actor_loss = -(log_probs * advantages).mean()
+        self.actor_optimizer.zero_grad()
+        actor_loss.backward()
+        self.actor_optimizer.step()
+
+# Usage example
+# agent = ActorCritic(state_size=4, action_size=2)
+# states, actions, rewards, log_probs, next_states, dones = [], [], [], [], [], []
+# 
+# for step in range(100):
+#     state = env.reset()
+#     done = False
+#     while not done:
+#         action, log_prob = agent.select_action(state)
+#         next_state, reward, done = env.step(action)
+#         states.append(state)
+#         actions.append(action)
+#         rewards.append(reward)
+#         log_probs.append(log_prob)
+#         next_states.append(next_state)
+#         dones.append(done)
+#         state = next_state
+#     
+#     agent.update(states, actions, rewards, log_probs, next_states, dones)`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          112,
+			Title:       "Computer Vision Advanced",
+			Description: "Learn advanced computer vision techniques: object detection, segmentation, transfer learning, and vision transformers.",
+			Order:       22,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Object Detection",
+					Content: `Object detection identifies and localizes multiple objects in images with bounding boxes.
+
+**Tasks:**
+- **Classification**: What objects are present?
+- **Localization**: Where are they? (bounding boxes)
+
+**Challenges:**
+- Multiple objects per image
+- Varying sizes and aspect ratios
+- Occlusion and clutter
+- Real-time requirements
+
+**Two-Stage Detectors:**
+- **R-CNN**: Region proposals → CNN → Classification
+- **Fast R-CNN**: Shared computation, faster
+- **Faster R-CNN**: Region proposal network (RPN)
+
+**One-Stage Detectors:**
+- **YOLO**: You Only Look Once - single pass
+- **SSD**: Single Shot MultiBox Detector
+- **RetinaNet**: Focal loss for class imbalance
+
+**YOLO Architecture:**
+- Divides image into grid
+- Each grid cell predicts bounding boxes
+- Single forward pass
+- Very fast inference
+
+**YOLO v1-v8 Evolution:**
+- v1: Original single-stage detector
+- v3: Multi-scale detection, better backbone
+- v5: PyTorch implementation, easy to use
+- v8: Latest with improved accuracy
+
+**Evaluation Metrics:**
+- **mAP (mean Average Precision)**: Primary metric
+- **IoU (Intersection over Union)**: Overlap measure
+- **Precision/Recall**: Detection quality
+
+**Applications:**
+- Autonomous vehicles
+- Surveillance
+- Medical imaging
+- Retail analytics`,
+					CodeExamples: `# Using YOLOv5 (requires ultralytics)
+try:
+    from ultralytics import YOLO
+    
+    # Load pre-trained model
+    model = YOLO('yolov5s.pt')  # Small model
+    
+    # Detect objects
+    results = model('image.jpg')
+    
+    # Display results
+    results[0].show()
+    
+    # Get detections
+    for result in results:
+        boxes = result.boxes
+        for box in boxes:
+            cls = int(box.cls[0])
+            conf = float(box.conf[0])
+            bbox = box.xyxy[0].tolist()
+            print(f"Class: {cls}, Confidence: {conf:.2f}, Box: {bbox}")
+except ImportError:
+    print("Install: pip install ultralytics")
+
+# Custom object detection with PyTorch
+import torch
+import torchvision
+from torchvision.models.detection import fasterrcnn_resnet50_fpn
+from torchvision.transforms import functional as F
+
+# Load pre-trained model
+model = fasterrcnn_resnet50_fpn(pretrained=True)
+model.eval()
+
+# Prepare image
+image = F.to_tensor(F.resize(F.pil_to_tensor(image), (800, 800)))
+
+# Inference
+with torch.no_grad():
+    predictions = model([image])
+
+# Process predictions
+boxes = predictions[0]['boxes']
+scores = predictions[0]['scores']
+labels = predictions[0]['labels']
+
+# Filter by confidence
+threshold = 0.5
+keep = scores > threshold
+boxes = boxes[keep]
+labels = labels[keep]
+scores = scores[keep]
+
+print(f"Detected {len(boxes)} objects")`,
+				},
+				{
+					Title: "Image Segmentation",
+					Content: `Image segmentation partitions image into regions, pixel-level classification.
+
+**Types of Segmentation:**
+- **Semantic Segmentation**: Classify each pixel (no instance distinction)
+- **Instance Segmentation**: Separate instances of same class
+- **Panoptic Segmentation**: Combines semantic + instance
+
+**Semantic Segmentation:**
+- **U-Net**: Encoder-decoder with skip connections
+- **FCN**: Fully Convolutional Networks
+- **DeepLab**: Atrous convolutions, CRF post-processing
+
+**U-Net Architecture:**
+- **Encoder**: Downsampling path (contracting)
+- **Decoder**: Upsampling path (expanding)
+- **Skip Connections**: Preserve spatial information
+- Symmetric U-shaped architecture
+
+**Instance Segmentation:**
+- **Mask R-CNN**: Extends Faster R-CNN with mask branch
+- **YOLACT**: Real-time instance segmentation
+- **SOLO**: Segmenting Objects by Locations
+
+**Mask R-CNN:**
+- Object detection + segmentation mask
+- ROI Align (better than ROI Pooling)
+- Parallel branches: classification, bbox, mask
+
+**Applications:**
+- Medical image analysis
+- Autonomous driving
+- Satellite imagery
+- Video editing
+
+**Evaluation Metrics:**
+- **mIoU**: Mean Intersection over Union
+- **Pixel Accuracy**: Percentage correct pixels
+- **Dice Coefficient**: Overlap measure`,
+					CodeExamples: `import torch
+import torch.nn as nn
+import torchvision
+from torchvision.models.segmentation import deeplabv3_resnet50, fcn_resnet50
+
+# Semantic Segmentation with DeepLabV3
+model = deeplabv3_resnet50(pretrained=True)
+model.eval()
+
+# Prepare image
+image = F.to_tensor(F.resize(F.pil_to_tensor(image), (520, 520)))
+
+# Inference
+with torch.no_grad():
+    output = model([image])[0]
+
+# Get predictions
+predictions = output['out'].argmax(1).squeeze().cpu().numpy()
+print(f"Segmentation shape: {predictions.shape}")
+
+# U-Net Implementation
+class UNet(nn.Module):
+    def __init__(self, n_classes):
+        super().__init__()
+        # Encoder
+        self.enc1 = self._conv_block(3, 64)
+        self.enc2 = self._conv_block(64, 128)
+        self.enc3 = self._conv_block(128, 256)
+        self.enc4 = self._conv_block(256, 512)
+        
+        # Bottleneck
+        self.bottleneck = self._conv_block(512, 1024)
+        
+        # Decoder
+        self.dec4 = self._upconv_block(1024, 512)
+        self.dec3 = self._upconv_block(512, 256)
+        self.dec2 = self._upconv_block(256, 128)
+        self.dec1 = self._upconv_block(128, 64)
+        
+        self.final = nn.Conv2d(64, n_classes, 1)
+        self.pool = nn.MaxPool2d(2)
+    
+    def _conv_block(self, in_ch, out_ch):
+        return nn.Sequential(
+            nn.Conv2d(in_ch, out_ch, 3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, 3, padding=1),
+            nn.ReLU(inplace=True)
+        )
+    
+    def _upconv_block(self, in_ch, out_ch):
+        return nn.Sequential(
+            nn.ConvTranspose2d(in_ch, out_ch, 2, stride=2),
+            nn.Conv2d(out_ch, out_ch, 3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, 3, padding=1),
+            nn.ReLU(inplace=True)
+        )
+    
+    def forward(self, x):
+        # Encoder
+        e1 = self.enc1(x)
+        e2 = self.enc2(self.pool(e1))
+        e3 = self.enc3(self.pool(e2))
+        e4 = self.enc4(self.pool(e3))
+        
+        # Bottleneck
+        b = self.bottleneck(self.pool(e4))
+        
+        # Decoder with skip connections
+        d4 = self.dec4(b)
+        d4 = torch.cat([d4, e4], dim=1)
+        d3 = self.dec3(d4)
+        d3 = torch.cat([d3, e3], dim=1)
+        d2 = self.dec2(d3)
+        d2 = torch.cat([d2, e2], dim=1)
+        d1 = self.dec1(d2)
+        d1 = torch.cat([d1, e1], dim=1)
+        
+        return self.final(d1)
+
+# Instance Segmentation with Mask R-CNN
+mask_rcnn = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True)
+mask_rcnn.eval()
+
+with torch.no_grad():
+    predictions = mask_rcnn([image])
+
+masks = predictions[0]['masks']
+boxes = predictions[0]['boxes']
+labels = predictions[0]['labels']`,
+				},
+				{
+					Title: "Transfer Learning for Vision",
+					Content: `Transfer learning uses pre-trained models as starting point for new tasks.
+
+**Why Transfer Learning:**
+- Pre-trained models learned useful features
+- Requires less data
+- Faster training
+- Better performance
+
+**Transfer Learning Strategies:**
+- **Feature Extraction**: Freeze backbone, train classifier
+- **Fine-tuning**: Unfreeze some layers, train end-to-end
+- **Progressive Unfreezing**: Gradually unfreeze layers
+
+**Pre-trained Models:**
+- **ImageNet**: Large dataset, many classes
+- **Models**: ResNet, VGG, EfficientNet, Vision Transformer
+
+**Feature Extraction:**
+- Remove final classification layer
+- Add new classifier for your task
+- Freeze backbone, train only classifier
+- Fast, works with small datasets
+
+**Fine-tuning:**
+- Unfreeze some/all layers
+- Use lower learning rate
+- Train end-to-end
+- Better performance, needs more data
+
+**Learning Rate Scheduling:**
+- Lower LR for pre-trained layers
+- Higher LR for new layers
+- Prevents destroying learned features
+
+**Data Augmentation:**
+- Crucial for small datasets
+- Rotation, flipping, color jitter
+- Random crops, scaling
+- Mixup, CutMix`,
+					CodeExamples: `import torch
+import torch.nn as nn
+import torchvision.models as models
+from torchvision import transforms
+
+# Feature Extraction
+def create_feature_extractor(num_classes):
+    # Load pre-trained ResNet
+    model = models.resnet50(pretrained=True)
+    
+    # Freeze all parameters
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    # Replace classifier
+    num_features = model.fc.in_features
+    model.fc = nn.Linear(num_features, num_classes)
+    
+    return model
+
+# Fine-tuning
+def create_finetuned_model(num_classes):
+    model = models.resnet50(pretrained=True)
+    
+    # Freeze early layers
+    for param in list(model.parameters())[:-10]:
+        param.requires_grad = False
+    
+    # Replace classifier
+    num_features = model.fc.in_features
+    model.fc = nn.Linear(num_features, num_classes)
+    
+    return model
+
+# Different learning rates for different layers
+def get_optimizer(model, lr_backbone=1e-5, lr_classifier=1e-3):
+    params = [
+        {'params': [p for n, p in model.named_parameters() 
+                   if 'fc' not in n], 'lr': lr_backbone},
+        {'params': [p for n, p in model.named_parameters() 
+                   if 'fc' in n], 'lr': lr_classifier}
+    ]
+    return torch.optim.Adam(params)
+
+# Data Augmentation
+train_transform = transforms.Compose([
+    transforms.RandomResizedCrop(224),
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])
+
+val_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])`,
+				},
+				{
+					Title: "Vision Transformers (ViT)",
+					Content: `Vision Transformers apply transformer architecture to images, achieving state-of-the-art results.
+
+**ViT Architecture:**
+- **Patch Embedding**: Split image into patches, embed
+- **Position Embedding**: Add positional information
+- **Transformer Encoder**: Self-attention layers
+- **Classification Head**: MLP for final prediction
+
+**Patch Embedding:**
+- Divide image into N×N patches (e.g., 16×16)
+- Flatten each patch
+- Linear projection to embedding dimension
+- Add learnable class token
+
+**Position Embedding:**
+- Learnable or fixed sinusoidal
+- Encodes spatial relationships
+- Similar to NLP transformers
+
+**Self-Attention in Vision:**
+- Patches attend to other patches
+- Learns spatial relationships
+- Can capture long-range dependencies
+
+**ViT vs CNNs:**
+- **ViT**: Global attention from start
+- **CNN**: Local receptive fields, hierarchical
+- **ViT**: Needs more data to train from scratch
+- **ViT**: Better with pre-training
+
+**Hybrid Approaches:**
+- CNN backbone + Transformer
+- Best of both worlds
+- CNN extracts features, Transformer models relationships
+
+**Efficient Variants:**
+- **DeiT**: Data-efficient image transformer
+- **Swin Transformer**: Hierarchical, shifted windows
+- **PVT**: Pyramid vision transformer
+
+**Applications:**
+- Image classification
+- Object detection
+- Segmentation
+- Multi-modal learning`,
+					CodeExamples: `import torch
+import torch.nn as nn
+import math
+
+class PatchEmbedding(nn.Module):
+    def __init__(self, img_size=224, patch_size=16, in_channels=3, embed_dim=768):
+        super().__init__()
+        self.img_size = img_size
+        self.patch_size = patch_size
+        self.n_patches = (img_size // patch_size) ** 2
+        
+        self.proj = nn.Conv2d(in_channels, embed_dim, 
+                             kernel_size=patch_size, stride=patch_size)
+    
+    def forward(self, x):
+        x = self.proj(x)  # (B, embed_dim, H', W')
+        B, C, H, W = x.shape
+        x = x.flatten(2).transpose(1, 2)  # (B, n_patches, embed_dim)
+        return x
+
+class VisionTransformer(nn.Module):
+    def __init__(self, img_size=224, patch_size=16, in_channels=3, 
+                 num_classes=1000, embed_dim=768, depth=12, num_heads=12):
+        super().__init__()
+        self.patch_embed = PatchEmbedding(img_size, patch_size, 
+                                          in_channels, embed_dim)
+        num_patches = self.patch_embed.n_patches
+        
+        self.cls_token = nn.Parameter(torch.randn(1, 1, embed_dim))
+        self.pos_embed = nn.Parameter(torch.randn(1, num_patches + 1, embed_dim))
+        self.pos_drop = nn.Dropout(0.1)
+        
+        # Transformer blocks
+        self.blocks = nn.ModuleList([
+            nn.TransformerEncoderLayer(embed_dim, num_heads, 
+                                      dim_feedforward=embed_dim*4,
+                                      dropout=0.1, batch_first=True)
+            for _ in range(depth)
+        ])
+        
+        self.norm = nn.LayerNorm(embed_dim)
+        self.head = nn.Linear(embed_dim, num_classes)
+    
+    def forward(self, x):
+        B = x.shape[0]
+        x = self.patch_embed(x)  # (B, n_patches, embed_dim)
+        
+        # Add class token
+        cls_tokens = self.cls_token.expand(B, -1, -1)
+        x = torch.cat([cls_tokens, x], dim=1)
+        
+        # Add position embedding
+        x = x + self.pos_embed
+        x = self.pos_drop(x)
+        
+        # Transformer blocks
+        for block in self.blocks:
+            x = block(x)
+        
+        x = self.norm(x)
+        cls_token_final = x[:, 0]
+        return self.head(cls_token_final)
+
+# Using pre-trained ViT
+try:
+    from transformers import ViTImageProcessor, ViTForImageClassification
+    
+    processor = ViTImageProcessor.from_pretrained('google/vit-base-patch16-224')
+    model = ViTForImageClassification.from_pretrained('google/vit-base-patch16-224')
+    
+    # Process image
+    inputs = processor(images=image, return_tensors="pt")
+    
+    # Inference
+    outputs = model(**inputs)
+    logits = outputs.logits
+    predicted_class = logits.argmax(-1).item()
+except ImportError:
+    print("Install: pip install transformers")`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
 	})
 }

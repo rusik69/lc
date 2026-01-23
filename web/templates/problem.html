@@ -25,9 +25,9 @@
         
         <div class="editor-section">
             <form id="code-form" hx-post="/run/{{.ID}}" hx-target="#result" hx-swap="innerHTML">
-                <div style="margin-bottom: 10px;">
-                    <label for="language-select" style="margin-right: 10px; color: #ccc;">Language:</label>
-                    <select id="language-select" name="language" style="padding: 5px; background: #272822; color: #f8f8f2; border: 1px solid #555; border-radius: 3px;">
+                <div class="language-select-container">
+                    <label for="language-select" class="language-select-label">Language:</label>
+                    <select id="language-select" name="language" class="language-select">
                         <option value="go">Go</option>
                         <option value="python">Python 3</option>
                     </select>
@@ -38,7 +38,7 @@
                 <div class="button-group">
                     <button type="button" id="run-btn" name="action" value="test">Run</button>
                     <button type="submit" name="action" value="submit">Submit</button>
-                    <button type="button" id="solution-btn" onclick="toggleSolution({{.ID}})" style="background: #5a5a5a;">Show Solution</button>
+                    <button type="button" id="solution-btn" class="solution-button" onclick="toggleSolution({{.ID}})">Show Solution</button>
                 </div>
             </form>
             <div id="result"></div>

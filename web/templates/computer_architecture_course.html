@@ -1,0 +1,24 @@
+{{define "title"}}Computer Architecture Course - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <h2>Computer Architecture Course</h2>
+    <p class="course-description">Master low-level hardware and computer architecture from CPU design to multi-core processors. Learn instruction sets, pipelining, caching, memory hierarchy, and performance optimization.</p>
+    
+    <div class="course-modules">
+        {{range .}}
+        <div class="module-card" onclick="window.location.href='/computer-architecture/{{.ID}}'">
+            <div class="module-header">
+                <h3>{{.Title}}</h3>
+                <span class="module-order">Module {{.Order}}</span>
+            </div>
+            <p class="module-description">{{.Description}}</p>
+            <div class="module-stats">
+                <span>{{len .Lessons}} lessons</span>
+                <span>{{len .ProblemIDs}} problems</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+{{end}}

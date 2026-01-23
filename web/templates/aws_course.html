@@ -1,0 +1,24 @@
+{{define "title"}}AWS Course - LeetCode Clone{{end}}
+{{define "content"}}
+<div class="container">
+    <h2>AWS Course</h2>
+    <p class="course-description">Master Amazon Web Services: cloud computing fundamentals, core services, serverless architecture, networking, security, and cost optimization.</p>
+    
+    <div class="course-modules">
+        {{range .}}
+        <div class="module-card" onclick="window.location.href='/aws/{{.ID}}'">
+            <div class="module-header">
+                <h3>{{.Title}}</h3>
+                <span class="module-order">Module {{.Order}}</span>
+            </div>
+            <p class="module-description">{{.Description}}</p>
+            <div class="module-stats">
+                <span>{{len .Lessons}} lessons</span>
+                <span>{{len .ProblemIDs}} problems</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+{{end}}

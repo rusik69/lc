@@ -158,17 +158,135 @@
                 initTheme();
             }
         })();
+
+        // Mobile menu functionality
+        (function() {
+            'use strict';
+            
+            function initMobileMenu() {
+                const toggle = document.getElementById('mobile-menu-toggle');
+                const mobileNav = document.getElementById('mobile-nav');
+                const overlay = document.getElementById('mobile-overlay');
+                const mobileThemeToggle = document.getElementById('theme-toggle-switch-mobile');
+                const desktopThemeToggle = document.getElementById('theme-toggle-switch');
+                
+                if (!toggle || !mobileNav || !overlay) {
+                    setTimeout(initMobileMenu, 50);
+                    return;
+                }
+                
+                function openMenu() {
+                    toggle.classList.add('active');
+                    mobileNav.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeMenu() {
+                    toggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (mobileNav.classList.contains('active')) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                });
+                
+                overlay.addEventListener('click', closeMenu);
+                
+                // Close menu when clicking nav links
+                const navLinks = mobileNav.querySelectorAll('.nav-link');
+                navLinks.forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        closeMenu();
+                    });
+                });
+                
+                // Sync mobile and desktop theme toggles
+                if (mobileThemeToggle && desktopThemeToggle) {
+                    function syncThemeToggles() {
+                        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                        mobileThemeToggle.checked = isLight;
+                        desktopThemeToggle.checked = isLight;
+                    }
+                    
+                    mobileThemeToggle.addEventListener('change', function() {
+                        const theme = this.checked ? 'light' : 'dark';
+                        document.documentElement.setAttribute('data-theme', theme);
+                        try {
+                            localStorage.setItem('theme', theme);
+                        } catch(e) {}
+                        desktopThemeToggle.checked = this.checked;
+                        
+                        // Update CodeMirror theme
+                        if (typeof CodeMirror !== 'undefined') {
+                            setTimeout(function() {
+                                document.querySelectorAll('.CodeMirror').forEach(function(el) {
+                                    try {
+                                        const cm = el.CodeMirror;
+                                        if (cm) {
+                                            cm.setOption('theme', theme === 'light' ? 'default' : 'monokai');
+                                        }
+                                    } catch(e) {}
+                                });
+                            }, 50);
+                        }
+                    });
+                    
+                    desktopThemeToggle.addEventListener('change', function() {
+                        mobileThemeToggle.checked = this.checked;
+                    });
+                    
+                    // Initial sync
+                    syncThemeToggles();
+                    
+                    // Sync on theme change
+                    const observer = new MutationObserver(syncThemeToggles);
+                    observer.observe(document.documentElement, {
+                        attributes: true,
+                        attributeFilter: ['data-theme']
+                    });
+                }
+                
+                // Close menu on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                        closeMenu();
+                    }
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMobileMenu);
+            } else {
+                initMobileMenu();
+            }
+        })();
     </script>
 </head>
 <body>
     <header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
             <h1>LeetCode Clone</h1>
-            <nav style="display: flex; gap: 10px; align-items: center;">
-                <label class="theme-switch" for="theme-toggle-switch" title="Toggle dark/light theme">
-                    <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle theme">
-                    <span class="slider"></span>
-                </label>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="desktop-nav">
+                <div class="theme-switch-container">
+                    <span class="theme-switch-label">Theme</span>
+                    <label class="theme-switch" for="theme-toggle-switch" title="Toggle dark/light theme">
+                        <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle theme">
+                        <span class="slider"></span>
+                    </label>
+                </div>
                 <a href="/" class="nav-link">Problems</a>
                 <a href="/algorithms" class="nav-link">Algorithms</a>
                 <a href="/systems-design" class="nav-link">Systems Design</a>
@@ -178,9 +296,34 @@
                 <a href="/linux" class="nav-link">Linux</a>
                 <a href="/machine-learning" class="nav-link">Machine Learning</a>
                 <a href="/networking" class="nav-link">Networking</a>
+                <a href="/frontend" class="nav-link">Frontend</a>
+                <a href="/devops" class="nav-link">DevOps</a>
+                <a href="/computer-architecture" class="nav-link">Computer Architecture</a>
             </nav>
         </div>
     </header>
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+    <nav class="mobile-nav" id="mobile-nav">
+        <div class="theme-switch-container">
+            <span class="theme-switch-label">Theme</span>
+            <label class="theme-switch" for="theme-toggle-switch-mobile" title="Toggle dark/light theme">
+                <input type="checkbox" id="theme-toggle-switch-mobile" aria-label="Toggle theme">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <a href="/" class="nav-link">Problems</a>
+        <a href="/algorithms" class="nav-link">Algorithms</a>
+        <a href="/systems-design" class="nav-link">Systems Design</a>
+        <a href="/golang" class="nav-link">Golang</a>
+        <a href="/python" class="nav-link">Python</a>
+        <a href="/kubernetes" class="nav-link">Kubernetes</a>
+        <a href="/linux" class="nav-link">Linux</a>
+        <a href="/machine-learning" class="nav-link">Machine Learning</a>
+        <a href="/networking" class="nav-link">Networking</a>
+        <a href="/frontend" class="nav-link">Frontend</a>
+        <a href="/devops" class="nav-link">DevOps</a>
+        <a href="/computer-architecture" class="nav-link">Computer Architecture</a>
+    </nav>
     <main>
         {{block "content" .}}{{end}}
     </main>

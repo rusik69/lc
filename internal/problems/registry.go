@@ -57,3 +57,38 @@ func RegisterNetworkingModules(modules []CourseModule) {
 	defer networkingMu.Unlock()
 	allNetworkingModules = append(allNetworkingModules, modules...)
 }
+
+// RegisterFrontendModules registers frontend course modules
+func RegisterFrontendModules(modules []CourseModule) {
+	frontendMu.Lock()
+	defer frontendMu.Unlock()
+	allFrontendModules = append(allFrontendModules, modules...)
+}
+
+// RegisterDevOpsModules registers DevOps course modules
+func RegisterDevOpsModules(modules []CourseModule) {
+	devopsMu.Lock()
+	defer devopsMu.Unlock()
+	allDevOpsModules = append(allDevOpsModules, modules...)
+}
+
+// RegisterSoftwareArchitectureModules registers software architecture course modules
+func RegisterSoftwareArchitectureModules(modules []CourseModule) {
+	softwareArchitectureMu.Lock()
+	defer softwareArchitectureMu.Unlock()
+	allSoftwareArchitectureModules = append(allSoftwareArchitectureModules, modules...)
+}
+
+// RegisterAWSModules registers AWS course modules
+func RegisterAWSModules(modules []CourseModule) {
+	awsMu.Lock()
+	defer awsMu.Unlock()
+	allAWSModules = append(allAWSModules, modules...)
+}
+
+// RegisterComputerArchitectureModules registers computer architecture course modules
+func RegisterComputerArchitectureModules(modules []CourseModule) {
+	computerArchitectureMu.Lock()
+	defer computerArchitectureMu.Unlock()
+	allComputerArchitectureModules = append(allComputerArchitectureModules, modules...)
+}

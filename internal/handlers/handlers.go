@@ -36,6 +36,16 @@ var (
 	linuxModuleTemplate      *template.Template
 	networkingTemplate       *template.Template
 	networkingModuleTemplate *template.Template
+	frontendTemplate         *template.Template
+	frontendModuleTemplate   *template.Template
+	devopsTemplate           *template.Template
+	devopsModuleTemplate     *template.Template
+	softwareArchitectureTemplate *template.Template
+	softwareArchitectureModuleTemplate *template.Template
+	awsTemplate                  *template.Template
+	awsModuleTemplate           *template.Template
+	computerArchitectureTemplate *template.Template
+	computerArchitectureModuleTemplate *template.Template
 )
 
 const (
@@ -179,6 +189,66 @@ func InitTemplates(templateDir string) error {
 
 	// Parse Networking module template
 	networkingModuleTemplate, err = template.New("networking_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/networking_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Frontend course template
+	frontendTemplate, err = template.New("frontend").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/frontend_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Frontend module template
+	frontendModuleTemplate, err = template.New("frontend_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/frontend_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse DevOps course template
+	devopsTemplate, err = template.New("devops").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/devops_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse DevOps module template
+	devopsModuleTemplate, err = template.New("devops_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/devops_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Software Architecture course template
+	softwareArchitectureTemplate, err = template.New("software_architecture").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/software_architecture_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Software Architecture module template
+	softwareArchitectureModuleTemplate, err = template.New("software_architecture_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/software_architecture_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse AWS course template
+	awsTemplate, err = template.New("aws").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/aws_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse AWS module template
+	awsModuleTemplate, err = template.New("aws_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/aws_module.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Computer Architecture course template
+	computerArchitectureTemplate, err = template.New("computer_architecture").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/computer_architecture_course.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse Computer Architecture module template
+	computerArchitectureModuleTemplate, err = template.New("computer_architecture_module").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/computer_architecture_module.html")
 	if err != nil {
 		return err
 	}
@@ -1078,6 +1148,336 @@ func HandleNetworkingModule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := networkingModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleFrontendCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/frontend" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetFrontendModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := frontendTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleFrontendModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetFrontendModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := frontendModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleDevOpsCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/devops" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetDevOpsModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := devopsTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleDevOpsModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetDevOpsModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := devopsModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleSoftwareArchitectureCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/software-architecture" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetSoftwareArchitectureModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := softwareArchitectureTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleSoftwareArchitectureModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetSoftwareArchitectureModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := softwareArchitectureModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleAWSCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/aws" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetAWSModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := awsTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleAWSModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetAWSModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := awsModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleComputerArchitectureCourse(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/computer-architecture" {
+		http.NotFound(w, r)
+		return
+	}
+
+	modules := problems.GetComputerArchitectureModules()
+	// Deduplicate modules by ID
+	seen := make(map[int]bool)
+	deduplicated := make([]problems.CourseModule, 0, len(modules))
+	for _, module := range modules {
+		if !seen[module.ID] {
+			seen[module.ID] = true
+			deduplicated = append(deduplicated, module)
+		}
+	}
+	// Sort modules by Order to ensure correct display order
+	sort.Slice(deduplicated, func(i, j int) bool {
+		return deduplicated[i].Order < deduplicated[j].Order
+	})
+	if err := computerArchitectureTemplate.ExecuteTemplate(w, "layout.html", deduplicated); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func HandleComputerArchitectureModule(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	moduleID, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	module := problems.GetComputerArchitectureModuleByID(moduleID)
+	if module == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Get problems for this module
+	var moduleProblems []problems.Problem
+	for _, problemID := range module.ProblemIDs {
+		problem := problems.GetProblem(problemID)
+		if problem != nil {
+			moduleProblems = append(moduleProblems, *problem)
+		}
+	}
+
+	data := struct {
+		Module   *problems.CourseModule
+		Problems []problems.Problem
+	}{
+		Module:   module,
+		Problems: moduleProblems,
+	}
+
+	if err := computerArchitectureModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

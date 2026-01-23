@@ -14,6 +14,11 @@ import (
 	_ "github.com/rusik69/lc/internal/courses/networking"
 	_ "github.com/rusik69/lc/internal/courses/python"
 	_ "github.com/rusik69/lc/internal/courses/systems_design"
+	_ "github.com/rusik69/lc/internal/courses/frontend"
+	_ "github.com/rusik69/lc/internal/courses/devops"
+	_ "github.com/rusik69/lc/internal/courses/software_architecture"
+	_ "github.com/rusik69/lc/internal/courses/aws"
+	_ "github.com/rusik69/lc/internal/courses/computer_architecture"
 	"github.com/rusik69/lc/internal/handlers"
 )
 
@@ -52,6 +57,16 @@ func main() {
 	mux.HandleFunc("/machine-learning/", handlers.HandleMachineLearningModule)
 	mux.HandleFunc("/networking", handlers.HandleNetworkingCourse)
 	mux.HandleFunc("/networking/", handlers.HandleNetworkingModule)
+	mux.HandleFunc("/frontend", handlers.HandleFrontendCourse)
+	mux.HandleFunc("/frontend/", handlers.HandleFrontendModule)
+	mux.HandleFunc("/devops", handlers.HandleDevOpsCourse)
+	mux.HandleFunc("/devops/", handlers.HandleDevOpsModule)
+	mux.HandleFunc("/software-architecture", handlers.HandleSoftwareArchitectureCourse)
+	mux.HandleFunc("/software-architecture/", handlers.HandleSoftwareArchitectureModule)
+	mux.HandleFunc("/aws", handlers.HandleAWSCourse)
+	mux.HandleFunc("/aws/", handlers.HandleAWSModule)
+	mux.HandleFunc("/computer-architecture", handlers.HandleComputerArchitectureCourse)
+	mux.HandleFunc("/computer-architecture/", handlers.HandleComputerArchitectureModule)
 	mux.HandleFunc("/problem/", handlers.HandleProblem)
 	mux.HandleFunc("/run/", handlers.HandleRun)
 	mux.HandleFunc("/solution/", handlers.HandleSolution)

@@ -61,6 +61,16 @@ var (
 	linuxMu                  sync.RWMutex
 	allNetworkingModules     []CourseModule
 	networkingMu             sync.RWMutex
+	allFrontendModules       []CourseModule
+	frontendMu               sync.RWMutex
+	allDevOpsModules         []CourseModule
+	devopsMu                 sync.RWMutex
+	allSoftwareArchitectureModules []CourseModule
+	softwareArchitectureMu   sync.RWMutex
+	allAWSModules            []CourseModule
+	awsMu                    sync.RWMutex
+	allComputerArchitectureModules []CourseModule
+	computerArchitectureMu   sync.RWMutex
 )
 
 func init() {
@@ -404,6 +414,111 @@ func GetNetworkingModuleByID(id int) *CourseModule {
 	for i := range allNetworkingModules {
 		if allNetworkingModules[i].ID == id {
 			return &allNetworkingModules[i]
+		}
+	}
+	return nil
+}
+
+// GetFrontendModules returns all frontend course modules
+func GetFrontendModules() []CourseModule {
+	frontendMu.RLock()
+	defer frontendMu.RUnlock()
+	result := make([]CourseModule, len(allFrontendModules))
+	copy(result, allFrontendModules)
+	return result
+}
+
+// GetFrontendModuleByID returns a frontend module by its ID
+func GetFrontendModuleByID(id int) *CourseModule {
+	frontendMu.RLock()
+	defer frontendMu.RUnlock()
+	for i := range allFrontendModules {
+		if allFrontendModules[i].ID == id {
+			return &allFrontendModules[i]
+		}
+	}
+	return nil
+}
+
+// GetDevOpsModules returns all DevOps course modules
+func GetDevOpsModules() []CourseModule {
+	devopsMu.RLock()
+	defer devopsMu.RUnlock()
+	result := make([]CourseModule, len(allDevOpsModules))
+	copy(result, allDevOpsModules)
+	return result
+}
+
+// GetDevOpsModuleByID returns a DevOps module by its ID
+func GetDevOpsModuleByID(id int) *CourseModule {
+	devopsMu.RLock()
+	defer devopsMu.RUnlock()
+	for i := range allDevOpsModules {
+		if allDevOpsModules[i].ID == id {
+			return &allDevOpsModules[i]
+		}
+	}
+	return nil
+}
+
+// GetSoftwareArchitectureModules returns all software architecture course modules
+func GetSoftwareArchitectureModules() []CourseModule {
+	softwareArchitectureMu.RLock()
+	defer softwareArchitectureMu.RUnlock()
+	result := make([]CourseModule, len(allSoftwareArchitectureModules))
+	copy(result, allSoftwareArchitectureModules)
+	return result
+}
+
+// GetSoftwareArchitectureModuleByID returns a software architecture module by its ID
+func GetSoftwareArchitectureModuleByID(id int) *CourseModule {
+	softwareArchitectureMu.RLock()
+	defer softwareArchitectureMu.RUnlock()
+	for i := range allSoftwareArchitectureModules {
+		if allSoftwareArchitectureModules[i].ID == id {
+			return &allSoftwareArchitectureModules[i]
+		}
+	}
+	return nil
+}
+
+// GetAWSModules returns all AWS course modules
+func GetAWSModules() []CourseModule {
+	awsMu.RLock()
+	defer awsMu.RUnlock()
+	result := make([]CourseModule, len(allAWSModules))
+	copy(result, allAWSModules)
+	return result
+}
+
+// GetAWSModuleByID returns an AWS module by its ID
+func GetAWSModuleByID(id int) *CourseModule {
+	awsMu.RLock()
+	defer awsMu.RUnlock()
+	for i := range allAWSModules {
+		if allAWSModules[i].ID == id {
+			return &allAWSModules[i]
+		}
+	}
+	return nil
+}
+
+// GetComputerArchitectureModules returns all computer architecture course modules
+func GetComputerArchitectureModules() []CourseModule {
+	computerArchitectureMu.RLock()
+	defer computerArchitectureMu.RUnlock()
+	result := make([]CourseModule, len(allComputerArchitectureModules))
+	copy(result, allComputerArchitectureModules)
+	return result
+}
+
+// GetComputerArchitectureModuleByID returns a computer architecture module by its ID
+func GetComputerArchitectureModuleByID(id int) *CourseModule {
+	computerArchitectureMu.RLock()
+	defer computerArchitectureMu.RUnlock()
+	for i := range allComputerArchitectureModules {
+		if allComputerArchitectureModules[i].ID == id {
+			return &allComputerArchitectureModules[i]
 		}
 	}
 	return nil

@@ -1,9 +1,9 @@
-{{define "title"}}{{.Module.Title}} - Golang Course - LeetCode Clone{{end}}
+{{define "title"}}{{.Module.Title}} - AWS Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/golang" class="back-link">← Back to Golang Course</a>
+            <a href="/aws" class="back-link">← Back to AWS Course</a>
             <h2 class="module-header-title">{{.Module.Title}}</h2>
             <p class="module-description">{{.Module.Description}}</p>
         </div>
@@ -22,7 +22,7 @@
                     <div class="lesson-text">{{markdown $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
-                        <pre><code class="language-go">{{$lesson.CodeExamples}}</code></pre>
+                        <pre><code>{{$lesson.CodeExamples}}</code></pre>
                     </div>
                     {{end}}
                 </div>
@@ -176,7 +176,7 @@ function toggleLesson(index) {
         toggle.textContent = '▲';
         // Highlight code when lesson is opened
         setTimeout(function() {
-            highlightGolangCode();
+            highlightAWSCode();
             if (window.highlightCode) {
                 window.highlightCode();
             }
@@ -188,21 +188,21 @@ function toggleLesson(index) {
 }
 
 // Highlight code blocks on page load and when lessons are toggled
-function highlightGolangCode() {
+function highlightAWSCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
         var codeBlocks = document.querySelectorAll('.lesson-code code');
         codeBlocks.forEach(function(block) {
             if (!block.hasAttribute('data-highlighted')) {
                 var text = block.textContent;
-                var lang = 'go'; // Default for Golang course
+                var lang = 'bash'; // Default for AWS CLI commands
                 
-                // Check if code block has language class
-                if (block.className && block.className.includes('language-')) {
-                    if (block.className.includes('language-python')) {
-                        lang = 'python';
-                    } else if (block.className.includes('language-go')) {
-                        lang = 'go';
-                    }
+                // Detect language from code content
+                if (text.includes('import boto3') || text.includes('boto3.client')) {
+                    lang = 'python';
+                } else if (text.includes('AWSTemplateFormatVersion') || text.includes('Resources:')) {
+                    lang = 'yaml';
+                } else if (text.includes('{') && text.includes('"Version"')) {
+                    lang = 'json';
                 }
                 
                 block.textContent = '';
@@ -218,7 +218,7 @@ function highlightGolangCode() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', highlightGolangCode);
+document.addEventListener('DOMContentLoaded', highlightAWSCode);
 // Also highlight when global highlightCode is called
 if (window.highlightCode) {
     window.highlightCode();
