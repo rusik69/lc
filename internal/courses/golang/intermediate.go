@@ -12,431 +12,194 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Understanding Pointers",
-					Content: `Pointers are just variables that hold the memory address of another variable. They are crucial in Go for sharing data and efficient memory usage.
+					Content: "Pointers are a fundamental concept in Go that allow you to work with the memory addresses of variables. They are essential for sharing data efficiently and controlling memory usage.\n\n" +
+						"**1. The Mechanics:**\n" +
+						"- **Address Operator (`&`)**: Used to find where a variable is located in memory (e.g., `&x`).\n" +
+						"- **Dereference Operator (`*`)**: Used to access the value stored at a memory address (e.g., `*ptr`).\n\n" +
+						"**2. The \"Pass by Value\" Rule:**\n" +
+						"Go is strictly **pass by value**. When you pass a variable to a function, Go creates a *copy*. If the variable is a pointer, Go copies the *address*, allowing you to modify the original data. This is why pointers are often called \"reference types\" in other languages, though Go is more explicit.\n\n" +
+						"**3. Stack vs. Heap:**\n" +
+						"Go automatically decides whether a variable should live on the **Stack** (fast, local) or the **Heap** (slower, persistent). If a function returns a pointer to a local variable, Go \"escapes\" that variable to the heap so it remains valid after the function finishes.",
+					CodeExamples: `# BASIC REDIRECTION
+x := 42
+ptr := &x      // ptr stores the address of x
+fmt.Println(ptr) // e.g., 0xc0000120b0
+fmt.Println(*ptr) // 42 (dereferencing)
 
-**The "&" and "*" Operators:**
-*   **& (Address Of):** "Where is this variable stored?" -> Returns memory address.
-*   **(*) (Dereference):** "What value is at this address?" -> Returns the value.
-
-**Stack vs Heap (Simplified):**
-*   **Stack:** Fast, local memory. Variables created here are cleaned up when the function returns.
-*   **Heap:** Persistent memory. Variables created here stay until the Garbage Collector (GC) decides they are no longer needed.
-*   *Note:* You don't manage this manually, but knowing it helps performance. If you return a pointer to a local variable, Go "escapes" it to the heap automatically.
-
-**When to use Pointers:**
-1.  **Modifying Data:** If a function needs to change a variable passed to it.
-2.  **Efficiency:** To avoid copying a massive struct (value mostly read-only).
-3.  **Consistency:** If some methods on a struct need a pointer receiver, use pointer receivers for all of them.`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    count := 10
-    
-    // Pass by value (copy)
-    increment(count)
-    fmt.Println(count) // Still 10!
-
-    // Pass by reference (pointer)
-    incrementPtr(&count)
-    fmt.Println(count) // Now 11!
+# SHARING DATA (Function)
+func double(n *int) {
+    *n = *n * 2 // Modifies the original value
 }
 
-func increment(x int) {
-    x++ // Only modifies the copy
-}
-
-func incrementPtr(x *int) {
-    *x++ // Goes to the address and modifies the value
-}`,
+val := 10
+double(&val)
+fmt.Println(val) // 20`,
 				},
+
 				{
 					Title: "Pointer Operations",
-					Content: `**Pointer Operations:**
-- Address operator: &variable
-- Dereference operator: *pointer
-- Pointer comparison: ==, !=
-- nil pointer check
+					Content: "Go simplifies pointers by removing many of the dangerous operations found in languages like C. This makes Go safer while still providing the performance benefits of direct memory access.\n\n" +
+						"**1. Allowed Operations:**\n" +
+						"- **Comparison**: You can compare two pointers using `==` or `!=`. They are equal if they point to the exact same memory address or if both are `nil`.\n" +
+						"- **Nil Check**: Always check if a pointer is `nil` before dereferencing it to avoid a runtime panic.\n\n" +
+						"**2. The Big Restriction: No Pointer Arithmetic:**\n" +
+						"Unlike C/C++, Go does **not** allow you to add or subtract from a pointer (e.g., `ptr++` is a compile error). You cannot move a pointer to the next memory address manually. This prevents buffer overflows and many common security vulnerabilities.",
+					CodeExamples: `# NIL CHECK (Crucial)
+var ptr *int
+if ptr != nil {
+    fmt.Println(*ptr)
+} else {
+    fmt.Println("Pointer is nil, skipping dereference")
+}
 
-**Pointer Arithmetic:**
-- Go does NOT support pointer arithmetic
-- This is intentional for safety`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    a := 10
-    b := 20
-    
-    p1 := &a
-    p2 := &b
-    p3 := &a
-    
-    // Dereference
-    fmt.Println(*p1)  // 10
-    
-    // Comparison
-    fmt.Println(p1 == p2)  // false
-    fmt.Println(p1 == p3)  // true
-    
-    // nil check
-    var p4 *int
-    if p4 == nil {
-        fmt.Println("p4 is nil")
-    }
-}`,
+# POINTER COMPARISON
+x, y := 10, 10
+p1 := &x
+p2 := &x
+p3 := &y
+fmt.Println(p1 == p2) // true
+fmt.Println(p1 == p3) // false (different addresses)`,
 				},
+
 				{
 					Title: "Pass by Value vs Reference",
-					Content: `**Pass by Value:**
-- Go passes arguments by value (copies them)
-- Changes to parameters don't affect original
-- For large structs, this can be inefficient
-
-**Pass by Reference (Pointer):**
-- Pass pointer to allow modification
-- More efficient for large structs
-- Can represent optional values with nil`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Pass by value
-func modifyValue(x int) {
-    x = 100
+					Content: "One of the most important concepts to master in Go is how data is passed between functions. This affects both the correctness and the performance of your application.\n\n" +
+						"**1. Everything is a Value**: When you pass a variable to a function, Go always creates a **copy** of that variable. If you pass an `int`, the function gets a copy of the number. If you pass a `struct`, the function gets a copy of the entire struct.\n\n" +
+						"**2. Passing Pointers**: When you pass a pointer, you are still passing a value—but that value is a **memory address**. The function gets a copy of the address, allowing it to modify the original data at that address.\n\n" +
+						"**3. Performance Considerations**: For small values like `int` or `bool`, copying is extremely fast. For large `structs`, copying all the data can be slow and memory-intensive; in those cases, passing a pointer is much more efficient.",
+					CodeExamples: `# PASS BY VALUE (Copy)
+type LargeStruct struct {
+    data [1000]int
 }
 
-// Pass by reference
-func modifyPointer(x *int) {
-    *x = 100
+func doWork(s LargeStruct) {
+    // 's' is a copy of the original 1000 integers!
 }
 
-func main() {
-    a := 10
-    modifyValue(a)
-    fmt.Println(a)  // 10 (unchanged)
-    
-    modifyPointer(&a)
-    fmt.Println(a)  // 100 (changed)
-}`,
+# PASS BY REFERENCE (Pointer)
+func doWorkFaster(s *LargeStruct) {
+    // 's' is just a pointer (8 bytes on 64-bit)
+}
+
+# THE "CHANGING THE COPY" TRAP
+func rename(s string) {
+    s = "New Name" // Only changes the local copy
+}
+
+val := "Old Name"
+rename(val)
+fmt.Println(val) // Still "Old Name"`,
 				},
+
 				{
 					Title: "Nil Pointers",
-					Content: `**Nil Pointers:**
-- Zero value for pointers is nil
-- Dereferencing nil pointer causes panic
-- Always check for nil before dereferencing
-- Common pattern: return nil for "not found" cases`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func findValue(slice []int, target int) *int {
-    for i, v := range slice {
-        if v == target {
-            return &slice[i]
-        }
+					Content: "A pointer that does not point to any valid memory address is said to be `nil`. In Go, the zero value for any pointer type is `nil`.\n\n" +
+						"**1. The Danger of Panic**: Dereferencing a `nil` pointer (e.g., trying to access `*ptr` when `ptr` is `nil`) will cause your program to crash immediately with a **runtime panic**. Unlike languages like Java which might throw a `NullPointerException`, Go's panics are non-recoverable by default.\n\n" +
+						"**2. Safe Handling**: Defensive programming is necessary. You should always check for `nil` before using a pointer that was returned from a function or passed as an optional argument.\n\n" +
+						"**3. Representing \"Nothing\"**: `nil` is frequently used to represent the absence of a value, such as a \"not found\" result from a database search or an optional configuration flag.",
+					CodeExamples: `# DEFENSIVE CHECK
+func printValue(n *int) {
+    if n == nil {
+        fmt.Println("No value provided")
+        return
     }
-    return nil  // Not found
+    fmt.Println("Value is:", *n)
 }
 
-func main() {
-    nums := []int{1, 2, 3, 4, 5}
-    
-    result := findValue(nums, 3)
-    if result != nil {
-        fmt.Println("Found:", *result)
-    } else {
-        fmt.Println("Not found")
+# OPTIONAL RETURN
+func findUser(id string) *User {
+    if userExists(id) {
+        return &foundUser
     }
+    return nil // Explicitly saying "Nothing found"
 }`,
 				},
+
 				{
 					Title: "Memory Management",
-					Content: `**Garbage Collection:**
-- Go has automatic garbage collection
-- No manual memory management needed
-- GC runs automatically in background
-- Tries to minimize pause times
-
-**Memory Safety:**
-- No pointer arithmetic
-- No dangling pointers (GC handles)
-- Compile-time type checking
-- Runtime bounds checking
-
-**Best Practices:**
-- Let GC handle memory
-- Use pointers only when needed
-- Avoid unnecessary allocations
-- Profile if performance is critical`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// GC handles cleanup automatically
-func createSlice() []int {
-    s := make([]int, 1000)
-    // s will be garbage collected when no longer referenced
-    return s
+					Content: "Go provides a sophisticated, automatic memory management system that frees developers from the burden of manual memory allocation and deallocation (like `malloc` and `free` in C).\n\n" +
+						"**1. Escape Analysis**: When you create a variable, the Go compiler uses \"Escape Analysis\" to decide if it can live on the fast **Stack** or needs to be \"escaped\" to the **Heap**. If a variable is accessible after its parent function returns (e.g., you return its address), it MUST go to the heap.\n\n" +
+						"**2. The Garbage Collector (GC)**: Go uses a concurrent, tri-color, mark-and-sweep garbage collector. It works in the background to identify memory that is no longer reachable and reclaim it. Go's GC is optimized for **low latency**, attempting to minimize the \"Stop The World\" pauses where your program's execution is frozen.\n\n" +
+						"**3. Performance Pro-Tip**: While GC is automatic, creating too many short-lived objects on the heap can increase GC pressure and slow down your app. Reusing objects (e.g., via `sync.Pool`) can help in high-performance scenarios.",
+					CodeExamples: `# STACK vs HEAP DATA
+func onStack() {
+    x := 42 // 'x' lives on the stack; fast and local
 }
 
-func main() {
-    s := createSlice()
-    fmt.Println(len(s))
-    // s can be garbage collected after main returns
-}`,
+func onHeap() *int {
+    y := 10 // 'y' would normally be on the stack...
+    return &y // ...but because we return its address, it "escapes" to the heap
+}
+
+# CONTROLLING ALLOCATION
+# Use 'make' for slices/maps/channels to pre-size them and avoid repeated heap allocations.
+s := make([]int, 0, 100) // Initial capacity of 100 avoids resizing`,
 				},
+
 				{
 					Title: "Pointer Methods",
-					Content: `Methods can have pointer receivers, allowing them to modify the receiver and work efficiently with large structs.
+					Content: "In Go, methods can be defined with either a **Value Receiver** or a **Pointer Receiver**. Understanding the choice between them is critical for both functional correctness and system performance.\n\n" +
+						"**1. Value Receivers (`func (v T)`)**: The method receives a copy of the struct. Any changes made to the struct's fields during the method only affect the copy, not the original.\n\n" +
+						"**2. Pointer Receivers (`func (p *T)`)**: The method receives the memory address of the struct. This allows the method to **modify** the original struct and is significantly more efficient for large data structures, as it avoids copying.\n\n" +
+						"**3. Automatic Conversion**: Go's compiler is smart. If you have a value but call a method that requires a pointer receiver, Go will automatically take the address for you (as long as the value is addressable).",
+					CodeExamples: `# RECTANGLE EXAMPLE
+type Rect struct { W, H int }
 
-**Pointer Receiver Methods:**
-- Syntax: func (p *Type) MethodName()
-- Can modify receiver
-- More efficient for large structs
-- Required when method needs to modify state
+# 1. VALUE RECEIVER (Read-only)
+func (r Rect) Area() int { return r.W * r.H }
 
-**Value vs Pointer Receivers:**
-- Value receiver: Works on copy, cannot modify
-- Pointer receiver: Works on original, can modify
-- Go automatically converts: value.Method() works with pointer receiver
-
-**When to Use Pointer Receivers:**
-- Method modifies receiver
-- Struct is large (avoid copying)
-- Consistency: use same receiver type for all methods
-- Need nil checks
-
-**Nil Receivers:**
-- Pointer receivers can be nil
-- Check for nil before use
-- Common pattern: return early if nil`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Counter struct {
-    value int
+# 2. POINTER RECEIVER (Modifiers)
+func (r *Rect) Scale(f int) {
+    r.W *= f
+    r.H *= f
 }
 
-// Pointer receiver - can modify
-func (c *Counter) Increment() {
-    c.value++
-}
-
-// Pointer receiver - can be nil
-func (c *Counter) GetValue() int {
-    if c == nil {
-        return 0  // Handle nil receiver
-    }
-    return c.value
-}
-
-// Value receiver - cannot modify
-func (c Counter) Display() {
-    fmt.Printf("Counter value: %d\n", c.value)
-}
-
-func main() {
-    c := Counter{value: 0}
-    
-    // Both work (Go converts automatically)
-    c.Increment()      // Converts to (&c).Increment()
-    (&c).Increment()  // Explicit
-    
-    fmt.Println(c.GetValue())  // 2
-    
-    // Nil receiver
-    var nilCounter *Counter
-    fmt.Println(nilCounter.GetValue())  // 0 (handled)
-}`,
+# AUTOMATIC DEREFERENCE
+myRect := Rect{10, 5}
+myRect.Scale(2) // Go does (&myRect).Scale(2) automatically!`,
 				},
+
 				{
 					Title: "Nil Pointer Safety",
-					Content: `Nil pointers are a common source of panics in Go. Understanding how to handle them safely is crucial.
+					Content: "In Go, `nil` is a value that represents the absence of an address. Handling it correctly is the difference between a stable application and one that crashes frequently.\n\n" +
+						"**1. The \"Method on Nil\" Feature**: Unlike many languages where calling a method on `null` is an immediate crash, Go actually allows you to call a method on a `nil` pointer. The crash only happens if the method tries to **access** a field of the struct without checking for `nil` first.\n\n" +
+						"**2. Defensive Methods**: It is good practice to write methods that handle a `nil` receiver gracefully (e.g., by returning a default value or an error), especially for data structures like Linked Lists or Trees.\n\n" +
+						"**3. Built-in Safety**: Go's type system and strict compiler prevent many basic pointer errors, but the developer is still responsible for logical `nil` checks.",
+					CodeExamples: `# SAFE METHOD ON NIL
+type Node struct { Value int }
 
-**Nil Pointer Behavior:**
-- Dereferencing nil pointer causes panic
-- Methods on nil receivers can be called (if handled)
-- Always check for nil before dereferencing
-- Use defensive programming
-
-**Nil Checks:**
-- if ptr == nil { return }
-- if ptr != nil { use ptr }
-- Common pattern: return early on nil
-
-**Nil Receiver Methods:**
-- Methods can handle nil receivers
-- Check for nil inside method
-- Return sensible default values
-- Common in standard library
-
-**Best Practices:**
-- Check for nil before dereferencing
-- Return early on nil
-- Handle nil in methods
-- Use nil to represent "not found" or "empty"
-- Document nil behavior
-
-**Common Patterns:**
-- Return nil for "not found"
-- Check nil before use
-- Provide nil-safe methods
-- Use nil as sentinel value`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Node struct {
-    Value int
-    Next  *Node
-}
-
-// Safe nil handling
-func (n *Node) GetValue() int {
+func (n *Node) SafeValue() int {
     if n == nil {
-        return 0  // Default value
+        return 0 // Handle the "empty" case gracefully
     }
     return n.Value
 }
 
-// Nil check before use
-func traverse(head *Node) {
-    current := head
-    for current != nil {
-        fmt.Println(current.Value)
-        current = current.Next
-    }
-}
+var myNode *Node // nil
+fmt.Println(myNode.SafeValue()) // 0 (No crash!)
 
-// Return nil for "not found"
-func findNode(head *Node, value int) *Node {
-    current := head
-    for current != nil {
-        if current.Value == value {
-            return current
-        }
-        current = current.Next
-    }
-    return nil  // Not found
-}
-
-func main() {
-    var head *Node  // nil
-    
-    // Safe to call method (handles nil)
-    fmt.Println(head.GetValue())  // 0
-    
-    // Check before dereferencing
-    if head != nil {
-        fmt.Println(head.Value)  // Won't execute
-    }
-    
-    // Find node
-    node := findNode(head, 5)
-    if node != nil {
-        fmt.Println("Found:", node.Value)
-    } else {
-        fmt.Println("Not found")
-    }
+# DANGEROUS METHOD
+func (n *Node) UnsafeValue() int {
+    return n.Value // CRASH if n is nil
 }`,
 				},
+
 				{
 					Title: "Pointer Best Practices",
-					Content: `Following best practices for pointers helps write safe, efficient, and maintainable Go code.
+					Content: "Using pointers correctly is about balancing performance with code simplicity. Here are the three gold rules of pointers in Go.\n\n" +
+						"**Rule 1: Use for large structs**. If your struct has many fields or large arrays, pass by pointer to avoid the cost of copying memory on every function call.\n\n" +
+						"**Rule 2: Use for consistency**. If some methods on a type require a pointer receiver (to modify state), it's best practice to use pointer receivers for **all** methods on that type, even the read-only ones. This makes the interface consistent.\n\n" +
+						"**Rule 3: Avoid for small data**. Types like `int`, `float64`, `bool`, and `string` are small and efficient to copy. Using a pointer for these (e.g., `*int`) adds unnecessary complexity and can actually be slower due to pointer chasing.",
+					CodeExamples: `# THE CONSISTENCY RULE
+type Player struct { Health int }
 
-**When to Use Pointers:**
+# Good: Pointer for both modifier and reader
+func (p *Player) TakeDamage(n int) { p.Health -= n }
+func (p *Player) IsAlive() bool   { return p.Health > 0 }
 
-**1. Modify Function Arguments:**
-- Pass pointer when function needs to modify value
-- More efficient than returning new value
-- Clear intent
-
-**2. Large Structs:**
-- Avoid copying large structs
-- Use pointer to pass efficiently
-- Pointer is 8 bytes (64-bit), struct might be much larger
-
-**3. Optional Values:**
-- Use nil to represent "not set"
-- Common pattern: *int for optional integer
-- Check for nil before use
-
-**4. Sharing State:**
-- Multiple functions need same data
-- Pass pointer to share
-- Be careful with concurrent access
-
-**When NOT to Use Pointers:**
-
-**1. Small Values:**
-- int, string, bool: pass by value
-- Copying is cheap
-- Simpler code
-
-**2. Immutable Data:**
-- If value shouldn't change
-- Pass by value prevents modification
-- Type safety
-
-**3. Slices and Maps:**
-- Already reference types
-- Don't need pointer (usually)
-- Exception: when modifying slice itself (append)
-
-**Best Practices:**
-- Use pointers for large structs
-- Use pointers when modification needed
-- Always check for nil
-- Document nil behavior
-- Be consistent in API design`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type User struct {
-    ID    int
-    Name  string
-    Email string
-}
-
-// Good: Pointer for large struct
-func updateUser(u *User, name string) {
-    u.Name = name  // Modifies original
-}
-
-// Good: Pointer for optional
-func setOptionalID(id *int) {
-    if id != nil {
-        *id = 42
-    }
-}
-
-// Good: Value for small
-func add(a, b int) int {  // No pointer needed
-    return a + b
-}
-
-// Bad: Unnecessary pointer
-func addBad(a, b *int) int {  // Overcomplicated
-    return *a + *b
-}
-
-func main() {
-    user := User{ID: 1, Name: "Alice"}
-    updateUser(&user, "Bob")
-    fmt.Println(user.Name)  // Bob
-    
-    var optionalID *int
-    setOptionalID(optionalID)  // Safe, does nothing
-    
-    id := 0
-    setOptionalID(&id)
-    fmt.Println(id)  // 42
+# BAD: POINTER FOR SMALL DATA
+func increment(n *int) { // Unnecessary pointer!
+    *n++
 }`,
 				},
 			},
@@ -450,166 +213,95 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Arrays",
-					Content: `**Arrays:**
-- Fixed-size sequence of elements
-- Size is part of type: [5]int vs [10]int
-- Value type (copied when assigned)
-- Rarely used directly (slices are preferred)
+					Content: "In Go, an array is a numbered sequence of elements of a single type with a **fixed length**. While you will use slices more often in practice, understanding arrays is crucial because slices are built on top of them.\n\n" +
+						"**1. Fixed Size**: Once an array is declared, its size cannot change. The size is actually part of the array's type; for example, `[5]int` and `[10]int` are distinct, incompatible types.\n\n" +
+						"**2. Value Type Behavior**: Unlike languages where arrays are references (like Java or JS), Go arrays are **value types**. If you assign an array to a new variable or pass it to a function, Go creates a **complete copy** of the entire array. This makes them expensive to pass if they are large.\n\n" +
+						"**3. Zero Initialization**: When you declare an array without a literal, all its elements are automatically initialized to their zero value (e.g., `0` for `int`, `false` for `bool`).",
+					CodeExamples: `# ARRAY DECLARATION
+var a [5]int           // [0 0 0 0 0]
+b := [3]string{"a", "b"} 
+c := [...]int{1, 2, 3} // Compiler counts elements
 
-**Array Operations:**
-- Indexing: arr[i]
-- Length: len(arr)
-- Iteration: for i, v := range arr`,
-					CodeExamples: `package main
+# THE VALUE TYPE TRAP
+arr1 := [3]int{1, 1, 1}
+arr2 := arr1      // arr2 is a NEW COPY
+arr2[0] = 999     // Does NOT affect arr1
+fmt.Println(arr1) // [1 1 1]
 
-import "fmt"
-
-func main() {
-    // Array declaration
-    var arr1 [5]int
-    arr2 := [5]int{1, 2, 3, 4, 5}
-    arr3 := [...]int{1, 2, 3}  // Compiler determines size
-    
-    // Accessing elements
-    fmt.Println(arr2[0])  // 1
-    
-    // Length
-    fmt.Println(len(arr2))  // 5
-    
-    // Iteration
-    for i, v := range arr2 {
-        fmt.Printf("Index %d: %d\n", i, v)
-    }
-}`,
+# MULTI-DIMENSIONAL
+var matrix [2][2]int
+matrix[0][1] = 5`,
 				},
+
 				{
 					Title: "Slices",
-					Content: `**Slices:**
-- Dynamic arrays (growable)
-- Reference type (points to underlying array)
-- More commonly used than arrays
-- Created with make() or slice literal
+					Content: "Slices are the most common and powerful way to work with collections of data in Go. They provide a dynamic, flexible interface to an underlying array.\n\n" +
+						"**1. Reference Semantics**: Unlike arrays, slices are **reference types**. A slice does not store the elements itself; it stores a pointer to an underlying array, a length, and a capacity. If you copy a slice, both copies point to the **same data**.\n\n" +
+						"**2. Creating Slices**: You can create a slice using a literal, by slicing an existing array/slice, or using the `make()` function. `make()` is preferred when you know the required size or want to pre-allocate capacity.\n\n" +
+						"**3. The Empty Slice**: A slice that hasn't been initialized is `nil` and has a length and capacity of 0. However, you can still `append` to a `nil` slice safely.",
+					CodeExamples: `# SLICE DECLARATION
+s := []int{1, 2, 3} // Literal
+a := make([]int, 5)  // Len 5, Cap 5
+b := make([]int, 0, 5) // Len 0, Cap 5 (Optimized for append)
 
-**Slice Operations:**
-- Creation: make([]Type, length, capacity)
-- Append: append(slice, elements...)
-- Copy: copy(dest, src)
-- Slicing: slice[start:end]`,
-					CodeExamples: `package main
+# SLICING OPERATOR
+primes := [6]int{2, 3, 5, 7, 11, 13}
+subset := primes[1:4] // [3, 5, 7]
 
-import "fmt"
-
-func main() {
-    // Slice creation
-    var s1 []int
-    s2 := []int{1, 2, 3}
-    s3 := make([]int, 5)        // length 5, capacity 5
-    s4 := make([]int, 0, 10)     // length 0, capacity 10
-    
-    // Append
-    s1 = append(s1, 1, 2, 3)
-    s1 = append(s1, 4, 5)
-    
-    // Slicing
-    s5 := s1[1:3]  // [2, 3]
-    s6 := s1[:3]   // [1, 2, 3]
-    s7 := s1[2:]   // [3, 4, 5]
-    
-    // Length and capacity
-    fmt.Println(len(s1), cap(s1))
-    
-    fmt.Println(s1, s2, s3, s4, s5, s6, s7)
-}`,
+# REFERENCE BEHAVIOR
+copy_s := s
+copy_s[0] = 999
+fmt.Println(s[0]) // Prints 999!`,
 				},
+
 				{
 					Title: "Slice Internals: Length vs Capacity",
-					Content: `Slices are not arrays. They are a "view" into an underlying array. Understanding this distinction is key to avoiding bugs and performance issues.
+					Content: "Slices are not just dynamic arrays; they are small data structures (headers) that point to a segment of an underlying array. Understanding how they grow is key to writing high-performance Go code.\n\n" +
+						"**1. The Three Fields**: A slice header contains a pointer to the data, a **Length** (the number of elements it currently contains), and a **Capacity** (the number of elements it *can* hold before being reallocated).\n\n" +
+						"**2. How 'append' Grows**: When you use `append()` and the length exceeds the capacity, Go must allocate a **new, larger array**. It typically doubles the capacity (for small slices) to minimize the number of reallocations, which are expensive because the entire dataset must be copied.\n\n" +
+						"**3. Performance Tip**: If you know how many elements your slice will eventually hold, providing an initial capacity to `make()` (e.g., `make([]int, 0, 100)`) can drastically improve performance by avoiding repeated reallocations.",
+					CodeExamples: `# VISUALIZING CAPACITY
+s := make([]int, 0, 2)
+s = append(s, 1)    // Len: 1, Cap: 2
+s = append(s, 2)    // Len: 2, Cap: 2
+s = append(s, 3)    // Len: 3, Cap: 4 (Doubled!)
 
-**Anatomy of a Slice:**
-A slice is a tiny struct with three fields:
-1.  **Pointer:** Points to the start of the data in the underlying array.
-2.  **Length (len):** How many elements are in the slice *right now*.
-3.  **Capacity (cap):** How many elements *can* be in the slice before it needs to grow (reallocate).
-
-**Visualizing Append:**
-When you 'append()' to a slice:
-1.  If 'len < cap', it just places the new item in the array and increases 'len'. Fast!
-2.  If 'len == cap', the array is full. Go creates a *new*, bigger array (usually 2x size), copies everything over, updates the pointer, and then adds the item. Slower!
-
-**Gotcha sharing:**
-Slicing 'b := a[1:3]' does NOT copy data. 'b' points to the same array as 'a'. Changing 'b[0]' changes 'a[1]'. Use 'copy()' if you need independent data.`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    // initialize: len=0, cap=5
-    numbers := make([]int, 0, 5) 
-    
-    for i := 0; i < 8; i++ {
-        numbers = append(numbers, i)
-        // Watch capacity jump: 5 -> 10 when we hit 6th element
-        fmt.Printf("Len: %d, Cap: %d\n", len(numbers), cap(numbers))
-    }
-    
-    // Slice Trap
-    original := []int{1, 2, 3}
-    view := original[:]
-    view[0] = 999
-    fmt.Println(original[0]) // Prints 999!
-}`,
+# SLICING MEMORY TRAP
+hugeArray := make([]int, 1000000)
+smallPart := hugeArray[0:10]
+// Even though smallPart only has 10 elements,
+// it keeps the entire hugeArray alive in memory!
+# SOLUTION: Use copy() to free the large array
+snippet := make([]int, 10)
+copy(snippet, hugeArray[0:10])`,
 				},
+
 				{
 					Title: "Maps",
-					Content: `**Maps:**
-- Key-value pairs (hash table/dictionary)
-- Reference type
-- Zero value is nil
-- Keys must be comparable types
+					Content: "Maps are Go's built-in associative data type (sometimes called hash tables or dictionaries in other languages). They map unique keys to specific values.\n\n" +
+						"**1. Keys and Values**: Map keys can be of any type that is comparable (e.g., `string`, `int`, `bool`, or even pointers). Slices and maps cannot be used as keys because they are not comparable.\n\n" +
+						"**2. The Comma Ok Idiom**: When you access a key that doesn't exist, Go returns the zero value for that type. To distinguish between a \"zero value\" and a \"missing key,\" use the two-value assignment: `val, ok := m[key]`.\n\n" +
+						"**3. Random Iteration**: Go intentionally randomizes the order of map iteration. You should never rely on maps maintaining a specific order; if you need order, you must maintain a separate slice of keys.",
+					CodeExamples: `# MAP INITIALIZATION
+m := make(map[string]int)
+m["Apple"] = 5
+delete(m, "Apple")
 
-**Map Operations:**
-- Creation: make(map[KeyType]ValueType)
-- Access: m[key]
-- Assignment: m[key] = value
-- Delete: delete(m, key)
-- Check existence: value, ok := m[key]`,
-					CodeExamples: `package main
+# THE "COMMA OK" IDIOM
+age, exists := m["Alice"]
+if !exists {
+    fmt.Println("User not found")
+}
 
-import "fmt"
+# MAP LITERAL
+scores := map[string]int{
+    "Red":   10,
+    "Blue":  20,
+}
 
-func main() {
-    // Map creation
-    var m1 map[string]int
-    m2 := make(map[string]int)
-    m3 := map[string]int{
-        "apple":  5,
-        "banana": 3,
-    }
-    
-    // Operations
-    m2["one"] = 1
-    m2["two"] = 2
-    
-    // Access
-    value := m2["one"]
-    fmt.Println(value)
-    
-    // Check existence
-    v, ok := m2["three"]
-    if ok {
-        fmt.Println("Found:", v)
-    } else {
-        fmt.Println("Not found")
-    }
-    
-    // Delete
-    delete(m2, "one")
-    
-    // Iteration
-    for key, value := range m3 {
-        fmt.Printf("%s: %d\n", key, value)
-    }
-}`,
+# ZERO VALUE TRAP
+m2 := make(map[string]int)
+fmt.Println(m2["Missing"]) // Prints 0! Use 'ok' to be sure.`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -622,439 +314,122 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Struct Definition",
-					Content: `**Structs:**
-- Collection of fields (like classes without inheritance)
-- Value type
-- Can be initialized in multiple ways
-- Fields can have tags for metadata
-
-**Struct Syntax:**
-type StructName struct {
-    Field1 Type1
-    Field2 Type2
-}`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Person struct {
+					Content: "A struct (short for structure) is a typed collection of fields. They are Go's way of grouping related data together into a single unit, similar to classes in other languages but without the complexity of inheritance.\n\n" +
+						"**1. Field Characteristics**: Each field in a struct has a name and a type. Fields starting with an uppercase letter are **exported** (public), while those starting with a lowercase letter are **unexported** (private to the package).\n\n" +
+						"**2. Zero Value Initialization**: When a struct is declared without an explicit value, all its fields are automatically initialized to their respective zero values.\n\n" +
+						"**3. Anonymous Structs**: You can also define structs without giving them a name. These are useful for one-time data structures, such as when parsing a specific JSON response in a single function.",
+					CodeExamples: `# NAMED STRUCT
+type User struct {
+    ID   int
     Name string
-    Age  int
-    City string
 }
 
-func main() {
-    // Zero value
-    var p1 Person
-    
-    // Literal initialization
-    p2 := Person{"Alice", 30, "NYC"}
-    p3 := Person{Name: "Bob", Age: 25}
-    p4 := Person{
-        Name: "Charlie",
-        Age:  35,
-        City: "LA",
-    }
-    
-    // Access fields
-    fmt.Println(p2.Name)
-    p2.Age = 31
-    
-    fmt.Println(p1, p2, p3, p4)
+# COMPOSITE LITERALS
+u1 := User{ID: 1, Name: "Bob"} // Field names (Preferred)
+u2 := User{2, "Alice"}          // Positional (Risky if order changes)
+
+# ANONYMOUS STRUCT
+config := struct {
+    Port int
+    Env  string
+}{
+    Port: 8080,
+    Env:  "production",
 }`,
 				},
+
 				{
 					Title: "Methods and Receivers",
-					Content: `**Methods:**
-- Functions with receiver argument
-- Receiver can be value or pointer
-- Value receiver: works on copy
-- Pointer receiver: works on original
+					Content: "Go does not have classes, but you can define **Methods** on types. A method is simply a function with a special **receiver** argument that appears between the `func` keyword and the method name.\n\n" +
+						"**1. Value Receivers (`(t T)`)**: The method operates on a **copy** of the original value. Any modifications to fields inside the method are lost when the method returns. Use this for small, immutable types.\n\n" +
+						"**2. Pointer Receivers (`(t *T)`)**: The method operates on the **original** value in memory. This allows the method to modify the struct's fields and is more efficient for large structs because it avoids copying.\n\n" +
+						"**3. Receiver Types**: While most methods are defined on structs, Go allows you to define methods on **any type** defined in the same package (except for basic types like `int` or `string` directly).",
+					CodeExamples: `# VALUE vs POINTER RECEIVER
+type User struct { Name string }
 
-**Method Syntax:**
-func (receiver ReceiverType) MethodName() ReturnType {
-    // body
-}`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Rectangle struct {
-    Width  float64
-    Height float64
+# 1. VALUE (No change)
+func (u User) UpdateNameValue(n string) {
+    u.Name = n
 }
 
-// Value receiver
-func (r Rectangle) Area() float64 {
-    return r.Width * r.Height
+# 2. POINTER (Works!)
+func (u *User) UpdateNamePtr(n string) {
+    u.Name = n
 }
 
-// Pointer receiver (can modify)
-func (r *Rectangle) Scale(factor float64) {
-    r.Width *= factor
-    r.Height *= factor
-}
-
-func main() {
-    rect := Rectangle{Width: 10, Height: 5}
-    fmt.Println(rect.Area())  // 50
-    
-    rect.Scale(2)
-    fmt.Println(rect.Width, rect.Height)  // 20, 10
-}`,
+user := User{"Alice"}
+user.UpdateNameValue("Bob") // user.Name is still "Alice"
+user.UpdateNamePtr("Bob")   // user.Name is now "Bob"`,
 				},
+
 				{
 					Title: "Method Sets",
-					Content: `**Method Sets:**
-- Value receiver: works with both value and pointer
-- Pointer receiver: works only with pointer
-- Interface satisfaction depends on method set
+					Content: "The **Method Set** of a type determines the interfaces that the type implements and the methods that can be called on its values and pointers. The rules are strict and crucial for understanding Go's polymorphism.\n\n" +
+						"**1. Value Receivers (`T`)**: Methods defined with a value receiver are part of the method set of **both** the value type `T` and the pointer type `*T`.\n\n" +
+						"**2. Pointer Receivers (`*T`)**: Methods defined with a pointer receiver are part of the method set **only** of the pointer type `*T`. They are NOT part of the method set of the value type `T`.\n\n" +
+						"**3. Interface Satisfaction**: If an interface requires a method that you've defined with a pointer receiver, only a **pointer** to your struct can satisfy that interface; passing a value will result in a compile error.",
+					CodeExamples: `# THE SATISFACTION RULE
+type Shaper interface { Area() int }
+type Square struct { side int }
 
-**Best Practice:**
-- Use pointer receivers when method modifies struct
-- Use pointer receivers for large structs (efficiency)
-- Use value receivers for small, immutable structs`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Counter struct {
-    value int
-}
-
-// Pointer receiver
-func (c *Counter) Increment() {
-    c.value++
-}
-
-// Value receiver
-func (c Counter) GetValue() int {
-    return c.value
-}
+# Pointer Receiver
+func (s *Square) Area() int { return s.side * s.side }
 
 func main() {
-    c := Counter{value: 0}
+    sq := Square{5}
     
-    // Both work
-    c.Increment()      // Go automatically converts
-    (&c).Increment()  // Explicit pointer
-    
-    fmt.Println(c.GetValue())  // 2
+    # var s1 Shaper = sq  // ERROR! Square does not implement Shaper (Area has pointer receiver)
+    var s2 Shaper = &sq // OK! *Square implements Shaper
 }`,
 				},
+
 				{
 					Title: "Embedded Structs",
-					Content: `**Embedding:**
-- Struct can embed another struct
-- Fields of embedded struct are promoted
-- Similar to composition (not inheritance)
-- Can override methods
-
-**Embedding Syntax:**
-type Outer struct {
-    Inner  // Embedded (no field name)
-    Field  // Regular field
-}`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Engine struct {
-    Power int
-}
-
-func (e Engine) Start() {
-    fmt.Println("Engine started")
-}
+					Content: "Go does not support type inheritance in the traditional sense (no `extends` keyword). Instead, it uses **Composition** through a feature called \"Embedded Structs\" or anonymous fields.\n\n" +
+						"**1. Field and Method Promotion**: When you embed a struct (by giving it a type name without a field name), all the fields and methods of the embedded struct are \"promoted\" to the outer struct. You can access them as if they were defined directly on the outer struct.\n\n" +
+						"**2. Shadowing and Collisions**: If the outer struct has a field or method with the same name as an embedded one, the outer one \"shadows\" the inner one. You can still access the inner one by using the type name of the embedded struct.\n\n" +
+						"**3. Composition over Inheritance**: This approach is more flexible than inheritance and avoids many of the deep hierarchy problems found in other languages.",
+					CodeExamples: `# EMBEDDING PATTERN
+type Engine struct { HP int }
+func (e Engine) Start() { fmt.Println("Vroom!") }
 
 type Car struct {
-    Engine  // Embedded
-    Brand   string
+    Engine // Embedded (no field name)
+    Brand string
 }
 
 func main() {
-    car := Car{
-        Engine: Engine{Power: 200},
-        Brand:  "Toyota",
-    }
-    
-    // Promoted fields and methods
-    fmt.Println(car.Power)  // Direct access
-    car.Start()             // Direct access
-}`,
+    c := Car{Brand: "Toyota"}
+    c.HP = 200 // Promoted field
+    c.Start()  // Promoted method
+}
+
+# SHADOWING EXAMPLE
+type SuperCar struct {
+    Car
+}
+func (s SuperCar) Start() { fmt.Println("SILENT Vroom!") }
+# s.Start() calls SuperCar's method, shadowing Car's.`,
 				},
+
 				{
 					Title: "Field Tags",
-					Content: `**Field Tags:**
-- Metadata attached to struct fields
-- Used by encoding packages (JSON, XML, etc.)
-- Format: ` + "`" + `tag:"value"` + "`" + `
-- Accessed via reflection
-
-**Common Uses:**
-- JSON encoding/decoding
-- Database ORM mapping
-- Validation`,
-					CodeExamples: `package main
-
-import (
-    "encoding/json"
-    "fmt"
-)
-
+					Content: "Field Tags are strings of metadata attached to struct fields. They are ignored by the Go compiler but can be read at runtime using the `reflect` package. They are most commonly used for encoding (JSON, XML) and database mappings (ORM).\n\n" +
+						"**1. Syntax**: Tags are written after the field type, enclosed in backticks (e.g., `` `json:\"name\"` ``). The standard format is `key:\"value\"`.\n\n" +
+						"**2. JSON Mapping**: Using the `json` tag, you can control how your struct fields are named when converted to JSON. For example, you can make an uppercase field (exported) map to a lowercase key in JSON.\n\n" +
+						"**3. The 'omitempty' Option**: A common JSON tag option is `omitempty`, which tells the encoder to skip the field if it has its zero value (e.g., `0`, `\"\"`, or `nil`).",
+					CodeExamples: `# JSON MAPPING
 type User struct {
-    ID       int    ` + "`" + `json:"id"` + "`" + `
-    Username string ` + "`" + `json:"username"` + "`" + `
-    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
-    Password string ` + "`" + `json:"-"` + "`" + `  // Ignored
+    FirstName string ` + "`" + `json:"first_name"` + "`" + `
+    LastName  string ` + "`" + `json:"last_name"` + "`" + `
+    Password  string ` + "`" + `json:"-"` + "`" + `          // Always hide in JSON
+    Age       int    ` + "`" + `json:"age,omitempty"` + "`" + ` // Hide if 0
 }
 
-func main() {
-    u := User{
-        ID:       1,
-        Username: "alice",
-        Email:    "alice@example.com",
-        Password: "secret",
-    }
-    
-    data, _ := json.Marshal(u)
-    fmt.Println(string(data))
-    // {"id":1,"username":"alice","email":"alice@example.com"}
-}`,
-				},
-				{
-					Title: "Embedding",
-					Content: `Struct embedding allows one struct to include another struct's fields and methods, promoting composition over inheritance.
-
-**Embedding Syntax:**
-- Embed struct without field name
-- Fields and methods are promoted
-- Can access embedded fields directly
-- Can override methods
-
-**Promotion:**
-- Embedded struct's fields become accessible
-- Embedded struct's methods become callable
-- No need to qualify with embedded struct name
-- Can still access via embedded struct name
-
-**Method Promotion:**
-- Methods of embedded struct are promoted
-- Can call directly on outer struct
-- Can override by defining method on outer struct
-- Outer struct's method takes precedence
-
-**Use Cases:**
-- Composition over inheritance
-- Code reuse
-- Extending functionality
-- Mixin pattern
-
-**Best Practices:**
-- Use embedding for "is-a" relationships
-- Prefer composition over inheritance
-- Be explicit about what you're embedding
-- Document embedded types`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Engine struct {
-    Power int
-}
-
-func (e Engine) Start() {
-    fmt.Println("Engine started")
-}
-
-type Car struct {
-    Engine  // Embedded (no field name)
-    Brand   string
-}
-
-// Method promotion
-func (c Car) Drive() {
-    c.Start()  // Can call embedded method
-    fmt.Printf("Driving %s car\n", c.Brand)
-}
-
-// Override method
-func (c Car) Start() {
-    fmt.Println("Car engine starting...")
-    c.Engine.Start()  // Call embedded method explicitly
-}
-
-func main() {
-    car := Car{
-        Engine: Engine{Power: 200},
-        Brand:  "Toyota",
-    }
-    
-    // Promoted fields
-    fmt.Println(car.Power)  // Direct access
-    fmt.Println(car.Engine.Power)  // Explicit access
-    
-    // Promoted methods
-    car.Start()  // Uses Car's Start (overridden)
-    car.Drive()
-}`,
-				},
-				{
-					Title: "Method Promotion",
-					Content: `When a struct embeds another struct, the embedded struct's methods are promoted and can be called directly on the outer struct.
-
-**Promotion Rules:**
-- Embedded struct's methods become available
-- Can call directly: outer.Method()
-- Can still call explicitly: outer.Embedded.Method()
-- Outer struct can override methods
-
-**Method Resolution:**
-- Outer struct's methods take precedence
-- If not found, check embedded structs
-- Ambiguity causes compile error
-- Must be explicit if ambiguous
-
-**Use Cases:**
-- Extending functionality
-- Code reuse
-- Interface satisfaction
-- Mixin pattern
-
-**Best Practices:**
-- Use promotion for convenience
-- Override when behavior needs to change
-- Be explicit when ambiguous
-- Document promoted methods`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Reader struct{}
-
-func (r Reader) Read() {
-    fmt.Println("Reading...")
-}
-
-type Writer struct{}
-
-func (w Writer) Write() {
-    fmt.Println("Writing...")
-}
-
-// Multiple embedding
-type ReadWriter struct {
-    Reader  // Promotes Read()
-    Writer  // Promotes Write()
-}
-
-// Override Read
-func (rw ReadWriter) Read() {
-    fmt.Println("ReadWriter reading...")
-    rw.Reader.Read()  // Call embedded method
-}
-
-func main() {
-    rw := ReadWriter{}
-    
-    // Promoted methods
-    rw.Read()   // Uses ReadWriter's Read (overridden)
-    rw.Write()  // Uses Writer's Write (promoted)
-    
-    // Explicit access
-    rw.Reader.Read()  // Uses Reader's Read directly
-}`,
-				},
-				{
-					Title: "Struct Tags",
-					Content: `Struct tags provide metadata for struct fields, used by encoding packages and validation libraries.
-
-**Tag Syntax:**
-- Format: ` + "`" + `key:"value" key2:"value2"` + "`" + `
-- Multiple tags separated by spaces
-- Values can have options (comma-separated)
-- Accessed via reflection
-
-**Common Tag Types:**
-
-**1. JSON Tags:**
-- json:"field_name"
-- json:"field_name,omitempty" (omit if zero)
-- json:"-" (ignore field)
-- json:",omitempty" (use Go field name)
-
-**2. XML Tags:**
-- xml:"field_name"
-- xml:"field_name,attr" (attribute)
-- xml:",chardata" (character data)
-
-**3. Database Tags:**
-- db:"column_name"
-- gorm:"column:name" (GORM)
-- sql:"column_name" (database/sql)
-
-**4. Validation Tags:**
-- validate:"required"
-- validate:"min=1,max=100"
-- validate:"email"
-
-**Tag Options:**
-- omitempty: Omit if zero value
-- -: Ignore field
-- attr: XML attribute
-- chardata: XML character data
-
-**Accessing Tags:**
-- Use reflect package
-- Common in encoding/json, encoding/xml
-- Used by ORMs and validators`,
-					CodeExamples: `package main
-
-import (
-    "encoding/json"
-    "encoding/xml"
-    "fmt"
-    "reflect"
-)
-
-type User struct {
-    ID       int    ` + "`" + `json:"id" xml:"id,attr" db:"user_id" validate:"required"` + "`" + `
-    Username string ` + "`" + `json:"username" xml:"username" db:"username" validate:"required,min=3"` + "`" + `
-    Email    string ` + "`" + `json:"email,omitempty" xml:"email" db:"email" validate:"email"` + "`" + `
-    Password string ` + "`" + `json:"-" xml:"-" db:"password"` + "`" + `
-}
-
-// Access tags via reflection
-func printTags(u User) {
-    t := reflect.TypeOf(u)
-    for i := 0; i < t.NumField(); i++ {
-        field := t.Field(i)
-        fmt.Printf("Field: %s\n", field.Name)
-        fmt.Printf("  JSON: %s\n", field.Tag.Get("json"))
-        fmt.Printf("  XML: %s\n", field.Tag.Get("xml"))
-        fmt.Printf("  DB: %s\n", field.Tag.Get("db"))
-        fmt.Printf("  Validate: %s\n", field.Tag.Get("validate"))
-    }
-}
-
-func main() {
-    u := User{
-        ID:       1,
-        Username: "alice",
-        Email:    "alice@example.com",
-        Password: "secret",
-    }
-    
-    // JSON
-    jsonData, _ := json.Marshal(u)
-    fmt.Println("JSON:", string(jsonData))
-    
-    // XML
-    xmlData, _ := xml.Marshal(u)
-    fmt.Println("XML:", string(xmlData))
-    
-    // Tags
-    printTags(u)
+# ORM / DATABASE TAGS
+type Product struct {
+    ID    int    ` + "`" + `gorm:"primaryKey"` + "`" + `
+    Price float64 ` + "`" + `validate:"min=0"` + "`" + `
 }`,
 				},
 			},
@@ -1068,407 +443,141 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Interface Definition",
-					Content: `**Interfaces:**
-- Define set of methods
-- Implicit satisfaction (no explicit declaration)
-- Type satisfies interface if it implements all methods
-- Can be empty (interface{})
-
-**Interface Syntax:**
-type InterfaceName interface {
-    Method1() ReturnType
-    Method2(param Type) ReturnType
-}`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type Shape interface {
-    Area() float64
-    Perimeter() float64
+					Content: "An interface in Go is a type that defines a **set of method signatures**. It specifies what an object can *do*, not what it *is*. In this way, interfaces are the key to building decoupled, modular, and testable code in Go.\n\n" +
+						"**1. Behavior Focus**: Unlike structs which define data, interfaces define behavior. Any type that provides the methods listed in an interface is said to \"satisfy\" or \"implement\" that interface.\n\n" +
+						"**2. Zero Value**: The zero value of an interface is `nil`. A `nil` interface holds neither a value nor a concrete type.\n\n" +
+						"**3. Standard Library Examples**: Many core features of Go rely on simple interfaces, such as `fmt.Stringer` (for printing) or `io.Reader` (for reading data streams).",
+					CodeExamples: `# INTERFACE DECLARATION
+type Stringer interface {
+    String() string
 }
 
-type Rectangle struct {
-    Width, Height float64
+# io.Writer (Core Go Interface)
+type Writer interface {
+    Write(p []byte) (n int, err error)
 }
 
-func (r Rectangle) Area() float64 {
-    return r.Width * r.Height
-}
-
-func (r Rectangle) Perimeter() float64 {
-    return 2 * (r.Width + r.Height)
-}
-
-func main() {
-    var s Shape = Rectangle{Width: 10, Height: 5}
-    fmt.Println(s.Area())
+# INTERFACE AS A CONTRACT
+func PrintDetails(s Stringer) {
+    fmt.Println("Details:", s.String())
 }`,
 				},
+
 				{
 					Title: "Implicit Satisfaction",
-					Content: `**Implicit Interface Satisfaction:**
-- No "implements" keyword
-- Type automatically satisfies interface if methods match
-- Enables decoupling and flexibility
-- Interfaces are satisfied implicitly at compile time`,
-					CodeExamples: `package main
+					Content: "In many languages (like Java), a class must explicitly state which interfaces it implements using a keyword like `implements`. In Go, this is done **implicitly**. This is a form of structural typing often referred to as \"Duck Typing\": *if it walks like a duck and quacks like a duck, it is a duck.*\n\n" +
+						"**1. No Declaration Needed**: If your struct has all the methods required by an interface, it automagically implements that interface. You don't need to import the interface or declare any connection to it.\n\n" +
+						"**2. Decoupling**: This allows you to define interfaces for types you don't even own (like types from the standard library or third-party packages) and use them in your functions.\n\n" +
+						"**3. Compile-time Safety**: Even though the connection is implicit, Go's compiler still checks it strictly. If a type is missing a method required by an interface, your code will fail to compile.",
+					CodeExamples: `# THE DUCK TEST
+type Flyer interface { Fly() }
 
-import "fmt"
+type Bird struct{}
+func (b Bird) Fly() { fmt.Println("Flap flap") }
 
-type Writer interface {
-    Write([]byte) (int, error)
-}
+# Bird AUTOMATICALLY implements Flyer.
 
-type File struct {
-    name string
-}
-
-func (f File) Write(data []byte) (int, error) {
-    fmt.Printf("Writing to %s: %s\n", f.name, string(data))
-    return len(data), nil
-}
-
-// File automatically satisfies Writer interface
-func save(w Writer, data []byte) {
-    w.Write(data)
-}
-
-func main() {
-    f := File{name: "output.txt"}
-    save(f, []byte("Hello"))
+# THIRD-PARTY INTEGRATION
+# You can define an interface in your package that matches methods 
+# in a library you use, allowing you to mock that library for testing.
+type Saver interface {
+    Save(data []byte) error
 }`,
 				},
+
 				{
 					Title: "Empty Interface",
-					Content: `**Empty Interface (interface{}):**
-- Can hold any type
-- Used for generic-like behavior (before Go 1.18)
-- Type assertions needed to use
-- Common in standard library`,
-					CodeExamples: `package main
+					Content: "The **Empty Interface** is defined as `interface{}`. Because it specifies zero methods, absolutely **every type** in Go satisfies the empty interface. It is the closest thing Go has to a \"top type\" (like `Object` in Java or `any` in TypeScript).\n\n" +
+						"**1. The 'any' Alias**: Since Go 1.18, `any` is a built-in alias for `interface{}`. They are exactly identical, and `any` is now the preferred way to write it for cleaner code.\n\n" +
+						"**2. When to Use**: Use the empty interface when you need to handle values of unknown types, such as in logging, JSON unmarshaling, or when building generic data containers (though modern Go prefers Generics for this).\n\n" +
+						"**3. The Catch**: An `interface{}` value doesn't have any methods of its own. To perform operations on the underlying value (like math on an `int`), you must first convert it back to its concrete type using **Type Assertions**.",
+					CodeExamples: `# THE VERSATILE 'any'
+var i any
 
-import "fmt"
+i = 42
+i = "hello"
+i = true
 
-func printValue(v interface{}) {
-    // Type assertion
-    switch val := v.(type) {
-    case int:
-        fmt.Printf("Integer: %d\n", val)
-    case string:
-        fmt.Printf("String: %s\n", val)
-    case bool:
-        fmt.Printf("Boolean: %v\n", val)
-    default:
-        fmt.Printf("Unknown type: %v\n", val)
-    }
+# PASSING ANY TYPE
+func Log(v any) {
+    fmt.Printf("Logging: %v\n", v)
 }
 
-func main() {
-    printValue(42)
-    printValue("hello")
-    printValue(true)
-}`,
+# SLICE OF ANY
+mixed := []any{1, "two", 3.0}`,
 				},
+
 				{
-					Title: "Type Assertions",
-					Content: `**Type Assertions:**
-- Extract concrete type from interface
-- Syntax: value, ok := interface.(Type)
-- Returns value and boolean indicating success
-- Panics if type doesn't match (without ok check)
+					Title: "Type Assertions & Switches",
+					Content: "Since an interface variable can hold any type that satisfies it, you often need to \"unpack\" that value to use its concrete fields or methods. Go provides two ways to do this: Type Assertions and Type Switches.\n\n" +
+						"**1. Type Assertion**: Used to access the underlying concrete value. Syntax: `v, ok := i.(T)`. If `ok` is true, the assertion succeeded. If you omit `ok` (e.g., `v := i.(T)`) and the type is wrong, your program will **panic**.\n\n" +
+						"**2. Type Switch**: A cleaner way to handle multiple possible types for an interface variable. It uses a modified `switch` syntax: `switch v := i.(type)`.\n\n" +
+						"**3. Defensive Coding**: Always use the \"comma-ok\" idiom for assertions or use a type switch to avoid unexpected runtime crashes.",
+					CodeExamples: `# THE COMMA-OK IDIOM
+var i any = "hello"
 
-**Type Switches:**
-- Switch on type of interface value
-- More convenient than multiple assertions`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func processValue(v interface{}) {
-    // Type assertion with ok check
-    if str, ok := v.(string); ok {
-        fmt.Printf("String: %s\n", str)
-    } else if num, ok := v.(int); ok {
-        fmt.Printf("Number: %d\n", num)
-    }
-    
-    // Type switch
-    switch val := v.(type) {
-    case string:
-        fmt.Printf("String: %s\n", val)
-    case int:
-        fmt.Printf("Int: %d\n", val)
-    case float64:
-        fmt.Printf("Float: %f\n", val)
-    default:
-        fmt.Printf("Unknown: %v\n", val)
-    }
+# Safe Assertion
+s, ok := i.(string)
+if ok {
+    fmt.Println(s) // "hello"
 }
 
-func main() {
-    processValue("hello")
-    processValue(42)
-    processValue(3.14)
+# THE TYPE SWITCH
+func handle(i any) {
+    switch v := i.(type) {
+    case int:
+        fmt.Printf("Twice %d is %d\n", v, v*2)
+    case string:
+        fmt.Printf("Length of %q is %d\n", v, len(v))
+    default:
+        fmt.Printf("Unknown type %T\n", v)
+    }
 }`,
 				},
+
 				{
 					Title: "Interface Composition",
-					Content: `**Interface Composition:**
-- Interfaces can embed other interfaces
-- Creates larger interface from smaller ones
-- Type must implement all embedded methods
-- Promotes code reuse and flexibility`,
-					CodeExamples: `package main
+					Content: "In Go, large interfaces are often built by combining smaller ones. This is called **Interface Composition** (or embedding). It is a key reason why Go interfaces are typically very small (often just one or two methods).\n\n" +
+						"**1. Embedding Syntax**: You can embed an interface in another just by listing its name (no field name needed). The new interface then includes all the methods of the embedded one.\n\n" +
+						"**2. Implementation**: To satisfy a composed interface, a type must implement **every method** from all the embedded interfaces.\n\n" +
+						"**3. Standard Examples**: The `io` package provides perfect examples: `io.ReadWriter` is composed of `io.Reader` and `io.Writer`, and `io.ReadWriteCloser` adds `io.Closer` to that mix.",
+					CodeExamples: `# REUSABLE BLOCKS
+type Reader interface { Read(p []byte) (n int, err error) }
+type Writer interface { Write(p []byte) (n int, err error) }
 
-import "fmt"
-
-type Reader interface {
-    Read([]byte) (int, error)
-}
-
-type Writer interface {
-    Write([]byte) (int, error)
-}
-
-// Composed interface
+# INTERFACE COMPOSITION
 type ReadWriter interface {
     Reader
     Writer
 }
 
-type File struct {
-    data []byte
-}
-
-func (f *File) Read(b []byte) (int, error) {
-    copy(b, f.data)
-    return len(f.data), nil
-}
-
-func (f *File) Write(b []byte) (int, error) {
-    f.data = append(f.data, b...)
-    return len(b), nil
-}
-
-func main() {
-    var rw ReadWriter = &File{}
-    rw.Write([]byte("Hello"))
-    
-    buf := make([]byte, 10)
-    rw.Read(buf)
-    fmt.Println(string(buf))
+# MULTIPLE EMBEDDING
+type FileHandler interface {
+    ReadWriter
+    Close() error
 }`,
 				},
+
 				{
 					Title: "Common Interfaces",
-					Content: `**Standard Library Interfaces:**
-
-- **io.Reader**: Read data
-- **io.Writer**: Write data
-- **io.Closer**: Close resource
-- **fmt.Stringer**: String representation
-- **error**: Error values
-- **sort.Interface**: Sorting
-
-**Implementing Standard Interfaces:**
-Makes your types work with standard library functions.`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "io"
-    "os"
-)
-
-type Counter struct {
-    count int
+					Content: "Go's power lies in a few extremely simple, pervasive interfaces found in the standard library. By implementing these, your types can plug into a vast ecosystem of existing Go code.\n\n" +
+						"**1. fmt.Stringer**: The most common interface. If your type has a `String() string` method, `fmt.Printf` and others will use it automatically for printing.\n\n" +
+						"**2. error**: Built-in interface for error handling. Any type with an `Error() string` method is an error.\n\n" +
+						"**3. io.Reader & io.Writer**: These are the backbone of Go's I/O system. They abstract away the details of where data is coming from or going, whether it's a file, a network socket, or an in-memory buffer.",
+					CodeExamples: `# fmt.Stringer
+func (u User) String() string {
+    return fmt.Sprintf("%s <%s>", u.Name, u.Email)
 }
 
-func (c *Counter) Write(p []byte) (int, error) {
-    c.count += len(p)
-    return len(p), nil
+# error (Custom Error)
+type MyError struct { Msg string }
+func (e MyError) Error() string { return e.Msg }
+
+# io.Writer (Backbone)
+func Greet(w io.Writer, name string) {
+    fmt.Fprintf(w, "Hello, %s\n", name)
 }
-
-func main() {
-    var w io.Writer = &Counter{}
-    fmt.Fprintf(w, "Hello")
-    
-    // Counter implements io.Writer
-    fmt.Fprintf(os.Stdout, "World")
-}`,
-				},
-				{
-					Title: "Interface Composition",
-					Content: `Interfaces can embed other interfaces, creating larger interfaces through composition.
-
-**Composition Syntax:**
-- Embed interface without method name
-- All embedded methods become part of interface
-- Type must implement all methods
-- Promotes code reuse
-
-**Benefits:**
-- Code reuse
-- Flexible design
-- Clear intent
-- Standard library pattern
-
-**Common Compositions:**
-- io.ReadWriter = io.Reader + io.Writer
-- io.ReadWriteCloser = io.Reader + io.Writer + io.Closer
-- http.ResponseWriter = io.Writer + http.Flusher + http.Hijacker
-
-**Best Practices:**
-- Compose small, focused interfaces
-- Follow standard library patterns
-- Document composed interfaces
-- Use for code reuse`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "io"
-)
-
-type Reader interface {
-    Read([]byte) (int, error)
-}
-
-type Writer interface {
-    Write([]byte) (int, error)
-}
-
-type Closer interface {
-    Close() error
-}
-
-// Composed interfaces
-type ReadWriter interface {
-    Reader
-    Writer
-}
-
-type ReadWriteCloser interface {
-    Reader
-    Writer
-    Closer
-}
-
-type File struct {
-    data []byte
-    pos  int
-}
-
-func (f *File) Read(b []byte) (int, error) {
-    if f.pos >= len(f.data) {
-        return 0, io.EOF
-    }
-    n := copy(b, f.data[f.pos:])
-    f.pos += n
-    return n, nil
-}
-
-func (f *File) Write(b []byte) (int, error) {
-    f.data = append(f.data, b...)
-    return len(b), nil
-}
-
-func (f *File) Close() error {
-    f.data = nil
-    return nil
-}
-
-func main() {
-    var rwc ReadWriteCloser = &File{}
-    
-    rwc.Write([]byte("Hello"))
-    
-    buf := make([]byte, 10)
-    rwc.Read(buf)
-    fmt.Println(string(buf))
-    
-    rwc.Close()
-}`,
-				},
-				{
-					Title: "Empty Interface",
-					Content: `The empty interface (interface{}) represents any type, enabling generic-like behavior before Go 1.18.
-
-**Empty Interface:**
-- interface{} is alias for any (Go 1.18+)
-- Can hold any value
-- Zero value is nil
-- Used extensively before generics
-
-**Common Uses:**
-- Accept any type as parameter
-- Store heterogeneous collections
-- JSON unmarshaling
-- Reflection operations
-- Function parameters (fmt.Printf, etc.)
-
-**Working with Empty Interface:**
-- Type assertions to extract type
-- Type switches for multiple types
-- Reflection for inspection
-- No type safety (use generics when possible)
-
-**Best Practices:**
-- Use sparingly (prefer generics in Go 1.18+)
-- Document expected types
-- Use type assertions/switches
-- Consider generics for new code
-- Prefer specific interfaces when possible`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Accept any type
-func printValue(v interface{}) {
-    // Type switch
-    switch val := v.(type) {
-    case int:
-        fmt.Printf("Integer: %d\n", val)
-    case string:
-        fmt.Printf("String: %s\n", val)
-    case bool:
-        fmt.Printf("Boolean: %v\n", val)
-    default:
-        fmt.Printf("Unknown: %v (type: %T)\n", val, val)
-    }
-}
-
-// Store different types
-func storeMixed() {
-    var values []interface{}
-    values = append(values, 42)
-    values = append(values, "hello")
-    values = append(values, true)
-    values = append(values, 3.14)
-    
-    for _, v := range values {
-        printValue(v)
-    }
-}
-
-// Type assertion
-func extractString(v interface{}) (string, bool) {
-    str, ok := v.(string)
-    return str, ok
-}
-
-func main() {
-    printValue(42)
-    printValue("hello")
-    printValue(true)
-    
-    storeMixed()
-    
-    if str, ok := extractString("test"); ok {
-        fmt.Println("Extracted:", str)
-    }
-}`,
+# Can pass os.Stdout, a file, or any buffer!`,
 				},
 			},
 			ProblemIDs: []int{},

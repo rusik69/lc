@@ -5,1090 +5,304 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
-			ID:          37,
+			ID:          38,
 			Title:       "Generics (Go 1.18+)",
 			Description: "Learn Go generics: type parameters, constraints, and modern generic programming patterns.",
 			Order:       7,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction to Generics",
-					Content: `Generics (added in Go 1.18) allow you to write functions and data structures that work with *any* type, without sacrificing type safety or performance.
-
-**The Old Way (Pre-1.18):**
-You had to use 'interface{}' (now called 'any') and use runtime type assertions. It was slow and unsafe (panic if you guessed wrong).
-
-**The New Way (Generics):**
-You define "Type Parameters". It's like a function parameter, but for types.
-
-**Syntax:**
-'func FunctionName[T Constraint](param T) T { ... }'
-
-*   **[T any]**: 'T' is the name of the generic type. 'any' is the constraint (allows anything).
-*   **(param T)**: The function takes an argument of type 'T'.
-
-**Real-World Use Cases:**
-1.  **Collections:** Sets, Stacks, Queues, Linked Lists that work on *any* type.
-2.  **Utility Functions:** 'Map', 'Filter', 'Reduce', 'Min', 'Max'.
-3.  **Database Code:** Repositories that work for any struct ID type.`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Generic Function
-// [T comparable] means T must be a type that supports == and !=
-func FindIndex[T comparable](slice []T, target T) int {
-    for i, v := range slice {
-        if v == target {
-            return i
-        }
+					Content: "Added in Go 1.18, **Generics** allow you to write functions and data structures that work with any type while maintaining strict compile-time type safety.\n\n" +
+						"**1. Type Parameters**: You define a generic by adding square brackets `[T Constraint]` after the function name or type name. `T` is a placeholder for the type, and `Constraint` specifies what that type is allowed to do.\n\n" +
+						"**2. The 'any' Constraint**: If you don't need the type to have any specific methods, use `any`. This allows literally any type (int, struct, pointer, etc.) to be used.\n\n" +
+						"**3. Performance**: Unlike Generics in some other languages (like Java's type erasure), Go's Generics are highly efficient and don't require runtime type assertions.",
+					CodeExamples: `# GENERIC FUNCTION
+func Reverse[T any](s []T) []T {
+    res := make([]T, len(s))
+    for i, v := range s {
+        res[len(s)-1-i] = v
     }
-    return -1
-}
-
-func main() {
-    // Works with ints!
-    ints := []int{10, 20, 30}
-    fmt.Println(FindIndex(ints, 20)) // 1
-
-    // Works with strings!
-    strs := []string{"foo", "bar", "baz"}
-    fmt.Println(FindIndex(strs, "baz")) // 2
+    return res
 }`,
 				},
+
 				{
 					Title: "Type Constraints",
-					Content: `**Understanding Type Constraints:**
-
-Type constraints define what types can be used with a generic function or type. They ensure type safety and enable operations on generic types.
-
-**Built-in Constraints:**
-
-**1. any:**
-- Alias for interface{}
-- Any type allowed
-- Most permissive constraint
-
-**2. comparable:**
-- Types that can be compared with == and !=
-- Includes: numbers, strings, booleans, pointers, arrays, structs
-- Excludes: slices, maps, functions
-
-**3. constraints Package (Go 1.18+):**
-- constraints.Ordered: Types that can be ordered (<, >, <=, >=)
-- constraints.Signed: Signed integer types
-- constraints.Unsigned: Unsigned integer types
-- constraints.Integer: All integer types
-- constraints.Float: All float types
-- constraints.Complex: All complex types
-
-**Custom Constraints:**
-
-**Interface Constraints:**
-- Use interfaces as constraints
-- Type must implement interface methods
-- Enables method calls on generic types
-
-**Type Sets (Go 1.18+):**
-- Define sets of types explicitly
-- More flexible than interfaces
-- Can specify exact types
-
-**Union Constraints:**
-- Combine multiple constraints
-- Type must satisfy any constraint
-- Syntax: T1 | T2 | T3
-
-**Best Practices:**
-- Use most specific constraint possible
-- Prefer constraints.Ordered over any for comparisons
-- Use interfaces for method requirements
-- Document constraint requirements`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "golang.org/x/exp/constraints"
-)
-
-// Using constraints.Ordered for comparisons
-func Min[T constraints.Ordered](a, b T) T {
-    if a < b {
-        return a
+					Content: "Type constraints define the set of permitted types that can be used for a type parameter. They ensure that the generic function only uses operations that all permitted types support.\n\n" +
+						"**1. Predefined Constraints**: \n" +
+						"- **`any`**: Allows any type. Use this when the function doesn't perform any operations on the generic values (e.g., just storing them).\n" +
+						"- **`comparable`**: Allows any type that supports `==` and `!=`. This is required for map keys and set-like logic.\n\n" +
+						"**2. Custom Constraints**: You define constraints using interfaces. A type set can be defined using the union operator `|` (e.g., `int | float64`).\n\n" +
+						"**3. The Approximation Operator (`~`)**: If you use `~int`, the constraint allows both `int` and any custom types defined with `type MyInt int`. Without `~`, only the exact type `int` is allowed.",
+					CodeExamples: `# COMPARABLE CONSTRAINT
+func Contains[T comparable](s []T, x T) bool {
+    for _, v := range s {
+        if v == x { return true }
     }
-    return b
+    return false
 }
 
-// Using constraints.Integer for integer operations
-func Sum[T constraints.Integer](numbers []T) T {
-    var sum T
-    for _, n := range numbers {
-        sum += n
-    }
-    return sum
-}
-
-// Custom interface constraint
-type Stringer interface {
-    String() string
-}
-
-func Print[T Stringer](value T) {
-    fmt.Println(value.String())
-}
-
-// Type set constraint
+# TYPE SET CONSTRAINTS
 type Numeric interface {
-    ~int | ~float64  // ~ means underlying type
+    ~int | ~float64 | ~complex128
 }
 
-func Double[T Numeric](value T) T {
-    return value * 2
+func Add[T Numeric](a, b T) T {
+    return a + b
 }
 
-// Union constraint
-type Number interface {
-    int | float64 | string
-}
-
-func Process[T Number](value T) {
-    fmt.Printf("Processing: %v\n", value)
-}
-
-func main() {
-    // Using constraints.Ordered
-    minInt := Min(5, 3)
-    fmt.Println(minInt)  // 3
-    
-    minFloat := Min(3.14, 2.71)
-    fmt.Println(minFloat)  // 2.71
-    
-    // Using constraints.Integer
-    sum := Sum([]int{1, 2, 3, 4, 5})
-    fmt.Println(sum)  // 15
-    
-    // Custom constraint
-    type MyInt int
-    doubled := Double(MyInt(5))
-    fmt.Println(doubled)  // 10
-}`,
+# USAGE
+type MyInt int
+Add(MyInt(1), MyInt(2)) // OK because of ~int`,
 				},
+
 				{
 					Title: "Generic Data Structures",
-					Content: `**Generic Collections:**
+					Content: "Generics shine when building common data structures (Stacks, Queues, Trees) that should work for any type without sacrificing type safety or requiring multiple copies of the same logic.\n\n" +
+						"**1. Type Definitions**: To define a generic struct, add the type parameter to the struct name: `type Container[T any] struct { data T }`.\n\n" +
+						"**2. Methods on Generic Types**: Methods must also declare the type parameter: `func (c *Container[T]) Get() T { ... }`.\n\n" +
+						"**3. Instantiation**: When you create an instance of a generic type, you typically specify the type: `c := Container[int]{}`. For functions, Go can often infer the type, but for structs, it's usually explicit.",
+					CodeExamples: `# GENERIC STACK
+type Stack[T any] []T
 
-Generics enable type-safe, reusable data structures without sacrificing performance or requiring code generation.
-
-**Common Generic Data Structures:**
-
-**1. Stack:**
-- LIFO (Last In, First Out)
-- Push and Pop operations
-- Type-safe element storage
-
-**2. Queue:**
-- FIFO (First In, First Out)
-- Enqueue and Dequeue operations
-- Useful for task processing
-
-**3. Linked List:**
-- Dynamic size
-- Efficient insertions/deletions
-- Type-safe node values
-
-**4. Binary Tree:**
-- Hierarchical structure
-- Generic node values
-- Type-safe operations
-
-**5. Heap/Priority Queue:**
-- Maintains order property
-- Generic element types
-- Efficient min/max operations
-
-**Benefits:**
-- Type safety at compile time
-- No type assertions needed
-- Better performance than interface-based solutions
-- Code reuse across types
-
-**Real-World Use Cases:**
-- Generic collections in libraries
-- Type-safe algorithms
-- Reusable data structures
-- API design with generics`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Generic Stack
-type Stack[T any] struct {
-    items []T
+func (s *Stack[T]) Push(v T) {
+    *s = append(*s, v)
 }
 
-func NewStack[T any]() *Stack[T] {
-    return &Stack[T]{items: make([]T, 0)}
+func (s *Stack[T]) Pop() T {
+    res := (*s)[len(*s)-1]
+    *s = (*s)[:len(*s)-1]
+    return res
 }
 
-func (s *Stack[T]) Push(item T) {
-    s.items = append(s.items, item)
-}
-
-func (s *Stack[T]) Pop() (T, bool) {
-    if len(s.items) == 0 {
-        var zero T
-        return zero, false
-    }
-    item := s.items[len(s.items)-1]
-    s.items = s.items[:len(s.items)-1]
-    return item, true
-}
-
-func (s *Stack[T]) Peek() (T, bool) {
-    if len(s.items) == 0 {
-        var zero T
-        return zero, false
-    }
-    return s.items[len(s.items)-1], true
-}
-
-// Generic Queue
-type Queue[T any] struct {
-    items []T
-}
-
-func NewQueue[T any]() *Queue[T] {
-    return &Queue[T]{items: make([]T, 0)}
-}
-
-func (q *Queue[T]) Enqueue(item T) {
-    q.items = append(q.items, item)
-}
-
-func (q *Queue[T]) Dequeue() (T, bool) {
-    if len(q.items) == 0 {
-        var zero T
-        return zero, false
-    }
-    item := q.items[0]
-    q.items = q.items[1:]
-    return item, true
-}
-
-// Generic Binary Tree Node
-type TreeNode[T comparable] struct {
-    Value T
-    Left  *TreeNode[T]
-    Right *TreeNode[T]
-}
-
-func (n *TreeNode[T]) Insert(value T) {
-    // Simplified insertion logic
-    if n.Value < value {  // Requires constraints.Ordered
-        if n.Right == nil {
-            n.Right = &TreeNode[T]{Value: value}
-        } else {
-            n.Right.Insert(value)
-        }
-    } else {
-        if n.Left == nil {
-            n.Left = &TreeNode[T]{Value: value}
-        } else {
-            n.Left.Insert(value)
-        }
-    }
-}
-
-func main() {
-    // Generic Stack with int
-    intStack := NewStack[int]()
-    intStack.Push(1)
-    intStack.Push(2)
-    intStack.Push(3)
-    val, _ := intStack.Pop()
-    fmt.Println(val)  // 3
-    
-    // Generic Stack with string
-    stringStack := NewStack[string]()
-    stringStack.Push("hello")
-    stringStack.Push("world")
-    str, _ := stringStack.Pop()
-    fmt.Println(str)  // world
-    
-    // Generic Queue
-    queue := NewQueue[int]()
-    queue.Enqueue(1)
-    queue.Enqueue(2)
-    queue.Enqueue(3)
-    item, _ := queue.Dequeue()
-    fmt.Println(item)  // 1 (FIFO)
-}`,
+# USAGE
+var s Stack[string]
+s.Push("Hello")
+val := s.Pop() // val is inferred as string`,
 				},
+
 				{
 					Title: "Generic Algorithms",
-					Content: `**Generic Algorithm Patterns:**
-
-Generics enable writing algorithms that work with any type while maintaining type safety and performance.
-
-**Common Generic Algorithms:**
-
-**1. Map/Transform:**
-- Apply function to each element
-- Return new slice with transformed values
-- Type-safe transformation
-
-**2. Filter:**
-- Select elements matching predicate
-- Return filtered slice
-- Generic predicate functions
-
-**3. Reduce/Fold:**
-- Combine elements into single value
-- Generic accumulator type
-- Flexible reduction operations
-
-**4. Find/Search:**
-- Find element matching condition
-- Generic search criteria
-- Type-safe comparisons
-
-**5. Sort:**
-- Sort slices of any comparable type
-- Custom comparison functions
-- Efficient sorting algorithms
-
-**Benefits:**
-- Reusable across types
-- Type-safe operations
-- No runtime overhead
-- Better than interface-based solutions
-
-**Best Practices:**
-- Use appropriate constraints
-- Keep algorithms generic and reusable
-- Document type requirements
-- Test with multiple types`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "golang.org/x/exp/constraints"
-)
-
-// Generic Map function
-func Map[T, U any](slice []T, fn func(T) U) []U {
-    result := make([]U, len(slice))
-    for i, v := range slice {
-        result[i] = fn(v)
+					Content: "Generics enable the creation of high-level utility functions like `Map`, `Filter`, and `Reduce` that work across different slice types while maintaining type safety.\n\n" +
+						"**1. Functional Patterns**: You can now write a single `Filter` function that works for `[]int`, `[]string`, or complex structs. This promotes the 'Don't Repeat Yourself' (DRY) principle.\n\n" +
+						"**2. Multiple Type Parameters**: Functions can have more than one type parameter. For example, a `Map` function needs two: one for the input type `T` and one for the output type `U`.\n\n" +
+						"**3. Zero Value Pattern**: When working with generics, you might need to return a \"zero value\" for a type you don't know yet. A common pattern is `var zero T; return zero`.",
+					CodeExamples: `# GENERIC MAP
+func Map[T any, U any](s []T, f func(T) U) []U {
+    res := make([]U, len(s))
+    for i, v := range s {
+        res[i] = f(v)
     }
-    return result
+    return res
 }
 
-// Generic Filter function
-func Filter[T any](slice []T, predicate func(T) bool) []T {
-    var result []T
-    for _, v := range slice {
-        if predicate(v) {
-            result = append(result, v)
-        }
-    }
-    return result
-}
-
-// Generic Reduce function
-func Reduce[T, U any](slice []T, initial U, fn func(U, T) U) U {
-    result := initial
-    for _, v := range slice {
-        result = fn(result, v)
-    }
-    return result
-}
-
-// Generic Find function
-func Find[T comparable](slice []T, value T) (int, bool) {
-    for i, v := range slice {
-        if v == value {
-            return i, true
-        }
-    }
-    return -1, false
-}
-
-// Generic Contains function
-func Contains[T comparable](slice []T, value T) bool {
-    _, found := Find(slice, value)
-    return found
-}
-
-// Generic Min/Max
-func Min[T constraints.Ordered](slice []T) (T, bool) {
-    if len(slice) == 0 {
-        var zero T
-        return zero, false
-    }
-    min := slice[0]
-    for _, v := range slice[1:] {
-        if v < min {
-            min = v
-        }
-    }
-    return min, true
-}
-
-func main() {
-    // Map: Square numbers
-    numbers := []int{1, 2, 3, 4, 5}
-    squared := Map(numbers, func(x int) int {
-        return x * x
-    })
-    fmt.Println(squared)  // [1, 4, 9, 16, 25]
-    
-    // Filter: Even numbers
-    evens := Filter(numbers, func(x int) bool {
-        return x%2 == 0
-    })
-    fmt.Println(evens)  // [2, 4]
-    
-    // Reduce: Sum
-    sum := Reduce(numbers, 0, func(acc, x int) int {
-        return acc + x
-    })
-    fmt.Println(sum)  // 15
-    
-    // Find
-    index, found := Find(numbers, 3)
-    fmt.Println(index, found)  // 2 true
-    
-    // Contains
-    hasFive := Contains(numbers, 5)
-    fmt.Println(hasFive)  // true
-    
-    // Min
-    min, ok := Min(numbers)
-    fmt.Println(min, ok)  // 1 true
-}`,
-				},
-			},
-			ProblemIDs: []int{},
-		},
-		{
-			ID:          38,
-			Title:       "Error Handling",
-			Description: "Learn Go's error handling patterns, custom errors, and panic/recover.",
-			Order:       8,
-			Lessons: []problems.Lesson{
-				{
-					Title: "Error Type",
-					Content: `**Errors in Go:**
-- Error is an interface type
-- Convention: return error as last value
-- nil means no error
-- Check errors explicitly (no exceptions)
-
-**Error Interface:**
-type error interface {
-    Error() string
-}`,
-					CodeExamples: `package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-func divide(a, b float64) (float64, error) {
-    if b == 0 {
-        return 0, errors.New("division by zero")
-    }
-    return a / b, nil
-}
-
-func main() {
-    result, err := divide(10, 2)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    fmt.Println("Result:", result)
-}`,
-				},
-				{
-					Title: "Error Handling Patterns",
-					Content: `Go doesn't have exceptions. We treats errors as values. This forces you to handle failure cases explicitly, leading to reliable software.
-
-**The Golden Rules:**
-1.  **Check errors immediately:** Don't ignore them.
-2.  **Add context:** If an error occurs, wrap it with more info using '%w'.
-3.  **Sentinel Errors:** Use 'errors.Is' to check for specific error types (like 'ErrNotFound').
-
-**Modern Error Checking (Go 1.13+):**
-*   **errors.Is(err, target):** Checks if 'err' matches 'target' (even if wrapped).
-*   **errors.As(err, &target):** Checks if 'err' can be cast to a specific custom error type.
-
-**Don't panic!**
-Only use 'panic()' for unrecoverable startup errors (like missing config). For everything else, return an error.`,
-					CodeExamples: `package main
-
-import (
-    "errors"
-    "fmt"
-    "os"
-)
-
-var ErrNotFound = errors.New("user not found")
-
-func findUser(id int) error {
-    if id == 0 {
-        return ErrNotFound
-    }
-    // Simulate DB failure
-    if id < 0 {
-        return fmt.Errorf("database connection failed: %w", errors.New("connection timeout"))
-    }
-    return nil
-}
-
-func main() {
-    err := findUser(0)
-    
-    // Check for specific error
-    if errors.Is(err, ErrNotFound) {
-        fmt.Println("User missing!")
-        return
-    }
-    
-    // Check for other errors
-    if err != nil {
-        fmt.Printf("Critical error: %v\n", err)
-    }
-}`,
-				},
-				{
-					Title: "Custom Error Types",
-					Content: `**Custom Errors:**
-- Create struct implementing error interface
-- Can include additional fields
-- Useful for error categorization
-- Enable type assertions for error handling`,
-					CodeExamples: `package main
-
-import "fmt"
-
-type ValidationError struct {
-    Field   string
-    Message string
-}
-
-func (e ValidationError) Error() string {
-    return fmt.Sprintf("Validation error in %s: %s", e.Field, e.Message)
-}
-
-type NotFoundError struct {
-    Resource string
-}
-
-func (e NotFoundError) Error() string {
-    return fmt.Sprintf("%s not found", e.Resource)
-}
-
-func validateUser(name string) error {
-    if name == "" {
-        return ValidationError{
-            Field:   "name",
-            Message: "cannot be empty",
-        }
-    }
-    return nil
-}
-
-func main() {
-    err := validateUser("")
-    if err != nil {
-        fmt.Println(err)
-    }
-}`,
-				},
-				{
-					Title: "Error Wrapping",
-					Content: `**Error Wrapping (Go 1.13+):**
-- Add context to errors
-- Preserve original error
-- Use fmt.Errorf with %w verb
-- Unwrap with errors.Unwrap()
-- Check with errors.Is()
-- Extract with errors.As()`,
-					CodeExamples: `package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-var ErrNotFound = errors.New("not found")
-
-func findUser(id int) error {
-    if id < 0 {
-        return fmt.Errorf("invalid id %d: %w", id, ErrNotFound)
-    }
-    return nil
-}
-
-func main() {
-    err := findUser(-1)
-    
-    // Check if error wraps ErrNotFound
-    if errors.Is(err, ErrNotFound) {
-        fmt.Println("User not found")
-    }
-    
-    // Extract wrapped error
-    var notFoundErr error
-    if errors.As(err, &notFoundErr) {
-        fmt.Println("Extracted:", notFoundErr)
-    }
-}`,
-				},
-				{
-					Title: "Panic and Recover",
-					Content: `**Panic:**
-- Stops normal execution
-- Deferred functions still run
-- Should be used for programmer errors, not normal errors
-- Similar to exceptions in other languages
-
-**Recover:**
-- Recovers from panic
-- Only useful inside deferred functions
-- Returns value passed to panic
-- Use sparingly - prefer error returns`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func riskyFunction() {
-    defer func() {
-        if r := recover(); r != nil {
-            fmt.Println("Recovered from panic:", r)
-        }
-    }()
-    
-    panic("something went wrong")
-    fmt.Println("This won't execute")
-}
-
-func main() {
-    riskyFunction()
-    fmt.Println("Program continues")
-}`,
-				},
-				{
-					Title: "Error Wrapping Advanced",
-					Content: `Advanced error wrapping techniques enable better error handling and debugging in complex applications.
-
-**Error Wrapping Patterns:**
-
-**1. Multi-Level Wrapping:**
-- Wrap errors at each level
-- Preserve full error chain
-- Enables precise error matching
-
-**2. Error Annotations:**
-- Add context at each level
-- Include function names, parameters
-- Helpful for debugging
-
-**3. Error Inspection:**
-- errors.Is(): Check for specific error in chain
-- errors.As(): Extract error of specific type
-- errors.Unwrap(): Get next error
-
-**4. Error Chains:**
-- Errors can wrap multiple levels
-- Chain preserved through wrapping
-- Can traverse entire chain
-
-**Best Practices:**
-- Wrap at appropriate levels
-- Add meaningful context
-- Use errors.Is() for sentinel errors
-- Use errors.As() for error types
-- Don't wrap unnecessarily`,
-					CodeExamples: `package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-var (
-    ErrNotFound     = errors.New("not found")
-    ErrInvalidInput = errors.New("invalid input")
-)
-
-func findUser(id int) error {
-    if id < 0 {
-        return fmt.Errorf("invalid user id %d: %w", id, ErrInvalidInput)
-    }
-    if id > 1000 {
-        return fmt.Errorf("user %d: %w", id, ErrNotFound)
-    }
-    return nil
-}
-
-func getUserProfile(id int) error {
-    user, err := findUser(id)
-    if err != nil {
-        return fmt.Errorf("failed to get user profile: %w", err)
-    }
-    // Process user...
-    return nil
-}
-
-func handleRequest(id int) error {
-    profile, err := getUserProfile(id)
-    if err != nil {
-        return fmt.Errorf("request failed: %w", err)
-    }
-    // Handle profile...
-    return nil
-}
-
-func main() {
-    err := handleRequest(-1)
-    
-    // Check entire chain
-    if errors.Is(err, ErrInvalidInput) {
-        fmt.Println("Invalid input detected")
-    }
-    
-    if errors.Is(err, ErrNotFound) {
-        fmt.Println("Not found detected")
-    }
-    
-    // Print full error chain
-    fmt.Printf("Full error: %v\n", err)
-    
-    // Unwrap chain
-    current := err
-    for current != nil {
-        fmt.Printf("  %v\n", current)
-        current = errors.Unwrap(current)
-    }
-}`,
-				},
-				{
-					Title: "Error Handling Best Practices",
-					Content: `Following best practices ensures robust, maintainable error handling throughout your Go application.
-
-**Core Principles:**
-- Check errors immediately
-- Return errors up the call stack
-- Add context when wrapping
-- Don't ignore errors
-- Handle errors appropriately
-
-**Error Handling Patterns:**
-
-**1. Early Return:**
-- Return immediately on error
-- Reduces nesting
-- Clear error paths
-- Most common pattern
-
-**2. Error Wrapping:**
-- Add context at each level
-- Use fmt.Errorf with %w
-- Preserve original error
-- Enable error inspection
-
-**3. Error Checking:**
-- Always check errors
-- Don't use _ to ignore
-- Handle or propagate
-- Log appropriately
-
-**4. Error Types:**
-- Create custom error types
-- Use errors.Is() and errors.As()
-- Enable type-specific handling
-- Export error variables
-
-**Common Mistakes:**
-- Ignoring errors with _
-- Not checking errors
-- Losing error context
-- Panicking for normal errors
-- Not wrapping errors
-
-**Best Practices:**
-- Check errors immediately
-- Return early on error
-- Wrap with context
-- Use errors.Is() and errors.As()
-- Document error behavior
-- Create error types for categories
-- Log errors appropriately
-- Don't panic for normal errors`,
-					CodeExamples: `package main
-
-import (
-    "errors"
-    "fmt"
-    "os"
-)
-
-// Good: Early return
-func readConfig(filename string) (string, error) {
-    data, err := os.ReadFile(filename)
-    if err != nil {
-        return "", fmt.Errorf("failed to read config %s: %w", filename, err)
-    }
-    return string(data), nil
-}
-
-// Good: Error wrapping
-func processUser(id int) error {
-    user, err := getUser(id)
-    if err != nil {
-        return fmt.Errorf("failed to get user %d: %w", id, err)
-    }
-    
-    err = validateUser(user)
-    if err != nil {
-        return fmt.Errorf("validation failed for user %d: %w", id, err)
-    }
-    
-    return nil
-}
-
-// Good: Error checking
-func safeOperation() error {
-    result, err := riskyOperation()
-    if err != nil {
-        return err  // Don't ignore
-    }
-    
-    // Use result only if no error
-    fmt.Println(result)
-    return nil
-}
-
-// Bad: Ignoring error
-func badExample() {
-    data, _ := os.ReadFile("file.txt")  // Don't do this!
-    fmt.Println(string(data))
-}
-
-// Good: Error type checking
-func handleError(err error) {
-    var validationErr ValidationError
-    if errors.As(err, &validationErr) {
-        fmt.Printf("Validation error: %s\n", validationErr.Message)
-        return
-    }
-    
-    var notFoundErr NotFoundError
-    if errors.As(err, &notFoundErr) {
-        fmt.Printf("Not found: %s\n", notFoundErr.Resource)
-        return
-    }
-    
-    fmt.Printf("Unknown error: %v\n", err)
-}
-
-func main() {
-    config, err := readConfig("config.json")
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    fmt.Println("Config:", config)
-}`,
+# USAGE
+nums := []int{1, 2, 3}
+strs := Map(nums, func(n int) string {
+    return fmt.Sprintf("Number %d", n)
+})`,
 				},
 			},
 			ProblemIDs: []int{},
 		},
 		{
 			ID:          39,
+			Title:       "Error Handling",
+			Description: "Learn Go's error handling patterns, custom errors, and panic/recover.",
+			Order:       8,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Error Type",
+					Content: "In Go, errors are not exceptions. Instead, an error is a normal value that implements the built-in `error` interface. This forces developers to handle failures explicitly, leading to more robust and predictable code.\n\n" +
+						"**1. The Interface**: The `error` interface is extremely simple, requiring only a single method: `Error() string`. Any type with this method is an error.\n\n" +
+						"**2. Returning Errors**: By convention, if a function can fail, its last return value should be of type `error`. If the function succeeds, it returns `nil` for the error.\n\n" +
+						"**3. Sentinel Errors**: You can define constant-like error values using `errors.New(\"message\")` to represent specific failure conditions that callers can check for.",
+					CodeExamples: `# CREATING ERRORS
+err := errors.New("something went wrong")
+
+# RETURNING ERRORS
+func FetchData() (string, error) {
+    if !connected {
+        return "", errors.New("no connection")
+    }
+    return "data", nil
+}
+
+# BASIC HANDLING
+data, err := FetchData()
+if err != nil {
+    log.Fatal(err)
+}`,
+				},
+
+				{
+					Title: "Error Handling Patterns",
+					Content: "Go doesn't have try/catch blocks. Errors are values that must be inspected. Modern Go (1.13+) introduced powerful patterns for working with error chains.\n\n" +
+						"**1. The 'Check' Rule**: Always check the error value before using any other returned data. The idiom is `if err != nil { ... }`.\n\n" +
+						"**2. Error Wrapping**: Use `fmt.Errorf(\"... %w\", ..., err)` to add context to an error while preserving the original error. The `%w` verb is special; it \"wraps\" the error so it can be unpacked later.\n\n" +
+						"**3. Inspection**: Use `errors.Is(err, target)` to check if an error (or any error in its chain) matches a specific value. Use `errors.As(err, &target)` to check if an error can be cast to a specific custom type.",
+					CodeExamples: `# WRAPPING ERRORS
+func ReadConfig() error {
+    err := os.Open("config.json")
+    if err != nil {
+        return fmt.Errorf("failed to open config: %w", err)
+    }
+    return nil
+}
+
+# INSPECTING THE CHAIN
+err := ReadConfig()
+if errors.Is(err, os.ErrNotExist) {
+    fmt.Println("File is missing!")
+}
+
+# TYPE ASSERTION (errors.As)
+var pathErr *os.PathError
+if errors.As(err, &pathErr) {
+    fmt.Println("Path error on:", pathErr.Path)
+}`,
+				},
+
+				{
+					Title: "Custom Error Types",
+					Content: "While `errors.New` is fine for simple messages, you often need to attach more data to an error (like a status code, a field name, or a timestamp). You do this by defining a **Custom Struct** that implements the `Error() string` method.\n\n" +
+						"**1. Rich Context**: A custom error struct can have any number of fields. This allows the caller to extract specific information about the failure using type assertions or `errors.As`.\n\n" +
+						"**2. Implementation**: You only need to provide the `Error() string` method. It is standard practice to return a human-readable string that describes the failure.\n\n" +
+						"**3. Pointers vs Values**: It is generally recommended to use a **pointer receiver** for your `Error()` method if the struct is large or if you want to ensure the error type is unique (pointers to different instances aren't equal).",
+					CodeExamples: `# CUSTOM ERROR STRUCT
+type QueryError struct {
+    Query  string
+    Err    error
+}
+
+func (e *QueryError) Error() string {
+    return fmt.Sprintf("query %q failed: %v", e.Query, e.Err)
+}
+
+# USAGE
+func Search(q string) error {
+    return &QueryError{Query: q, Err: errors.New("timeout")}
+}
+
+# INSPECTING CUSTOM DATA
+err := Search("select *")
+var qe *QueryError
+if errors.As(err, &qe) {
+    fmt.Println("Original query was:", qe.Query)
+}`,
+				},
+
+				{
+					Title: "Panic and Recover",
+					Content: "Go provides a mechanism for handling \"exceptional\" conditions that cannot be managed by regular error handling. This is done through `panic` and `recover`.\n\n" +
+						"**1. Panic**: Stops the normal execution of a goroutine. When a function calls `panic`, it immediately stops, and Go begins running any `defer`ed functions in that goroutine.\n\n" +
+						"**2. Recover**: A built-in function that regains control of a panicking goroutine. It is **only useful inside deferred functions**. If called during normal execution, it does nothing and returns `nil`.\n\n" +
+						"**3. When to Use**: Only use `panic` for truly unrecoverable errors (e.g., out of bounds, nil pointer dereference) or during program initialization. Never use it for normal control flow or expected errors (like a missing file).",
+					CodeExamples: `# RECOVERING FROM PANIC
+func Protect() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from:", r)
+        }
+    }()
+    
+    # TRIGGER PANIC
+    var slice []int
+    _ = slice[0] // Out of bounds panic!
+}
+
+# PROGRAM CONTINUES AFTER RECOVER
+func main() {
+    Protect()
+    fmt.Println("I am still alive!")
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          40,
 			Title:       "Concurrency",
 			Description: "Master goroutines, channels, select, and concurrent programming patterns.",
 			Order:       9,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Goroutines",
-					Content: `**Goroutines:**
-- Lightweight threads managed by Go runtime
-- Created with go keyword
-- Very cheap to create (thousands possible)
-- Multiplexed onto OS threads (M:N threading model)
-- Stack starts at 2KB, grows as needed (up to 1GB)
+					Content: "A **Goroutine** is a lightweight thread of execution managed by the Go runtime. They are the fundamental building blocks of Go's concurrency model, allowing you to run thousands of tasks simultaneously with very little overhead.\n\n" +
+						"**1. M:N Scheduling**: Go uses an M:N scheduler, meaning it multiplexes M goroutines onto N OS threads. This is far more efficient than OS threads because context switching happens in user space, not kernel space.\n\n" +
+						"**2. Dynamic Stacks**: OS threads usually have a fixed 2MB stack. Goroutines start with a tiny 2KB stack that grows and shrinks as needed, allowing you to run millions of them in a single program.\n\n" +
+						"**3. Concurrency vs Parallelism**: Concurrency is about *dealing* with lots of things at once (structure). Parallelism is about *doing* lots of things at once (execution). Goroutines enable concurrency; if you have multiple CPU cores, they can run in parallel.",
+					CodeExamples: `# STARTING A GOROUTINE
+go doWork() // Runs doWork concurrently
 
-**Starting Goroutines:**
-go functionCall()
+# ANONYMOUS GOROUTINE
+go func(msg string) {
+    fmt.Println(msg)
+}("Hello from goroutine")
 
-**Key Characteristics (2024-2025 Best Practices):**
-
-**1. Lightweight:**
-- 2KB initial stack (vs 1-2MB for OS threads)
-- Can create millions of goroutines
-- Efficient context switching
-- Managed by Go runtime scheduler
-
-**2. GOMAXPROCS:**
-- Controls number of OS threads used
-- Default: Number of CPU cores
-- Can be set: runtime.GOMAXPROCS(n)
-- Affects parallelism, not concurrency
-
-**3. Scheduling:**
-- Cooperative scheduling (goroutines yield control)
-- Preemptive scheduling for blocking operations
-- Work-stealing scheduler for load balancing
-- Efficient for I/O-bound and CPU-bound workloads
-
-**4. Coordination:**
-- Main goroutine must wait for others
-- Use sync.WaitGroup or channels to coordinate
-- Context package for cancellation and timeouts
-- Shared memory access needs synchronization
-
-**Best Practices:**
-- Don't create goroutines in loops without limits
-- Use worker pools for controlled concurrency
-- Always handle goroutine lifecycle (start, wait, cleanup)
-- Use context.Context for cancellation
-- Avoid goroutine leaks (ensure all goroutines can exit)`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func sayHello(name string) {
-    for i := 0; i < 3; i++ {
-        fmt.Printf("Hello from %s\n", name)
-        time.Sleep(100 * time.Millisecond)
-    }
-}
-
-func main() {
-    // Start goroutine
-    go sayHello("Alice")
-    go sayHello("Bob")
-    
-    // Wait for goroutines
-    time.Sleep(1 * time.Second)
-    fmt.Println("Done")
-}`,
+# SYNCHRONIZATION (Wait)
+var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+    defer wg.Done()
+    process()
+}()
+wg.Wait()`,
 				},
+
 				{
 					Title: "Channels",
-					Content: `**Channels:**
-- Communication mechanism between goroutines
-- Typed conduit for sending/receiving values
-- Created with make(chan Type)
-- Send: ch <- value
-- Receive: value := <-ch
-- "Don't communicate by sharing memory; share memory by communicating" (Go proverb)
+					Content: "Channels are the pipes that connect goroutines. They allow you to send values from one goroutine to another, providing a powerful mechanism for both **communication** and **synchronization**.\n\n" +
+						"**1. Unbuffered Channels**: Created with `make(chan int)`. They are synchronous. A send operation blocks until a receiver is ready, and a receive blocks until a sender is ready. This acts as a 'handshake' between routines.\n\n" +
+						"**2. Buffered Channels**: Created with a capacity, e.g., `make(chan int, 10)`. They allow sending values without an immediate receiver, up to the buffer limit. They decouple the producer from the consumer.\n\n" +
+						"**3. Closing Channels**: Use `close(ch)` to signal that no more values will be sent. It's important to remember that only the **sender** should close a channel, never the receiver.",
+					CodeExamples: `# UNBUFFERED (Synchronization)
+ch := make(chan string)
+go func() { 
+    ch <- "ping" // Blocks until main receives
+}()
+fmt.Println(<-ch)
 
-**Channel Types:**
+# BUFFERED (Decoupling)
+emails := make(chan string, 3)
+emails <- "job1"
+emails <- "job2" 
+# Doesn't block yet!
 
-**1. Unbuffered Channels:**
-- Synchronous communication
-- Sender blocks until receiver ready
-- Receiver blocks until sender ready
-- Guarantees delivery (handshake)
-- Most common pattern
-
-**2. Buffered Channels:**
-- Asynchronous communication
-- Sender blocks only when buffer full
-- Receiver blocks only when buffer empty
-- Buffer size: make(chan Type, size)
-- Use for: Producer-consumer patterns, rate limiting
-
-**Channel Operations:**
-- Send: ch <- value (blocks if unbuffered and no receiver)
-- Receive: value := <-ch (blocks if no sender)
-- Close: close(ch) (signals no more values)
-- Range: for value := range ch (receives until closed)
-- Select: Choose from multiple channels
-
-**Best Practices (2024-2025):**
-- Prefer unbuffered channels (simpler, safer)
-- Use buffered channels only when needed (performance, decoupling)
-- Always close channels when done (prevents goroutine leaks)
-- Use select for non-blocking operations
-- Don't send on closed channels (panic)
-- Receiving from closed channel returns zero value immediately`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    // Unbuffered channel
-    ch := make(chan int)
-    
-    // Send in goroutine
-    go func() {
-        ch <- 42
-    }()
-    
-    // Receive
-    value := <-ch
-    fmt.Println(value)
-    
-    // Buffered channel
-    buffered := make(chan string, 2)
-    buffered <- "first"
-    buffered <- "second"
-    fmt.Println(<-buffered)
-    fmt.Println(<-buffered)
+# CHANNEL DIRECTIONS
+func process(in <-chan int, out chan<- int) {
+    for v := range in {
+        out <- v * 2
+    }
+    close(out)
 }`,
 				},
+
 				{
 					Title: "Select Statement",
-					Content: `**Select:**
-- Like switch but for channels
-- Waits on multiple channel operations
-- Chooses ready case (non-deterministic if multiple ready)
-- Default case makes it non-blocking
+					Content: "The `select` statement lets a goroutine wait on multiple communication operations. It's like a `switch` but for channels. It blocks until one of its cases can run, then it executes that case.\n\n" +
+						"**1. Non-Deterministic**: If multiple channels are ready at the same time, Go picks one at random. This prevents starvation of any single channel.\n\n" +
+						"**2. Timeouts**: You can implement timeouts using `time.After(duration)`, which returns a channel that sends a value after the specified time.\n\n" +
+						"**3. Non-Blocking Operations**: Adding a `default:` case makes the `select` non-blocking. If no channel is ready, the `default` case executes immediately.",
+					CodeExamples: `# WAITING ON MULTIPLE CHANNELS
+select {
+case msg1 := <-ch1:
+    fmt.Println("Received", msg1)
+case ch2 <- "hi":
+    fmt.Println("Sent hi to ch2")
+case <-time.After(time.Second):
+    fmt.Println("Timed out")
+}
 
-**Common Uses:**
-- Multiplexing channels
-- Timeouts
-- Non-blocking operations`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func main() {
-    ch1 := make(chan string)
-    ch2 := make(chan string)
-    
-    go func() {
-        time.Sleep(1 * time.Second)
-        ch1 <- "from ch1"
-    }()
-    
-    go func() {
-        time.Sleep(2 * time.Second)
-        ch2 <- "from ch2"
-    }()
-    
-    select {
-    case msg1 := <-ch1:
-        fmt.Println(msg1)
-    case msg2 := <-ch2:
-        fmt.Println(msg2)
-    case <-time.After(3 * time.Second):
-        fmt.Println("timeout")
-    }
+# NON-BLOCKING RECEIVE
+select {
+case msg := <-ch:
+    fmt.Println("Got message:", msg)
+default:
+    fmt.Println("Nothing ready")
 }`,
 				},
+
 				{
 					Title: "Channel Directions",
 					Content: `**Channel Directions:**
@@ -1126,3128 +340,647 @@ func main() {
 				},
 				{
 					Title: "Worker Pools",
-					Content: `**Worker Pool Pattern:**
-- Fixed number of goroutines (workers)
-- Process jobs from channel
-- Efficient resource usage
-- Common concurrent pattern`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "sync"
-)
-
+					Content: "A **Worker Pool** is a common pattern for managing a fixed number of goroutines that process a stream of tasks. This prevents your program from starting too many concurrent routines and overwhelming system resources (like CPU or file handles).\n\n" +
+						"**1. Implementation**: You create a channel for the jobs and another for the results. A fixed set of workers (goroutines) read from the jobs channel, perform the work, and send the outcome to the results channel.\n\n" +
+						"**2. Scalability**: You can easily scale your application by changing the number of workers in the pool. This provides predictable performance even as the volume of jobs increases.\n\n" +
+						"**3. Lifecycle**: It's important to close the jobs channel once all jobs are sent so that the workers can exit gracefully after finishing their current task.",
+					CodeExamples: `# WORKER DEFINITION
 func worker(id int, jobs <-chan int, results chan<- int) {
-    for job := range jobs {
-        fmt.Printf("Worker %d processing job %d\n", id, job)
-        results <- job * 2
+    for j := range jobs {
+        fmt.Printf("worker %d processing job %d\n", id, j)
+        results <- j * 2
     }
 }
 
-func main() {
-    jobs := make(chan int, 100)
-    results := make(chan int, 100)
-    
-    // Start workers
-    for w := 1; w <= 3; w++ {
-        go worker(w, jobs, results)
-    }
-    
-    // Send jobs
-    for j := 1; j <= 5; j++ {
-        jobs <- j
-    }
-    close(jobs)
-    
-    // Collect results
-    for r := 1; r <= 5; r++ {
-        fmt.Println("Result:", <-results)
-    }
-}`,
+# STARTING THE POOL
+const numJobs = 5
+jobs := make(chan int, numJobs)
+results := make(chan int, numJobs)
+
+for w := 1; w <= 3; w++ {
+    go worker(w, jobs, results)
+}
+
+# SPREADING WORK
+for j := 1; j <= numJobs; j++ {
+    jobs <- j
+}
+close(jobs) // Workers loop until channel is empty`,
 				},
+
 				{
 					Title: "Context Package",
-					Content: `**Context:**
-- Carries deadlines, cancellation signals, values
-- Used for cancellation and timeouts
-- Passed through call chains
-- Created with context.Background() or context.TODO()
+					Content: "The `context` package is indispensable for managing the lifecycle, cancellation, and timeouts of concurrent operations. It allows you to propagate signals across API boundaries and goroutines.\n\n" +
+						"**1. Cancellation**: You can create a context with a cancel function: `ctx, cancel := context.WithCancel(parent)`. Calling `cancel()` signals all goroutines watching that context to stop.\n\n" +
+						"**2. Timeouts & Deadlines**: Use `context.WithTimeout` or `context.WithDeadline` to automatically signal cancellation after a certain duration or at a specific time. This is critical for preventing goroutines from hanging forever on slow network requests.\n\n" +
+						"**3. Convention**: Always pass `context.Context` as the first argument to functions that perform I/O or long-running tasks. This is a Go standard.",
+					CodeExamples: `# WITH TIMEOUT
+ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+defer cancel() // Always cleanup!
 
-**Common Functions:**
-- context.WithCancel()
-- context.WithTimeout()
-- context.WithDeadline()
-- context.WithValue()`,
-					CodeExamples: `package main
-
-import (
-    "context"
-    "fmt"
-    "time"
-)
-
-func doWork(ctx context.Context) {
+# CHECKING FOR DONE
+go func(ctx context.Context) {
     for {
         select {
         case <-ctx.Done():
-            fmt.Println("Cancelled")
-            return
+            return // Exit if cancelled
         default:
-            fmt.Println("Working...")
-            time.Sleep(500 * time.Millisecond)
+            doWork()
         }
     }
-}
-
-func main() {
-    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-    defer cancel()
-    
-    go doWork(ctx)
-    time.Sleep(3 * time.Second)
-}`,
+}(ctx)`,
 				},
 				{
 					Title: "Mutexes and Sync Package",
-					Content: `**Mutex:**
-- Mutual exclusion lock
-- Protects shared resources
-- sync.Mutex for exclusive access
-- sync.RWMutex for read-write access
-
-**Other Sync Primitives:**
-- sync.WaitGroup: Wait for goroutines
-- sync.Once: Execute once
-- sync.Map: Concurrent map`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "sync"
-)
-
-type SafeCounter struct {
-    mu    sync.Mutex
-    value int
+					Content: "When multiple goroutines access the same memory, you must synchronize that access to prevent **Data Races**. The `sync` package provides the tools to do this safely.\n\n" +
+						"**1. Mutex**: A `sync.Mutex` (mutual exclusion lock) ensures only one goroutine can access a block of code at a time. Use `Lock()` to enter and `Unlock()` to leave.\n\n" +
+						"**2. RWMutex**: A `sync.RWMutex` allows multiple simultaneous readers but only one writer. This is much faster for read-heavy workloads.\n\n" +
+						"**3. WaitGroup**: Used to wait for a collection of goroutines to finish. You call `Add(delta)` before starting a routine, `Done()` when it finishes, and `Wait()` to block until all are done.",
+					CodeExamples: `# SYNC.MUTEX
+type AtomicInt struct {
+    mu sync.Mutex
+    n  int
 }
 
-func (c *SafeCounter) Increment() {
-    c.mu.Lock()
-    defer c.mu.Unlock()
-    c.value++
+func (a *AtomicInt) Inc() {
+    a.mu.Lock()
+    defer a.mu.Unlock()
+    a.n++
 }
 
-func (c *SafeCounter) GetValue() int {
-    c.mu.Lock()
-    defer c.mu.Unlock()
-    return c.value
-}
-
-func main() {
-    counter := SafeCounter{}
-    var wg sync.WaitGroup
-    
-    for i := 0; i < 10; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            counter.Increment()
-        }()
-    }
-    
-    wg.Wait()
-    fmt.Println(counter.GetValue())
-}`,
-				},
-				{
-					Title: "Worker Pools",
-					Content: `Worker pools use a fixed number of goroutines to process jobs from a channel, providing efficient resource usage and controlled concurrency.
-
-**Worker Pool Pattern:**
-- Fixed number of worker goroutines
-- Jobs sent via channel
-- Results collected via channel
-- Efficient resource usage
-- Controlled concurrency
-
-**Benefits:**
-- Limit resource usage
-- Control concurrency level
-- Efficient for I/O-bound tasks
-- Easy to scale
-
-**Implementation Steps:**
-1. Create job and result channels
-2. Start fixed number of workers
-3. Send jobs to channel
-4. Workers process jobs
-5. Collect results
-6. Close channels when done
-
-**Use Cases:**
-- Processing files
-- API requests
-- Database operations
-- Image processing
-- Any parallelizable task`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "sync"
-    "time"
-)
-
-type Job struct {
-    ID     int
-    Data   string
-}
-
-type Result struct {
-    JobID  int
-    Output string
-}
-
-func worker(id int, jobs <-chan Job, results chan<- Result, wg *sync.WaitGroup) {
-    defer wg.Done()
-    for job := range jobs {
-        // Simulate work
-        time.Sleep(100 * time.Millisecond)
-        results <- Result{
-            JobID:  job.ID,
-            Output: fmt.Sprintf("Processed: %s", job.Data),
-        }
-    }
-}
-
-func main() {
-    numWorkers := 3
-    numJobs := 10
-    
-    jobs := make(chan Job, numJobs)
-    results := make(chan Result, numJobs)
-    var wg sync.WaitGroup
-    
-    // Start workers
-    for w := 1; w <= numWorkers; w++ {
-        wg.Add(1)
-        go worker(w, jobs, results, &wg)
-    }
-    
-    // Send jobs
-    for j := 1; j <= numJobs; j++ {
-        jobs <- Job{ID: j, Data: fmt.Sprintf("job-%d", j)}
-    }
-    close(jobs)
-    
-    // Wait for workers to finish
+# SYNC.WAITGROUP
+var wg sync.WaitGroup
+for i := 0; i < 10; i++ {
+    wg.Add(1)
     go func() {
-        wg.Wait()
-        close(results)
+        defer wg.Done()
+        doWork()
     }()
-    
-    // Collect results
-    for result := range results {
-        fmt.Println(result.Output)
-    }
-}`,
-				},
-				{
-					Title: "Fan-In/Fan-Out",
-					Content: `Fan-in and fan-out are powerful concurrency patterns for distributing and collecting work across multiple goroutines.
-
-**Fan-Out:**
-- Distribute work across multiple goroutines
-- Split input channel to multiple workers
-- Each worker processes subset of work
-- Increases throughput
-
-**Fan-In:**
-- Combine results from multiple channels
-- Merge multiple channels into one
-- Collect results from workers
-- Common in worker pool patterns
-
-**Patterns:**
-
-**1. Fan-Out:**
-- One input channel
-- Multiple worker goroutines
-- Each worker reads from same channel
-- Distributes load
-
-**2. Fan-In:**
-- Multiple input channels
-- One output channel
-- Use select to merge
-- Collects results
-
-**Use Cases:**
-- Parallel processing
-- Load distribution
-- Result aggregation
-- Pipeline processing
-
-**Benefits:**
-- Better resource utilization
-- Increased throughput
-- Scalable design
-- Clean separation of concerns`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "sync"
-)
-
-// Fan-out: Distribute work
-func fanOut(input <-chan int, outputs []chan int) {
-    defer func() {
-        for _, ch := range outputs {
-            close(ch)
-        }
-    }()
-    
-    for val := range input {
-        // Round-robin distribution
-        for _, ch := range outputs {
-            select {
-            case ch <- val:
-            default:
-            }
-        }
-    }
 }
-
-// Fan-in: Combine results
-func fanIn(inputs []<-chan int) <-chan int {
-    output := make(chan int)
-    var wg sync.WaitGroup
-    
-    for _, input := range inputs {
-        wg.Add(1)
-        go func(ch <-chan int) {
-            defer wg.Done()
-            for val := range ch {
-                output <- val
-            }
-        }(input)
-    }
-    
-    go func() {
-        wg.Wait()
-        close(output)
-    }()
-    
-    return output
-}
-
-// Worker function
-func worker(id int, jobs <-chan int, results chan<- int) {
-    for job := range jobs {
-        results <- job * 2  // Process job
-    }
-}
-
-func main() {
-    // Create channels
-    jobs := make(chan int, 10)
-    results1 := make(chan int, 5)
-    results2 := make(chan int, 5)
-    
-    // Start workers (fan-out)
-    go worker(1, jobs, results1)
-    go worker(2, jobs, results2)
-    
-    // Send jobs
-    for i := 1; i <= 10; i++ {
-        jobs <- i
-    }
-    close(jobs)
-    
-    // Fan-in: Combine results
-    merged := fanIn([]<-chan int{results1, results2})
-    
-    // Collect results
-    for result := range merged {
-        fmt.Println("Result:", result)
-    }
-}`,
-				},
-				{
-					Title: "Context Package Deep Dive",
-					Content: `The context package provides a powerful way to manage cancellation, timeouts, and request-scoped values in Go programs.
-
-**Context Basics:**
-- Carries cancellation signals
-- Carries deadlines and timeouts
-- Carries request-scoped values
-- Immutable (create new context, don't modify)
-
-**Context Creation:**
-- context.Background(): Root context
-- context.TODO(): Placeholder context
-- context.WithCancel(): Cancellable context
-- context.WithTimeout(): Context with timeout
-- context.WithDeadline(): Context with deadline
-- context.WithValue(): Context with values
-
-**Context Propagation:**
-- Pass context as first parameter
-- Convention: ctx context.Context
-- Propagate through call chain
-- Check ctx.Done() in loops
-
-**Common Patterns:**
-- HTTP request handling
-- Database queries with timeout
-- Long-running operations
-- Graceful shutdown
-- Request tracing
-
-**Best Practices:**
-- Pass context as first parameter
-- Check ctx.Done() in loops
-- Use context for cancellation
-- Don't store contexts in structs
-- Use context.WithValue sparingly`,
-					CodeExamples: `package main
-
-import (
-    "context"
-    "fmt"
-    "time"
-)
-
-// Context as first parameter
-func processRequest(ctx context.Context, data string) error {
-    // Check cancellation
-    select {
-    case <-ctx.Done():
-        return ctx.Err()
-    default:
-    }
-    
-    // Simulate work
-    time.Sleep(1 * time.Second)
-    
-    // Check again
-    if ctx.Err() != nil {
-        return ctx.Err()
-    }
-    
-    fmt.Println("Processed:", data)
-    return nil
-}
-
-// With timeout
-func doWithTimeout() {
-    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-    defer cancel()
-    
-    err := processRequest(ctx, "data")
-    if err != nil {
-        fmt.Println("Error:", err)
-    }
-}
-
-// With cancellation
-func doWithCancel() {
-    ctx, cancel := context.WithCancel(context.Background())
-    
-    go func() {
-        time.Sleep(1 * time.Second)
-        cancel()  // Cancel after 1 second
-    }()
-    
-    err := processRequest(ctx, "data")
-    if err != nil {
-        fmt.Println("Cancelled:", err)
-    }
-}
-
-// With value
-func doWithValue() {
-    ctx := context.WithValue(context.Background(), "userID", 123)
-    
-    userID := ctx.Value("userID")
-    fmt.Println("User ID:", userID)
-}
-
-func main() {
-    doWithTimeout()
-    doWithCancel()
-    doWithValue()
-}`,
-				},
-				{
-					Title: "Channel Patterns",
-					Content: `Common channel patterns solve specific concurrency problems elegantly.
-
-**Channel Patterns:**
-
-**1. Pipeline:**
-- Chain of stages connected by channels
-- Each stage processes and passes to next
-- Enables streaming processing
-- Example: Read → Process → Write
-
-**2. Generator:**
-- Function that returns channel
-- Produces values on demand
-- Closes channel when done
-- Example: Fibonacci generator
-
-**3. Multiplexing:**
-- Combine multiple channels into one
-- Use select statement
-- Fan-in pattern
-- Example: Merge multiple result channels
-
-**4. Demultiplexing:**
-- Split one channel to multiple
-- Distribute work
-- Fan-out pattern
-- Example: Distribute jobs to workers
-
-**5. Or-Done:**
-- Wait for channel or done signal
-- Prevents blocking forever
-- Common in context usage
-- Example: Select with ctx.Done()
-
-**6. Tee:**
-- Split channel to multiple outputs
-- Broadcast to multiple receivers
-- Useful for logging, monitoring
-- Example: Process and log simultaneously
-
-**Best Practices:**
-- Close channels when done
-- Use select for multiple channels
-- Handle context cancellation
-- Avoid channel leaks`,
-					CodeExamples: `package main
-
-import (
-    "context"
-    "fmt"
-    "time"
-)
-
-// Generator pattern
-func generate(ctx context.Context, max int) <-chan int {
-    ch := make(chan int)
-    go func() {
-        defer close(ch)
-        for i := 0; i < max; i++ {
-            select {
-            case <-ctx.Done():
-                return
-            case ch <- i:
-            }
-        }
-    }()
-    return ch
-}
-
-// Pipeline stage
-func square(ctx context.Context, input <-chan int) <-chan int {
-    output := make(chan int)
-    go func() {
-        defer close(output)
-        for val := range input {
-            select {
-            case <-ctx.Done():
-                return
-            case output <- val * val:
-            }
-        }
-    }()
-    return output
-}
-
-// Or-done pattern
-func orDone(ctx context.Context, input <-chan int) <-chan int {
-    output := make(chan int)
-    go func() {
-        defer close(output)
-        for {
-            select {
-            case <-ctx.Done():
-                return
-            case val, ok := <-input:
-                if !ok {
-                    return
-                }
-                select {
-                case <-ctx.Done():
-                    return
-                case output <- val:
-                }
-            }
-        }
-    }()
-    return output
-}
-
-// Tee pattern: Split channel
-func tee(ctx context.Context, input <-chan int) (<-chan int, <-chan int) {
-    out1 := make(chan int)
-    out2 := make(chan int)
-    
-    go func() {
-        defer close(out1)
-        defer close(out2)
-        for val := range input {
-            var out1, out2 = out1, out2
-            for i := 0; i < 2; i++ {
-                select {
-                case <-ctx.Done():
-                    return
-                case out1 <- val:
-                    out1 = nil
-                case out2 <- val:
-                    out2 = nil
-                }
-            }
-        }
-    }()
-    
-    return out1, out2
-}
-
-func main() {
-    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-    defer cancel()
-    
-    // Pipeline: generate → square
-    numbers := generate(ctx, 5)
-    squared := square(ctx, numbers)
-    
-    for val := range squared {
-        fmt.Println(val)
-    }
-}`,
-				},
-				{
-					Title: "Select Statement",
-					Content: `The select statement is crucial for coordinating multiple channel operations and implementing timeouts.
-
-**Select Basics:**
-- Waits on multiple channel operations
-- Chooses ready case (non-deterministic if multiple ready)
-- Blocks until at least one case ready
-- Default case makes it non-blocking
-
-**Select Patterns:**
-
-**1. Multiplexing:**
-- Wait on multiple channels
-- Process first ready
-- Common in fan-in
-
-**2. Timeouts:**
-- Use time.After() channel
-- Prevent blocking forever
-- Essential for production code
-
-**3. Non-Blocking:**
-- Default case
-- Check if operation ready
-- Don't block
-
-**4. Cancellation:**
-- Select on ctx.Done()
-- Cancel long operations
-- Graceful shutdown
-
-**Best Practices:**
-- Always include timeout or cancellation
-- Handle default case appropriately
-- Close channels properly
-- Use select in loops for continuous operations`,
-					CodeExamples: `package main
-
-import (
-    "context"
-    "fmt"
-    "time"
-)
-
-// Multiplexing
-func multiplex(ch1, ch2 <-chan string) {
-    for {
-        select {
-        case msg := <-ch1:
-            fmt.Println("From ch1:", msg)
-        case msg := <-ch2:
-            fmt.Println("From ch2:", msg)
-        }
-    }
-}
-
-// With timeout
-func withTimeout() {
-    ch := make(chan string)
-    
-    go func() {
-        time.Sleep(2 * time.Second)
-        ch <- "result"
-    }()
-    
-    select {
-    case result := <-ch:
-        fmt.Println("Got result:", result)
-    case <-time.After(1 * time.Second):
-        fmt.Println("Timeout!")
-    }
-}
-
-// Non-blocking
-func nonBlocking(ch chan int) {
-    select {
-    case val := <-ch:
-        fmt.Println("Got value:", val)
-    default:
-        fmt.Println("No value ready")
-    }
-}
-
-// With context
-func withContext(ctx context.Context, ch <-chan int) {
-    for {
-        select {
-        case <-ctx.Done():
-            fmt.Println("Cancelled")
-            return
-        case val := <-ch:
-            fmt.Println("Value:", val)
-        }
-    }
-}
-
-func main() {
-    // Timeout example
-    withTimeout()
-    
-    // Non-blocking
-    ch := make(chan int)
-    nonBlocking(ch)
-    
-    // With context
-    ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-    defer cancel()
-    withContext(ctx, ch)
-}`,
-				},
-				{
-					Title: "Channel Buffering",
-					Content: `Channel buffering affects when sends and receives block, impacting performance and behavior.
-
-**Unbuffered Channels:**
-- Synchronous communication
-- Send blocks until receiver ready
-- Receive blocks until sender ready
-- Zero capacity: make(chan Type)
-
-**Buffered Channels:**
-- Asynchronous communication
-- Send blocks only when buffer full
-- Receive blocks only when buffer empty
-- Capacity > 0: make(chan Type, capacity)
-
-**Buffer Sizing:**
-- Small buffer (1-10): Reduces blocking
-- Medium buffer (10-100): Balances memory and performance
-- Large buffer (100+): For high-throughput scenarios
-- Zero buffer: Synchronous, most common
-
-**When to Use Buffered:**
-- Producer faster than consumer
-- Batch processing
-- Reduce blocking
-- Performance optimization
-
-**When to Use Unbuffered:**
-- Synchronization needed
-- Backpressure desired
-- Simple communication
-- Most common case
-
-**Best Practices:**
-- Start with unbuffered
-- Add buffer if needed for performance
-- Don't use buffer as queue
-- Consider backpressure
-- Monitor channel capacity`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-// Unbuffered: Synchronous
-func unbufferedExample() {
-    ch := make(chan int)  // Unbuffered
-    
-    go func() {
-        fmt.Println("Sending...")
-        ch <- 42  // Blocks until receiver ready
-        fmt.Println("Sent")
-    }()
-    
-    time.Sleep(100 * time.Millisecond)
-    fmt.Println("Receiving...")
-    val := <-ch  // Now sender can proceed
-    fmt.Println("Received:", val)
-}
-
-// Buffered: Asynchronous
-func bufferedExample() {
-    ch := make(chan int, 3)  // Buffer size 3
-    
-    // Can send 3 values without blocking
-    ch <- 1
-    ch <- 2
-    ch <- 3
-    
-    fmt.Println("Sent 3 values")
-    
-    // Now buffer is full, next send would block
-    // But we can receive
-    fmt.Println(<-ch)  // 1
-    fmt.Println(<-ch)  // 2
-    fmt.Println(<-ch)  // 3
-}
-
-// Producer-consumer with buffer
-func producerConsumer() {
-    ch := make(chan int, 10)  // Buffer allows async
-    
-    // Producer
-    go func() {
-        for i := 0; i < 20; i++ {
-            ch <- i
-            fmt.Printf("Produced: %d\n", i)
-        }
-        close(ch)
-    }()
-    
-    // Consumer
-    for val := range ch {
-        time.Sleep(50 * time.Millisecond)  // Slower consumer
-        fmt.Printf("Consumed: %d\n", val)
-    }
-}
-
-func main() {
-    unbufferedExample()
-    bufferedExample()
-    producerConsumer()
-}`,
-				},
-			},
-			ProblemIDs: []int{},
-		},
-		{
-			ID:          40,
-			Title:       "Packages & Modules",
-			Description: "Understand package organization, modules, and dependency management.",
-			Order:       10,
-			Lessons: []problems.Lesson{
-				{
-					Title: "Package Organization",
-					Content: `**Packages:**
-- Collection of related Go files
-- One package per directory
-- Package name matches directory name (except main)
-- Files in same package share namespace
-
-**Package Declaration:**
-package packagename
-
-**Import Paths:**
-- Standard library: "fmt", "net/http"
-- Local packages: "./mypackage"
-- Remote packages: "github.com/user/repo"`,
-					CodeExamples: `// In file: math/calculator.go
-package math
-
-func Add(a, b int) int {
-    return a + b
-}
-
-// In file: main.go
-package main
-
-import (
-    "fmt"
-    "./math"  // Local package
-)
-
-func main() {
-    result := math.Add(2, 3)
-    fmt.Println(result)
-}`,
-				},
-				{
-					Title: "Exported vs Unexported",
-					Content: `**Visibility Rules:**
-- Exported (public): Starts with capital letter
-- Unexported (private): Starts with lowercase letter
-- Only exported identifiers accessible from other packages
-- Package-level visibility, not file-level
-
-**Naming Convention:**
-- Exported: Add, Calculate, User
-- Unexported: add, calculate, user`,
-					CodeExamples: `package math
-
-// Exported - can be used from other packages
-func Add(a, b int) int {
-    return a + b
-}
-
-// Unexported - only within this package
-func add(a, b int) int {
-    return a + b
-}
-
-type Calculator struct {
-    // Exported field
-    Result int
-    // Unexported field
-    history []int
-}`,
-				},
-				{
-					Title: "Go Modules",
-					Content: `**Modules:**
-- Collection of related packages
-- Defined by go.mod file
-- Introduced in Go 1.11
-- Replaces GOPATH
-
-**go.mod File:**
-- Module path
-- Go version
-- Dependencies with versions
-
-**Commands:**
-- go mod init: Create new module
-- go mod tidy: Add/remove dependencies
-- go mod download: Download dependencies`,
-					CodeExamples: `// go.mod
-module example.com/myproject
-
-go 1.21
-
-require (
-    github.com/example/package v1.2.3
-)
-
-// Usage
-package main
-
-import "github.com/example/package"
-
-func main() {
-    package.DoSomething()
-}`,
-				},
-				{
-					Title: "Module Versioning",
-					Content: `**Versioning:**
-- Semantic versioning (v1.2.3)
-- Major, minor, patch versions
-- Tags in git repository
-- Latest version selected automatically
-
-**Version Selection:**
-- go.mod specifies minimum version
-- go get updates to latest compatible version
-- Use go get package@version for specific version`,
-					CodeExamples: `// In go.mod
-require (
-    github.com/example/package v1.2.3
-)
-
-// Update to latest
-// go get github.com/example/package
-
-// Update to specific version
-// go get github.com/example/package@v1.3.0
-
-// Update all dependencies
-// go get -u ./...`,
-				},
-				{
-					Title: "Dependency Management",
-					Content: `**Dependency Management:**
-- go.mod: Module definition and dependencies
-- go.sum: Checksums for dependencies
-- Version resolution is automatic
-- Minimal version selection algorithm
-
-**Best Practices:**
-- Commit go.mod and go.sum
-- Use go mod tidy regularly
-- Pin versions for production
-- Review dependency updates`,
-					CodeExamples: `// go.mod
-module myproject
-
-go 1.21
-
-require (
-    github.com/gin-gonic/gin v1.9.1
-    github.com/lib/pq v1.10.9
-)
-
-// go.sum contains checksums
-// Automatically generated, commit to version control`,
-				},
-				{
-					Title: "Internal Packages",
-					Content: `**Internal Packages:**
-- Packages with "internal" in path
-- Only importable by packages in parent directory tree
-- Enforces encapsulation
-- Useful for private implementation details
-
-**Structure:**
-project/
-  internal/
-    database/
-    cache/`,
-					CodeExamples: `// Directory structure:
-// myproject/
-//   internal/
-//     db/
-//       connection.go
-
-// In connection.go
-package db
-
-func Connect() {
-    // Implementation
-}
-
-// Can be imported from myproject/* but not from outside`,
+wg.Wait()`,
 				},
 			},
 			ProblemIDs: []int{},
 		},
 		{
 			ID:          41,
-			Title:       "Standard Library",
-			Description: "Explore Go's rich standard library: fmt, strings, io, time, json, http, and more.",
-			Order:       11,
+			Title:       "Packages & Modules",
+			Description: "Understand package organization, modules, and dependency management.",
+			Order:       10,
 			Lessons: []problems.Lesson{
 				{
-					Title: "fmt Package",
-					Content: `**fmt Package:**
-- Formatting and printing
-- fmt.Print, fmt.Println, fmt.Printf
-- fmt.Scan, fmt.Scanf for input
-- fmt.Sprintf for formatted strings
-- fmt.Errorf for error creation`,
-					CodeExamples: `package main
+					Title: "Package Organization",
+					Content: "Go Code is organized into **Packages**. A package is simply a directory containing one or more `.go` files that all declare the same package name at the top. This structure promotes modularity and reusability.\n\n" +
+						"**1. Directories**: Every Go file must belong to a package. By convention, the package name is the same as the directory name. The entry point of a program must be in `package main`.\n\n" +
+						"**2. Imports**: You access code from other packages using the `import` keyword. Go uses a full path (starting from the module name) to identify packages uniquely.\n\n" +
+						"**3. Standard Library**: Go comes with a rich standard library (e.g., `fmt`, `net/http`, `os`) that you can import without any external dependencies.",
+					CodeExamples: `# DIRECTORY STRUCTURE
+/myproject
+  /math
+    adder.go
+  main.go
 
-import "fmt"
+# math/adder.go
+package math
+func Add(a, b int) int { return a + b }
 
+# main.go
+import "myproject/math"
 func main() {
-    name := "Alice"
-    age := 30
-    
-    fmt.Print("Hello")
-    fmt.Println("World")
-    fmt.Printf("Name: %s, Age: %d\n", name, age)
-    
-    str := fmt.Sprintf("User: %s (%d)", name, age)
-    fmt.Println(str)
+    math.Add(1, 2)
 }`,
 				},
 				{
-					Title: "strings Package",
-					Content: `**strings Package:**
-- String manipulation functions
-- Contains, HasPrefix, HasSuffix
-- Index, LastIndex
-- Replace, ReplaceAll
-- Split, Join
-- ToUpper, ToLower, Trim`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "strings"
-)
-
-func main() {
-    s := "Hello, World"
-    
-    fmt.Println(strings.Contains(s, "World"))
-    fmt.Println(strings.HasPrefix(s, "Hello"))
-    fmt.Println(strings.Index(s, "World"))
-    fmt.Println(strings.ReplaceAll(s, "World", "Go"))
-    fmt.Println(strings.Split(s, ", "))
-    fmt.Println(strings.ToUpper(s))
-    fmt.Println(strings.Trim("  Hello  ", " "))
-}`,
-				},
-				{
-					Title: "strconv Package",
-					Content: `**strconv Package:**
-- String conversions
-- Atoi, Itoa (int ↔ string)
-- ParseFloat, FormatFloat
-- ParseBool, FormatBool
-- ParseInt, FormatInt`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "strconv"
-)
-
-func main() {
-    // String to int
-    num, _ := strconv.Atoi("42")
-    fmt.Println(num)
-    
-    // Int to string
-    str := strconv.Itoa(42)
-    fmt.Println(str)
-    
-    // Parse float
-    f, _ := strconv.ParseFloat("3.14", 64)
-    fmt.Println(f)
-    
-    // Format float
-    s := strconv.FormatFloat(3.14, 'f', 2, 64)
-    fmt.Println(s)
-}`,
-				},
-				{
-					Title: "os and io Packages",
-					Content: `**os Package:**
-- Operating system interface
-- File operations
-- Environment variables
-- Process management
-
-**io Package:**
-- I/O primitives
-- io.Reader, io.Writer interfaces
-- io.Copy, io.ReadAll
-- io.Pipe`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "io"
-    "os"
-)
-
-func main() {
-    // Read file
-    data, _ := os.ReadFile("file.txt")
-    fmt.Println(string(data))
-    
-    // Write file
-    os.WriteFile("output.txt", []byte("Hello"), 0644)
-    
-    // Environment variables
-    path := os.Getenv("PATH")
-    fmt.Println(path)
-    
-    // Copy
-    src, _ := os.Open("source.txt")
-    dst, _ := os.Create("dest.txt")
-    io.Copy(dst, src)
-}`,
-				},
-				{
-					Title: "time Package",
-					Content: `**time Package:**
-- Time representation and operations
-- time.Now(), time.Date()
-- time.Duration for durations
-- time.Ticker, time.Timer
-- Time formatting and parsing`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func main() {
-    // Current time
-    now := time.Now()
-    fmt.Println(now)
-    
-    // Format time
-    fmt.Println(now.Format("2006-01-02 15:04:05"))
-    
-    // Parse time
-    t, _ := time.Parse("2006-01-02", "2023-01-01")
-    fmt.Println(t)
-    
-    // Duration
-    duration := 2 * time.Hour
-    fmt.Println(duration)
-    
-    // Sleep
-    time.Sleep(1 * time.Second)
-    
-    // Ticker
-    ticker := time.NewTicker(1 * time.Second)
-    go func() {
-        for t := range ticker.C {
-            fmt.Println("Tick at", t)
-        }
-    }()
-}`,
-				},
-				{
-					Title: "encoding/json Package",
-					Content: `**encoding/json Package:**
-- JSON encoding and decoding
-- json.Marshal (Go → JSON)
-- json.Unmarshal (JSON → Go)
-- Struct tags for field mapping
-- Custom marshaling/unmarshaling`,
-					CodeExamples: `package main
-
-import (
-    "encoding/json"
-    "fmt"
-)
-
-type User struct {
-    ID       int    ` + "`" + `json:"id"` + "`" + `
-    Username string ` + "`" + `json:"username"` + "`" + `
-    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
+					Title: "Exported vs Unexported",
+					Content: "Go uses a very simple but strict rule for **Visibility**: access control is determined by the first letter of an identifier (variables, functions, types, fields).\n\n" +
+						"**1. Exported**: If an identifier starts with an **Upper Case** letter (e.g., `User`, `FetchData`), it is *exported* and visible to other packages that import yours.\n\n" +
+						"**2. Unexported**: If it starts with a **Lower Case** letter (e.g., `user`, `dbConn`), it is *unexported* and private to its own package. It cannot be accessed from outside.\n\n" +
+						"**3. Encapsulation**: This mechanism makes it easy to hide implementation details and provide a clean, public API for your modules.",
+					CodeExamples: `# PUBLIC API
+type Config struct {
+    Port int // Exported field
+    host string // Unexported field
 }
 
-func main() {
-    // Marshal
-    u := User{ID: 1, Username: "alice", Email: "alice@example.com"}
-    data, _ := json.Marshal(u)
-    fmt.Println(string(data))
-    
-    // Unmarshal
-    jsonStr := "{\"id\":2,\"username\":\"bob\"}"
-    var u2 User
-    json.Unmarshal([]byte(jsonStr), &u2)
-    fmt.Println(u2)
-}`,
+func Connect() { ... } // Exported function
+
+# PRIVATE LOGIC
+func dial() { ... } // Unexported function`,
+				},
+
+				{
+					Title: "Go Modules & Dependencies",
+					Content: "Go Modules are the standard for dependency management. A module is a collection of Go packages that are versioned together as a single unit, defined by a `go.mod` file at the root.\n\n" +
+						"**1. Initialization**: Use `go mod init <name>` to start a new module. This creates the `go.mod` file which tracks your dependencies and Go version.\n\n" +
+						"**2. Tidy**: Running `go mod tidy` is a daily habit for Go developers. It adds missing dependencies used in your code and removes unused ones, ensuring your module files are clean.\n\n" +
+						"**3. Versioning**: Go uses semantic versioning. The `go.sum` file captures cryptographic hashes of dependency versions to ensure that builds are reproducible and secure.",
+					CodeExamples: `# INITIALIZE
+go mod init github.com/user/project
+
+# ADD DEPENDENCY
+go get github.com/gin-gonic/gin@v1.9.0
+
+# CLEANUP
+go mod tidy
+
+# REPRODUCIBLE BUILDS
+# go.mod: lists requirements
+# go.sum: lists content hashes`,
 				},
 				{
-					Title: "net/http Package",
-					Content: `**net/http Package:**
-- HTTP client and server
-- http.Get, http.Post
-- http.HandleFunc, http.ListenAndServe
-- http.Request, http.Response
-- Middleware support`,
-					CodeExamples: `package main
+					Title: "Internal Packages",
+					Content: "A directory named `internal` (and its subdirectories) has special meaning in Go. Packages within an `internal` folder can only be imported by packages rooted in the **parent** of that folder.\n\n" +
+						"**1. Encapsulation**: This allows you to share code between packages in your project while strictly preventing external users from importing those private internal APIs.\n\n" +
+						"**2. Example**: If you have `project/internal/secret`, only code inside `project/...` can import `secret`. Any other project trying to import it will fail at compile time.\n\n" +
+						"**3. Structure**: This is commonly used for database logic, private utilities, or complex subsystem implementations that shouldn't be exposed as public API.",
+					CodeExamples: `# DIRECTORY
+/app
+  /internal
+    /db
+      mysql.go
+  main.go
 
-import (
-    "fmt"
-    "net/http"
-)
+# app/internal/db/mysql.go
+package db
+func Connect() { ... }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
-}
+# app/main.go
+import "app/internal/db" // WORKS
 
-func main() {
-    http.HandleFunc("/", handler)
-    http.ListenAndServe(":8080", nil)
-    
-    // Client example
-    resp, _ := http.Get("https://example.com")
-    defer resp.Body.Close()
-}`,
-				},
-				{
-					Title: "regexp Package",
-					Content: `**regexp Package:**
-- Regular expressions
-- regexp.Compile, regexp.MustCompile
-- Match, FindString, FindAllString
-- ReplaceAllString
-- Compile once, use many times`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "regexp"
-)
-
-func main() {
-    re := regexp.MustCompile(` + "`" + `\d+` + "`" + `)
-    
-    // Match
-    matched := re.MatchString("abc123def")
-    fmt.Println(matched)
-    
-    // Find
-    found := re.FindString("abc123def456")
-    fmt.Println(found)
-    
-    // Find all
-    all := re.FindAllString("abc123def456", -1)
-    fmt.Println(all)
-    
-    // Replace
-    replaced := re.ReplaceAllString("abc123def", "X")
-    fmt.Println(replaced)
-}`,
-				},
-				{
-					Title: "sort Package",
-					Content: `**sort Package:**
-- Sorting slices
-- sort.Ints, sort.Float64s, sort.Strings
-- sort.Sort for custom types
-- Implementing sort.Interface
-- sort.Search for binary search`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "sort"
-)
-
-func main() {
-    // Sort integers
-    nums := []int{3, 1, 4, 1, 5, 9, 2, 6}
-    sort.Ints(nums)
-    fmt.Println(nums)
-    
-    // Sort strings
-    words := []string{"banana", "apple", "cherry"}
-    sort.Strings(words)
-    fmt.Println(words)
-    
-    // Custom sort
-    people := []struct {
-        Name string
-        Age  int
-    }{
-        {"Alice", 30},
-        {"Bob", 25},
-        {"Charlie", 35},
-    }
-    
-    sort.Slice(people, func(i, j int) bool {
-        return people[i].Age < people[j].Age
-    })
-    fmt.Println(people)
-}`,
+# github.com/other/app/main.go
+import "app/internal/db" // COMPILE ERROR`,
 				},
 			},
 			ProblemIDs: []int{},
 		},
 		{
 			ID:          42,
-			Title:       "Testing & Benchmarking",
-			Description: "Learn to write tests, benchmarks, and measure code performance.",
-			Order:       12,
+			Title:       "Standard Library",
+			Description: "Explore Go's rich standard library: fmt, strings, io, time, json, http, and more.",
+			Order:       11,
 			Lessons: []problems.Lesson{
+
 				{
-					Title: "Writing Tests",
-					Content: `**Testing in Go:**
-- Tests in files ending with _test.go
-- Use testing package
-- Test functions: func TestXxx(*testing.T)
-- Run with: go test
+					Title: "Common Utilities",
+					Content: "Go's standard library provides a suite of essential packages for formatting, string manipulation, and type conversion that are used in almost every program.\n\n" +
+						"**1. fmt**: Used for formatted I/O. Beyond printing, `fmt.Errorf` is the standard way to create errors with dynamic context.\n\n" +
+						"**2. strings**: Contains high-performance functions for searching, splitting, and joined strings. It is optimized for UTF-8.\n\n" +
+						"**3. strconv**: Handles conversions between strings and various basic types like integers, floats, and booleans with strict error checking.",
+					CodeExamples: `# STRING FORMATTING
+s := fmt.Sprintf("value: %.2f", 3.1415)
 
-**Test Functions:**
-- Must start with Test
-- Take *testing.T parameter
-- Use t.Error or t.Fatal for failures`,
-					CodeExamples: `package math
+# STRING MANIPULATION
+clean := strings.TrimSpace("  hello  ")
+parts := strings.Split("a,b,c", ",")
 
-// math.go
-func Add(a, b int) int {
-    return a + b
-}
-
-// math_test.go
-package math
-
-import "testing"
-
-func TestAdd(t *testing.T) {
-    result := Add(2, 3)
-    if result != 5 {
-        t.Errorf("Add(2, 3) = %d; want 5", result)
-    }
-}
-
-func TestAddNegative(t *testing.T) {
-    result := Add(-1, -2)
-    if result != -3 {
-        t.Fatalf("Add(-1, -2) = %d; want -3", result)
-    }
-}`,
+# TYPE CONVERSION
+n, err := strconv.Atoi("123")
+b := strconv.FormatBool(true)`,
 				},
 				{
-					Title: "Table-Driven Tests",
-					Content: `**Table-Driven Tests:**
-- Common Go testing pattern
-- Define test cases in slice
-- Loop through test cases
-- Reduces code duplication
-- Easy to add new cases`,
-					CodeExamples: `package math
+					Title: "I/O & Filesystem",
+					Content: "Go provides powerful primitives for input and output operations through the `io` and `os` packages. Most I/O in Go is based on two fundamental interfaces: `Reader` and `Writer`.\n\n" +
+						"**1. io.Reader & Writer**: These interfaces allow Go to handle data streams abstractly, whether they come from a file, a network connection, or an in-memory buffer.\n\n" +
+						"**2. os Package**: Used for interacting with the operating system. It provides platform-independent functions for file creation, deletion, and environment variable access.\n\n" +
+						"**3. bufio**: For high-performance I/O, the `bufio` package adds buffering to any `Reader` or `Writer`, reducing the number of expensive system calls.",
+					CodeExamples: `# READING A FILE
+data, err := os.ReadFile("config.json")
+if err != nil { ... }
 
-import "testing"
+# WRITING WITH BUFFERING
+f, _ := os.Create("log.txt")
+w := bufio.NewWriter(f)
+w.WriteString("Hello Go!")
+w.Flush() // Don't forget to flush!
 
-func TestMultiply(t *testing.T) {
-    tests := []struct {
-        name     string
-        a        int
-        b        int
-        expected int
-    }{
-        {"positive", 2, 3, 6},
-        {"negative", -2, 3, -6},
-        {"zero", 0, 5, 0},
-        {"one", 1, 10, 10},
-    }
-    
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            result := Multiply(tt.a, tt.b)
-            if result != tt.expected {
-                t.Errorf("Multiply(%d, %d) = %d; want %d",
-                    tt.a, tt.b, result, tt.expected)
-            }
-        })
-    }
-}`,
+# STREAMING DATA
+io.Copy(os.Stdout, f) // Pipe file to terminal`,
 				},
 				{
-					Title: "Test Coverage",
-					Content: `**Test Coverage:**
-- Measure how much code is tested
-- Run: go test -cover
-- Generate coverage profile: go test -coverprofile=coverage.out
-- View HTML: go tool cover -html=coverage.out
+					Title: "Time & Scheduling",
+					Content: "The `time` package is the standard for measuring and displaying time, as well as managing concurrent scheduling through timers and tickers.\n\n" +
+						"**1. Time Points**: `time.Now()` gives the current local time. You can compare times using `Before()`, `After()`, and `Equal()` methods.\n\n" +
+						"**2. Durations**: Represented by the `time.Duration` type (e.g., `time.Second * 5`). Always use durations for timeouts and sleep operations.\n\n" +
+						"**3. Tickers**: A `time.Ticker` sends a value on a channel at a regular interval. It is the idiomatic way to perform periodic tasks in Go.",
+					CodeExamples: `# MEASURING ELAPSED TIME
+start := time.Now()
+doWork()
+fmt.Println("Took:", time.Since(start))
 
-**Coverage Goals:**
-- Aim for high coverage
-- Focus on critical paths
-- Don't obsess over 100%`,
-					CodeExamples: `// Run with coverage
-// go test -cover
+# PERIODIC TASK
+ticker := time.NewTicker(100 * time.Millisecond)
+defer ticker.Stop()
 
-// Generate coverage file
-// go test -coverprofile=coverage.out
-
-// View in browser
-// go tool cover -html=coverage.out
-
-// Coverage percentage shows how much code is executed by tests`,
+go func() {
+    for t := range ticker.C {
+        fmt.Println("Tick at", t)
+    }
+}()`,
 				},
 				{
-					Title: "Benchmarks",
-					Content: `**Benchmarks:**
-- Measure function performance
-- Function: func BenchmarkXxx(*testing.B)
-- Run with: go test -bench=.
-- b.N is number of iterations
-
-**Benchmark Functions:**
-- Must start with Benchmark
-- Take *testing.B parameter
-- Loop b.N times
-- Use b.ResetTimer() if needed`,
-					CodeExamples: `package math
-
-import "testing"
-
-func BenchmarkAdd(b *testing.B) {
-    for i := 0; i < b.N; i++ {
-        Add(10, 20)
-    }
+					Title: "JSON & Data Serialization",
+					Content: "Go's `encoding/json` package makes it easy to convert between Go structs and JSON strings. It uses **Struct Tags** to map between Go fields and JSON keys.\n\n" +
+						"**1. Marshal**: Converts a Go value into a JSON byte slice. If a field is unexported (starts with lowercase), it will be ignored by the marshaler.\n\n" +
+						"**2. Unmarshal**: Parses JSON data into a Go struct or map. You must pass a pointer to the destination variable.\n\n" +
+						"**3. Customizing**: Use tags like `json:\"user_id\"` to change keys, or `json:\"-\"` to skip fields entirely.",
+					CodeExamples: `# STRUCT WITH TAGS
+type User struct {
+    Name  string // Exported
+    Email string // Exported
 }
 
-func BenchmarkAddLarge(b *testing.B) {
-    b.ResetTimer()
-    for i := 0; i < b.N; i++ {
-        Add(1000000, 2000000)
-    }
-}
+# ENCODE
+u := User{Name: "Alice"}
+data, _ := json.Marshal(u) 
 
-// Run: go test -bench=.
-// Output shows ns/op (nanoseconds per operation)`,
+# DECODE
+var u2 User
+json.Unmarshal(data, &u2)`,
 				},
 				{
-					Title: "Examples",
-					Content: `**Example Functions:**
-- Documentation and testing combined
-- Function: func ExampleXxx()
-- Must have Output comment
-- Run with: go test -run Example
+					Title: "Networking & HTTP",
+					Content: "The `net/http` package provides everything you need to build robust HTTP clients and production-grade web servers without relying on third-party frameworks.\n\n" +
+						"**1. HTTP Server**: You define handlers (functions that satisfy the `HandlerFunc` signature) and map them to routes using `http.HandleFunc`.\n\n" +
+						"**2. HTTP Client**: The `http.Get`, `http.Post`, and `http.Do` functions allow you to perform requests. Always remember to close the response body to prevent resource leaks.\n\n" +
+						"**3. Context Aware**: Standard library HTTP operations support `context.Context`, allowing you to easily propagate timeouts and cancellation signals across the network.",
+					CodeExamples: `# SIMPLE SERVER
+http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprint(w, "Hello!")
+})
+log.Fatal(http.ListenAndServe(":8080", nil))
 
-**Example Output:**
-- Comment: // Output: expected output
-- Validates example produces correct output`,
-					CodeExamples: `package math
-
-import "fmt"
-
-func ExampleAdd() {
-    result := Add(2, 3)
-    fmt.Println(result)
-    // Output: 5
-}
-
-func ExampleMultiply() {
-    result := Multiply(4, 5)
-    fmt.Printf("Result: %d\n", result)
-    // Output: Result: 20
-}
-
-// Examples appear in godoc documentation
-// Run: go test -run Example`,
-				},
-				{
-					Title: "Testing Best Practices",
-					Content: `**Best Practices:**
-- Write tests alongside code
-- Test behavior, not implementation
-- Use table-driven tests
-- Test edge cases and errors
-- Keep tests simple and readable
-- Use subtests for organization
-- Mock external dependencies
-- Test in isolation`,
-					CodeExamples: `package math
-
-import "testing"
-
-// Good: Test behavior
-func TestDivide(t *testing.T) {
-    result, err := Divide(10, 2)
-    if err != nil {
-        t.Fatal(err)
-    }
-    if result != 5 {
-        t.Errorf("want 5, got %d", result)
-    }
-}
-
-// Good: Test error case
-func TestDivideByZero(t *testing.T) {
-    _, err := Divide(10, 0)
-    if err == nil {
-        t.Error("expected error for division by zero")
-    }
-}`,
+# HTTP GET CLIENT
+resp, _ := http.Get("https://example.com")
+defer resp.Body.Close() // MANDATORY
+body, _ := io.ReadAll(resp.Body)`,
 				},
 			},
 			ProblemIDs: []int{},
 		},
 		{
 			ID:          43,
-			Title:       "Advanced Topics",
-			Description: "Explore reflection, generics, build tags, profiling, and Go best practices.",
-			Order:       13,
+			Title:       "Testing & Benchmarking",
+			Description: "Learn to write tests, benchmarks, and measure code performance.",
+			Order:       12,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Reflection",
-					Content: `**Reflection (reflect package):**
-- Examine types and values at runtime
-- reflect.TypeOf(), reflect.ValueOf()
-- Type inspection and manipulation
-- Used by encoding packages (JSON, etc.)
-- Use sparingly - prefer type assertions
-
-**Common Uses:**
-- Type checking
-- Struct field iteration
-- Dynamic function calls`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "reflect"
-)
-
-func inspect(v interface{}) {
-    t := reflect.TypeOf(v)
-    val := reflect.ValueOf(v)
-    
-    fmt.Printf("Type: %s\n", t)
-    fmt.Printf("Value: %v\n", val)
-    
-    if t.Kind() == reflect.Struct {
-        for i := 0; i < t.NumField(); i++ {
-            field := t.Field(i)
-            value := val.Field(i)
-            fmt.Printf("  %s: %v\n", field.Name, value)
-        }
+					Title: "Advanced Testing Patterns",
+					Content: "Go's testing philosophy emphasizes readability and robustness. Beyond simple assertions, Advanced Go developers use specific patterns to handle complex logic.\n\n" +
+						"**1. Table-Driven Tests**: The most common pattern. By defining a slice of anonymous structs containing inputs and expected outputs, you can test dozens of cases with a single loop.\n\n" +
+						"**2. Subtests**: Use `t.Run()` inside your loop to give each case a unique name. This allows you to run specific sub-cases from the command line using `-run=TestName/SubName`.\n\n" +
+						"**3. Helper Functions**: Use `t.Helper()` in shared testing logic. This marks the function as a helper, so that when a test fails, the error message points to the caller's line number instead of the helper.",
+					CodeExamples: `# TABLE-DRIVEN WITH SUBTESTS
+func TestAdd(t *testing.T) {
+    cases := []struct {
+        name, a, b string
+        want      int
+    }{
+        {"positive", 2, 2, 4},
+        {"zero", 0, 0, 0},
     }
-}
 
-func main() {
-    type Person struct {
-        Name string
-        Age  int
+    for _, tc := range cases {
+        t.Run(tc.name, func(t *testing.T) {
+            got := Add(tc.a, tc.b)
+            if got != tc.want {
+                t.Errorf("got %d, want %d", got, tc.want)
+            }
+        })
     }
-    inspect(Person{"Alice", 30})
 }`,
 				},
 				{
-					Title: "Generics (Go 1.18+)",
-					Content: `**Generics:**
-- Write code that works with multiple types
-- Type parameters: [T Type]
-- Constraints: [T comparable]
-- Type inference
-
-**Syntax:**
-func FunctionName[T TypeConstraint](param T) T {
-    // body
-}`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Generic function
-func Max[T comparable](a, b T) T {
-    if a > b {
-        return a
+					Title: "Performance & Analysis",
+					Content: "Go has built-in support for measuring performance and code quality through benchmarks and coverage analysis.\n\n" +
+						"**1. Benchmarks**: Identify performance bottlenecks. A benchmark function: `func BenchmarkX(b *testing.B)` loops `b.N` times. Use `b.ResetTimer()` to exclude setup time from the measurement.\n\n" +
+						"**2. Coverage**: Measure how much of your code is executed by tests using `go test -cover`. Use `-coverprofile` to generate a detailed report that highlights untested branches in HTML.\n\n" +
+						"**3. Fuzzing**: A modern feature that generates random inputs to find edge cases that cause crashes. Use `func FuzzX(f *testing.F)` to provide a starting corpus and let Go explore the input space.",
+					CodeExamples: `# BENCHMARKING
+func BenchmarkSort(b *testing.B) {
+    data := makeLargeSlice()
+    b.ResetTimer() // Exclude setup
+    for i := 0; i < b.N; i++ {
+        sort.Ints(data)
     }
-    return b
 }
 
-// Generic with constraint
-func Sum[T int | float64](nums []T) T {
-    var sum T
-    for _, num := range nums {
-        sum += num
-    }
-    return sum
-}
+# COVERAGE COMMANDS
+# go test -coverprofile=c.out
+# go tool cover -html=c.out
 
-// Generic type
-type Stack[T any] struct {
-    items []T
-}
-
-func (s *Stack[T]) Push(item T) {
-    s.items = append(s.items, item)
-}
-
-func (s *Stack[T]) Pop() T {
-    item := s.items[len(s.items)-1]
-    s.items = s.items[:len(s.items)-1]
-    return item
-}
-
-func main() {
-    fmt.Println(Max(3, 5))
-    fmt.Println(Sum([]int{1, 2, 3}))
+# FUZZING
+func FuzzParse(f *testing.F) {
+    f.Add("initial corpus")
+    f.Fuzz(func(t *testing.T, s string) {
+        Parse(s) // Search for crashes
+    })
 }`,
 				},
 				{
-					Title: "Build Tags",
-					Content: `**Build Tags:**
-- Conditional compilation
-- // +build tag
-- //go:build tag (newer syntax)
-- Files compiled only when tag matches
-- Use for platform-specific code
-
-**Common Tags:**
-- Operating systems: linux, windows, darwin
-- Architectures: amd64, arm64
-- Custom: dev, test, production`,
-					CodeExamples: `// +build linux
-
-package main
-
-// This file only compiles on Linux
-
-// +build !windows
-
-package main
-
-// This file compiles on all platforms except Windows
-
-//go:build linux || darwin
-
-package main
-
-// Newer syntax - compiles on Linux or macOS
-
-// Usage: go build -tags=dev`,
-				},
-				{
-					Title: "CGO Basics",
-					Content: `**CGO:**
-- Call C code from Go
-- import "C"
-- Requires C compiler
-- Use sparingly - adds complexity
-
-**When to Use:**
-- Interfacing with C libraries
-- Performance-critical sections
-- Legacy code integration
-
-**Trade-offs:**
-- Breaks cross-compilation
-- Slower build times
-- More complex builds`,
-					CodeExamples: `package main
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-void hello() {
-    printf("Hello from C!\n");
-}
-*/
-import "C"
-
-func main() {
-    C.hello()
+					Title: "Documentation Examples",
+					Content: "Examples in Go are a unique feature where your code examples also serve as living tests that validate the library's behavior and appear in the documentation.\n\n" +
+						"**1. Function Prefix**: Must start with `Example`. To link to a function `Foo`, name it `ExampleFoo`.\n\n" +
+						"**2. Output Validation**: Include a comment at the end of the function starting with `// Output:`. The testing tool captures standard output and compares it to this comment.\n\n" +
+						"**3. Documentation**: These examples are automatically rendered by `pkgsite` or `godoc`, providing users with runnable, verified examples of how to use your API.",
+					CodeExamples: `# RUNNABLE EXAMPLE
+func ExampleReverse() {
+    fmt.Println(Reverse("hello"))
+    // Output: olleh
 }
 
-// Requires C compiler
-// go build`,
-				},
-				{
-					Title: "Profiling and Performance",
-					Content: `**Profiling:**
-- Measure program performance
-- CPU profiling: go test -cpuprofile
-- Memory profiling: go test -memprofile
-- Use pprof tool to analyze
-
-**Performance Tips:**
-- Profile before optimizing
-- Use sync.Pool for object reuse
-- Preallocate slices when size known
-- Avoid unnecessary allocations
-- Use buffered channels appropriately`,
-					CodeExamples: `package main
-
-import (
-    "os"
-    "runtime/pprof"
-)
-
-func main() {
-    // CPU profiling
-    f, _ := os.Create("cpu.prof")
-    pprof.StartCPUProfile(f)
-    defer pprof.StopCPUProfile()
-    
-    // Your code here
-    
-    // Memory profiling
-    mf, _ := os.Create("mem.prof")
-    pprof.WriteHeapProfile(mf)
-    mf.Close()
-    
-    // Analyze: go tool pprof cpu.prof
-}`,
-				},
-				{
-					Title: "Best Practices and Idioms",
-					Content: `**Go Idioms:**
-- Error handling: if err != nil { return err }
-- Defer for cleanup
-- Use interfaces for abstraction
-- Prefer composition over inheritance
-- Keep functions small and focused
-- Use meaningful names
-- Document exported functions
-
-**Code Organization:**
-- One package per directory
-- Clear package boundaries
-- Minimize dependencies
-- Keep it simple`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "os"
-)
-
-// Good: Clear error handling
-func readFile(filename string) ([]byte, error) {
-    data, err := os.ReadFile(filename)
-    if err != nil {
-        return nil, fmt.Errorf("failed to read file: %w", err)
-    }
-    return data, nil
-}
-
-// Good: Use defer for cleanup
-func processFile(filename string) error {
-    file, err := os.Open(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()  // Always closes
-    
-    // Process file
-    return nil
-}
-
-// Good: Small, focused functions
-func validateUser(name string) error {
-    if name == "" {
-        return fmt.Errorf("name cannot be empty")
-    }
-    return nil
-}`,
+# RUN WITH: go test -v`,
 				},
 			},
 			ProblemIDs: []int{},
 		},
 		{
 			ID:          44,
-			Title:       "File I/O",
-			Description: "Master file operations, reading, writing, and working with the filesystem.",
-			Order:       14,
+			Title:       "Advanced Topics",
+			Description: "Explore reflection, generics, build tags, profiling, and Go best practices.",
+			Order:       13,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Reading Files",
-					Content: `Reading files in Go is straightforward with the os and io packages.
+					Title: "Advanced Reflection",
+					Content: "Reflection allows a Go program to inspect its own structure and values at runtime. It is a powerful but complex tool used by JSON encoders, ORMs, and dependency injection frameworks.\n\n" +
+						"**1. Type & Value**: The two pillars of reflection are `reflect.Type` (what something is) and `reflect.Value` (what something contains). Use `reflect.TypeOf()` and `reflect.ValueOf()` to enter the reflection world.\n\n" +
+						"**2. Kind**: While `Type` might be `main.User`, its `Kind` is `reflect.Struct`. Checking the Kind is essential for writing generic functions that handle different shapes of data.\n\n" +
+						"**3. Performance**: Reflection is significantly slower than regular Go code and bypasses type safety at compile time. Rules of thumb: Use it only when necessary, and always validate `CanSet()` before modifying values.",
+					CodeExamples: `# INSPECTING A VALUE
+v := reflect.ValueOf(42)
+fmt.Println("Type:", v.Type())
+fmt.Println("Kind:", v.Kind())
 
-**Reading Methods:**
-
-**1. os.ReadFile():**
-- Reads entire file into memory
-- Returns []byte and error
-- Simple for small files
-- Closes file automatically
-
-**2. os.Open() + io.ReadAll():**
-- More control over file handle
-- Can read in chunks
-- Must close file manually
-- Better for large files
-
-**3. bufio.Scanner:**
-- Line-by-line reading
-- Memory efficient
-- Handles large files well
-- Convenient for text files
-
-**4. io.Copy():**
-- Copy from reader to writer
-- Efficient for large files
-- Streams data
-- No memory buffer needed
-
-**Best Practices:**
-- Use os.ReadFile() for small files
-- Use bufio.Scanner for line-by-line
-- Always handle errors
-- Close files when done
-- Use defer for cleanup`,
-					CodeExamples: `package main
-
-import (
-    "bufio"
-    "fmt"
-    "io"
-    "os"
-)
-
-// Method 1: Read entire file
-func readEntireFile(filename string) error {
-    data, err := os.ReadFile(filename)
-    if err != nil {
-        return err
-    }
-    fmt.Println(string(data))
-    return nil
+# MODIFYING VIA POINTER
+x := 10
+ptr := reflect.ValueOf(&x).Elem()
+if ptr.CanSet() {
+    ptr.SetInt(20)
 }
 
-// Method 2: Open and read
-func readWithOpen(filename string) error {
-    file, err := os.Open(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    data, err := io.ReadAll(file)
-    if err != nil {
-        return err
-    }
-    fmt.Println(string(data))
-    return nil
-}
-
-// Method 3: Line by line
-func readLineByLine(filename string) error {
-    file, err := os.Open(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
-        fmt.Println(scanner.Text())
-    }
-    return scanner.Err()
-}
-
-// Method 4: Read in chunks
-func readInChunks(filename string) error {
-    file, err := os.Open(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    buf := make([]byte, 1024)  // 1KB chunks
-    for {
-        n, err := file.Read(buf)
-        if err == io.EOF {
-            break
-        }
-        if err != nil {
-            return err
-        }
-        fmt.Print(string(buf[:n]))
-    }
-    return nil
-}
-
-func main() {
-    readEntireFile("file.txt")
-    readWithOpen("file.txt")
-    readLineByLine("file.txt")
-    readInChunks("file.txt")
+# STRUCT FIELD ITERATION
+t := reflect.TypeOf(User{})
+for i := 0; i < t.NumField(); i++ {
+    fmt.Println(t.Field(i).Name)
 }`,
 				},
 				{
-					Title: "Writing Files",
-					Content: `Writing files in Go offers multiple approaches depending on your needs.
+					Title: "Conditional Compilation",
+					Content: "Go provides a simple mechanism to include or exclude files during the build process based on environment variables, OS, or architecture.\n\n" +
+						"**1. Syntax**: At the very top of a file, use `//go:build tag`. You can use boolean logic: `//go:build linux && !amd64`.\n\n" +
+						"**2. Platform Support**: This is most commonly used for implementing OS-specific logic (e.g., file paths in Windows vs Linux) without cluttering the main logic with `if` statements.\n\n" +
+						"**3. Suffixes**: Go also supports file naming suffixes like `file_linux.go` or `file_amd64.go`, which are automatically applied without explicit tags.",
+					CodeExamples: `# RUN ONLY ON LINUX
+//go:build linux
 
-**Writing Methods:**
+package main
 
-**1. os.WriteFile():**
-- Writes entire []byte to file
-- Creates file if doesn't exist
-- Truncates if exists
-- Simple for small data
+# EXCLUDE WINDOWS
+//go:build !windows
 
-**2. os.Create() + Write():**
-- More control over file handle
-- Can write incrementally
-- Must close file manually
-- Better for large writes
-
-**3. bufio.Writer:**
-- Buffered writing
-- More efficient for multiple writes
-- Flush when done
-- Reduces system calls
-
-**4. io.Copy():**
-- Copy from reader to file
-- Efficient for large data
-- Streams data
-- No memory buffer needed
-
-**File Modes:**
-- 0644: Read/write for owner, read for others
-- 0755: Execute permissions
-- 0600: Read/write for owner only
-
-**Best Practices:**
-- Use os.WriteFile() for small data
-- Use bufio.Writer for multiple writes
-- Set appropriate file permissions
-- Always handle errors
-- Close files when done`,
-					CodeExamples: `package main
-
-import (
-    "bufio"
-    "fmt"
-    "io"
-    "os"
-)
-
-// Method 1: Write entire file
-func writeEntireFile(filename string, data []byte) error {
-    return os.WriteFile(filename, data, 0644)
-}
-
-// Method 2: Create and write
-func writeWithCreate(filename string, data []byte) error {
-    file, err := os.Create(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    _, err = file.Write(data)
-    return err
-}
-
-// Method 3: Buffered writing
-func writeBuffered(filename string, lines []string) error {
-    file, err := os.Create(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    writer := bufio.NewWriter(file)
-    defer writer.Flush()
-    
-    for _, line := range lines {
-        _, err := writer.WriteString(line + "\n")
-        if err != nil {
-            return err
-        }
-    }
-    return nil
-}
-
-// Method 4: Append to file
-func appendToFile(filename string, data []byte) error {
-    file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    _, err = file.Write(data)
-    return err
-}
-
-// Method 5: Copy from reader
-func copyToFile(filename string, reader io.Reader) error {
-    file, err := os.Create(filename)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    _, err = io.Copy(file, reader)
-    return err
-}
+# USAGE IN TERMINAL
+go build -tags=pro`,
+				},
+				{
+					Title: "CGO & Native Code",
+					Content: "CGO allows Go packages to call C code. It is the bridge between the managed Go runtime and native C libraries.\n\n" +
+						"**1. Import \"C\"**: By importing the pseudo-package `C`, you gain access to C types and functions. Comments immediately preceding this import are treated as C header code.\n\n" +
+						"**2. Cost**: Calling C from Go has significant overhead due to stack management and context switching. It also makes your binary non-portable and significantly complicates building.\n\n" +
+						"**3. Safe Bridge**: Use `C.CString` to pass Go strings to C, but always remember to free them with `C.free` using `unsafe` to avoid memory leaks.",
+					CodeExamples: `# C INTEGRATION
+/*
+#include <stdio.h>
+void hello() { printf("Native C says hi!"); }
+*/
+import "C"
 
 func main() {
-    data := []byte("Hello, World!")
-    writeEntireFile("output.txt", data)
-    
-    lines := []string{"Line 1", "Line 2", "Line 3"}
-    writeBuffered("lines.txt", lines)
-    
-    appendToFile("output.txt", []byte("\nAppended line"))
+    C.hello()
 }`,
 				},
 				{
-					Title: "File Operations",
-					Content: `Go provides comprehensive file and directory operations through the os package.
+					Title: "Profiling & Optimization",
+					Content: "Go has world-class support for profiling and tuning the performance of your applications.\n\n" +
+						"**1. CPU Profiling**: Identifies where your program spends most of its time. Generate it during tests with `-cpuprofile` and analyze using `go tool pprof`.\n\n" +
+						"**2. Memory Profiling**: Tracks heap allocations (`-memprofile`). This is crucial for identifying memory leaks and reducing the pressure on the Garbage Collector.\n\n" +
+						"**3. Tracing**: The execution tracer provides a visualization of concurrent events in your program, helping you find issues with scheduling or high latency.",
+					CodeExamples: `# GENERATE PROFILE
+go test -cpuprofile cpu.out -memprofile mem.out
 
-**File Operations:**
+# ANALYZE PROFILE
+go tool pprof -http=:8080 cpu.out
 
-**1. File Info:**
-- os.Stat(): Get file information
-- FileInfo interface: Size, Mode, ModTime, IsDir
-- Check if file exists
-- Get file permissions
-
-**2. File Manipulation:**
-- os.Rename(): Rename/move file
-- os.Remove(): Delete file
-- os.RemoveAll(): Delete directory recursively
-- os.Chmod(): Change permissions
-
-**3. Directory Operations:**
-- os.Mkdir(): Create directory
-- os.MkdirAll(): Create directory tree
-- os.ReadDir(): List directory contents
-- os.Chdir(): Change directory
-
-**4. Path Operations:**
-- filepath.Join(): Join path components
-- filepath.Dir(): Get directory
-- filepath.Base(): Get filename
-- filepath.Ext(): Get extension
-- filepath.Clean(): Clean path
-
-**Best Practices:**
-- Use filepath.Join() for paths
-- Check errors from file operations
-- Handle file permissions
-- Use os.RemoveAll() carefully
-- Check if file exists before operations`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "os"
-    "path/filepath"
-)
-
-// File info
-func fileInfo(filename string) error {
-    info, err := os.Stat(filename)
-    if err != nil {
-        return err
-    }
-    
-    fmt.Printf("Name: %s\n", info.Name())
-    fmt.Printf("Size: %d bytes\n", info.Size())
-    fmt.Printf("Mode: %v\n", info.Mode())
-    fmt.Printf("IsDir: %v\n", info.IsDir())
-    fmt.Printf("ModTime: %v\n", info.ModTime())
-    
-    return nil
-}
-
-// Check if file exists
-func fileExists(filename string) bool {
-    _, err := os.Stat(filename)
-    return !os.IsNotExist(err)
-}
-
-// Create directory
-func createDir(path string) error {
-    return os.MkdirAll(path, 0755)
-}
-
-// List directory
-func listDir(path string) error {
-    entries, err := os.ReadDir(path)
-    if err != nil {
-        return err
-    }
-    
-    for _, entry := range entries {
-        info, _ := entry.Info()
-        fmt.Printf("%s (%d bytes)\n", entry.Name(), info.Size())
-    }
-    return nil
-}
-
-// Path operations
-func pathOperations() {
-    path := filepath.Join("dir", "subdir", "file.txt")
-    fmt.Println("Full path:", path)
-    fmt.Println("Dir:", filepath.Dir(path))
-    fmt.Println("Base:", filepath.Base(path))
-    fmt.Println("Ext:", filepath.Ext(path))
-    fmt.Println("Clean:", filepath.Clean("/a/../b/./c"))
-}
-
-// Walk directory tree
-func walkDir(root string) error {
-    return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            return err
-        }
-        fmt.Println(path)
-        return nil
-    })
-}
-
-func main() {
-    fileInfo("file.txt")
-    fmt.Println("Exists:", fileExists("file.txt"))
-    createDir("mydir")
-    listDir(".")
-    pathOperations()
-    walkDir(".")
-}`,
+# EXECUTION TRACE
+go test -trace trace.out
+go tool trace trace.out`,
 				},
 			},
+
 			ProblemIDs: []int{},
 		},
+
 		{
-			ID:          45,
-			Title:       "HTTP Client & Server",
-			Description: "Build HTTP clients and servers using Go's net/http package.",
-			Order:       15,
-			Lessons: []problems.Lesson{
-				{
-					Title: "HTTP Client",
-					Content: `Go's net/http package provides a powerful HTTP client for making requests.
-
-**HTTP Methods:**
-- http.Get(): GET request
-- http.Post(): POST request
-- http.PostForm(): POST with form data
-- http.Head(): HEAD request
-- http.NewRequest(): Custom request
-
-**Request Options:**
-- Set headers
-- Add query parameters
-- Set request body
-- Set timeout
-- Add authentication
-
-**Response Handling:**
-- Read response body
-- Check status code
-- Read headers
-- Handle redirects
-- Close response body
-
-**Best Practices:**
-- Always close response body
-- Set timeouts
-- Handle errors
-- Check status codes
-- Use context for cancellation`,
-					CodeExamples: `package main
-
-import (
-    "bytes"
-    "context"
-    "encoding/json"
-    "fmt"
-    "io"
-    "net/http"
-    "time"
-)
-
-// Simple GET request
-func simpleGet(url string) error {
-    resp, err := http.Get(url)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-    
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return err
-    }
-    
-    fmt.Println(string(body))
-    return nil
-}
-
-// GET with headers
-func getWithHeaders(url string) error {
-    req, err := http.NewRequest("GET", url, nil)
-    if err != nil {
-        return err
-    }
-    
-    req.Header.Set("Authorization", "Bearer token")
-    req.Header.Set("Content-Type", "application/json")
-    
-    client := &http.Client{Timeout: 10 * time.Second}
-    resp, err := client.Do(req)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-    
-    body, _ := io.ReadAll(resp.Body)
-    fmt.Println(string(body))
-    return nil
-}
-
-// POST with JSON
-func postJSON(url string, data interface{}) error {
-    jsonData, err := json.Marshal(data)
-    if err != nil {
-        return err
-    }
-    
-    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-    if err != nil {
-        return err
-    }
-    
-    req.Header.Set("Content-Type", "application/json")
-    
-    client := &http.Client{Timeout: 10 * time.Second}
-    resp, err := client.Do(req)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-    
-    return nil
-}
-
-// POST with form data
-func postForm(url string, formData map[string]string) error {
-    values := make(map[string][]string)
-    for k, v := range formData {
-        values[k] = []string{v}
-    }
-    
-    resp, err := http.PostForm(url, values)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-    
-    return nil
-}
-
-// With context
-func getWithContext(ctx context.Context, url string) error {
-    req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-    if err != nil {
-        return err
-    }
-    
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-    
-    return nil
-}
-
-func main() {
-    simpleGet("https://example.com")
-    getWithHeaders("https://api.example.com/data")
-    postJSON("https://api.example.com/users", map[string]string{"name": "Alice"})
-}`,
-				},
-				{
-					Title: "HTTP Server",
-					Content: `Building HTTP servers in Go is straightforward with the net/http package.
-
-**Server Basics:**
-- http.HandleFunc(): Register handler function
-- http.Handle(): Register handler interface
-- http.ListenAndServe(): Start server
-- http.Server: Advanced server configuration
-
-**Handler Functions:**
-- Signature: func(w http.ResponseWriter, r *http.Request)
-- Write response with w.Write()
-- Set headers with w.Header()
-- Set status with w.WriteHeader()
-
-**Handler Interface:**
-- Implement ServeHTTP method
-- More flexible than functions
-- Can store state
-- Reusable handlers
-
-**Server Configuration:**
-- Set read/write timeouts
-- Set max header size
-- Configure TLS
-- Set address and port
-
-**Best Practices:**
-- Use http.HandleFunc() for simple handlers
-- Use http.Handle() for reusable handlers
-- Set appropriate timeouts
-- Handle errors
-- Use middleware for common functionality`,
-					CodeExamples: `package main
-
-import (
-    "fmt"
-    "net/http"
-    "time"
-)
-
-// Handler function
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
-}
-
-// Handler with method check
-func apiHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
-    
-    w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, "{\"status\": \"ok\"}")
-}
-
-// Handler interface
-type CounterHandler struct {
-    count int
-}
-
-func (h *CounterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    h.count++
-    fmt.Fprintf(w, "Count: %d", h.count)
-}
-
-// Middleware
-func loggingMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        start := time.Now()
-        next.ServeHTTP(w, r)
-        fmt.Printf("%s %s %v\n", r.Method, r.URL.Path, time.Since(start))
-    })
-}
-
-// Advanced server
-func advancedServer() {
-    mux := http.NewServeMux()
-    mux.HandleFunc("/", helloHandler)
-    mux.Handle("/counter", &CounterHandler{})
-    
-    server := &http.Server{
-        Addr:         ":8080",
-        Handler:      loggingMiddleware(mux),
-        ReadTimeout:  15 * time.Second,
-        WriteTimeout: 15 * time.Second,
-        IdleTimeout:  60 * time.Second,
-    }
-    
-    server.ListenAndServe()
-}
-
-// Simple server
-func simpleServer() {
-    http.HandleFunc("/", helloHandler)
-    http.HandleFunc("/api", apiHandler)
-    http.ListenAndServe(":8080", nil)
-}
-
-func main() {
-    simpleServer()
-    // advancedServer()
-}`,
-				},
-				{
-					Title: "HTTP Middleware",
-					Content: `Middleware provides a way to add cross-cutting concerns to HTTP handlers.
-
-**Middleware Pattern:**
-- Wrap handlers with additional functionality
-- Chain multiple middlewares
-- Common uses: logging, auth, CORS, rate limiting
-
-**Middleware Types:**
-
-**1. Function Middleware:**
-- Takes http.Handler, returns http.Handler
-- Simple and flexible
-- Easy to chain
-
-**2. Method Middleware:**
-- Methods on handler struct
-- Can store state
-- More object-oriented
-
-**Common Middleware:**
-
-**1. Logging:**
-- Log requests and responses
-- Track request time
-- Log errors
-
-**2. Authentication:**
-- Check authentication
-- Validate tokens
-- Set user context
-
-**3. CORS:**
-- Set CORS headers
-- Handle preflight requests
-- Allow cross-origin requests
-
-**4. Rate Limiting:**
-- Limit request rate
-- Prevent abuse
-- Track by IP or user
-
-**5. Recovery:**
-- Recover from panics
-- Log panics
-- Return error response
-
-**Best Practices:**
-- Keep middleware focused
-- Chain in correct order
-- Handle errors properly
-- Don't modify request after reading body
-- Use context for values`,
-					CodeExamples: `package main
-
-import (
-    "context"
-    "fmt"
-    "net/http"
-    "time"
-)
-
-// Logging middleware
-func loggingMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        start := time.Now()
-        next.ServeHTTP(w, r)
-        fmt.Printf("%s %s %v\n", r.Method, r.URL.Path, time.Since(start))
-    })
-}
-
-// Auth middleware
-func authMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        token := r.Header.Get("Authorization")
-        if token == "" {
-            http.Error(w, "Unauthorized", http.StatusUnauthorized)
-            return
-        }
-        // Validate token...
-        next.ServeHTTP(w, r)
-    })
-}
-
-// CORS middleware
-func corsMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Access-Control-Allow-Origin", "*")
-        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-        
-        if r.Method == "OPTIONS" {
-            w.WriteHeader(http.StatusOK)
-            return
-        }
-        
-        next.ServeHTTP(w, r)
-    })
-}
-
-// Recovery middleware
-func recoveryMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        defer func() {
-            if err := recover(); err != nil {
-                fmt.Printf("Panic: %v\n", err)
-                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-            }
-        }()
-        next.ServeHTTP(w, r)
-    })
-}
-
-// Context middleware
-func contextMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := context.WithValue(r.Context(), "userID", 123)
-        next.ServeHTTP(w, r.WithContext(ctx))
-    })
-}
-
-// Chain middlewares
-func chainMiddlewares(handler http.Handler, middlewares ...func(http.Handler) http.Handler) http.Handler {
-    for i := len(middlewares) - 1; i >= 0; i-- {
-        handler = middlewares[i](handler)
-    }
-    return handler
-}
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello!")
-}
-
-func main() {
-    handler := http.HandlerFunc(helloHandler)
-    
-    handler = chainMiddlewares(
-        handler,
-        loggingMiddleware,
-        corsMiddleware,
-        recoveryMiddleware,
-    )
-    
-    http.Handle("/", handler)
-    http.ListenAndServe(":8080", nil)
-}`,
-				},
-			},
-			ProblemIDs: []int{},
-		},
-		{
-			ID:          46,
-			Title:       "JSON & Encoding",
-			Description: "Work with JSON encoding and decoding, and other encoding formats.",
-			Order:       16,
-			Lessons: []problems.Lesson{
-				{
-					Title: "JSON Encoding",
-					Content: `Go's encoding/json package provides powerful JSON encoding and decoding capabilities.
-
-**JSON Encoding:**
-
-**1. json.Marshal():**
-- Convert Go value to JSON []byte
-- Handles structs, maps, slices
-- Uses struct tags for field names
-- Returns error on failure
-
-**2. json.Encoder:**
-- Stream encoding
-- Write directly to io.Writer
-- More efficient for large data
-- Use Encode() method
-
-**Struct Tags:**
-- json:"field_name": Custom field name
-- json:"-": Ignore field
-- json:",omitempty": Omit if zero value
-- json:",string": Encode as string
-
-**Best Practices:**
-- Use struct tags for field names
-- Handle encoding errors
-- Use omitempty for optional fields
-- Use Encoder for streaming
-- Set Content-Type header`,
-					CodeExamples: `package main
-
-import (
-    "encoding/json"
-    "fmt"
-    "os"
-)
-
-type User struct {
-    ID       int    ` + "`" + `json:"id"` + "`" + `
-    Username string ` + "`" + `json:"username"` + "`" + `
-    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
-    Password string ` + "`" + `json:"-"` + "`" + `
-    Active   bool   ` + "`" + `json:"active"` + "`" + `
-}
-
-// Marshal to JSON
-func marshalExample() {
-    user := User{
-        ID:       1,
-        Username: "alice",
-        Email:    "alice@example.com",
-        Password: "secret",
-        Active:   true,
-    }
-    
-    data, err := json.Marshal(user)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    
-    fmt.Println(string(data))
-    // {"id":1,"username":"alice","email":"alice@example.com","active":true}
-}
-
-// Marshal with indentation
-func marshalIndent() {
-    user := User{ID: 1, Username: "bob"}
-    data, _ := json.MarshalIndent(user, "", "  ")
-    fmt.Println(string(data))
-}
-
-// Encoder for streaming
-func encoderExample() {
-    user := User{ID: 1, Username: "charlie"}
-    encoder := json.NewEncoder(os.Stdout)
-    encoder.SetIndent("", "  ")
-    encoder.Encode(user)
-}
-
-// Custom marshaling
-func (u User) MarshalJSON() ([]byte, error) {
-    type Alias User
-    return json.Marshal(&struct {
-        *Alias
-        Username string ` + "`" + `json:"user_name"` + "`" + `
-    }{
-        Alias:    (*Alias)(&u),
-        Username: u.Username,
-    })
-}
-
-func main() {
-    marshalExample()
-    marshalIndent()
-    encoderExample()
-}`,
-				},
-				{
-					Title: "JSON Decoding",
-					Content: `Decoding JSON in Go converts JSON data back into Go values.
-
-**JSON Decoding:**
-
-**1. json.Unmarshal():**
-- Convert JSON []byte to Go value
-- Handles structs, maps, slices
-- Uses struct tags for field mapping
-- Returns error on failure
-
-**2. json.Decoder:**
-- Stream decoding
-- Read directly from io.Reader
-- More efficient for large data
-- Use Decode() method
-
-**Decoding Behavior:**
-- Ignores unknown fields
-- Uses field names or tags
-- Converts compatible types
-- Returns error on type mismatch
-
-**Best Practices:**
-- Use struct tags for field mapping
-- Handle decoding errors
-- Check for required fields
-- Use Decoder for streaming
-- Validate decoded data`,
-					CodeExamples: `package main
-
-import (
-    "encoding/json"
-    "fmt"
-    "strings"
-)
-
-type User struct {
-    ID       int    ` + "`" + `json:"id"` + "`" + `
-    Username string ` + "`" + `json:"username"` + "`" + `
-    Email    string ` + "`" + `json:"email,omitempty"` + "`" + `
-}
-
-// Unmarshal from JSON
-func unmarshalExample() {
-    jsonStr := "{\"id\":1,\"username\":\"alice\",\"email\":\"alice@example.com\"}"
-    
-    var user User
-    err := json.Unmarshal([]byte(jsonStr), &user)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    
-    fmt.Printf("User: %+v\n", user)
-}
-
-// Decoder for streaming
-func decoderExample() {
-    jsonStr := "{\"id\":2,\"username\":\"bob\"}\n{\"id\":3,\"username\":\"charlie\"}"
-    
-    decoder := json.NewDecoder(strings.NewReader(jsonStr))
-    for {
-        var user User
-        if err := decoder.Decode(&user); err != nil {
-            break
-        }
-        fmt.Printf("User: %+v\n", user)
-    }
-}
-
-// Decode to map
-func decodeToMap() {
-    jsonStr := "{\"id\":1,\"username\":\"alice\",\"extra\":\"value\"}"
-    
-    var result map[string]interface{}
-    json.Unmarshal([]byte(jsonStr), &result)
-    
-    fmt.Println(result)
-    fmt.Println(result["id"])
-    fmt.Println(result["username"])
-}
-
-// Custom unmarshaling
-func (u *User) UnmarshalJSON(data []byte) error {
-    type Alias User
-    aux := &struct {
-        *Alias
-        Username string ` + "`" + `json:"user_name"` + "`" + `
-    }{
-        Alias: (*Alias)(u),
-    }
-    
-    if err := json.Unmarshal(data, &aux); err != nil {
-        return err
-    }
-    
-    u.Username = aux.Username
-    return nil
-}
-
-func main() {
-    unmarshalExample()
-    decoderExample()
-    decodeToMap()
-}`,
-				},
-			},
-			ProblemIDs: []int{},
-		},
-		{
-			ID:          47,
+			ID:          48,
 			Title:       "Database Operations",
 			Description: "Connect to databases, execute queries, and work with database/sql package.",
 			Order:       17,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Database Connection",
-					Content: `Go's database/sql package provides a generic interface for SQL databases.
+					Title: "SQL & Connection Pooling",
+					Content: "Go's `database/sql` package followed by a driver (like `pgx` or `go-sql-driver/mysql`) provides a high-performance, thread-safe way to interact with relational databases.\n\n" +
+						"**1. The *sql.DB Object**: It is not a single connection, but a **pool** of connections. You should create it once and share it across your entire application. It automatically manages opening and closing physical connections.\n\n" +
+						"**2. Pool Tuning**: In production, always configure `SetMaxOpenConns` (limit total connections) and `SetConnMaxLifetime` (prevent stale connections). Proper tuning prevents your database from being overwhelmed during traffic spikes.\n\n" +
+						"**3. SQL Injection**: Never use `fmt.Sprintf` to build queries. Always use placeholders (e.g., `?` or `$1`). The `database/sql` package handles parameter escaping automatically.",
+					CodeExamples: `# CONNECTION POOL SETUP
+db, _ := sql.Open("postgres", dsn)
+db.SetMaxOpenConns(25)
+db.SetMaxIdleConns(5)
+db.SetConnMaxLifetime(5 * time.Minute)
 
-**Database Drivers:**
-- Import database driver (blank import)
-- Register driver automatically
-- Use driver-specific connection string
-- Common drivers: mysql, postgres, sqlite
+# SAFE QUERY WITH PLACEHOLDERS
+var name string
+err := db.QueryRow("SELECT name FROM users WHERE id = $1", userID).Scan(&name)`,
+				},
+				{
+					Title: "Robust Transactions",
+					Content: "Transactions ensure that a series of database operations either all succeed or all fail, maintaining data integrity in complex workflows.\n\n" +
+						"**1. ACID Compliance**: Transactions are started with `db.BeginTx()`. Using the `context` package allows you to automatically roll back transactions if a request is cancelled or times out.\n\n" +
+						"**2. Atomic Operations**: Within a transaction (`*sql.Tx`), all operations must use the transaction object instead of the global `db` object to be part of the atomic unit.\n\n" +
+						"**3. Defer Rollback**: A critical pattern is to `defer tx.Rollback()`. If `tx.Commit()` is called successfully, the deferred rollback does nothing; otherwise, it ensures the transaction is safely closed on any error or panic.",
+					CodeExamples: `# TRANSACTION PATTERN
+func transfer(db *sql.DB, ctx context.Context) error {
+    tx, err := db.BeginTx(ctx, nil)
+    if err != nil { return err }
+    defer tx.Rollback() // Safety net
 
-**Connection:**
-- sql.Open(): Open database connection
-- Returns *sql.DB (connection pool)
-- Doesn't actually connect until used
-- Manages connection pool automatically
+    _, err = tx.ExecContext(ctx, "UPDATE ...")
+    if err != nil { return err }
 
-**Connection Pool:**
-- SetMaxOpenConns(): Max open connections
-- SetMaxIdleConns(): Max idle connections
-- SetConnMaxLifetime(): Connection lifetime
-- SetConnMaxIdleTime(): Idle timeout
+    return tx.Commit() // Success!
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          49,
+			Title:       "Advanced Concurrency Patterns",
+			Description: "Deep dive into sophisticated concurrency patterns: Fan-out/Fan-in, Pipelines, Context-aware control, and robust Worker Pools.",
+			Order:       18,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Pipelines & Fan-out/Fan-in",
+					Content: `**Pipelines** are a series of stages connected by channels, where each stage is a group of goroutines running the same function.
 
-**Best Practices:**
-- Import driver with blank import
-- Use connection pooling
-- Set appropriate pool settings
-- Close database when done
-- Handle connection errors`,
-					CodeExamples: `package main
+**1. Pipeline Pattern:**
+A pipeline stage takes values from an input channel, performs some work, and sends them to an output channel.
+` + "```" + `
+[ Source ] -> [ Stage A ] -> [ Stage B ] -> [ Sink ]
+` + "```" + `
 
-import (
-    "database/sql"
-    "fmt"
-    "time"
-    
-    _ "github.com/lib/pq"  // PostgreSQL driver
-)
+**2. Fan-out:**
+Multiple goroutines read from the same channel until it's closed. This allows work to be distributed across multiple CPU cores.
 
-func connectDB() (*sql.DB, error) {
-    // Connection string format depends on driver
-    dsn := "host=localhost user=postgres password=secret dbname=mydb sslmode=disable"
-    
-    db, err := sql.Open("postgres", dsn)
-    if err != nil {
-        return nil, err
-    }
-    
-    // Configure connection pool
-    db.SetMaxOpenConns(25)
-    db.SetMaxIdleConns(5)
-    db.SetConnMaxLifetime(5 * time.Minute)
-    db.SetConnMaxIdleTime(10 * time.Minute)
-    
-    // Test connection
-    if err := db.Ping(); err != nil {
-        return nil, err
-    }
-    
-    return db, nil
+**3. Fan-in:**
+Consolidating multiple input channels into a single output channel. This is often used to collect results from a fan-out stage.`,
+					CodeExamples: `// FAN-OUT / FAN-IN EXAMPLE
+func producer(nums ...int) <-chan int {
+    out := make(chan int)
+    go func() {
+        for _, n := range nums { out <- n }
+        close(out)
+    }()
+    return out
 }
 
-func main() {
-    db, err := connectDB()
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
+func worker(in <-chan int) <-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in { out <- n * n }
+        close(out)
+    }()
+    return out
+}
+
+func merge(cs ...<-chan int) <-chan int {
+    var wg sync.WaitGroup
+    out := make(chan int)
+    output := func(c <-chan int) {
+        for n := range c { out <- n }
+        wg.Done()
     }
-    defer db.Close()
-    
-    fmt.Println("Connected to database")
+    wg.Add(len(cs))
+    for _, c := range cs { go output(c) }
+    go func() { wg.Wait(); close(out) }()
+    return out
 }`,
 				},
 				{
-					Title: "Executing Queries",
-					Content: `Executing SQL queries in Go involves different methods depending on the operation.
+					Title: "Context-aware Goroutine Control",
+					Content: `Properly managing the lifecycle of goroutines is critical for preventing resource leaks (goroutine "leak").
 
-**Query Methods:**
+**1. Done Channel Pattern:**
+The most basic way to signal a goroutine to stop. Usually a 'chan struct{}' that is closed by the parent.
 
-**1. db.Query():**
-- SELECT queries
-- Returns multiple rows
-- Use rows.Next() to iterate
-- Close rows when done
+**2. Context Cancellation:**
+Go's 'context' package is the standard for propagating cancellation signals and timeouts.
 
-**2. db.QueryRow():**
-- SELECT query expecting one row
-- Returns *sql.Row
-- Use Scan() to get values
-- Returns sql.ErrNoRows if no result
-
-**3. db.Exec():**
-- INSERT, UPDATE, DELETE
-- Returns Result with LastInsertId, RowsAffected
-- Use for data modification
-
-**4. Prepared Statements:**
-- db.Prepare(): Prepare statement
-- stmt.Query(), stmt.Exec(): Execute
-- More efficient for repeated queries
-- Prevents SQL injection
-
-**Best Practices:**
-- Always check errors
-- Close rows when done
-- Use prepared statements for repeated queries
-- Handle sql.ErrNoRows
-- Use transactions for multiple operations`,
-					CodeExamples: `package main
-
-import (
-    "database/sql"
-    "fmt"
-    "log"
-    
-    _ "github.com/lib/pq"
-)
-
-type User struct {
-    ID       int
-    Username string
-    Email    string
-}
-
-// Query multiple rows
-func queryUsers(db *sql.DB) ([]User, error) {
-    rows, err := db.Query("SELECT id, username, email FROM users")
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
-    
-    var users []User
-    for rows.Next() {
-        var u User
-        if err := rows.Scan(&u.ID, &u.Username, &u.Email); err != nil {
-            return nil, err
+**3. Leaking Prevention:**
+Always ensure every goroutine has a clearly defined exit condition. If a goroutine is blocked on a channel send/receive that will never happen, it is leaked memory.`,
+					CodeExamples: `// PREVENTING LEAKS WITH CONTEXT
+func longRunningWork(ctx context.Context, data <-chan string) {
+    for {
+        select {
+        case <-ctx.Done():
+            return // Clean exit
+        case msg, ok := <-data:
+            if !ok { return }
+            process(msg)
         }
-        users = append(users, u)
     }
-    
-    return users, rows.Err()
 }
 
-// Query single row
-func queryUser(db *sql.DB, id int) (*User, error) {
-    var u User
-    err := db.QueryRow("SELECT id, username, email FROM users WHERE id = $1", id).
-        Scan(&u.ID, &u.Username, &u.Email)
+// Timeout pattern
+func operationWithDeadline() {
+    ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+    defer cancel()
     
-    if err == sql.ErrNoRows {
-        return nil, fmt.Errorf("user %d not found", id)
-    }
-    if err != nil {
-        return nil, err
-    }
-    
-    return &u, nil
-}
-
-// Execute INSERT
-func insertUser(db *sql.DB, username, email string) (int, error) {
-    var id int
-    err := db.QueryRow(
-        "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
-        username, email,
-    ).Scan(&id)
-    
-    return id, err
-}
-
-// Execute UPDATE
-func updateUser(db *sql.DB, id int, email string) error {
-    result, err := db.Exec(
-        "UPDATE users SET email = $1 WHERE id = $2",
-        email, id,
-    )
-    if err != nil {
-        return err
-    }
-    
-    rowsAffected, err := result.RowsAffected()
-    if err != nil {
-        return err
-    }
-    
-    if rowsAffected == 0 {
-        return fmt.Errorf("user %d not found", id)
-    }
-    
-    return nil
-}
-
-// Prepared statement
-func preparedQuery(db *sql.DB) error {
-    stmt, err := db.Prepare("SELECT id, username FROM users WHERE id = $1")
-    if err != nil {
-        return err
-    }
-    defer stmt.Close()
-    
-    var id, username string
-    err = stmt.QueryRow(1).Scan(&id, &username)
-    if err != nil {
-        return err
-    }
-    
-    fmt.Println(id, username)
-    return nil
-}
-
-func main() {
-    db, err := sql.Open("postgres", "connection string")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
-    
-    users, _ := queryUsers(db)
-    fmt.Println(users)
+    go func() {
+        // This will stop when context times out
+        doWork(ctx)
+    }()
 }`,
 				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          50,
+			Title:       "Idiomatic Design Patterns",
+			Description: "Learn patterns that are specific to Go's philosophy: Functional Options, Decorators, Registries, and Middleware.",
+			Order:       19,
+			Lessons: []problems.Lesson{
 				{
-					Title: "Transactions",
-					Content: `Transactions ensure multiple database operations succeed or fail together.
+					Title: "Functional Options",
+					Content: `Go doesn't support default parameter values or method overloading. The **Functional Options** pattern is the idiomatic solution for creating flexible and readable constructors.
 
-**Transaction Basics:**
-- db.Begin(): Start transaction
-- tx.Commit(): Commit transaction
-- tx.Rollback(): Rollback transaction
-- All operations on tx, not db
+**1. The Problem:**
+Long constructors like 'NewServer(host, port, timeout, maxConn, tls, ...)' are hard to read and change.
 
-**Transaction Methods:**
-- tx.Query(), tx.QueryRow(), tx.Exec()
-- Same as db methods but within transaction
-- All operations atomic
-- Use defer tx.Rollback()
+**2. The Solution:**
+Define an 'Option' type as a function: 'type Option func(*Server)'. Each option modifies the server instance.
 
-**Best Practices:**
-- Always defer Rollback()
-- Commit only if all operations succeed
-- Handle errors properly
-- Keep transactions short
-- Don't nest transactions
-
-**Use Cases:**
-- Multiple related operations
-- Data consistency
-- Atomic updates
-- Complex operations`,
-					CodeExamples: `package main
-
-import (
-    "database/sql"
-    "fmt"
-    "log"
-    
-    _ "github.com/lib/pq"
-)
-
-// Simple transaction
-func transferMoney(db *sql.DB, fromID, toID int, amount float64) error {
-    tx, err := db.Begin()
-    if err != nil {
-        return err
-    }
-    defer tx.Rollback()  // Rollback if not committed
-    
-    // Deduct from sender
-    _, err = tx.Exec(
-        "UPDATE accounts SET balance = balance - $1 WHERE id = $2",
-        amount, fromID,
-    )
-    if err != nil {
-        return err
-    }
-    
-    // Add to receiver
-    _, err = tx.Exec(
-        "UPDATE accounts SET balance = balance + $1 WHERE id = $2",
-        amount, toID,
-    )
-    if err != nil {
-        return err
-    }
-    
-    // Commit transaction
-    return tx.Commit()
+**3. Benefits:**
+- API is extensible without breaking changes.
+- Default values are easy to manage.
+- Code is extremely readable.`,
+					CodeExamples: `// FUNCTIONAL OPTIONS PATTERN
+type Server struct {
+    port int
+    timeout time.Duration
 }
 
-// Transaction with checks
-func createUserWithProfile(db *sql.DB, username, email string) (int, error) {
-    tx, err := db.Begin()
-    if err != nil {
-        return 0, err
-    }
-    defer tx.Rollback()
-    
-    // Insert user
-    var userID int
-    err = tx.QueryRow(
-        "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
-        username, email,
-    ).Scan(&userID)
-    if err != nil {
-        return 0, err
-    }
-    
-    // Insert profile
-    _, err = tx.Exec(
-        "INSERT INTO profiles (user_id) VALUES ($1)",
-        userID,
-    )
-    if err != nil {
-        return 0, err
-    }
-    
-    // Commit
-    if err := tx.Commit(); err != nil {
-        return 0, err
-    }
-    
-    return userID, nil
+type Option func(*Server)
+
+func WithTimeout(t time.Duration) Option {
+    return func(s *Server) { s.timeout = t }
 }
 
-func main() {
-    db, err := sql.Open("postgres", "connection string")
-    if err != nil {
-        log.Fatal(err)
+func NewServer(port int, opts ...Option) *Server {
+    s := &Server{port: port, timeout: 30 * time.Second} // Defaults
+    for _, opt := range opts {
+        opt(s)
     }
-    defer db.Close()
-    
-    err = transferMoney(db, 1, 2, 100.0)
-    if err != nil {
-        log.Fatal(err)
-    }
+    return s
+}
+
+// Usage
+srv := NewServer(8080, WithTimeout(10*time.Second))`,
+				},
+				{
+					Title: "Decorator & Middleware",
+					Content: `Due to Go's treatment of functions as first-class citizens and its focus on interfaces, the **Decorator** pattern is very powerful and widely used.
+
+**1. Function Wrapping:**
+Taking a function, adding logic (logging, timing, auth), and returning a function with the same signature.
+
+**2. Middleware Pattern:**
+The cornerstone of HTTP servers. It wraps a 'Handler' with common logic.
+
+**3. Structural Benefits:**
+Allows separation of concerns (keeping core logic clean of cross-cutting concerns like logging or monitoring).`,
+					CodeExamples: `// HTTP MIDDLEWARE EXAMPLE
+func LoggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        log.Printf("Request: %s %s", r.Method, r.URL.Path)
+        next.ServeHTTP(w, r)
+    })
+}
+
+// Generic Decorator
+func TimedExecute(name string, f func()) {
+    start := time.Now()
+    f()
+    log.Printf("%s took %v", name, time.Since(start))
 }`,
 				},
 			},

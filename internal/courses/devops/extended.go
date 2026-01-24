@@ -1583,5 +1583,83 @@ FROM deployments`,
 			},
 			ProblemIDs: []int{},
 		},
+		{
+			ID:          300,
+			Title:       "Platform Engineering & IDP",
+			Description: "Internal Developer Platforms, self-service infrastructure, and the shift from DevOps to Platform Engineering.",
+			Order:       50,
+			Lessons: []problems.Lesson{
+				{
+					Title: "What is Platform Engineering?",
+					Content: `Platform Engineering is the discipline of designing and building toolchains and workflows that enable self-service capabilities for software engineering organizations in the cloud-native era.
+
+**1. The Goal:**
+Reduce cognitive load for developers by providing an **Internal Developer Platform (IDP)** that abstracts complex infrastructure.
+
+**2. Key Concepts:**
+- **Self-Service**: Developers can spin up databases, clusters, or environments without waiting for Ops.
+- **Golden Paths**: Standardized, supported ways to build and deploy applications.
+- **Developer Experience (DevEx)**: Focusing on making the development workflow smooth and fast.`,
+					CodeExamples: `# Terraform module for a "Golden Path" environment
+module "standard_app_env" {
+  source = "./modules/platform/standard-env"
+  
+  app_name = "order-service"
+  team     = "billing"
+  db_type  = "postgres" # IDP validates and provisions according to policy
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
+			ID:          301,
+			Title:       "AIOps and FinOps",
+			Description: "Using AI to optimize operations and managing cloud costs effectively with FinOps practices.",
+			Order:       51,
+			Lessons: []problems.Lesson{
+				{
+					Title: "FinOps Fundamentals",
+					Content: `FinOps is an evolving cloud financial management discipline and cultural practice that enables organizations to get maximum business value by helping engineering, finance, technology and business teams to collaborate on data-driven spending decisions.
+
+**1. Inform:** Visibility into spending, allocation, and tags.
+**2. Optimize:** Identifying waste, rightsizing, and reserved instance planning.
+**3. Operate:** Continuous evaluation of business objectives vs. cost.`,
+					CodeExamples: `# AWS Cost and Usage Query (Example)
+SELECT
+  line_item_product_code,
+  SUM(line_item_unblended_cost) AS total_cost
+FROM
+  cur_report
+WHERE
+  MONTH(bill_billing_period_start_date) = 1
+GROUP BY
+  line_item_product_code
+ORDER BY
+  total_cost DESC;`,
+				},
+				{
+					Title: "AIOps and Predictive Ops",
+					Content: `AIOps (Artificial Intelligence for IT Operations) uses data science and machine learning to help IT operations teams work more efficiently.
+
+**Core Capabilities:**
+- **Anomaly Detection**: Identifying abnormal patterns in logs/metrics before they become outages.
+- **Event Correlation**: Grouping thousands of alerts into a single actionable incident.
+- **Root Cause Analysis (RCA)**: Using ML to trace back the source of a failure across microservices.`,
+					CodeExamples: `# Example: Prometheus alert with dynamic threshold (simplified)
+groups:
+- name: aiops_alerts
+  rules:
+  - alert: HighErrorRateAnomaly
+    expr: |
+      rate(http_requests_total{status="500"}[5m]) > 
+      (avg_over_time(rate(http_requests_total{status="500"}[1h])[1w]) * 2)
+    for: 2m
+    labels:
+      severity: warning # Alert triggers if 500s are twice the weekly average`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
 	})
 }

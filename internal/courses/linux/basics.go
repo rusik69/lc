@@ -12,313 +12,87 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Linux?",
-					Content: `Linux is a free and open-source Unix-like operating system kernel originally created by Linus Torvalds in 1991. What started as a hobby project has grown into the most widely used operating system in the world, powering everything from smartphones and embedded devices to the world's most powerful supercomputers and cloud infrastructure.
+					Content: `Linux is a free and open-source Unix-like operating system kernel originally created by Linus Torvalds in 1991. While the term "Linux" technically refers only to the kernel, it is commonly used to describe the entire operating system formed by combining the kernel with GNU utilities, system libraries, and various applications.
+
+**Technical Definition:**
+At its core, Linux is a **monolithic kernel**. This means the entire operating system is working in kernel space and is alone in supervisor mode. It handles process management, memory management, hardware device drivers, and system calls. However, it is modular, allowing drivers and extensions to be loaded and unloaded at runtime.
+
+**The GNU/Linux Relationship:**
+The software we call "Linux" is usually a combination of:
+1. **The Linux Kernel:** Manages the hardware.
+2. **GNU Utilities:** The shell (bash), core utilities (ls, cp, rm), and compilers (gcc) provided by the Free Software Foundation.
+3. **System Libraries:** Like glibc, which provide the interface for applications to talk to the kernel.
+4. **Desktop Environments/Applications:** GNOME, KDE, Web Browsers, etc.
 
 **Historical Context:**
 
 **The Birth of Linux:**
-In 1991, Linus Torvalds, a Finnish computer science student, announced he was working on a free operating system kernel as a hobby. This kernel, combined with GNU software and other open-source components, became what we know today as Linux.
+In 1991, Linus Torvalds, a 21-year-old student at the University of Helsinki, announced he was working on a free operating system kernel as a hobby. He famously stated it "won't be big and professional like gnu". Paradoxically, the combination of his kernel with the GNU project's tools created the professional-grade system we use today.
 
 **Key Milestones:**
-- **1991**: Linus Torvalds releases Linux kernel version 0.01
-- **1992**: Linux kernel licensed under GPL (GNU General Public License)
-- **1993**: First Linux distributions emerge (Debian, Slackware)
-- **1994**: Linux 1.0 released, Red Hat founded
-- **1996**: Linux gains enterprise attention
-- **2000s**: Linux becomes dominant on servers
-- **2010s**: Linux powers cloud computing, Android, IoT
-- **2020s**: Linux is everywhere - cloud, edge, embedded, supercomputers
+- **1991**: Linus Torvalds releases Linux kernel version 0.01 (10,000 lines of code).
+- **1992**: Linux kernel licensed under GPL v2, ensuring it remains free forever.
+- **1993**: Slackware and Debian are founded, bringing Linux to the masses.
+- **1996**: Version 2.0 released; Linux supports multiple processors (SMP).
+- **2001**: Version 2.4 released; support for USB, PC Card, and better journaling filesystems.
+- **2011**: Linus releases version 3.0 to mark the 20th anniversary.
+- **2020s**: Linux powers 100% of the world's top 500 supercomputers and nearly all cloud infrastructure.
 
 **What Makes Linux Special:**
 
-**1. Open Source:**
-- **Free**: No licensing costs
-- **Transparent**: Source code is visible and auditable
-- **Modifiable**: Can customize for specific needs
-- **Community-Driven**: Developed by thousands of contributors worldwide
-- **Security**: Open source allows security audits and fixes
+**1. Open Source (GPL):**
+- **Transparency**: Anyone can inspect the code for backdoors or vulnerabilities.
+- **Collaboration**: Thousands of developers from competing companies (Intel, AMD, Google, Microsoft) work together on the kernel.
+- **Freedom**: You are never locked into a single vendor.
 
-**2. Unix Philosophy:**
-Linux follows the Unix philosophy, which emphasizes:
-- **Simplicity**: Do one thing and do it well
-- **Composability**: Small programs that work together
-- **Text-based**: Text files for configuration and data
-- **Modularity**: Build complex systems from simple components
-- **Clarity**: Clear, readable code and interfaces
+**2. The Unix Philosophy:**
+Linux is built on the idea that "everything is a file" and "small programs should do one thing well and work together."
+- **Pipes (|)**: The power to connect the output of one tool to the input of another is the secret to Linux's CLI efficiency.
+- **Text Streams**: Standard protocols for communication between tools.
 
 **3. Stability and Reliability:**
-- **Uptime**: Linux servers can run for years without rebooting
-- **Crash Resistance**: Isolated processes prevent system-wide crashes
-- **Memory Management**: Efficient memory handling
-- **Process Management**: Robust process scheduling and management
-- **Real-world example**: Many Linux servers have uptime measured in years
+- **Kernel/User Space Separation**: A crashing application (user space) cannot easily bring down the entire system (kernel space).
+- **Zero-Downtime Updates**: Many kernel updates can now be applied without rebooting using technologies like kpatch or kgraft.
 
-**4. Security:**
-- **User Permissions**: Granular access control
-- **Principle of Least Privilege**: Users have minimum necessary permissions
-- **Regular Updates**: Security patches available quickly
-- **Audit Trail**: Comprehensive logging capabilities
-- **Isolation**: Processes and users are isolated from each other
-
-**5. Performance:**
-- **Efficient**: Low overhead, high performance
-- **Scalable**: Handles everything from embedded devices to supercomputers
-- **Resource Management**: Excellent resource allocation
-- **Optimization**: Highly optimized for various hardware architectures
+**4. Security Architecture:**
+- **DAC (Discretionary Access Control)**: Traditional owner/group/other permissions.
+- **MAC (Mandatory Access Control)**: Advanced security layers like SELinux or AppArmor that restrict even the root user's potential impact.
 
 **Linux vs Other Operating Systems:**
 
 **Linux:**
-- **Cost**: Free and open-source
-- **Customization**: Highly customizable (kernel, distributions, desktop environments)
-- **Use Cases**: Servers, cloud, embedded, development, supercomputers
-- **Interface**: Primarily command-line, GUI available
-- **Software**: Vast repository of free software
-- **Community**: Large, active open-source community
-- **Learning Curve**: Steeper initially, powerful once learned
-- **Hardware Support**: Excellent (especially servers and embedded)
+- **Kernel Type**: Monolithic (modular).
+- **License**: Open Source (GPL).
+- **Filesystem**: Case-sensitive (ext4, XFS, Btrfs).
+- **Performance**: Extremely high efficiency, especially under heavy network load.
 
 **Windows:**
-- **Cost**: Proprietary, requires license (expensive for servers)
-- **Customization**: Limited (closed source)
-- **Use Cases**: Desktop, enterprise servers, gaming
-- **Interface**: GUI-focused, command-line available (PowerShell)
-- **Software**: Commercial software ecosystem
-- **Community**: Microsoft support, commercial ecosystem
-- **Learning Curve**: Easier for beginners (GUI-focused)
-- **Hardware Support**: Excellent for desktop hardware
+- **Kernel Type**: Hybrid (NT kernel).
+- **License**: Proprietary.
+- **Filesystem**: Case-insensitive (NTFS).
+- **Design Focus**: Consistency and user-friendliness for desktop users.
 
 **macOS:**
-- **Cost**: Proprietary, requires Apple hardware
-- **Customization**: Limited (closed source, but Unix-based)
-- **Use Cases**: Desktop, development, creative work
-- **Interface**: GUI-focused, Unix terminal available
-- **Software**: Apple ecosystem, some open-source
-- **Community**: Apple support, developer community
-- **Learning Curve**: Moderate (Unix-like, but GUI-focused)
-- **Hardware Support**: Limited to Apple hardware
+- **Kernel Type**: Hybrid (XNU - Mach + BSD).
+- **License**: Proprietary (though based on open-source Darwin).
+- **Design Focus**: Seamless hardware/software integration and premium user experience.
 
-**Why Linux Matters:**
+**Why Linux Matters Today:**
 
-**1. Servers:**
-- **Web Servers**: Powers majority of web servers worldwide
-  - Apache HTTP Server: Most popular web server
-  - Nginx: High-performance web server and reverse proxy
-  - Both run primarily on Linux
-- **Database Servers**: MySQL, PostgreSQL, MongoDB run on Linux
-- **Application Servers**: Java, Python, Node.js applications
-- **File Servers**: Samba, NFS for file sharing
-- **Real-world**: Over 90% of cloud instances run Linux
+**1. Infrastructure & Cloud:**
+- **AWS, GCP, Azure**: These "Clouds" are essentially massive Linux data centers.
+- **Hypervisors**: KVM (Kernel-based Virtual Machine) turns Linux into a world-class platform for virtualization.
 
-**2. Cloud Computing:**
-- **Foundation of Cloud**: AWS, Google Cloud, Azure run on Linux
-- **Containers**: Docker and Kubernetes are Linux-native
-- **Serverless**: Many serverless platforms run on Linux
-- **Microservices**: Container orchestration platforms
-- **Real-world**: All major cloud providers use Linux extensively
+**2. Containerization:**
+Docker and Kubernetes rely on Linux-specific features like **Cgroups** (resource limiting) and **Namespaces** (isolation). Without Linux, modern microservices wouldn't exist in their current form.
 
-**3. Containers and Orchestration:**
-- **Docker**: Container platform built on Linux
-- **Kubernetes**: Container orchestration (originally for Linux)
-- **Container Images**: Most container images are Linux-based
-- **Microservices**: Enable microservices architecture
-- **DevOps**: Essential for modern DevOps practices
+**3. Embedded & Android:**
+- **Smartphones**: Android is built on top of the Linux kernel.
+- **IoT**: From smart fridges to space rovers (NASA's Perseverance rover runs Linux), it is the go-to OS for reliability.
 
-**4. Embedded Systems and IoT:**
-- **Routers**: Most network routers run Linux
-- **Smart TVs**: Many smart TVs use Linux
-- **IoT Devices**: Raspberry Pi, embedded devices
-- **Automotive**: Car infotainment systems
-- **Real-world**: Linux powers billions of embedded devices
+**4. Development Environment:**
+Most modern languages (Python, Go, Node.js, Rust) are "Linux-first." Developing on Linux provides the closest environment to production for most backend developers.`,
 
-**5. Supercomputers:**
-- **Top 500**: Linux powers all top 500 supercomputers
-- **High-Performance Computing**: Scientific computing, research
-- **Parallel Processing**: Excellent for parallel workloads
-- **Real-world**: 100% of top 500 supercomputers run Linux
-
-**6. Mobile Devices:**
-- **Android**: Based on Linux kernel
-- **Billions of Devices**: Android powers billions of smartphones
-- **Tablets**: Many tablets run Android/Linux
-- **Real-world**: Linux (via Android) is the most widely used OS
-
-**7. Development:**
-- **Preferred by Developers**: Many developers prefer Linux
-- **Development Tools**: Excellent development tooling
-- **Package Management**: Easy software installation
-- **Scripting**: Powerful shell scripting capabilities
-
-**Linux Foundation Training Path (2024-2025 Best Practices):**
-
-**Foundation Level:**
-- **Introduction to Linux (LFS101)**: Linux fundamentals, command-line basics
-- **Linux Essentials**: Basic Linux knowledge for beginners
-- **Prerequisites**: None, suitable for beginners
-
-**System Administration:**
-- **Linux System Administration Essentials (LFS207)**: Intermediate-level foundational course
-- **Linux System Administration**: Comprehensive system administration skills
-- **Prerequisites**: Basic Linux knowledge
-
-**Certification Paths:**
-- **Linux Foundation Certified System Administrator (LFCS)**: Entry-level certification
-- **Linux Foundation Certified Engineer (LFCE)**: Advanced certification
-- **Kubernetes Certifications**: CKA, CKAD, CKS (container orchestration)
-- **Cloud Native Certifications**: KCNA, KCSA (cloud-native technologies)
-
-**Key Skills for 2024-2025:**
-- **Containerization**: Docker, Podman, container management
-- **Orchestration**: Kubernetes, container orchestration
-- **Automation**: Ansible, Terraform, Infrastructure as Code
-- **Cloud Integration**: AWS, Azure, GCP Linux administration
-- **Security**: SELinux, firewalls, security hardening
-- **Monitoring**: System monitoring, log management, observability
-- **Real-world**: Most software development happens on Linux
-
-**8. Enterprise:**
-- **Enterprise Servers**: Red Hat Enterprise Linux, SUSE Linux Enterprise
-- **Mission-Critical**: Powers mission-critical enterprise applications
-- **Cost Savings**: Significant cost savings vs proprietary OS
-- **Support**: Enterprise support available from vendors
-- **Real-world**: Major enterprises rely on Linux for critical workloads
-
-**Linux Philosophy:**
-
-The Unix/Linux philosophy consists of several key principles:
-
-**1. "Everything is a File":**
-- Devices, processes, network connections are represented as files
-- Unified interface for interacting with system components
-- Simplifies system interaction and programming
-- Example: /dev/sda (disk), /proc/cpuinfo (CPU info), /dev/tty (terminal)
-
-**2. "Small, Focused Programs":**
-- Each program does one thing well
-- Programs are simple and focused
-- Easier to understand, maintain, and debug
-- Example: grep (search), wc (word count), sort (sorting)
-
-**3. "Chain Programs Together":**
-- Programs can be combined using pipes (|)
-- Output of one program becomes input of another
-- Build complex operations from simple tools
-- Example: cat file.txt | grep "error" | sort | uniq
-
-**4. "Avoid Captive User Interfaces":**
-- Prefer command-line interfaces
-- Scriptable and automatable
-- Can be combined with other programs
-- Example: Command-line tools vs GUI-only applications
-
-**5. "Store Data in Flat Text Files":**
-- Configuration files are plain text
-- Human-readable and editable
-- Version control friendly
-- Example: /etc/hosts, /etc/passwd, configuration files
-
-**6. "Make Each Program Do One Thing Well":**
-- Single responsibility principle
-- Programs are tools, not solutions
-- Combine tools to solve problems
-- Example: Unix tools (ls, cat, grep, awk, sed)
-
-**7. "Worse is Better":**
-- Simplicity over perfection
-- Good enough is better than perfect
-- Practical solutions over theoretical perfection
-- Example: Simple, working solutions preferred
-
-**Linux Architecture:**
-
-**Kernel:**
-- Core of the operating system
-- Manages hardware resources
-- Provides system calls to applications
-- Handles process scheduling, memory management, device drivers
-
-**System Libraries:**
-- GNU C Library (glibc) and other libraries
-- Provide functions for applications
-- Interface between applications and kernel
-
-**System Tools:**
-- Essential utilities (ls, cp, mv, etc.)
-- Usually part of GNU coreutils
-- Provide basic system functionality
-
-**Shell:**
-- Command-line interface
-- Bash, Zsh, Fish, etc.
-- Interprets commands and executes programs
-
-**Desktop Environment (Optional):**
-- GUI for desktop use
-- GNOME, KDE, XFCE, etc.
-- Not needed for servers
-
-**Applications:**
-- User applications
-- Web browsers, text editors, development tools
-- Can be GUI or command-line
-
-**Getting Started with Linux:**
-
-**Why Learn Linux:**
-
-**1. Career Opportunities:**
-- **DevOps**: Essential for DevOps roles
-- **Cloud Computing**: Required for cloud platforms
-- **System Administration**: Core skill for sysadmins
-- **Software Development**: Many developers use Linux
-- **Cybersecurity**: Important for security professionals
-
-**2. Practical Benefits:**
-- **Cost**: Free to use and learn
-- **Skills**: Transferable across many technologies
-- **Understanding**: Deep understanding of how computers work
-- **Automation**: Powerful scripting and automation capabilities
-- **Control**: Complete control over your system
-
-**3. Technology Foundation:**
-- **Cloud**: Understanding cloud requires Linux knowledge
-- **Containers**: Docker and Kubernetes are Linux-based
-- **DevOps**: Modern DevOps relies heavily on Linux
-- **Networking**: Many network devices run Linux
-- **Embedded**: IoT and embedded systems use Linux
-
-**Common Linux Distributions:**
-
-**For Beginners:**
-- **Ubuntu**: Most popular, user-friendly, great documentation
-- **Linux Mint**: Even more user-friendly, Windows-like interface
-- **Fedora**: Modern, cutting-edge, good for learning
-
-**For Servers:**
-- **Ubuntu Server**: Popular, well-supported, easy to use
-- **CentOS/Rocky Linux**: Enterprise-standard, RHEL-compatible
-- **Debian**: Stable, reliable, widely used
-- **Red Hat Enterprise Linux**: Commercial, enterprise support
-
-**For Advanced Users:**
-- **Arch Linux**: Rolling release, minimal, learn everything
-- **Gentoo**: Source-based, maximum customization
-- **Slackware**: Traditional, oldest surviving distribution
-
-**Conclusion:**
-
-Linux is not just an operating system—it's a fundamental technology that powers the modern digital world. From the servers hosting websites to the smartphones in our pockets, from cloud infrastructure to supercomputers, Linux is everywhere.
-
-Understanding Linux is essential for:
-- **Developers**: Most development happens on Linux
-- **DevOps Engineers**: Containers, cloud, automation all use Linux
-- **System Administrators**: Core skill for managing servers
-- **Cloud Engineers**: Cloud platforms are Linux-based
-- **Anyone in Tech**: Linux knowledge is increasingly valuable
-
-The key to learning Linux is hands-on practice. Start with a beginner-friendly distribution like Ubuntu, learn basic commands, understand the file system, practice regularly, and gradually build your skills. Linux rewards those who invest time in learning it with powerful capabilities and deep understanding of how computers work.
-
-Remember: Linux is about freedom—freedom to use, modify, and distribute. This freedom has enabled Linux to become the foundation of modern computing infrastructure. Whether you're running a web server, developing software, or managing cloud infrastructure, Linux skills are essential for success in modern technology.`,
 					CodeExamples: `# Check Linux version
 uname -a
 # Output: Linux hostname 5.15.0-generic #1-Ubuntu SMP ...
@@ -343,500 +117,81 @@ uname -s
 					Title: "Linux Distributions",
 					Content: `A Linux distribution (often called a "distro") is an operating system built from a software collection that includes the Linux kernel, system libraries, applications, and package management tools. While Linux itself is just the kernel, distributions package everything needed to create a complete, usable operating system.
 
-**What Makes a Distribution:**
+**Categorization by Release Model:**
 
-**Core Components:**
-- **Linux Kernel**: The core operating system kernel
-- **System Libraries**: GNU C Library (glibc) and other essential libraries
-- **System Tools**: Basic utilities (ls, cp, mv, grep, etc.)
-- **Shell**: Command-line interface (Bash, Zsh, etc.)
-- **Package Manager**: Tool for installing and managing software
-- **Desktop Environment** (optional): GUI for desktop use
-- **Applications**: Software packages and applications
+**1. Fixed Release (Point Release):**
+- **How it works**: Versions are released at fixed intervals (e.g., every 6 months or 2 years). Each version is supported for a specific time.
+- **Pros**: Predictability, extreme stability, tested component harmony.
+- **Cons**: Software can become outdated. Upgrading between major versions can be risky.
+- **Examples**: Ubuntu LTS, Debian Stable, RHEL.
 
-**Distribution Philosophy:**
-
-Each distribution has its own philosophy and goals:
-- **Stability vs Cutting-Edge**: Some prioritize stability, others latest features
-- **Ease of Use vs Control**: Some are user-friendly, others give full control
-- **Commercial vs Community**: Some are commercial, others community-driven
-- **Package Management**: Different package managers and philosophies
+**2. Rolling Release:**
+- **How it works**: There are no "versions" of the OS. You install once and update continuously. Packages are updated as soon as they are stable.
+- **Pros**: Always have the latest software, no major OS upgrade re-installs.
+- **Cons**: Higher risk of breakage after an update. Requires more user intervention.
+- **Examples**: Arch Linux, Gentoo, openSUSE Tumbleweed.
 
 **Major Distribution Families:**
 
-**1. Debian-based Distributions:**
+**1. The Debian Family (The "People's" OS):**
+- **Debian**: Known for its strict adherence to free software and stability. It uses the '.deb' package format and 'apt' manager.
+- **Ubuntu**: Built on Debian, it made Linux accessible to non-technical users. It introduced "LTS" (Long Term Support) versions, which are the industry standard for production servers.
+- **Kali Linux**: A specialized Debian derivative pre-loaded with hundreds of security and penetration testing tools.
 
-**Debian:**
-- **Philosophy**: Stability, free software, community-driven
-- **Release Cycle**: Stable releases every 2-3 years
-- **Package Manager**: apt (Advanced Package Tool)
-- **Use Cases**: Servers, stable desktop systems
-- **Strengths**: 
-  - Extremely stable and reliable
-  - Huge software repository (60,000+ packages)
-  - Strong commitment to free software
-  - Excellent for servers
-- **Weaknesses**: 
-  - Software can be outdated
-  - Slower release cycle
-  - Less user-friendly than Ubuntu
-- **Real-world**: Powers many web servers and cloud instances
+**2. The Red Hat Family (The Enterprise Titan):**
+- **RHEL (Red Hat Enterprise Linux)**: The gold standard for enterprise. Requires a paid subscription for support and updates. Uses '.rpm' packages and 'dnf'.
+- **Fedora**: The upstream for RHEL. It's where new features (like Wayland or Systemd) are tested before they reach the enterprise.
+- **Rocky Linux / AlmaLinux**: Community-driven, bug-for-bug compatible clones of RHEL that emerged after CentOS changed its model.
 
-**Ubuntu:**
-- **Philosophy**: User-friendly, "Linux for human beings"
-- **Release Cycle**: Regular releases every 6 months, LTS every 2 years
-- **Package Manager**: apt (inherited from Debian)
-- **Use Cases**: Desktop, servers, cloud, IoT
-- **Strengths**: 
-  - Most popular Linux distribution
-  - Excellent documentation and community support
-  - User-friendly, easy to install
-  - Large software repository
-  - Strong commercial support (Canonical)
-- **Weaknesses**: 
-  - Some proprietary software included
-  - Can be resource-heavy
-  - Some customization removed for simplicity
-- **Variants**: 
-  - **Ubuntu Desktop**: Full desktop experience
-  - **Ubuntu Server**: Server-focused, no GUI
-  - **Ubuntu Core**: Minimal, IoT-focused
-  - **Kubuntu**: KDE desktop environment
-  - **Xubuntu**: XFCE desktop (lightweight)
-  - **Lubuntu**: LXQt desktop (very lightweight)
-- **Real-world**: Most popular Linux distribution, used by millions
+**3. The Arch Family (The DIY Choice):**
+- **Arch Linux**: Follows the KISS (Keep It Simple, Stupid) principle. It provides a minimal base, and the user must manually configure everything.
+- **Manjaro**: An Arch-based distro that adds a GUI and a more user-friendly layer while retaining access to the massive **'AUR' (Arch User Repository)**.
 
-**Linux Mint:**
-- **Philosophy**: User-friendly, Windows-like experience
-- **Base**: Based on Ubuntu (or Debian)
-- **Package Manager**: apt
-- **Use Cases**: Desktop, especially for Windows users switching to Linux
-- **Strengths**: 
-  - Very user-friendly
-  - Windows-like interface (Cinnamon desktop)
-  - Includes multimedia codecs by default
-  - Good for beginners
-- **Weaknesses**: 
-  - Less popular than Ubuntu
-  - Smaller community
-  - Based on Ubuntu, so inherits Ubuntu's issues
-- **Real-world**: Popular choice for Windows users trying Linux
+**Package Management Internals:**
 
-**Kali Linux:**
-- **Philosophy**: Security-focused, penetration testing
-- **Base**: Based on Debian
-- **Package Manager**: apt
-- **Use Cases**: Security testing, penetration testing, forensics
-- **Strengths**: 
-  - Pre-installed security tools (hundreds of tools)
-  - Regularly updated security tools
-  - Excellent for security professionals
-- **Weaknesses**: 
-  - Not for general use
-  - Requires security knowledge
-  - Can be misused if not careful
-- **Real-world**: Standard tool for cybersecurity professionals
+**What is a Package?**
+A package is a compressed archive ('.deb' or '.rpm') containing:
+- **Binaries**: The compiled program code.
+- **Metadata**: Name, version, description, and dependencies.
+- **Scripts**: Instructions for tasks to run before or after installation (e.g., creating a system user).
 
-**2. Red Hat-based Distributions:**
+**How Repositories Work:**
+Repositories are central servers hosting thousands of packages.
+1. **Index Update**: When you run `apt update`, you download a list of available packages and versions.
+2. **Dependency Resolution**: When installing `vlc`, the manager checks if `libavcodec` is installed. If not, it fetches it automatically.
+3. **Verification**: Packages are digitally signed. Your system checks the signature against a trusted public key to ensure the software hasn't been tampered with.
 
-**Red Hat Enterprise Linux (RHEL):**
-- **Philosophy**: Enterprise-grade, commercial, supported
-- **Release Cycle**: Major releases every 3-4 years, minor updates regularly
-- **Package Manager**: yum (older) or dnf (newer)
-- **Use Cases**: Enterprise servers, mission-critical systems
-- **Strengths**: 
-  - Enterprise-grade stability and support
-  - Long support lifecycle (10+ years)
-  - Excellent documentation
-  - Strong security features
-  - Commercial support available
-- **Weaknesses**: 
-  - Requires paid subscription
-  - Software can be conservative/outdated
-  - Less cutting-edge features
-- **Real-world**: Powers many enterprise servers and data centers
+**Universal Package Formats:**
+To solve the "one binary for all distros" problem, new formats have emerged:
+- **Snap (Canonical)**: Bundles dependencies, runs in a sandbox.
+- **Flatpak (Community)**: Focused on desktop apps, excellent isolation.
+- **AppImage**: A single file that "just runs" without installation.`,
+					CodeExamples: `# Package Manager Identity
+# Debian/Ubuntu uses APT
+# Red Hat/Fedora uses DNF
+# Arch uses PACMAN
 
-**CentOS (Community Enterprise Operating System):**
-- **Philosophy**: Free RHEL clone, community-driven
-- **Status**: Now CentOS Stream (rolling release, upstream of RHEL)
-- **Package Manager**: yum/dnf
-- **Use Cases**: Servers, when RHEL compatibility needed without cost
-- **Strengths**: 
-  - Binary compatible with RHEL
-  - Free and open-source
-  - Stable and reliable
-  - Good for learning RHEL
-- **Weaknesses**: 
-  - CentOS 8 ended, now CentOS Stream (different model)
-  - Less support than RHEL
-- **Note**: Traditional CentOS ended, replaced by CentOS Stream
-- **Real-world**: Was very popular for servers, now transitioning
+# SEARCHING for a package
+# Ubuntu: apt search nginx
+# Fedora: dnf search nginx
+# Arch: pacman -Ss nginx
 
-**Rocky Linux:**
-- **Philosophy**: RHEL-compatible, community-driven replacement for CentOS
-- **Release Cycle**: Follows RHEL release cycle
-- **Package Manager**: dnf
-- **Use Cases**: Servers, RHEL-compatible systems
-- **Strengths**: 
-  - Binary compatible with RHEL
-  - Free and open-source
-  - Community-driven
-  - Fills gap left by CentOS
-- **Weaknesses**: 
-  - Relatively new (founded 2020)
-  - Smaller community than CentOS had
-- **Real-world**: Growing adoption as CentOS replacement
+# INSTALLING a package
+# Ubuntu: sudo apt install htop
+# Fedora: sudo dnf install htop
+# Arch: sudo pacman -S htop
 
-**Fedora:**
-- **Philosophy**: Cutting-edge, innovation, community-driven
-- **Release Cycle**: New release every 6 months, supported for ~13 months
-- **Package Manager**: dnf
-- **Use Cases**: Desktop, development, testing new technologies
-- **Strengths**: 
-  - Latest software and features
-  - Strong security (SELinux enabled by default)
-  - Good for developers
-  - Sponsored by Red Hat (but community-driven)
-- **Weaknesses**: 
-  - Faster release cycle (more updates needed)
-  - Can be less stable than RHEL
-  - Shorter support lifecycle
-- **Real-world**: Popular with developers, used by Linus Torvalds
+# REMOVING a package (and its config)
+# Ubuntu: sudo apt purge htop
+# Fedora: sudo dnf remove htop
+# Arch: sudo pacman -Rns htop
 
-**3. Arch-based Distributions:**
-
-**Arch Linux:**
-- **Philosophy**: Simplicity, user-centric, do-it-yourself
-- **Release Cycle**: Rolling release (continuous updates)
-- **Package Manager**: pacman
-- **Use Cases**: Advanced users, learning Linux deeply, customization
-- **Strengths**: 
-  - Rolling release (always up-to-date)
-  - Minimal base installation (build what you need)
-  - Excellent documentation (Arch Wiki)
-  - Huge software repository (AUR - Arch User Repository)
-  - Maximum control and customization
-- **Weaknesses**: 
-  - Steep learning curve
-  - Requires manual configuration
-  - Can break if not careful with updates
-  - Not for beginners
-- **Real-world**: Popular with advanced Linux users and developers
-
-**Manjaro:**
-- **Philosophy**: User-friendly Arch Linux
-- **Base**: Based on Arch Linux
-- **Package Manager**: pacman
-- **Use Cases**: Desktop, users who want Arch benefits with easier setup
-- **Strengths**: 
-  - Easier installation than Arch
-  - Rolling release benefits
-  - Access to AUR
-  - Multiple desktop environments available
-- **Weaknesses**: 
-  - Still more complex than Ubuntu
-  - Can have compatibility issues (delayed Arch updates)
-- **Real-world**: Popular Arch-based distribution for desktop users
-
-**4. Other Notable Distributions:**
-
-**openSUSE:**
-- **Philosophy**: Stable, reliable, enterprise and desktop
-- **Release Cycle**: Regular releases, Leap (stable) and Tumbleweed (rolling)
-- **Package Manager**: zypper
-- **Use Cases**: Desktop, servers, enterprise
-- **Strengths**: 
-  - Very stable and reliable
-  - Good for both desktop and server
-  - YaST (configuration tool) is user-friendly
-  - Strong in Europe
-- **Weaknesses**: 
-  - Less popular globally
-  - Smaller community than Ubuntu/Fedora
-- **Real-world**: Popular in Europe, used by some enterprises
-
-**Slackware:**
-- **Philosophy**: Traditional Unix-like, simplicity, stability
-- **Release Cycle**: Very slow (years between releases)
-- **Package Manager**: pkgtool, slackpkg
-- **Use Cases**: Learning Unix, servers, embedded systems
-- **Strengths**: 
-  - Oldest surviving Linux distribution
-  - Very stable
-  - Traditional Unix feel
-  - Minimal and simple
-- **Weaknesses**: 
-  - Very slow release cycle
-  - Manual package management
-  - Steep learning curve
-  - Not for beginners
-- **Real-world**: Used by Unix purists and some embedded systems
-
-**Gentoo:**
-- **Philosophy**: Source-based, maximum optimization and customization
-- **Release Cycle**: Rolling release
-- **Package Manager**: Portage
-- **Use Cases**: Maximum performance, learning, customization
-- **Strengths**: 
-  - Compile from source (optimized for your hardware)
-  - Maximum customization
-  - Excellent documentation
-  - Very flexible
-- **Weaknesses**: 
-  - Very time-consuming (compile everything)
-  - Steep learning curve
-  - Not practical for most users
-- **Real-world**: Used by performance enthusiasts and learning purposes
-
-**Choosing a Distribution:**
-
-**Decision Factors:**
-
-**1. Experience Level:**
-- **Beginner**: Ubuntu, Linux Mint, Fedora
-- **Intermediate**: Debian, openSUSE, Manjaro
-- **Advanced**: Arch Linux, Gentoo, Slackware
-
-**2. Use Case:**
-- **Desktop**: Ubuntu, Linux Mint, Fedora, Manjaro
-- **Server**: Ubuntu Server, Debian, RHEL/Rocky Linux, CentOS Stream
-- **Development**: Fedora, Ubuntu, Arch Linux
-- **Security**: Kali Linux, Parrot OS
-- **Enterprise**: RHEL, SUSE Linux Enterprise, Ubuntu Server
-
-**3. Hardware:**
-- **Modern Hardware**: Any distribution
-- **Old Hardware**: Lubuntu, Xubuntu, Debian (lightweight)
-- **ARM/Raspberry Pi**: Raspberry Pi OS, Ubuntu ARM
-- **Servers**: Ubuntu Server, Debian, RHEL
-
-**4. Support Needs:**
-- **Commercial Support**: RHEL, SUSE Linux Enterprise, Ubuntu (Canonical)
-- **Community Support**: Ubuntu, Fedora, Arch Linux (excellent communities)
-- **Documentation**: Arch Linux (Arch Wiki), Ubuntu, Fedora
-
-**5. Software Requirements:**
-- **Latest Software**: Fedora, Arch Linux, openSUSE Tumbleweed
-- **Stable Software**: Debian, RHEL, Ubuntu LTS
-- **Specific Software**: Check if software is available in distribution's repository
-
-**Package Managers:**
-
-**Understanding Package Managers:**
-
-Package managers are tools that automate the process of installing, updating, configuring, and removing software. They handle dependencies automatically and ensure software compatibility.
-
-**apt (Advanced Package Tool) - Debian/Ubuntu:**
-- **Commands**: apt-get, apt-cache, apt (newer unified command)
-- **Repositories**: Debian/Ubuntu repositories
-- **Strengths**: 
-  - Easy to use
-  - Large repository
-  - Good dependency resolution
-  - Well-documented
-- **Common Commands**:
-  - apt update: Update package lists
-  - apt upgrade: Upgrade installed packages
-  - apt install package: Install package
-  - apt remove package: Remove package
-  - apt search keyword: Search for packages
-
-**yum/dnf (Yellowdog Updater Modified/Dandified YUM) - Red Hat/Fedora:**
-- **Commands**: yum (older), dnf (newer, default in Fedora)
-- **Repositories**: RPM repositories
-- **Strengths**: 
-  - Good dependency resolution
-  - Transaction support (can rollback)
-  - Plugin system
-- **Common Commands**:
-  - dnf update: Update packages
-  - dnf install package: Install package
-  - dnf remove package: Remove package
-  - dnf search keyword: Search for packages
-
-**pacman (Package Manager) - Arch Linux:**
-- **Commands**: pacman
-- **Repositories**: Official repositories + AUR (Arch User Repository)
-- **Strengths**: 
-  - Fast and efficient
-  - Simple syntax
-  - Access to AUR (huge software collection)
-- **Common Commands**:
-  - pacman -Syu: Update system
-  - pacman -S package: Install package
-  - pacman -R package: Remove package
-  - pacman -Ss keyword: Search for packages
-
-**zypper - openSUSE:**
-- **Commands**: zypper
-- **Repositories**: openSUSE repositories
-- **Strengths**: 
-  - Good dependency resolution
-  - Transaction support
-  - Repository management
-- **Common Commands**:
-  - zypper update: Update packages
-  - zypper install package: Install package
-  - zypper remove package: Remove package
-  - zypper search keyword: Search for packages
-
-**Distribution Comparison:**
-
-**Stability Ranking:**
-1. Debian Stable (most stable)
-2. RHEL/Rocky Linux
-3. Ubuntu LTS
-4. openSUSE Leap
-5. Fedora
-6. Arch Linux (rolling, can be less stable)
-
-**Ease of Use Ranking:**
-1. Linux Mint (easiest)
-2. Ubuntu
-3. Fedora
-4. openSUSE
-5. Debian
-6. Arch Linux (most challenging)
-
-**Software Freshness Ranking:**
-1. Arch Linux (always latest)
-2. Fedora (cutting-edge)
-3. openSUSE Tumbleweed (rolling)
-4. Ubuntu (regular releases)
-5. Debian (stable, older software)
-6. RHEL (enterprise, conservative)
-
-**Best Practices:**
-
-**1. Start with Beginner-Friendly:**
-- Begin with Ubuntu or Linux Mint
-- Learn basics before switching
-- Don't start with Arch or Gentoo
-- **Example**: New users should start with Ubuntu
-
-**2. Match Distribution to Use Case:**
-- Desktop: Ubuntu, Linux Mint, Fedora
-- Server: Ubuntu Server, Debian, RHEL
-- Learning: Ubuntu, Fedora, Arch Linux
-- **Example**: Use Ubuntu Server for web servers
-
-**3. Consider Support:**
-- Commercial support: RHEL, SUSE, Ubuntu (Canonical)
-- Community support: Ubuntu, Fedora, Arch Linux
-- **Example**: Enterprise needs commercial support (RHEL)
-
-**4. Test Before Committing:**
-- Try distributions in virtual machines
-- Test with live USB
-- Don't switch production systems without testing
-- **Example**: Test new distribution in VM before installing
-
-**5. Learn Package Manager:**
-- Master your distribution's package manager
-- Understand repository management
-- Learn dependency resolution
-- **Example**: Learn apt commands for Ubuntu
-
-**Common Mistakes:**
-
-**1. Choosing Wrong Distribution:**
-- **Problem**: Choosing Arch Linux as beginner
-- **Impact**: Frustration, giving up on Linux
-- **Solution**: Start with Ubuntu or Linux Mint
-- **Example**: Beginner choosing Arch Linux and struggling
-
-**2. Not Updating Regularly:**
-- **Problem**: Not updating system regularly
-- **Impact**: Security vulnerabilities, outdated software
-- **Solution**: Regular updates (daily/weekly)
-- **Example**: System compromised due to unpatched vulnerabilities
-
-**3. Mixing Repositories:**
-- **Problem**: Adding incompatible repositories
-- **Impact**: Dependency conflicts, broken system
-- **Solution**: Use official repositories, be careful with third-party repos
-- **Example**: Adding incompatible PPA breaking Ubuntu system
-
-**4. Ignoring Documentation:**
-- **Problem**: Not reading distribution documentation
-- **Impact**: Missing features, incorrect usage
-- **Solution**: Read official documentation
-- **Example**: Not understanding Arch installation process
-
-**Real-World Distribution Usage:**
-
-**Web Servers:**
-- **Ubuntu Server**: Most popular for web servers
-- **Debian**: Stable, reliable choice
-- **RHEL/Rocky Linux**: Enterprise web servers
-- **Real-world**: Majority of web servers run Ubuntu or Debian
-
-**Cloud Computing:**
-- **Ubuntu**: Most popular on AWS, Google Cloud, Azure
-- **Amazon Linux**: AWS-optimized distribution
-- **Container Images**: Alpine Linux (minimal), Ubuntu, Debian
-- **Real-world**: Most cloud instances run Ubuntu
-
-**Enterprise Servers:**
-- **RHEL**: Enterprise standard
-- **SUSE Linux Enterprise**: Enterprise alternative
-- **Ubuntu Server**: Growing enterprise adoption
-- **Real-world**: Large enterprises use RHEL or SUSE
-
-**Desktop:**
-- **Ubuntu**: Most popular desktop Linux
-- **Linux Mint**: Popular for Windows users
-- **Fedora**: Popular with developers
-- **Real-world**: Ubuntu dominates desktop Linux market
-
-**Development:**
-- **Fedora**: Cutting-edge, good for development
-- **Ubuntu**: Popular development platform
-- **Arch Linux**: Maximum control for developers
-- **Real-world**: Many developers use Fedora or Ubuntu
-
-**Conclusion:**
-
-Choosing the right Linux distribution is important for your success and satisfaction. Each distribution has its strengths and is suited for different use cases. The key is to:
-
-- **Start simple**: Begin with beginner-friendly distributions
-- **Match to use case**: Choose distribution suited for your needs
-- **Learn the package manager**: Essential skill for any distribution
-- **Don't be afraid to try**: Test distributions before committing
-- **Consider support**: Commercial vs community support
-
-Remember: The best distribution is the one that works for you. Don't get caught up in distribution wars - focus on learning Linux fundamentals, which transfer across distributions. Whether you choose Ubuntu, Fedora, Arch, or any other distribution, the core Linux knowledge you gain will be valuable regardless of which distribution you use.
-
-Most importantly: **Start using Linux**. Don't spend too much time choosing - pick Ubuntu or Linux Mint, install it, and start learning. You can always switch distributions later as you gain experience and understand your needs better.`,
-					CodeExamples: `# Ubuntu/Debian - Check distribution
-lsb_release -a
-# Output:
-# Distributor ID: Ubuntu
-# Description:    Ubuntu 22.04.3 LTS
-# Release:        22.04
-# Codename:       jammy
-
-# Red Hat/CentOS - Check distribution
-cat /etc/redhat-release
-# Output: CentOS Linux release 8.5.2111
-
-# Arch Linux - Check distribution
-cat /etc/arch-release
-# Output: Arch Linux
-
-# Package manager examples
-# Ubuntu/Debian
-apt update && apt upgrade
-apt install package-name
-
-# Red Hat/Fedora
-dnf update
-dnf install package-name
-
-# Arch
-pacman -Syu
-pacman -S package-name`,
+# SYSTEM UPGRADE
+# Ubuntu: sudo apt update && sudo apt upgrade
+# Fedora: sudo dnf upgrade
+# Arch: sudo pacman -Syu`,
 				},
+
 				{
 					Title: "Getting Started with Linux",
 					Content: `Starting your Linux journey requires understanding the basics of accessing and using the system.
@@ -1002,453 +357,221 @@ lsmod | head
 			Lessons: []problems.Lesson{
 				{
 					Title: "Terminal Basics",
-					Content: `The terminal (command line) is the most powerful way to interact with Linux. Understanding it is essential for Linux proficiency.
+					Content: `The terminal is your direct interface to the power of Linux. To master it, you must understand the distinction between three related but different concepts:
 
-**What is a Terminal?**
-- Text-based interface to the operating system
-- Also called: shell, command line, CLI (Command Line Interface)
-- More powerful than GUI for many tasks
-- Faster and more efficient for experienced users
+**1. The Terminal Emulator**: This is the GUI application you run (like GNOME Terminal, Alacritty, or VS Code's integrated terminal). It mimics the behavior of old physical hardware terminals.
+**2. The Shell**: This is the "brain" or the interpreter. It takes your text input, understands it, and tells the OS what to do. The most common shell is **Bash**.
+**3. The TTY (Teletype)**: This refers to the underlying device driver that handles the communication. You can access "pure" TTYs (no GUI) on most Linux systems by pressing Ctrl+Alt+F2 through F6.
 
-**Common Shells:**
-- **bash**: Most common default shell (Bourne Again Shell)
-- **zsh**: Enhanced shell, default on macOS
-- **fish**: User-friendly with syntax highlighting
-- **sh**: Basic shell (POSIX compliant)
+**Shell Features to Know:**
+- **Globbing**: Using wildcards like ` + "`" + `*` + "`" + ` (match anything) or ` + "`" + `?` + "`" + ` (match one char).
+- **Expansion**: The shell "expands" your commands before running them. For example, ` + "`" + `echo {1..3}` + "`" + ` becomes ` + "`" + `1 2 3` + "`" + `.
+- **Redirection**: Using ` + "`" + `>` + "`" + `, ` + "`" + `>>` + "`" + `, and ` + "`" + `<` + "`" + ` to move data between files and commands.
 
-**Terminal Components:**
-- **Prompt**: Shows current directory and user (e.g., user@host:~$)
-- **Command**: What you type
-- **Arguments**: Options and parameters
-- **Output**: Results displayed
+**Standard Streams:**
+Every command has three streams:
+1. **stdin (0)**: Standard Input (usually your keyboard).
+2. **stdout (1)**: Standard Output (usually your screen).
+3. **stderr (2)**: Standard Error (where error messages go).`,
+					CodeExamples: `# WHAT SHELL AM I USING?
+echo $0
+# or
+ps -p $$
 
-**Command Structure:**
+# EXPANSION EXAMPLES
+# Brace expansion
+echo photo_{2021,2022,2023}.jpg
+# Output: photo_2021.jpg photo_2022.jpg photo_2023.jpg
 
-command [options] [arguments]
+# GLOBBING EXAMPLES
+# List all .png files
+ls *.png
+# List files with a single character as name
+ls ?.txt
 
+# REDIRECON BASICS
+# Save output to a file (overwrites)
+echo "Hello" > file.txt
+# Append to a file
+echo "World" >> file.txt
 
-Example: ls -l /home
-- ls: command
-- -l: option (long format)
-- /home: argument (directory)`,
-					CodeExamples: `# Check current shell
-echo $SHELL
-# Output: /bin/bash
-
-# List available shells
-cat /etc/shells
-
-# Change shell (temporarily)
-zsh
-
-# Change shell (permanently)
-chsh -s /bin/zsh
-
-# Command structure examples
-ls                    # Command only
-ls -l                 # Command with option
-ls -l /home          # Command with option and argument
-ls -lah /home        # Multiple options combined
-
-# Understanding the prompt
-# user@hostname:~/directory$ 
-# user: current username
-# hostname: computer name
-# ~/directory: current directory (~ = home)
-# $: regular user prompt (# = root user)`,
+# SYSTEM PROMPT SYMBOLS
+# $ = Regular User
+# # = Root (Superuser) - use with CAUTION!`,
 				},
+
 				{
 					Title: "Navigation Commands",
-					Content: `Navigating the file system is fundamental to using Linux. These commands help you move around directories.
+					Content: `The Linux directory structure is a tree, starting from the **Root (/)**. Navigating it efficiently is the hallmark of a power user.
 
-**Essential Navigation Commands:**
+**Path Types Explained:**
+- **Absolute Path**: Starts from the root (e.g., ` + "`" + `/var/log/nginx` + "`" + `). It works no matter where you currently are.
+- **Relative Path**: Starts from your current location (e.g., ` + "`" + `../config` + "`" + `).
+- **The Home (~)**: Your personal space. ` + "`" + `cd ~` + "`" + ` always takes you back home.
 
-**pwd (Print Working Directory):**
-- Shows current directory path
-- Always know where you are
-
-**cd (Change Directory):**
-- Move to different directories
-- cd or cd ~: Go to home directory
-- cd ..: Go up one level
-- cd -: Go to previous directory
-- cd /: Go to root directory
-
-**ls (List):**
-- List files and directories
-- ls: Basic listing
-- ls -l: Long format (detailed)
-- ls -a: Show hidden files
-- ls -h: Human-readable sizes
-- ls -R: Recursive (show subdirectories)
-
-**Path Types:**
-- **Absolute**: Full path from root (/home/user/documents)
-- **Relative**: Path relative to current directory (./documents or ../parent)
-- **~**: Shortcut for home directory
-- **.**: Current directory
-- **..**: Parent directory`,
-					CodeExamples: `# Print current directory
+**Advanced Navigation:**
+- **cd -**: A "back" button for the terminal. It returns you to the immediately previous directory.
+- **pushd / popd**: A "stack" for directories. ` + "`" + `pushd` + "`" + ` saves your current spot and moves you, while ` + "`" + `popd` + "`" + ` brings you back.
+- **ls -F**: Adds a trailing symbol to names to show their type (` + "`" + `/` + "`" + ` for directory, ` + "`" + `*` + "`" + ` for executable).`,
+					CodeExamples: `# WHERE AM I?
 pwd
-# Output: /home/username
 
-# Navigate to home directory
-cd ~
-# or
-cd
-
-# Navigate to specific directory
-cd /home/username/documents
-
-# Go up one level
-cd ..
-
-# Go to root directory
-cd /
-
-# Go to previous directory
+# THE QUICK "BACK" BUTTON
+cd /etc/nginx
+cd /var/log
 cd -
+# Now you are back in /etc/nginx!
 
-# List current directory contents
-ls
+# USING THE DIRECTORY STACK
+pushd /tmp
+# Do some work in /tmp...
+popd
+# You are back exactly where you were.
 
-# List with details
-ls -l
-# Output shows: permissions, owner, size, date, name
-
-# List all files (including hidden)
-ls -a
-# Hidden files start with '.'
-
-# List with human-readable sizes
-ls -lh
-
-# Combine options
+# LISTING SECRETS
+# -a shows hidden files (starting with .)
+# -h shows "Human Readable" sizes (KB, MB, GB)
 ls -lah
-# -l: long format
-# -a: all files
-# -h: human-readable
 
-# List specific directory
-ls /etc
-
-# List with pattern matching
-ls *.txt
-# Shows only .txt files
-
-# Navigate using relative paths
-cd ./documents      # Current directory's documents folder
-cd ../parent        # Parent directory's parent folder
-cd ~/documents      # Home directory's documents folder`,
+# RECURSIVE LISTING (The tree view)
+ls -R
+# or if installed:
+tree`,
 				},
+
 				{
 					Title: "File Operations",
-					Content: `Working with files is a core Linux skill. Learn to create, copy, move, rename, and delete files.
+					Content: `Managing files is the core of system administration. Understanding the nuances of these commands prevents data loss and improves productivity.
 
-**File Operations:**
+**1. Copying (cp):**
+- **Recursive (` + "`" + `-r` + "`" + `)**: Mandatory for copying directories.
+- **Archive (` + "`" + `-a` + "`" + `)**: The preferred way to copy. It preserves permissions, ownership, and links.
+- **Safety (` + "`" + `-i` + "`" + `)**: Always use this to avoid accidentally overwriting a file with the same name.
 
-**cp (Copy):**
-- Copy files and directories
-- cp source destination
-- cp -r: Copy directories recursively
-- cp -i: Interactive (prompt before overwrite)
-- cp -v: Verbose (show what's being copied)
+**2. Moving and Renaming (mv):**
+In Linux, renaming is just moving a file to a new name in the same directory.
+- **Tip**: You can move an entire directory just like a file. No ` + "`" + `-r` + "`" + ` is needed for ` + "`" + `mv` + "`" + `.
 
-**mv (Move/Rename):**
-- Move files to different location
-- Rename files
-- mv source destination
-- Can move multiple files
+**3. The Danger of Deletion (rm):**
+**WARNING**: There is no "Trash" or "Recycle Bin" in the terminal. Once deleted with ` + "`" + `rm` + "`" + `, a file is gone.
+- **The -rf Flag**: ` + "`" + `r` + "`" + ` (recursive) and ` + "`" + `f` + "`" + ` (force). This is extremely powerful and dangerous. Use with extreme caution.
+- **Best Practice**: Before running ` + "`" + `rm -rf` + "`" + ` on a wildcard (like ` + "`" + `rm -rf *` + "`" + `), run ` + "`" + `ls *` + "`" + ` first to see exactly what will be deleted.
 
-**rm (Remove):**
-- Delete files and directories
-- **Warning**: Permanent deletion (no trash)
-- rm file: Delete file
-- rm -r: Delete directory recursively
-- rm -f: Force (no prompts)
-- rm -i: Interactive (safer)
+**4. Creating Files and Directories:**
+- **mkdir -p**: Creates nested structures in one go (e.g., ` + "`" + `mkdir -p project/src/utils` + "`" + `).
+- **touch**: Not just for creating empty files; its primary purpose is to update the access/modification time of a file.`,
+					CodeExamples: `# THE SAFE WAY TO COPY
+cp -ai source_folder backup_folder
 
-**mkdir (Make Directory):**
-- Create new directories
-- mkdir dirname
-- mkdir -p: Create parent directories if needed
+# RENAMING A DIRECTORY
+mv old_name new_name
 
-**touch:**
-- Create empty file
-- Update file timestamp
-- touch filename
+# PREVIEW BEFORE DELETE
+# Use ls to see what your wildcard matches
+ls logs/*.tmp
+# If it looks correct, then delete:
+rm logs/*.tmp
 
-**File Naming:**
-- Case-sensitive (File.txt ≠ file.txt)
-- Avoid spaces (use underscores or hyphens)
-- Avoid special characters`,
-					CodeExamples: `# Create a file
-touch myfile.txt
+# CREATE NESTED DIRS IN ONE GO
+mkdir -p app/{src,bin,docs,test}
+# This creates 4 directories inside "app" using brace expansion!
 
-# Create multiple files
-touch file1.txt file2.txt file3.txt
-
-# Create a directory
-mkdir mydir
-
-# Create nested directories
-mkdir -p parent/child/grandchild
-
-# Copy a file
-cp source.txt destination.txt
-
-# Copy to directory
-cp file.txt /home/user/documents/
-
-# Copy directory
-cp -r sourcedir destdir
-
-# Copy with confirmation
-cp -i source.txt dest.txt
-
-# Move/rename a file
-mv oldname.txt newname.txt
-
-# Move file to directory
-mv file.txt /home/user/documents/
-
-# Move multiple files
-mv file1.txt file2.txt /home/user/documents/
-
-# Delete a file
-rm file.txt
-
-# Delete directory
-rm -r directory
-
-# Delete with confirmation (safer)
-rm -ri directory
-
-# Force delete (dangerous!)
-rm -rf directory
-
-# List files to verify operations
-ls -l`,
+# DELETE AN EMPTY DIRECTORY
+rmdir empty_folder`,
 				},
+
 				{
 					Title: "Command History & Shortcuts",
-					Content: `Linux provides powerful shortcuts and history features to make command line work more efficient.
+					Content: `The "Readline" library powers the input of most Linux shells, providing deep history and cursor manipulation features that make you feel like you have superpowers.
 
-**Command History:**
-- **history**: View command history
-- **Up/Down arrows**: Navigate through history
-- **Ctrl+R**: Search history interactively
-- **!n**: Execute command number n from history
-- **!!**: Repeat last command
-- **!string**: Execute last command starting with string
+**1. The Magic of History Expansion:**
+- **!!**: Repeat the entire last command. (Useful with sudo: ` + "`" + `sudo !!` + "`" + `).
+- **!$**: Represents the last argument of the previous command. (e.g., if you ran ` + "`" + `mkdir my_long_dir_name` + "`" + `, follow up with ` + "`" + `cd !$` + "`" + `).
+- **!n**: Run the n-th command from your history list.
+- **Ctrl+R**: The recursive search. Type a part of an old command to find it instantly.
 
-**Keyboard Shortcuts:**
-- **Ctrl+C**: Cancel/interrupt current command
-- **Ctrl+D**: Exit shell or end input
-- **Ctrl+L**: Clear screen (same as clear)
-- **Ctrl+A**: Move cursor to beginning of line
-- **Ctrl+E**: Move cursor to end of line
-- **Ctrl+U**: Delete from cursor to beginning of line
-- **Ctrl+K**: Delete from cursor to end of line
-- **Ctrl+W**: Delete word before cursor
-- **Tab**: Auto-complete commands and filenames
-- **Double Tab**: Show completion options
+**2. Lightning-Fast Cursor Movement:**
+- **Ctrl+A / Ctrl+E**: Jump to the beginning or end of the line.
+- **Alt+F / Alt+B**: Move forward or backward by one whole word.
+- **Ctrl+XX**: Toggle between the start of the line and your current cursor position.
 
-**Command Aliases:**
-- Create shortcuts for long commands
-- alias ll='ls -lah'
-- alias ..='cd ..'
-- View aliases: alias
-- Remove alias: unalias name
+**3. Deletion and Yanking:**
+- **Ctrl+U**: "Cut" everything from the cursor back to the start.
+- **Ctrl+K**: "Cut" everything from the cursor to the end.
+- **Ctrl+Y**: "Paste" (yank) what you just cut with the above commands.
+- **Ctrl+W**: Delete the word immediately before the cursor.
 
-**Environment Variables:**
-- $HOME: Home directory path
-- $USER: Current username
-- $PATH: Directories searched for commands
-- $PWD: Current directory`,
-					CodeExamples: `# View command history
-history
+**4. The Essential Tab:**
+Tab completion is not just for laziness; it prevents typos.
+- **Single Tab**: Completes the name if unique.
+- **Double Tab**: Lists all possible completions.`,
+					CodeExamples: `# REPEAT AS ROOT
+# You forgot sudo? No problem:
+$ apt update
+E: Could not open lock file...
+$ sudo !!
 
-# View last 10 commands
-history | tail -10
+# REUSING ARGUMENTS
+$ touch very_long_filename_with_details.txt
+$ mv !$ backup/
 
-# Execute command from history by number
-!42
+# SEARCHING HISTORY
+# Press Ctrl+R, then type "nginx"
+(reverse-i-search)'ngi': systemctl restart nginx
 
-# Repeat last command
-!!
-
-# Execute last command starting with 'ls'
-!ls
-
-# Search history interactively
-# Press Ctrl+R, type search term
-
-# Clear history
-history -c
-
-# Keyboard shortcuts in action
-# Type: ls -l /very/long/path
-# Press Ctrl+A: cursor moves to beginning
-# Press Ctrl+E: cursor moves to end
-# Press Ctrl+U: deletes entire line
-
-# Tab completion
-# Type: ls /usr/b
-# Press Tab: completes to /usr/bin
-
-# Create aliases
-alias ll='ls -lah'
-alias ..='cd ..'
-alias grep='grep --color=auto'
-
-# Use alias
-ll  # Executes: ls -lah
-
-# View all aliases
-alias
-
-# Remove alias
-unalias ll
-
-# View environment variables
-echo $HOME
-echo $USER
-echo $PATH
-
-# Add to PATH (temporarily)
-export PATH=$PATH:/new/directory
-
-# Make alias permanent (add to ~/.bashrc)
-echo "alias ll='ls -lah'" >> ~/.bashrc
-source ~/.bashrc`,
+# EDITING LONG PATHS
+# Cursor is at the end:
+$ ls -l /var/www/html/site/assets/img/logo.png
+# Press Alt+B several times to jump back word by word.`,
 				},
+
 				{
 					Title: "Command Aliases & Customization",
-					Content: `Customizing your shell environment makes Linux more efficient and personalized.
+					Content: `The true power of Linux is discovered when you stop using it "out of the box" and start tailoring it to your workflow.
 
-**What are Aliases?**
-- Shortcuts for long commands
-- Save typing time
-- Make commands more memorable
-- Can include options and arguments
+**1. What are Aliases?**
+An alias is essentially a nickname for a long command.
+- **Safety**: ` + "`" + `alias rm='rm -i'` + "`" + ` (prompts before deleting).
+- **Correctness**: ` + "`" + `alias grep='grep --color=auto'` + "`" + ` (makes finding things easier).
+- **Speed**: ` + "`" + `alias ..='cd ..'` + "`" + `.
 
-**Creating Aliases:**
-- alias name='command': Create alias
-- alias: List all aliases
-- unalias name: Remove alias
-- Temporary: Lost when session ends
-- Permanent: Add to shell config file
+**2. Persistent Configuration (.bashrc vs .bash_profile):**
+To make your aliases work every time you open a terminal, you must put them in a configuration file:
+- **.bashrc**: Executed for every new **interactive non-login** shell (like when you open a terminal window).
+- **.bash_profile**: Executed once for **login** shells (like when you first SSH into a server).
+- **Best Practice**: Put your aliases in ` + "`" + `.bashrc` + "`" + ` or a separate ` + "`" + `.bash_aliases` + "`" + ` file that is called by ` + "`" + `.bashrc` + "`" + `.
 
-**Common Aliases:**
-- alias ll='ls -lah': Long listing with details
-- alias la='ls -A': List all including hidden
-- alias ..='cd ..': Go up one directory
-- alias ...='cd ../..': Go up two directories
-- alias grep='grep --color=auto': Colorized grep
-- alias vi='vim': Use vim instead of vi
+**3. Environment Variables:**
+Variables like ` + "`" + `$PATH` + "`" + ` or ` + "`" + `$EDITOR` + "`" + ` global settings that applications look at.
+- **$PATH**: The list of directories the shell searches for commands. If a command isn't in your PATH, you have to type the full path (e.g., ` + "`" + `/home/user/my_app` + "`" + `).
+- **$EDITOR**: Tells Git or other tools which text editor you prefer (e.g., ` + "`" + `export EDITOR=vim` + "`" + `).
 
-**Shell Configuration Files:**
-- ~/.bashrc: Bash config (runs for interactive shells)
-- ~/.bash_profile: Login shell config
-- ~/.profile: General profile (all shells)
-- ~/.bash_aliases: Dedicated alias file (sourced by .bashrc)
-
-**Shell Customization:**
-- **Prompt (PS1)**: Customize command prompt
-- **Environment Variables**: PATH, EDITOR, etc.
-- **Functions**: More powerful than aliases
-- **Completion**: Tab completion customization
-
-**Best Practices:**
-- Use descriptive alias names
-- Don't override essential commands
-- Document aliases with comments
-- Keep aliases simple
-- Use functions for complex logic`,
-					CodeExamples: `# Create temporary alias
-alias ll='ls -lah'
-ll  # Executes: ls -lah
-
-# Create alias with options
-alias grep='grep --color=auto'
-grep "error" file.txt  # Now colorized
-
-# Create alias for directory navigation
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-
-# Create alias for common operations
-alias rm='rm -i'  # Interactive delete (safer)
-alias cp='cp -i'  # Interactive copy
-alias mv='mv -i'  # Interactive move
-
-# List all aliases
+**4. Shell Functions (Pro Level):**
+While aliases are great for simple shortcuts, **functions** allow you to use logic and parameters. For example, a function can create a directory and immediately move into it—something a simple alias cannot do easily.`,
+					CodeExamples: `# VIEW ALL CURRENT ALIASES
 alias
 
-# Remove alias
-unalias ll
+# USEFUL PRODUCTION ALIASES
+alias myip="curl -s https://ifconfig.me"
+alias ports="sudo netstat -tulanp"
+alias psg="ps aux | grep -v grep | grep -i"
 
-# Make aliases permanent
-# Edit ~/.bashrc
-nano ~/.bashrc
+# PERSISTENCE (Adding to .bashrc)
+echo "alias ll='ls -lah'" >> ~/.bashrc
+source ~/.bashrc  # Apply changes immediately
 
-# Add aliases:
-alias ll='ls -lah'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-
-# Reload configuration
-source ~/.bashrc
-# or
-. ~/.bashrc
-
-# Custom prompt (PS1)
-export PS1='[\u@\h \W]\$ '
-# \u = username, \h = hostname, \W = current directory
-
-# More advanced prompt
-export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-# Green username@host, blue directory
-
-# Environment variables
-export EDITOR=vim
-export VISUAL=vim
-export PAGER=less
-
-# Add to PATH
-export PATH=$PATH:/usr/local/bin
-
-# Shell functions (more powerful than aliases)
+# THE "MKCD" FUNCTION
+# Add this to your ~/.bashrc:
 function mkcd() {
     mkdir -p "$1" && cd "$1"
 }
-# Usage: mkcd newdir
 
-function extract() {
-    if [ -f "$1" ]; then
-        case "$1" in
-            *.tar.bz2) tar xjf "$1" ;;
-            *.tar.gz) tar xzf "$1" ;;
-            *.bz2) bunzip2 "$1" ;;
-            *.rar) unrar x "$1" ;;
-            *.gz) gunzip "$1" ;;
-            *.tar) tar xf "$1" ;;
-            *.tbz2) tar xjf "$1" ;;
-            *.tgz) tar xzf "$1" ;;
-            *.zip) unzip "$1" ;;
-            *.Z) uncompress "$1" ;;
-            *.7z) 7z x "$1" ;;
-            *) echo "'$1' cannot be extracted" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
-}
-# Usage: extract archive.tar.gz`,
+# THE POWER OF $PATH
+# Temporary addition:
+export PATH=$PATH:/home/user/my_custom_tools
+# Now you can run tools in that folder just by name!`,
 				},
+
 			},
 			ProblemIDs: []int{},
 		},
@@ -1460,302 +583,162 @@ function extract() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Linux File System Structure",
-					Content: `Linux organizes everything in a hierarchical tree structure starting from root (/). Understanding this structure is crucial.
+					Content: `The Linux directory structure is not random; it follows the **Filesystem Hierarchy Standard (FHS)**. Unlike Windows, which uses drive letters (C:, D:), Linux uses a single unified tree starting from the **Root (/)**.
 
-**Root Directory (/):**
-- Top-level directory
-- Everything branches from here
-- Similar to C:\ on Windows
+**Key Directories and Their Roles:**
+- **/bin & /sbin**: Essential binaries. ` + "`" + `/bin` + "`" + ` is for all users, while ` + "`" + `/sbin` + "`" + ` is for system administration (commands like ` + "`" + `iptables` + "`" + ` or ` + "`" + `reboot` + "`" + `).
+- **/etc**: The "Control Center." Almost all system-wide configuration files (like ` + "`" + `/etc/hosts` + "`" + ` or ` + "`" + `/etc/passwd` + "`" + `) live here.
+- **/home**: User-specific data. Every user has a subfolder here (e.g., ` + "`" + `/home/alice` + "`" + `) for their private files.
+- **/root**: The home directory for the root user. Note that it is *not* inside ` + "`" + `/home` + "`" + `.
+- **/var**: Variable data. This is where logs (` + "`" + `/var/log` + "`" + `), databases, and mail spools are stored. If your disk is full, check here first!
+- **/proc & /sys**: These are **Pseudo Filesystems**. They don't actually exist on the disk; they are interfaces to the Linux kernel. Reading a file in ` + "`" + `/proc` + "`" + ` (like ` + "`" + `/proc/meminfo` + "`" + `) gives you real-time data from the kernel.
+- **/tmp**: Temporary files. On many modern systems, this is stored in RAM (tmpfs) and is wiped on reboot.
 
-**Important Directories:**
+**Everything is a File:**
+In Linux, hardware devices are represented as files in ** /dev**.
+- ` + "`" + `/dev/sda` + "`" + `: Your hard drive.
+- ` + "`" + `/dev/null` + "`" + `: The "Black Hole." Anything you send here disappears.
+- ` + "`" + `/dev/random` + "`" + `: A source of high-quality random numbers.`,
+					CodeExamples: `# WHERE IS A COMMAND LOCATED?
+which ls
+# Output: /usr/bin/ls
 
-**/bin**: Essential binary executables (ls, cp, mv)
-**/boot**: Boot loader files and kernel
-**/dev**: Device files (hardware representation)
-**/etc**: System configuration files
-**/home**: User home directories
-**/lib**: Shared libraries
-**/media**: Removable media mount points
-**/mnt**: Temporary mount points
-**/opt**: Optional/third-party software
-**/proc**: Virtual filesystem (process/kernel info)
-**/root**: Root user's home directory
-**/run**: Runtime data (since boot)
-**/sbin**: System binaries (admin commands)
-**/srv**: Service data
-**/sys**: Virtual filesystem (kernel/sys info)
-**/tmp**: Temporary files
-**/usr**: User programs and data
-**/var**: Variable data (logs, cache, spool)
+# CHECK DISK USAGE BY DIRECTORY
+df -h
+du -sh /var/log
 
-**File Types:**
-- **Regular files**: Text, images, executables
-- **Directories**: Folders containing files
-- **Symbolic links**: Shortcuts to files/directories
-- **Device files**: Represent hardware
-- **Sockets**: Inter-process communication
-- **Named pipes**: Process communication`,
-					CodeExamples: `# View root directory structure
-ls /
+# PEEKING INTO THE KERNEL
+cat /proc/cpuinfo
+cat /proc/uptime
 
-# View directory tree
-tree /
-# (if tree not installed: apt install tree)
+# THE BLACK HOLE
+# Discard error messages from a command:
+ls /nonexistent_folder 2> /dev/null
 
-# View specific directory
-ls /etc
-ls /home
-ls /usr/bin
-
-# Check file type
-file /bin/ls
-# Output: /bin/ls: ELF 64-bit LSB executable
-
-file /etc/passwd
-# Output: /etc/passwd: ASCII text
-
-# List with file types
-ls -F
-# Shows: / for directories, * for executables, @ for links
-
-# Detailed listing showing file types
-ls -l
-# First character shows type:
-# - = regular file
-# d = directory
-# l = symbolic link
-# c = character device
-# b = block device
-# s = socket
-# p = named pipe
-
-# Navigate important directories
-cd /etc        # Configuration files
-cd /var/log    # Log files
-cd /tmp        # Temporary files
-cd /usr/bin    # User executables`,
+# LISTING WITH TYPE INDICATORS
+ls -F /
+# / = directory
+# @ = symlink
+# * = executable`,
 				},
+
 				{
 					Title: "File Permissions",
-					Content: `Linux uses a permission system to control access to files and directories. Understanding permissions is essential for security.
+					Content: `Linux is a multi-user system, so security is managed through a granular permission system. Every file and directory has an owner and belongs to a specific group.
 
-**Permission Types:**
-- **Read (r)**: View file contents or list directory
-- **Write (w)**: Modify file or create/delete in directory
-- **Execute (x)**: Run file as program or enter directory
+**1. Basic Permission Bits:**
+- **Read (r / 4)**: For files, you can read content. For directories, you can list filenames (but not access their metadata without 'x').
+- **Write (w / 2)**: For files, you can modify or truncate them. For directories, you can create, rename, or delete files *within* them.
+- **Execute (x / 1)**: For files, you can run them as programs. For directories, you can "enter" them (cd) and access files inside.
 
-**Permission Groups:**
-- **Owner (u)**: File owner
-- **Group (g)**: Group members
-- **Others (o)**: Everyone else
+**2. Special Permissions (The 4th Digit):**
+Sometimes you'll see permissions like ` + "`" + `s` + "`" + ` or ` + "`" + `t` + "`" + ` instead of ` + "`" + `x` + "`" + `.
+- **SUID (Set User ID / 4000)**: When a file is executed, it runs with the permissions of the *owner* (often root). Example: ` + "`" + `/usr/bin/passwd` + "`" + `.
+- **SGID (Set Group ID / 2000)**: Files run with the permissions of the *group*. On directories, new files created inside inherit the parent's group.
+- **Sticky Bit (1000)**: Only the owner of a file (or root) can delete it, even if others have write access to the directory. Common on ` + "`" + `/tmp` + "`" + `.
 
-**Permission Representation:**
-- **Symbolic**: rwxrwxrwx (read, write, execute for owner/group/others)
-- **Octal**: 755 (4+2+1 for each group)
-  - 4 = read
-  - 2 = write
-  - 1 = execute
-  - 7 = 4+2+1 (read+write+execute)
+**3. Umask (The Default Permission):**
+When you create a new file, it doesn't have 777. The ` + "`" + `umask` + "`" + ` value "masks" or subtracts permissions from the default (usually 666 for files, 777 for dirs).`,
+					CodeExamples: `# VIEWING PERMISSIONS
+ls -l /etc/shadow
+# Output: -rw-r----- 1 root shadow ... 
+# ONLY root can write, others cannot even read.
 
-**Common Permissions:**
-- **755**: rwxr-xr-x (owner: all, others: read+execute)
-- **644**: rw-r--r-- (owner: read+write, others: read)
-- **600**: rw------- (owner only)
-- **777**: rwxrwxrwx (all permissions - dangerous!)
+# ADDING THE STICKY BIT
+chmod +t my_shared_folder/
+# Now others can't delete each other's files.
 
-**Viewing Permissions:**
+# THE SUID BIT EXAMPLE
+ls -l /usr/bin/passwd
+# Output: -rwsr-xr-x ...
+# Note the 's' instead of 'x'.
 
-ls -l filename
--rwxr-xr-x 1 user group 1234 Jan 1 12:00 filename
+# CHANGING PERMISSIONS (Octal)
+# 755 = User(rwx), Group(rx), Others(rx)
+chmod 755 script.sh
 
-- First 10 characters: permissions and type
-- Next: number of links, owner, group, size, date, name`,
-					CodeExamples: `# View file permissions
-ls -l myfile.txt
-# Output: -rw-r--r-- 1 user group 1024 Jan 1 12:00 myfile.txt
-
-# Breakdown:
-# - = regular file
-# rw- = owner can read/write
-# r-- = group can read
-# r-- = others can read
-
-# View directory permissions
-ls -ld mydir
-# Output: drwxr-xr-x 2 user group 4096 Jan 1 12:00 mydir
-
-# Change permissions (symbolic)
-chmod u+x file.txt      # Add execute for owner
-chmod g-w file.txt      # Remove write for group
-chmod o+r file.txt      # Add read for others
-chmod a+x file.txt      # Add execute for all (a = all)
-
-# Change permissions (octal)
-chmod 755 script.sh     # rwxr-xr-x
-chmod 644 file.txt      # rw-r--r--
-chmod 600 secret.txt    # rw------- (owner only)
-chmod 777 dangerous.sh  # rwxrwxrwx (all - not recommended!)
-
-# Recursive permission change
-chmod -R 755 directory/
-
-# Common permission patterns
-chmod 755 script.sh      # Executable script
-chmod 644 document.txt   # Regular document
-chmod 600 .ssh/id_rsa    # Private key (owner only)
-chmod 700 .ssh/          # SSH directory (owner only)`,
+# THE UMASK VALUE
+umask
+# If output is 0022, new files get 644 (666-022) and dirs get 755 (777-022).`,
 				},
+
 				{
 					Title: "Ownership & chown",
-					Content: `File ownership determines who can change permissions and control access. Understanding ownership is crucial for system administration.
+					Content: `Ownership is the bedrock of Linux security. Every file is owned by exactly one **User** and one **Group**.
 
-**Ownership Concepts:**
-- **Owner**: User who created the file
-- **Group**: Group associated with the file
-- **Root**: Superuser with all permissions
+**1. The Root User (The Superuser):**
+Root is the "God mode" of Linux. It has UID 0 and can bypass all permission checks.
+- **DANGER**: Running as root all the time is risky. One typo in ` + "`" + `rm` + "`" + ` can destroy the entire system.
+- **Sudo (SuperUser DO)**: The standard way to run a single command with root privileges without logging in as root.
 
-**chown (Change Owner):**
-- Change file/directory owner
-- Usually requires root privileges
-- chown user file
-- chown user:group file
-- chown -R: Recursive (for directories)
+**2. Changing Owners (chown):**
+Only root (or a user with sudo) can change the owner of a file.
+- **Syntax**: ` + "`" + `chown user:group filename` + "`" + `.
+- **Cleanup**: If you copy files from a USB drive, they often end up with the wrong owner. Use ` + "`" + `chown` + "`" + ` to fix them.
 
-**chgrp (Change Group):**
-- Change group ownership
-- chgrp groupname file
+**3. Changing Groups (chgrp):**
+A simpler version of chown that only affects the group.
 
-**whoami**: Show current user
-**id**: Show user and group IDs
-**groups**: Show groups user belongs to
-
-**sudo:**
-- Execute command as another user (usually root)
-- sudo command
-- Requires password (unless configured otherwise)
-- Use sparingly and carefully!`,
-					CodeExamples: `# Check current user
-whoami
-# Output: username
-
-# Check user and group IDs
+**4. Identity Commands:**
+- **id**: Shows your UID (User ID) and GID (Group ID).
+- **whoami**: A quick way to see which user the current shell is running as.`,
+					CodeExamples: `# WHO AM I?
 id
-# Output: uid=1000(username) gid=1000(username) groups=1000(username),27(sudo)
+# Output: uid=1000(alice) gid=1000(alice) groups=1000(alice),27(sudo)
 
-# Check groups
-groups
-# Output: username sudo
+# TAKING OWNERSHIP OF A WEB FOLDER
+sudo chown -R www-data:www-data /var/www/html
 
-# View file ownership
-ls -l file.txt
-# Output: -rw-r--r-- 1 user group 1024 Jan 1 12:00 file.txt
-#         owner: user, group: group
+# GIVING YOURSELF PERMISSION FOR A FILE
+sudo chown $USER:$USER my_config.conf
 
-# Change owner (requires sudo)
-sudo chown newuser file.txt
+# RUNNING A COMMAND AS ROOT
+sudo apt update
 
-# Change owner and group
-sudo chown newuser:newgroup file.txt
-
-# Change group only
-sudo chgrp newgroup file.txt
-# or
-sudo chown :newgroup file.txt
-
-# Recursive ownership change
-sudo chown -R user:group directory/
-
-# Common ownership operations
-sudo chown www-data:www-data /var/www/html  # Web server files
-sudo chown user:user ~/documents            # User's documents
-
-# Change ownership of current user's files
-chown $USER:$USER file.txt
-# (may not require sudo for own files)
-
-# View all files owned by user
-find / -user username 2>/dev/null
-
-# View all files owned by group
-find / -group groupname 2>/dev/null`,
+# SWITCHING TO THE ROOT USER (Use with caution!)
+sudo -i`,
 				},
+
 				{
 					Title: "Links (Hard & Soft)",
-					Content: `Links provide ways to reference files by multiple names or locations. Linux supports two types of links.
+					Content: `In Linux, a "link" is essentially a pointer to data on your disk. Understanding the two types of links is key to understanding how the filesystem manages data.
 
-**Hard Links:**
-- Multiple directory entries pointing to same file data
-- Same inode number
-- Cannot link directories
-- Cannot cross filesystems
-- All links are equal (no "original")
-- Deleting one link doesn't delete data (until last link removed)
+**1. Symbolic Links (Soft Links / Symlinks):**
+These are like "Shortcuts" in Windows or "Aliases" in macOS.
+- **How they work**: A symlink is a special file that contains the *path* to another file.
+- **Deleting**: If you delete the original file, the symlink becomes **dangling** (broken).
+- **Flexibility**: They can link to directories and can point to files on different disks or partitions.
 
-**Symbolic Links (Soft Links):**
-- Special file containing path to target
-- Different inode from target
-- Can link directories
-- Can cross filesystems
-- Points to name, not data
-- Broken if target deleted (dangling link)
-- Shows with -> in ls -l
+**2. Hard Links:**
+These are much more foundational and tied to the **Inode** system.
+- **How they work**: A hard link is just another name for the data on the disk. They share the same Inode number.
+- **Deleting**: If you delete the "original" file, the data is *not* deleted as long as at least one hard link still exists. The data is only freed when the link count reaches zero.
+- **Restrictions**: They cannot link to directories and cannot cross different disk partitions.
 
-**When to Use:**
-- **Hard links**: Same filesystem, want multiple names
-- **Symbolic links**: Cross filesystem, directories, or want to see target clearly
+**3. What is an Inode?**
+An Inode (Index Node) is a data structure that stores everything about a file *except* its name and its actual data. It stores permissions, owner, size, and timestamps.
+- Each file has a unique Inode number.
+- You can see this number with ` + "`" + `ls -i` + "`" + `.`,
+					CodeExamples: `# CREATING A SYMLINK (Most common)
+ln -s /etc/nginx/nginx.conf my_config.conf
 
-**Creating Links:**
-- ln target linkname: Create hard link
-- ln -s target linkname: Create symbolic link`,
-					CodeExamples: `# Create a file
-echo "Hello World" > original.txt
+# CREATING A HARD LINK
+ln target_file.txt link_name.txt
 
-# Create hard link
-ln original.txt hardlink.txt
-
-# Create symbolic link
-ln -s original.txt symlink.txt
-
-# View links
+# SEEING INODE NUMBERS
 ls -li
-# Output shows inode numbers:
-# 1234567 -rw-r--r-- 2 user group 12 Jan 1 12:00 original.txt
-# 1234567 -rw-r--r-- 2 user group 12 Jan 1 12:00 hardlink.txt
-# 1234568 lrwxrwxrwx 1 user group 12 Jan 1 12:00 symlink.txt -> original.txt
-# Note: hard links have same inode (1234567), symlink has different (1234568)
+# Output: 123456 -rw-r--r-- 2 alice ...
+# The '2' indicates there are two hard links for this inode.
 
-# Count links
-ls -l original.txt
-# Shows: -rw-r--r-- 2 user group ...
-#         ^ number of hard links
+# FINDING THE TARGET OF A SYMLINK
+readlink my_config.conf
+# or simply
+ls -l my_config.conf
 
-# Edit through link (both work)
-echo "Modified" >> hardlink.txt
-cat original.txt  # Shows modification
-
-echo "Modified2" >> symlink.txt
-cat original.txt  # Shows modification
-
-# Delete original
-rm original.txt
-
-# Hard link still works
-cat hardlink.txt  # Still shows content
-
-# Symbolic link is broken
-cat symlink.txt   # Error: No such file or directory
-ls -l symlink.txt # Shows: symlink.txt -> original.txt (red/broken)
-
-# Create symbolic link to directory
-ln -s /usr/bin bin_link
-cd bin_link  # Works like /usr/bin
-
-# Find all symbolic links
-find /usr -type l
-
-# Find broken symbolic links
-find /usr -type l ! -exec test -e {} \;`,
+# DANGER: BROKEN SYMLINKS
+# If you move the original file, symlinks pointing to its old name will break!`,
 				},
+
 				{
 					Title: "Special File Types & Inodes",
 					Content: `Understanding special file types and inodes is crucial for advanced Linux administration.

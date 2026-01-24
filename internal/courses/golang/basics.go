@@ -12,359 +12,78 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Go?",
-					Content: `Go (Golang) is the language of the cloud. Born at Google, it was designed to solve specific problems: slow builds, uncontrolled dependencies, and the difficulty of writing efficient concurrent software.
+					Content: `Go (Golang) is an open-source programming language created at Google in 2007 and released in 2009. It was designed to address the challenges of modern software development: multicore processors, networked systems, and massive codebases.
 
-**Why Go Won:**
-*   **Simplicity:** You can learn the entire language spec in a weekend. No complex inheritance, no operator overloading, no magic.
-*   **Performance:** Compiles to machine code. Fast startup, low memory footprint. It feels like Python but runs like C.
-*   **Concurrency:** Goroutines and Channels make writing high-performance concurrent programs (like web servers) incredibly easy.
-*   **Tools:** The compiler is fast. The standard library is rich (especially for networking). The tooling ('gofmt', 'go test') is world-class.
+**The Philosophy of Go:**
+Go was created by **Robert Griesemer, Rob Pike, and Ken Thompson**. Their goal was to combine the efficiency of a compiled language (like C++) with the readability and usability of a dynamic language (like Python).
+- **Pragmatism over Theory**: Go avoids complex features like inheritance and operator overloading in favor of simplicity.
+- **Fast Build Times**: One of the primary motivations for Go was to reduce the time developers spent waiting for code to compile.
 
-**Who uses it?**
-Docker, Kubernetes, Terraform, Prometheus, Uber, Netflix, Twitch. If it's infrastructure or backend, it's likely written in Go.
+**Why Go Dominates the Cloud:**
+If you look at the "Cloud Native" landscape, Go is everywhere. **Docker, Kubernetes, Prometheus, and Terraform** are all written in Go.
+1. **Static Binaries**: Go compiles everything into a single file with no external dependencies (like a JVM or Python runtime). This makes it perfect for Docker containers.
+2. **Concurrency First**: Unlike other languages where concurrency was an afterthought, Go was built from day one with **Goroutines** and **Channels**.
+3. **Memory Safety**: Go is garbage-collected, which prevents many common memory-related bugs found in C or C++.
 
-**Key Features:**
-1.  **Statically Typed:** Catches errors at compile time.
-2.  **Garbage Collected:** You don't manage memory manually.
-3.  **Compiled:** Single binary deployment. No "DLL hell".
-4.  **Opinionated:** 'gofmt' formats your code. No more arguments about tabs vs spaces.`,
-					CodeExamples: `// Hello World in Go
+**Key Language Features:**
+- **Static Typing & Type Inference**: You get the safety of static types without the verbosity, thanks to the ` + "`" + `:=` + "`" + ` operator.
+- **Composition over Inheritance**: Go uses Interfaces and Structs to achieve polymorphism, avoiding the "fragile base class" problem.
+- **Strict Compiler**: The Go compiler does not allow unused variables or unused imports, keeping codebases clean.`,
+					CodeExamples: `// A simple, concurrent web server in Go
 package main
 
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, Cloud!")
-}`,
-				},
-				{
-					Title: "Installation and Setup",
-					Content: `**Installing Go:**
-
-**Official Installation:**
-1. Download from https://go.dev/dl/
-2. Choose version (latest stable recommended)
-3. Install the package for your OS
-4. Verify installation: go version
-
-**Platform-Specific Instructions:**
-
-**Linux:**
-- Download .tar.gz archive
-- Extract to /usr/local: sudo tar -C /usr/local -xzf go1.21.x.linux-amd64.tar.gz
-- Add to PATH: export PATH=$PATH:/usr/local/go/bin
-- Add to ~/.bashrc or ~/.zshrc for persistence
-
-**macOS:**
-- Download .pkg installer (recommended)
-- Or use Homebrew: brew install go
-- Verify: go version
-
-**Windows:**
-- Download .msi installer
-- Run installer (adds to PATH automatically)
-- Or use Chocolatey: choco install golang
-- Verify in PowerShell: go version
-
-**Version Management:**
-- Use g (golang.org/x/website/cmd/g) for version switching
-- Or use gvm (Go Version Manager)
-- Or manually manage multiple versions
-
-**Go Workspace:**
-
-**Legacy GOPATH (Deprecated):**
-- GOPATH: Workspace directory (deprecated in Go 1.11+)
-- Required all Go code under $GOPATH/src
-- Made dependency management difficult
-- Still works but not recommended for new projects
-
-**Modern Go Modules (Recommended):**
-- Introduced in Go 1.11 (2018)
-- Each project is independent module
-- No GOPATH requirement
-- Better dependency management
-- Standard for all new projects
-
-**Environment Variables:**
-
-**GOROOT:**
-- Go installation directory
-- Usually /usr/local/go (Linux/macOS) or C:\Program Files\Go (Windows)
-- Rarely needs to be set manually
-- Used by Go toolchain to find standard library
-
-**GOPATH (Legacy):**
-- Workspace directory (deprecated)
-- Was required for Go < 1.11
-- Not needed with Go modules
-- Still used by some tools (golangci-lint, etc.)
-
-**GO111MODULE:**
-- Controls module behavior (auto/on/off)
-- auto: Use modules if go.mod exists (default)
-- on: Always use modules
-- off: Never use modules (legacy mode)
-- Usually don't need to set (auto is fine)
-
-**GOBIN:**
-- Where go install puts binaries
-- Defaults to $GOPATH/bin (if GOPATH set) or $HOME/go/bin
-- Add to PATH to use installed tools
-
-**GOPROXY:**
-- Proxy for module downloads
-- Default: https://proxy.golang.org,direct
-- Can use private proxies: GOPROXY=https://proxy.company.com,direct
-- direct: Bypass proxy, fetch directly
-
-**GOSUMDB:**
-- Checksum database for module verification
-- Default: sum.golang.org
-- Can disable: GOSUMDB=off (not recommended)
-
-**GOPRIVATE:**
-- Modules that should not be fetched from public proxy
-- Example: GOPRIVATE=*.company.com,github.com/company/*
-- Used for private repositories
-
-**Creating a New Project:**
-
-**Basic Module:**
-go mod init example.com/myproject
-
-**With Git Repository:**
-go mod init github.com/username/project
-
-**Module Path Best Practices:**
-- Use reverse domain notation
-- Match repository location (GitHub, GitLab, etc.)
-- Use descriptive names
-- Avoid generic names (utils, common, etc.)
-
-**go.mod File:**
-- Defines module name and Go version
-- Lists direct dependencies
-- Can specify minimum Go version
-- Can exclude problematic versions
-
-**go.sum File:**
-- Contains checksums for dependencies
-- Ensures reproducible builds
-- Should be committed to version control
-- Prevents dependency tampering
-
-**Common Pitfalls:**
-
-**1. Wrong Module Path:**
-- Using incorrect path causes import issues
-- Should match repository location
-- Hard to fix after project starts
-- Solution: Set correct path from start
-
-**2. Not Committing go.sum:**
-- Missing checksums cause build issues
-- Breaks reproducible builds
-- Solution: Always commit go.sum
-
-**3. Mixing GOPATH and Modules:**
-- Confusion about which to use
-- Can cause import errors
-- Solution: Use modules for all new projects
-
-**4. Wrong Go Version:**
-- Using outdated Go version
-- Missing new features
-- Security issues
-- Solution: Use latest stable version
-
-**5. Not Setting GOPRIVATE:**
-- Private modules fetched from public proxy
-- Causes authentication errors
-- Solution: Set GOPRIVATE for private repos
-
-**Best Practices:**
-
-**1. Use Latest Stable Go:**
-- Get latest features
-- Security fixes
-- Performance improvements
-- Check: https://go.dev/doc/devel/release
-
-**2. Use Go Modules:**
-- Standard for all projects
-- Better dependency management
-- Easier to work with
-- No GOPATH needed
-
-**3. Set Up IDE:**
-- Install Go extension/plugin
-- Enable format on save
-- Enable goimports on save
-- Set up debugging
-
-**4. Configure Git:**
-- Add go.sum to repository
-- Don't commit vendor/ (unless needed)
-- Use .gitignore for build artifacts
-
-**5. Use goimports:**
-- Automatically adds/removes imports
-- Better than go fmt for imports
-- Install: go install golang.org/x/tools/cmd/goimports@latest
-
-**Verification Steps:**
-
-1. Check Go version: go version
-2. Check GOROOT: go env GOROOT
-3. Check GOPATH: go env GOPATH
-4. Check module support: go env GO111MODULE
-5. Test compilation: go build ./...
-6. Test installation: go install example.com/cmd/tool`,
-					CodeExamples: `// Installation verification
-// Check Go version
-$ go version
-go version go1.21.5 linux/amd64
-
-// Check environment
-$ go env
-GOARCH="amd64"
-GOOS="linux"
-GOROOT="/usr/local/go"
-GOPATH="/home/user/go"
-GO111MODULE="auto"
-GOPROXY="https://proxy.golang.org,direct"
-GOSUMDB="sum.golang.org"
-
-// Create new project
-$ mkdir myproject && cd myproject
-$ go mod init github.com/username/myproject
-go: creating new go.mod: module github.com/username/myproject
-
-// go.mod file created
-module github.com/username/myproject
-
-go 1.21
-
-// Add dependency
-$ go get github.com/gin-gonic/gin
-go: downloading github.com/gin-gonic/gin v1.9.1
-go: added github.com/gin-gonic/gin v1.9.1
-
-// go.mod updated
-module github.com/username/myproject
-
-go 1.21
-
-require (
-    github.com/gin-gonic/gin v1.9.1
+import (
+    "fmt"
+    "net/http"
 )
 
-// go.sum created automatically with checksums
-
-// Example: Setting up private repository
-// Set GOPRIVATE
-$ export GOPRIVATE=github.com/company/*
-
-// Or in .bashrc/.zshrc
-export GOPRIVATE=github.com/company/*,*.company.com
-
-// Configure Git for private repos
-$ git config --global url."git@github.com:company/".insteadOf "https://github.com/company/"
-
-// Example: Project structure
-myproject/
-├── go.mod
-├── go.sum
-├── cmd/
-│   └── app/
-│       └── main.go
-├── internal/
-│   ├── handlers/
-│   │   └── handlers.go
-│   └── services/
-│       └── service.go
-├── pkg/
-│   └── utils/
-│       └── utils.go
-└── README.md
-
-// Example: Multiple binaries
-// cmd/server/main.go
-package main
-func main() { /* server code */ }
-
-// cmd/cli/main.go
-package main
-func main() { /* CLI code */ }
-
-// Build specific binary
-$ go build ./cmd/server
-$ go build ./cmd/cli
-
-// Example: Using goimports
-// Before (missing import)
-package main
 func main() {
-    fmt.Println("Hello")
-}
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello from a Go-powered Cloud!")
+    })
 
-// After goimports (auto-added)
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello")
-}
-
-// Install goimports
-$ go install golang.org/x/tools/cmd/goimports@latest
-
-// Use in editor or manually
-$ goimports -w .
-
-// Example: Troubleshooting common issues
-
-// Issue: Cannot find package
-// Solution: Run go mod tidy
-$ go mod tidy
-
-// Issue: Checksum mismatch
-// Solution: Clear module cache and re-download
-$ go clean -modcache
-$ go mod download
-
-// Issue: Private repo authentication
-// Solution: Set up Git credentials or GOPRIVATE
-$ export GOPRIVATE=github.com/company/*
-$ git config --global url."git@github.com:".insteadOf "https://github.com/"
-
-// Issue: Wrong Go version
-// Solution: Update Go or adjust go.mod
-// In go.mod: go 1.21 (minimum version)
-
-// Example: IDE setup (VS Code)
-// Install Go extension
-// Settings:
-// - "go.formatTool": "goimports"
-// - "go.lintTool": "golangci-lint"
-// - "go.useLanguageServer": true
-
-// Example: Docker setup
-FROM golang:1.21-alpine AS builder
-WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN go build -o app ./cmd/server
-
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=builder /app/app .
-CMD ["./app"]`,
+    fmt.Println("Server starting on :8080...")
+    http.ListenAndServe(":8080", nil)
+}`,
 				},
+
+				{
+					Title: "Installation and Setup",
+					Content: `Setting up a productive Go environment involves more than just installing a compiler; it's about understanding the toolchain and the module system that powers modern Go development.
+
+**1. Critical Environment Variables:**
+While Go is increasingly "zero-config," these variables control how it behaves:
+- **GOPROXY**: Controls where Go downloads modules from. The default ` + "`" + `https://proxy.golang.org` + "`" + ` is fast and secure.
+- **GOPRIVATE**: Essential for corporate work. Tells Go *not* to use the public proxy for internal repositories (e.g., ` + "`" + `GOPRIVATE=github.com/mycompany/*` + "`" + `).
+- **GOBIN**: Where ` + "`" + `go install` + "`" + ` puts finished binaries. Add this directory to your system PATH to run your Go tools from anywhere.
+
+**2. The Transition to Modules (go.mod):**
+Forget the legacy ` + "`" + `GOPATH` + "`" + ` workspace. Modern Go uses **Modules**.
+- Every project should start with ` + "`" + `go mod init <name>` + "`" + `.
+- **go.sum**: This file is a security record. It contains specific cryptographic checksums of your dependencies, ensuring your builds are reproducible and haven't been tampered with.
+
+**3. Tooling for Success:**
+Go's real power is its built-in tooling:
+- **gofmt**: Automatically formats your code. Never argue about style again.
+- **go vet**: Catches common mistakes that the compiler might allow.
+- **go test**: A world-class testing framework built directly into the toolchain.`,
+					CodeExamples: `# INITIALIZE A NEW MODULE
+mkdir my-app && cd my-app
+go mod init github.com/username/my-app
+
+# INSTALLING A TOOL (e.g., golangci-lint)
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# WORKING WITH PRIVATE REPOS
+# 1. Set GOPRIVATE
+export GOPRIVATE=github.com/my-org/*
+# 2. Tell Git to use SSH instead of HTTPS for these repos
+git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+# CLEANING UP UNUSED DEPENDENCIES
+go mod tidy`,
+				},
+
 				{
 					Title: "Go Toolchain",
 					Content: `Go treats its toolchain as a first-class feature. There's no need for external build systems like Make or Maven for most projects.
@@ -678,131 +397,109 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Variables",
-					Content: `**Variable Declaration:**
-Go has several ways to declare variables:
+					Content: `Variables are the storage for data in your program. Go is a statically typed language, meaning every variable has a type that is determined at compile time.
 
-1. var name type = value
-2. var name = value (type inference)
-3. name := value (short declaration, only inside functions)
+**1. Ways to Declare Variables:**
+- **Standard (` + "`" + `var` + "`" + `)**: ` + "`" + `var x int = 10` + "`" + `. Can be used anywhere (package or function level).
+- **Short Declaration (` + "`" + `:=` + "`" + `)**: ` + "`" + `y := 20` + "`" + `. Go infers the type automatically. **Restriction**: This can ONLY be used inside function bodies.
+- **Multiple Declaration**: ` + "`" + `var x, y, z int` + "`" + ` or ` + "`" + `a, b := 1, "hello"` + "`" + `.
 
-**Zero Values:**
-Variables declared without initialization get zero values:
-- Numbers: 0
-- Strings: ""
-- Booleans: false
-- Pointers, slices, maps, channels: nil
+**2. Zero Values:**
+Variables declared without an explicit initial value are given their **Zero Value**:
+- ` + "`" + `0` + "`" + ` for numeric types.
+- ` + "`" + `false` + "`" + ` for booleans.
+- ` + "`" + `""` + "`" + ` (empty string) for strings.
+- ` + "`" + `nil` + "`" + ` for pointers, slices, maps, channels, and interfaces.
 
-**Multiple Variables:**
-You can declare multiple variables at once.`,
-					CodeExamples: `package main
-
-import "fmt"
+**3. Variable Shadowing:**
+Shadowing occurs when you declare a variable with the same name as one in an outer scope. In Go, this is very common with error handling (` + "`" + `err` + "`" + `). Be careful as you can accidentally "hide" a variable you intended to use.`,
+					CodeExamples: `# THE SHORT DECLARATION LIMIT
+var GlobalVar = 100 // OK
+// GlobalVar2 := 200 // ERROR! Cannot use := at package level
 
 func main() {
-    // Explicit type
-    var age int = 25
-    
-    // Type inference
-    var name = "Alice"
-    
-    // Short declaration (only in functions)
-    city := "New York"
-    
-    // Multiple variables
-    var x, y int = 1, 2
-    a, b := 3, 4
-    
-    // Zero values
-    var count int
-    var message string
-    
-    fmt.Println(age, name, city, x, y, a, b, count, message)
+    # ZERO VALUES IN ACTION
+    var i int
+    var s string
+    var p *int
+    fmt.Printf("%v, %q, %v\n", i, s, p) // 0, "", <nil>
+
+    # SHADOWING TRAP
+    x := 10
+    if true {
+        x := 5 // This is a different 'x'!
+        fmt.Println("Inner:", x) // 5
+    }
+    fmt.Println("Outer:", x) // 10
 }`,
 				},
+
 				{
 					Title: "Basic Types",
-					Content: `**Numeric Types:**
-- Integers: int, int8, int16, int32, int64
-- Unsigned: uint, uint8, uint16, uint32, uint64, uintptr
-- Floating point: float32, float64
-- Complex: complex64, complex128
-- byte (alias for uint8)
-- rune (alias for int32, represents Unicode code point)
+					Content: `Go provides a rich set of built-in types that are both efficient and safe.
 
-**String Type:**
-- Immutable sequence of bytes
-- UTF-8 encoded by default
-- Can use backticks for raw strings
+**1. Integers and Floats:**
+- **Architecture-Dependent**: ` + "`" + `int` + "`" + ` and ` + "`" + `uint` + "`" + ` are typically 64 bits on modern systems, matching the CPU word size.
+- **Explicit Sizes**: Use ` + "`" + `int8` + "`" + `, ` + "`" + `int64` + "`" + `, etc., when you need a fixed size regardless of the architecture.
+- **Complex Numbers**: Go has native support for complex numbers (` + "`" + `complex64` + "`" + ` and ` + "`" + `complex128` + "`" + `).
 
-**Boolean Type:**
-- true or false
-- No implicit conversion from numbers`,
-					CodeExamples: `package main
+**2. The Rune and Byte:**
+- **byte**: An alias for ` + "`" + `uint8` + "`" + `. Used for raw data.
+- **rune**: An alias for ` + "`" + `int32` + "`" + `. It represents a Unicode code point. Since Go strings are UTF-8, a single character might take multiple bytes, but a ` + "`" + `rune` + "`" + ` always represents one full character.
 
-import "fmt"
+**3. Strings:**
+- **Immutable**: Once created, a string's content cannot be changed.
+- **Structure**: A string is a read-only slice of bytes.
+- **Raw Strings**: Created with backticks ` + "`" + ` ` + "`" + `, these preserve newlines and special characters without escaping.`,
+					CodeExamples: `// RUNES vs BYTES
+s := "Gopher"
+fmt.Println(len(s)) // 6 bytes
 
-func main() {
-    // Integers
-    var i int = 42
-    var i8 int8 = 127
-    var i64 int64 = 9223372036854775807
-    
-    // Floating point
-    var f32 float32 = 3.14
-    var f64 float64 = 3.141592653589793
-    
-    // String
-    var s1 string = "Hello"
-    var s2 = "World"
-    s3 := ` + "`" + `Raw
-    String` + "`" + `
-    
-    // Boolean
-    var b bool = true
-    
-    // Rune (character)
-    var r rune = 'A'
-    
-    fmt.Println(i, i8, i64, f32, f64, s1, s2, s3, b, r)
-}`,
+s2 := "世界" // "World" in Chinese
+fmt.Println(len(s2)) // 6 bytes (each char is 3 bytes in UTF-8)
+fmt.Println(utf8.RuneCountInString(s2)) // 2 runes
+
+// ARCHITECTURE CHECK
+fmt.Println(strconv.IntSize) // 64 or 32
+
+// COMPLEX NUMBERS
+c := complex(5, 7)
+fmt.Println(real(c), imag(c)) // 5, 7`,
 				},
+
 				{
 					Title: "Constants",
-					Content: `**Constants:**
-- Declared with const keyword
-- Must be compile-time values
-- Can be typed or untyped
-- Can use iota for sequential constants
+					Content: `Constants are values that are known at compile time and cannot be changed during execution. They are declared with the ` + "`" + `const` + "`" + ` keyword.
 
-**Iota:**
-- Predeclared identifier for constant generation
-- Resets to 0 in each const block
-- Increments for each constant in the block`,
-					CodeExamples: `package main
+**1. Typed vs. Untyped Constants:**
+This is a unique feature of Go.
+- **Untyped Constants**: Constants like ` + "`" + `const Pi = 3.14` + "`" + ` are untyped. They have very high precision and can be used in expressions with different types without explicit conversion (as long as the value fits).
+- **Typed Constants**: Constants like ` + "`" + `const Pi float64 = 3.14` + "`" + ` are treated exactly like variables of that type.
 
-import "fmt"
+**2. Constant Groups and Iota:**
+Go provides ` + "`" + `iota` + "`" + ` as a way to create incrementing values easily. It resets to 0 whenever a ` + "`" + `const` + "`" + ` keyword appears in the source and increments after each line in a constant block.`,
+					CodeExamples: `# THE POWER OF UNTYPED CONSTANTS
+const Big = 1 << 100 // A massive number
+const Small = Big >> 99
+fmt.Println(Small) // 2
 
-const Pi = 3.14159
+# IOTA MAGIC
 const (
-    StatusOK = 200
-    StatusNotFound = 404
-    StatusError = 500
+    _ = iota // Skip 0
+    KB = 1 << (10 * iota) // 1 << (10*1) = 1024
+    MB = 1 << (10 * iota) // 1 << (10*2) = 1048576
+    GB = 1 << (10 * iota) // 1 << (10*3)
 )
 
+# ENUMS PATTERN
 const (
-    Sunday = iota  // 0
-    Monday          // 1
-    Tuesday         // 2
-    Wednesday       // 3
-    Thursday        // 4
-    Friday          // 5
-    Saturday        // 6
+    StatusRunning = iota
+    StatusStopped
+    StatusError
 )
-
-func main() {
-    fmt.Println(Pi, StatusOK, Sunday, Monday)
-}`,
+fmt.Println(StatusRunning, StatusStopped) // 0, 1`,
 				},
+
 				{
 					Title: "Type Conversion",
 					Content: `Type conversion in Go is explicit and strict - there are no implicit conversions between types, even between compatible numeric types. This design choice prevents many subtle bugs that plague languages with implicit conversions. Understanding type conversion is essential for working with Go's type system effectively.
@@ -1254,150 +951,102 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "If/Else Statements",
-					Content: `**If Statement:**
-- No parentheses around condition
-- Braces are required
-- Can have initialization statement before condition
+					Content: "The `if` statement in Go is similar to other languages, but it has some key differences and features that encourage cleaner code.\n\n" +
+						"**1. No Parentheses, Mandatory Braces:**\n" +
+						"Go removes the need for parentheses around conditions, making the code cleaner. However, braces `{}` are mandatory even for single-line bodies. This prevents the \"hanging else\" bug common in C.\n\n" +
+						"**2. The Initialization Expression:**\n" +
+						"Go allows you to execute a short statement before the condition. This is most commonly used for error handling or computing a temporary value only needed for the condition.\n" +
+						"- **Scope**: Variables declared in the initialization statement are only available inside the `if` block (and any associated `else` blocks).\n\n" +
+						"**3. The \"Early Return\" Pattern:**\n" +
+						"In Go, it's idiomatic to check for errors or \"bad\" conditions first and return early. This reduces indentation and keeps the \"happy path\" of the code at the left margin.",
+					CodeExamples: `# INITIALIZATION PATTERN
+if err := computeValue(); err != nil {
+    return err // 'err' is only valid here
+}
 
-**If-Else:**
-- Standard if-else structure
-- Can chain multiple conditions
-
-**If with Initialization:**
-Common pattern for checking errors or initializing variables.`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    x := 10
-    
-    // Simple if
-    if x > 5 {
-        fmt.Println("x is greater than 5")
+# EARLY RETURN (Idiomatic)
+func process(x int) error {
+    if x < 0 {
+        return errors.New("negative value")
     }
-    
-    // If-else
-    if x > 20 {
-        fmt.Println("x is large")
-    } else {
-        fmt.Println("x is small")
-    }
-    
-    // If with initialization
-    if y := 15; y > 10 {
-        fmt.Println("y is greater than 10")
-    }
-    
-    // Multiple conditions
-    if x > 0 && x < 100 {
-        fmt.Println("x is in valid range")
-    }
+    // Happy path continues here without being nested in an 'else'
+    fmt.Println("Processing", x)
+    return nil
 }`,
 				},
+
 				{
 					Title: "Switch Statements",
-					Content: `**Switch:**
-- More flexible than other languages
-- No fall-through by default (unlike C)
-- Can switch on values or types
-- Can have initialization statement
-- Default case is optional
+					Content: "The `switch` statement in Go is a cleaner way to write multiple condition checks. Unlike many other C-family languages, Go's `switch` has several unique safety and power features.\n\n" +
+						"**1. No Implicit Fallthrough:**\n" +
+						"Go only runs the matching `case`. You don't need a `break` at the end of every case. If you *want* the execution to continue into the next case, you must explicitly use the `fallthrough` keyword.\n\n" +
+						"**2. Multiple Values in a Single Case:**\n" +
+						"You can comma-separate multiple values in one `case` statement (e.g., `case \"Saturday\", \"Sunday\":`).\n\n" +
+						"**3. The No-Expression Switch (Switch True):**\n" +
+						"If you omit the expression after `switch`, Go assumes it is `switch true`. This is a very powerful alternative to a long `if-else if-else` chain.\n\n" +
+						"**4. Variable Initialization:**\n" +
+						"Just like `if`, you can initialize a variable that is scoped to the switch: `switch day := getDay(); day { ... }`.",
+					CodeExamples: `# SWITCH TRUE PATTERN
+switch {
+case x < 0:
+    fmt.Println("Negative")
+case x == 0:
+    fmt.Println("Zero")
+default:
+    fmt.Println("Positive")
+}
 
-**Switch Variations:**
-- Expression switch: switch value { case ... }
-- Type switch: switch v := x.(type) { case ... }
-- No expression switch: switch { case condition: }`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    day := "Monday"
-    
-    // Expression switch
-    switch day {
-    case "Monday":
-        fmt.Println("Start of week")
-    case "Friday":
-        fmt.Println("End of week")
-    default:
-        fmt.Println("Midweek")
-    }
-    
-    // Switch with initialization
-    switch x := 5; x {
-    case 1, 2, 3:
-        fmt.Println("Small")
-    case 4, 5, 6:
-        fmt.Println("Medium")
-    }
-    
-    // No expression switch (like if-else chain)
-    x := 10
-    switch {
-    case x < 0:
-        fmt.Println("Negative")
-    case x == 0:
-        fmt.Println("Zero")
-    default:
-        fmt.Println("Positive")
-    }
+# MULTIPLE VALUES & FALLTHROUGH
+switch day {
+case "Saturday", "Sunday":
+    fmt.Println("Weekend!")
+case "Monday":
+    fmt.Println("The grind begins")
+    fallthrough // Moves into the next case regardless of match
+default:
+    fmt.Println("Standard weekday")
 }`,
 				},
+
 				{
 					Title: "For Loops",
-					Content: `**For Loop:**
-Go has only one loop construct: for. It can be used in three ways:
+					Content: "In Go, there is only one looping construct: the `for` loop. However, its versatile design allows it to behave like a traditional C-style for loop, a `while` loop, or even an infinite loop.\n\n" +
+						"**1. The Three Faces of 'for':**\n" +
+						"- **The Standard Loop**: `for i := 0; i < 10; i++ { ... }`. Classic initialization, condition, and post-iteration.\n" +
+						"- **The While Loop**: `for condition { ... }`. Go omits the `while` keyword; if you only provide a condition, it behaves like a `while` loop.\n" +
+						"- **The Infinite Loop**: `for { ... }`. Without any condition, the loop runs forever until it hits a `break` or `return`.\n\n" +
+						"**2. Iterating with 'range':**\n" +
+						"The `range` keyword is the most common way to iterate over slices, maps, or strings.\n" +
+						"- **Slice/Array**: Returns index and value.\n" +
+						"- **Map**: Returns key and value.\n" +
+						"- **String**: Returns byte index and the `rune` at that position.",
+					CodeExamples: `# THE WHILE-STYLE LOOP
+i := 1
+for i <= 3 {
+    fmt.Println(i)
+    i = i + 1
+}
 
-1. Traditional for loop: for init; condition; post { }
-2. While-style: for condition { }
-3. Infinite loop: for { }
-4. Range loop: for index, value := range collection { }
+# INFINITE LOOP WITH BREAK
+for {
+    if workDone() {
+        break
+    }
+    doWork()
+}
 
-**Range:**
-- Iterates over arrays, slices, strings, maps, channels
-- Returns index and value (or key and value for maps)
-- Can omit index with _`,
-					CodeExamples: `package main
+# THE POWER OF RANGE
+colors := []string{"Red", "Green", "Blue"}
+for i, color := range colors {
+    fmt.Printf("Index %d is %s\n", i, color)
+}
 
-import "fmt"
-
-func main() {
-    // Traditional for loop
-    for i := 0; i < 5; i++ {
-        fmt.Println(i)
-    }
-    
-    // While-style loop
-    i := 0
-    for i < 5 {
-        fmt.Println(i)
-        i++
-    }
-    
-    // Infinite loop
-    count := 0
-    for {
-        if count >= 3 {
-            break
-        }
-        fmt.Println(count)
-        count++
-    }
-    
-    // Range over slice
-    nums := []int{1, 2, 3, 4, 5}
-    for index, value := range nums {
-        fmt.Printf("Index: %d, Value: %d\n", index, value)
-    }
-    
-    // Range over string
-    for i, char := range "Hello" {
-        fmt.Printf("Index: %d, Char: %c\n", i, char)
-    }
+# CLEARING A MAP (Range)
+for k := range myMap {
+    delete(myMap, k)
 }`,
 				},
+
 				{
 					Title: "Break and Continue",
 					Content: `Go provides break and continue statements for controlling loop execution, similar to other languages but with a unique feature: labeled break and continue statements that allow you to control nested loops precisely. Understanding these control flow statements is essential for writing efficient and readable Go code.
@@ -1803,197 +1452,134 @@ func main() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Function Declaration",
-					Content: `**Function Syntax:**
-func functionName(parameters) returnType {
-    // body
+					Content: "Functions are the building blocks of Go programs. They are \"first-class citizens,\" meaning they can be assigned to variables, passed as arguments, and returned from other functions.\n\n" +
+						"**1. Parameter and Return Syntax:**\n" +
+						"- **Type Grouping**: If consecutive parameters share a type, you only need to write the type once at the end (e.g., `func add(a, b int)`).\n" +
+						"- **Multiple Returns**: This is a powerful Go feature. Functions can return any number of values, which is the idiomatic way to return both a result and an `error`.\n\n" +
+						"**2. The Scope of Variables:**\n" +
+						"Variables declared inside a function are local to that function. Go does not have a global `this` or complex context rules like JavaScript; everything is explicit.",
+					CodeExamples: `# MULTIPLE RETURN VALUES
+func swap(x, y string) (string, string) {
+    return y, x
 }
 
-**Key Points:**
-- Functions are first-class citizens
-- Can return multiple values
-- Can have named return values
-- Functions can be assigned to variables
-- Functions can be passed as arguments`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Simple function
-func greet(name string) {
-    fmt.Println("Hello,", name)
+# PARAMETER TYPE GROUPING
+func multiply(x, y, z int) int {
+    return x * y * z
 }
 
-// Function with return value
-func add(a, b int) int {
-    return a + b
-}
-
-// Multiple return values
-func divide(a, b float64) (float64, error) {
-    if b == 0 {
-        return 0, fmt.Errorf("division by zero")
-    }
-    return a / b, nil
-}
-
-func main() {
-    greet("Alice")
-    sum := add(3, 4)
-    result, err := divide(10, 2)
-    fmt.Println(sum, result, err)
-}`,
+# ASSIGNING TO A VARIABLE
+myFunc := func(x int) int { return x * x }
+fmt.Println(myFunc(5)) // 25`,
 				},
+
 				{
 					Title: "Named Return Values",
-					Content: `**Named Returns:**
-- Return values can be named
-- Act as variables in the function
-- Naked return uses named values
-- Improves readability for complex functions
-
-**Best Practice:**
-Use named returns for documentation, but prefer explicit returns for clarity.`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Named return values
-func calculate(x, y int) (sum int, product int) {
-    sum = x + y
-    product = x * y
-    return  // Naked return
+					Content: "In Go, you can give names to the values your function returns. These names act like variables defined at the top of the function and provide built-in documentation for the caller.\n\n" +
+						"**1. Documentation**: Named returns (e.g., `(sum, diff int)`) clarify the *meaning* of the values, which is especially useful for functions returning multiple values of the same type.\n\n" +
+						"**2. Naked Returns**: A `return` statement without arguments returns the current values of the named return variables. While this saves typing, it can make long functions very hard to read because the returned values are \"hidden\" at the top.\n\n" +
+						"**3. Zero Values**: Named return variables are initialized to their zero value when the function starts.",
+					CodeExamples: `# NAMED RETURNS
+func split(sum int) (x, y int) {
+    x = sum * 4 / 9
+    y = sum - x
+    return // Returns the current values of x and y
 }
 
-// Explicit return (preferred)
-func calculate2(x, y int) (int, int) {
-    sum := x + y
-    product := x * y
-    return sum, product
-}
-
-func main() {
-    s, p := calculate(3, 4)
-    fmt.Println(s, p)
+# PREFERRED: EXPLICIT RETURNS (for clarity)
+func calculate(a, b int) (result int, err error) {
+    if b == 0 {
+        return 0, errors.New("cannot divide by zero")
+    }
+    return a / b, nil // Explicit is often better
 }`,
 				},
+
 				{
 					Title: "Variadic Functions",
-					Content: `**Variadic Functions:**
-- Accept variable number of arguments
-- Use ... before type in parameter list
-- Arguments become a slice inside function
-- Can have at most one variadic parameter
-- Must be last parameter`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Variadic function
-func sum(numbers ...int) int {
+					Content: "A variadic function is a function that can accept any number of trailing arguments. This is incredibly common in standard library functions like `fmt.Println`.\n\n" +
+						"**1. The Ellipsis Syntax**: You define a variadic parameter by placing `...` before the type (e.g., `nums ...int`). Inside the function, this parameter is treated as a **slice** of that type.\n\n" +
+						"**2. Passing a Slice**: If you already have a slice of the required type, you can \"spread\" it into a variadic function by using the `...` suffix (e.g., `myFunc(mySlice...)`).\n\n" +
+						"**3. Restrictions**: A function can have only **one** variadic parameter, and it must be the **last** parameter in the list.",
+					CodeExamples: `# THE VARIADIC PATTERN
+func sum(nums ...int) int {
     total := 0
-    for _, num := range numbers {
-        total += num
+    for _, n := range nums {
+        total += n
     }
     return total
 }
 
-// Variadic with other parameters
-func printInfo(name string, scores ...int) {
-    fmt.Printf("Name: %s\n", name)
-    fmt.Printf("Scores: %v\n", scores)
-}
+# SPREADING A SLICE
+primes := []int{2, 3, 5, 7}
+fmt.Println(sum(primes...))
 
-func main() {
-    fmt.Println(sum(1, 2, 3))
-    fmt.Println(sum(1, 2, 3, 4, 5))
-    
-    printInfo("Alice", 85, 90, 95)
+# MIXED PARAMETERS
+func log(prefix string, values ...any) {
+    fmt.Print(prefix)
+    fmt.Println(values...)
 }`,
 				},
+
 				{
 					Title: "Defer Statement",
-					Content: `**Defer:**
-- Defers execution until surrounding function returns
-- Arguments evaluated immediately, execution deferred
-- Multiple defers execute in LIFO order (last in, first out)
-- Common use: cleanup, closing files, unlocking mutexes
+					Content: "The `defer` statement is Go's idiomatic way to ensure resources are cleaned up (files closed, mutexes unlocked) regardless of which path a function takes to return.\n\n" +
+						"**1. LIFO Execution**: If you have multiple `defer` calls, they are executed in **Last-In, First-Out** order. Think of it like a stack: the last thing you defer is the first thing that runs when the function ends.\n\n" +
+						"**2. Immediate Evaluation**: When you call `defer foo(x)`, the value of `x` is evaluated **at that moment**, not when the function actually runs later.\n\n" +
+						"**3. Interaction with Named Returns**: A deferred function can read and even modify the values of named return variables before the function actually returns to its caller.",
+					CodeExamples: `# ENSURING SYSTEM SAFETY
+func writeToFile(filename string) error {
+    f, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer f.Close() // Guaranteed to run even if write fails
 
-**Defer with Return Values:**
-- Deferred functions can modify named return values
-- Useful for error handling and cleanup`,
-					CodeExamples: `package main
-
-import "fmt"
-
-func main() {
-    defer fmt.Println("World")
-    fmt.Println("Hello")
-    // Output: Hello\nWorld
-    
-    // Multiple defers (LIFO)
-    defer fmt.Println("First")
-    defer fmt.Println("Second")
-    defer fmt.Println("Third")
-    // Output: Third\nSecond\nFirst
+    return f.Write("Hello Go")
 }
 
-func example() (result int) {
-    defer func() {
-        result++  // Modifies named return
-    }()
-    return 0  // Returns 1, not 0
+# LIFO ORDER
+# defer print(1)
+# defer print(2)
+# Prints: 2 then 1
+
+# MODIFYING RETURN VALUES
+func triple() (result int) {
+    defer func() { result = result * 3 }()
+    return 10 // Returns 30!
 }`,
 				},
+
 				{
 					Title: "Function Types and Closures",
-					Content: `**Function Types:**
-- Functions have types
-- Can assign functions to variables
-- Can pass functions as arguments
-- Can return functions
+					Content: "Go treats functions as first-class citizens, meaning they can be assigned to variables, passed to other functions, and returned from other functions. This allows for powerful functional programming patterns like **Closures**.\n\n" +
+						"**1. Function Types**: You can define a new type for a function signature (e.g., `type MathOp func(int, int) int`). This makes your code more readable when passing around higher-order functions.\n\n" +
+						"**2. Closures**: A closure is a function value that references variables from outside its own body. The function may access and assign to these referenced variables; in this sense, the function is \"bound\" to the variables.\n\n" +
+						"**3. Stateful Functions**: Closures are the primary way to create functions that maintain internal state without using global variables or complex objects.",
+					CodeExamples: `# FUNCTION TYPES (Typedef)
+type FilterFunc func(int) bool
 
-**Closures:**
-- Functions that reference variables from outer scope
-- Can capture and modify outer variables
-- Useful for callbacks, iterators, and stateful functions`,
-					CodeExamples: `package main
-
-import "fmt"
-
-// Function type
-type Operation func(int, int) int
-
-func add(a, b int) int {
-    return a + b
+func filter(nums []int, f FilterFunc) []int {
+    var res []int
+    for _, n := range nums {
+        if f(n) {
+            res = append(res, n)
+        }
+    }
+    return res
 }
 
-func multiply(a, b int) int {
-    return a * b
-}
-
-func apply(op Operation, a, b int) int {
-    return op(a, b)
-}
-
-// Closure example
-func counter() func() int {
-    count := 0
-    return func() int {
-        count++
-        return count
+# THE CLOSURE PATTERN
+func makeMultiplier(factor int) func(int) int {
+    return func(x int) int {
+        return x * factor // 'factor' is captured from the outer scope
     }
 }
 
-func main() {
-    result := apply(add, 3, 4)
-    fmt.Println(result)
-    
-    c := counter()
-    fmt.Println(c())  // 1
-    fmt.Println(c())  // 2
-    fmt.Println(c())  // 3
-}`,
+double := makeMultiplier(2)
+fmt.Println(double(10)) // 20`,
 				},
+
 				{
 					Title: "Method Sets",
 					Content: `Method sets determine which methods are available on a type and how it can satisfy interfaces.
