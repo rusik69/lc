@@ -5,6 +5,543 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
+			ID:          37,
+			Title:       "Generics (Go 1.18+)",
+			Description: "Learn Go generics: type parameters, constraints, and modern generic programming patterns.",
+			Order:       7,
+			Lessons: []problems.Lesson{
+				{
+					Title: "Introduction to Generics",
+					Content: `**What are Generics?**
+
+Generics were introduced in Go 1.18 (March 2022) to enable writing code that works with multiple types while maintaining type safety. Before generics, Go developers had to use interfaces, type assertions, or code generation to achieve similar functionality.
+
+**Why Generics Matter:**
+
+**1. Type Safety:**
+- Compile-time type checking
+- No runtime type assertions needed
+- Prevents type-related bugs
+
+**2. Code Reuse:**
+- Write functions that work with multiple types
+- Reduce code duplication
+- Maintainable and DRY (Don't Repeat Yourself)
+
+**3. Performance:**
+- No runtime overhead (unlike interfaces with type assertions)
+- Compiler generates specific code for each type
+- Same performance as non-generic code
+
+**4. Better APIs:**
+- More expressive function signatures
+- Clearer intent in code
+- Better IDE support and autocomplete
+
+**Key Concepts:**
+
+**Type Parameters:**
+- Syntax: func FunctionName[T TypeConstraint](param T) T
+- T is a type parameter (can be any name)
+- TypeConstraint defines what types T can be
+
+**Type Constraints:**
+- Define what types are allowed
+- Can be interfaces or type sets
+- Built-in constraints: comparable, any, constraints package
+
+**Generic Functions:**
+- Functions that work with type parameters
+- Type inferred from arguments
+- Can be explicitly specified
+
+**Generic Types:**
+- Types that can work with multiple underlying types
+- Examples: Stack[T], Queue[T], Tree[T]
+
+**Real-World Applications:**
+- Collections: Generic stacks, queues, trees
+- Algorithms: Generic sorting, searching, filtering
+- Utilities: Generic min/max, map/filter/reduce
+- Data structures: Generic linked lists, heaps, graphs`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Generic function - works with any comparable type
+func Max[T comparable](a, b T) T {
+    // Note: This is simplified - real implementation needs constraints.Ordered
+    return a  // Placeholder
+}
+
+// Generic function with constraints
+func Find[T comparable](slice []T, value T) int {
+    for i, v := range slice {
+        if v == value {
+            return i
+        }
+    }
+    return -1
+}
+
+// Generic type
+type Stack[T any] struct {
+    items []T
+}
+
+func (s *Stack[T]) Push(item T) {
+    s.items = append(s.items, item)
+}
+
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    item := s.items[len(s.items)-1]
+    s.items = s.items[:len(s.items)-1]
+    return item, true
+}
+
+func main() {
+    // Type inference
+    index := Find([]int{1, 2, 3, 4, 5}, 3)
+    fmt.Println(index)  // 2
+    
+    // Explicit type specification
+    index2 := Find[string]([]string{"a", "b", "c"}, "b")
+    fmt.Println(index2)  // 1
+    
+    // Generic type
+    intStack := Stack[int]{}
+    intStack.Push(1)
+    intStack.Push(2)
+    val, _ := intStack.Pop()
+    fmt.Println(val)  // 2
+    
+    stringStack := Stack[string]{}
+    stringStack.Push("hello")
+    stringStack.Push("world")
+    str, _ := stringStack.Pop()
+    fmt.Println(str)  // world
+}`,
+				},
+				{
+					Title: "Type Constraints",
+					Content: `**Understanding Type Constraints:**
+
+Type constraints define what types can be used with a generic function or type. They ensure type safety and enable operations on generic types.
+
+**Built-in Constraints:**
+
+**1. any:**
+- Alias for interface{}
+- Any type allowed
+- Most permissive constraint
+
+**2. comparable:**
+- Types that can be compared with == and !=
+- Includes: numbers, strings, booleans, pointers, arrays, structs
+- Excludes: slices, maps, functions
+
+**3. constraints Package (Go 1.18+):**
+- constraints.Ordered: Types that can be ordered (<, >, <=, >=)
+- constraints.Signed: Signed integer types
+- constraints.Unsigned: Unsigned integer types
+- constraints.Integer: All integer types
+- constraints.Float: All float types
+- constraints.Complex: All complex types
+
+**Custom Constraints:**
+
+**Interface Constraints:**
+- Use interfaces as constraints
+- Type must implement interface methods
+- Enables method calls on generic types
+
+**Type Sets (Go 1.18+):**
+- Define sets of types explicitly
+- More flexible than interfaces
+- Can specify exact types
+
+**Union Constraints:**
+- Combine multiple constraints
+- Type must satisfy any constraint
+- Syntax: T1 | T2 | T3
+
+**Best Practices:**
+- Use most specific constraint possible
+- Prefer constraints.Ordered over any for comparisons
+- Use interfaces for method requirements
+- Document constraint requirements`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "golang.org/x/exp/constraints"
+)
+
+// Using constraints.Ordered for comparisons
+func Min[T constraints.Ordered](a, b T) T {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+// Using constraints.Integer for integer operations
+func Sum[T constraints.Integer](numbers []T) T {
+    var sum T
+    for _, n := range numbers {
+        sum += n
+    }
+    return sum
+}
+
+// Custom interface constraint
+type Stringer interface {
+    String() string
+}
+
+func Print[T Stringer](value T) {
+    fmt.Println(value.String())
+}
+
+// Type set constraint
+type Numeric interface {
+    ~int | ~float64  // ~ means underlying type
+}
+
+func Double[T Numeric](value T) T {
+    return value * 2
+}
+
+// Union constraint
+type Number interface {
+    int | float64 | string
+}
+
+func Process[T Number](value T) {
+    fmt.Printf("Processing: %v\n", value)
+}
+
+func main() {
+    // Using constraints.Ordered
+    minInt := Min(5, 3)
+    fmt.Println(minInt)  // 3
+    
+    minFloat := Min(3.14, 2.71)
+    fmt.Println(minFloat)  // 2.71
+    
+    // Using constraints.Integer
+    sum := Sum([]int{1, 2, 3, 4, 5})
+    fmt.Println(sum)  // 15
+    
+    // Custom constraint
+    type MyInt int
+    doubled := Double(MyInt(5))
+    fmt.Println(doubled)  // 10
+}`,
+				},
+				{
+					Title: "Generic Data Structures",
+					Content: `**Generic Collections:**
+
+Generics enable type-safe, reusable data structures without sacrificing performance or requiring code generation.
+
+**Common Generic Data Structures:**
+
+**1. Stack:**
+- LIFO (Last In, First Out)
+- Push and Pop operations
+- Type-safe element storage
+
+**2. Queue:**
+- FIFO (First In, First Out)
+- Enqueue and Dequeue operations
+- Useful for task processing
+
+**3. Linked List:**
+- Dynamic size
+- Efficient insertions/deletions
+- Type-safe node values
+
+**4. Binary Tree:**
+- Hierarchical structure
+- Generic node values
+- Type-safe operations
+
+**5. Heap/Priority Queue:**
+- Maintains order property
+- Generic element types
+- Efficient min/max operations
+
+**Benefits:**
+- Type safety at compile time
+- No type assertions needed
+- Better performance than interface-based solutions
+- Code reuse across types
+
+**Real-World Use Cases:**
+- Generic collections in libraries
+- Type-safe algorithms
+- Reusable data structures
+- API design with generics`,
+					CodeExamples: `package main
+
+import "fmt"
+
+// Generic Stack
+type Stack[T any] struct {
+    items []T
+}
+
+func NewStack[T any]() *Stack[T] {
+    return &Stack[T]{items: make([]T, 0)}
+}
+
+func (s *Stack[T]) Push(item T) {
+    s.items = append(s.items, item)
+}
+
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    item := s.items[len(s.items)-1]
+    s.items = s.items[:len(s.items)-1]
+    return item, true
+}
+
+func (s *Stack[T]) Peek() (T, bool) {
+    if len(s.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    return s.items[len(s.items)-1], true
+}
+
+// Generic Queue
+type Queue[T any] struct {
+    items []T
+}
+
+func NewQueue[T any]() *Queue[T] {
+    return &Queue[T]{items: make([]T, 0)}
+}
+
+func (q *Queue[T]) Enqueue(item T) {
+    q.items = append(q.items, item)
+}
+
+func (q *Queue[T]) Dequeue() (T, bool) {
+    if len(q.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    item := q.items[0]
+    q.items = q.items[1:]
+    return item, true
+}
+
+// Generic Binary Tree Node
+type TreeNode[T comparable] struct {
+    Value T
+    Left  *TreeNode[T]
+    Right *TreeNode[T]
+}
+
+func (n *TreeNode[T]) Insert(value T) {
+    // Simplified insertion logic
+    if n.Value < value {  // Requires constraints.Ordered
+        if n.Right == nil {
+            n.Right = &TreeNode[T]{Value: value}
+        } else {
+            n.Right.Insert(value)
+        }
+    } else {
+        if n.Left == nil {
+            n.Left = &TreeNode[T]{Value: value}
+        } else {
+            n.Left.Insert(value)
+        }
+    }
+}
+
+func main() {
+    // Generic Stack with int
+    intStack := NewStack[int]()
+    intStack.Push(1)
+    intStack.Push(2)
+    intStack.Push(3)
+    val, _ := intStack.Pop()
+    fmt.Println(val)  // 3
+    
+    // Generic Stack with string
+    stringStack := NewStack[string]()
+    stringStack.Push("hello")
+    stringStack.Push("world")
+    str, _ := stringStack.Pop()
+    fmt.Println(str)  // world
+    
+    // Generic Queue
+    queue := NewQueue[int]()
+    queue.Enqueue(1)
+    queue.Enqueue(2)
+    queue.Enqueue(3)
+    item, _ := queue.Dequeue()
+    fmt.Println(item)  // 1 (FIFO)
+}`,
+				},
+				{
+					Title: "Generic Algorithms",
+					Content: `**Generic Algorithm Patterns:**
+
+Generics enable writing algorithms that work with any type while maintaining type safety and performance.
+
+**Common Generic Algorithms:**
+
+**1. Map/Transform:**
+- Apply function to each element
+- Return new slice with transformed values
+- Type-safe transformation
+
+**2. Filter:**
+- Select elements matching predicate
+- Return filtered slice
+- Generic predicate functions
+
+**3. Reduce/Fold:**
+- Combine elements into single value
+- Generic accumulator type
+- Flexible reduction operations
+
+**4. Find/Search:**
+- Find element matching condition
+- Generic search criteria
+- Type-safe comparisons
+
+**5. Sort:**
+- Sort slices of any comparable type
+- Custom comparison functions
+- Efficient sorting algorithms
+
+**Benefits:**
+- Reusable across types
+- Type-safe operations
+- No runtime overhead
+- Better than interface-based solutions
+
+**Best Practices:**
+- Use appropriate constraints
+- Keep algorithms generic and reusable
+- Document type requirements
+- Test with multiple types`,
+					CodeExamples: `package main
+
+import (
+    "fmt"
+    "golang.org/x/exp/constraints"
+)
+
+// Generic Map function
+func Map[T, U any](slice []T, fn func(T) U) []U {
+    result := make([]U, len(slice))
+    for i, v := range slice {
+        result[i] = fn(v)
+    }
+    return result
+}
+
+// Generic Filter function
+func Filter[T any](slice []T, predicate func(T) bool) []T {
+    var result []T
+    for _, v := range slice {
+        if predicate(v) {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+
+// Generic Reduce function
+func Reduce[T, U any](slice []T, initial U, fn func(U, T) U) U {
+    result := initial
+    for _, v := range slice {
+        result = fn(result, v)
+    }
+    return result
+}
+
+// Generic Find function
+func Find[T comparable](slice []T, value T) (int, bool) {
+    for i, v := range slice {
+        if v == value {
+            return i, true
+        }
+    }
+    return -1, false
+}
+
+// Generic Contains function
+func Contains[T comparable](slice []T, value T) bool {
+    _, found := Find(slice, value)
+    return found
+}
+
+// Generic Min/Max
+func Min[T constraints.Ordered](slice []T) (T, bool) {
+    if len(slice) == 0 {
+        var zero T
+        return zero, false
+    }
+    min := slice[0]
+    for _, v := range slice[1:] {
+        if v < min {
+            min = v
+        }
+    }
+    return min, true
+}
+
+func main() {
+    // Map: Square numbers
+    numbers := []int{1, 2, 3, 4, 5}
+    squared := Map(numbers, func(x int) int {
+        return x * x
+    })
+    fmt.Println(squared)  // [1, 4, 9, 16, 25]
+    
+    // Filter: Even numbers
+    evens := Filter(numbers, func(x int) bool {
+        return x%2 == 0
+    })
+    fmt.Println(evens)  // [2, 4]
+    
+    // Reduce: Sum
+    sum := Reduce(numbers, 0, func(acc, x int) int {
+        return acc + x
+    })
+    fmt.Println(sum)  // 15
+    
+    // Find
+    index, found := Find(numbers, 3)
+    fmt.Println(index, found)  // 2 true
+    
+    // Contains
+    hasFive := Contains(numbers, 5)
+    fmt.Println(hasFive)  // true
+    
+    // Min
+    min, ok := Min(numbers)
+    fmt.Println(min, ok)  // 1 true
+}`,
+				},
+			},
+			ProblemIDs: []int{},
+		},
+		{
 			ID:          38,
 			Title:       "Error Handling",
 			Description: "Learn Go's error handling patterns, custom errors, and panic/recover.",
@@ -440,15 +977,44 @@ func main() {
 - Lightweight threads managed by Go runtime
 - Created with go keyword
 - Very cheap to create (thousands possible)
-- Multiplexed onto OS threads
+- Multiplexed onto OS threads (M:N threading model)
+- Stack starts at 2KB, grows as needed (up to 1GB)
 
 **Starting Goroutines:**
 go functionCall()
 
-**Key Points:**
+**Key Characteristics (2024-2025 Best Practices):**
+
+**1. Lightweight:**
+- 2KB initial stack (vs 1-2MB for OS threads)
+- Can create millions of goroutines
+- Efficient context switching
+- Managed by Go runtime scheduler
+
+**2. GOMAXPROCS:**
+- Controls number of OS threads used
+- Default: Number of CPU cores
+- Can be set: runtime.GOMAXPROCS(n)
+- Affects parallelism, not concurrency
+
+**3. Scheduling:**
+- Cooperative scheduling (goroutines yield control)
+- Preemptive scheduling for blocking operations
+- Work-stealing scheduler for load balancing
+- Efficient for I/O-bound and CPU-bound workloads
+
+**4. Coordination:**
 - Main goroutine must wait for others
 - Use sync.WaitGroup or channels to coordinate
-- Shared memory access needs synchronization`,
+- Context package for cancellation and timeouts
+- Shared memory access needs synchronization
+
+**Best Practices:**
+- Don't create goroutines in loops without limits
+- Use worker pools for controlled concurrency
+- Always handle goroutine lifecycle (start, wait, cleanup)
+- Use context.Context for cancellation
+- Avoid goroutine leaks (ensure all goroutines can exit)`,
 					CodeExamples: `package main
 
 import (
@@ -481,10 +1047,38 @@ func main() {
 - Created with make(chan Type)
 - Send: ch <- value
 - Receive: value := <-ch
+- "Don't communicate by sharing memory; share memory by communicating" (Go proverb)
 
 **Channel Types:**
-- Unbuffered: Synchronous, blocks until receiver ready
-- Buffered: Asynchronous, blocks only when full`,
+
+**1. Unbuffered Channels:**
+- Synchronous communication
+- Sender blocks until receiver ready
+- Receiver blocks until sender ready
+- Guarantees delivery (handshake)
+- Most common pattern
+
+**2. Buffered Channels:**
+- Asynchronous communication
+- Sender blocks only when buffer full
+- Receiver blocks only when buffer empty
+- Buffer size: make(chan Type, size)
+- Use for: Producer-consumer patterns, rate limiting
+
+**Channel Operations:**
+- Send: ch <- value (blocks if unbuffered and no receiver)
+- Receive: value := <-ch (blocks if no sender)
+- Close: close(ch) (signals no more values)
+- Range: for value := range ch (receives until closed)
+- Select: Choose from multiple channels
+
+**Best Practices (2024-2025):**
+- Prefer unbuffered channels (simpler, safer)
+- Use buffered channels only when needed (performance, decoupling)
+- Always close channels when done (prevents goroutine leaks)
+- Use select for non-blocking operations
+- Don't send on closed channels (panic)
+- Receiving from closed channel returns zero value immediately`,
 					CodeExamples: `package main
 
 import "fmt"

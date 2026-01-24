@@ -12,195 +12,662 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Systems Design?",
-					Content: `Systems design is the process of defining the architecture, components, modules, interfaces, and data for a system to satisfy specified requirements. It's about making trade-offs between different aspects like performance, scalability, reliability, and cost.
+					Content: `Systems design is the process of defining the architecture, components, modules, interfaces, and data for a system to satisfy specified requirements. It's a comprehensive discipline that involves making strategic trade-offs between competing concerns like performance, scalability, reliability, security, and cost to build systems that can handle real-world scale and complexity.
 
-**Key Goals:**
-- **Scalability**: System can handle growth in users, data, or traffic
-- **Reliability**: System works correctly and consistently
-- **Availability**: System is accessible when needed (uptime)
-- **Performance**: System responds quickly to requests
-- **Maintainability**: System is easy to understand, modify, and extend
-- **Security**: System protects data and prevents unauthorized access
-- **Cost Efficiency**: System operates within budget constraints
+**The Essence of Systems Design:**
+
+**What Systems Design Really Is:**
+Systems design is not just about drawing boxes and arrows. It's about understanding requirements deeply, making informed architectural decisions, and designing systems that can evolve and scale. It combines engineering principles, architectural patterns, and practical experience to solve complex problems.
+
+**Key Characteristics:**
+- **Holistic Approach**: Considers entire system, not just individual components
+- **Trade-off Analysis**: Balances competing requirements and constraints
+- **Scalability Focus**: Designs for growth and scale
+- **Practical**: Grounded in real-world constraints and requirements
+- **Iterative**: Evolves as requirements and understanding deepen
 
 **Why Systems Design Matters:**
 
-**Professional Impact:**
-- Design systems that can scale to millions of users
-- Make informed architectural decisions
+**1. Professional Impact:**
+
+**Design Scalable Systems:**
+- Build systems that handle millions of users
+- Design for growth without major rewrites
+- Avoid performance bottlenecks before they occur
+- **Real-world example**: Designing Twitter to handle 500M tweets/day
+
+**Make Informed Decisions:**
 - Understand trade-offs between different approaches
-- Build production-ready systems that don't require constant firefighting
-- Reduce technical debt and maintenance costs
+- Choose appropriate technologies and patterns
+- Avoid costly mistakes and rework
+- **Real-world example**: Choosing between SQL and NoSQL databases
 
-**Career Development:**
-- Prepare for technical interviews at top tech companies
-- Demonstrate senior-level thinking and problem-solving
+**Build Production-Ready Systems:**
+- Design for reliability and fault tolerance
+- Plan for monitoring and observability
+- Consider operational requirements
+- **Real-world example**: Designing for 99.9% uptime with automatic failover
+
+**Reduce Technical Debt:**
+- Make decisions that don't require constant refactoring
+- Design for maintainability and extensibility
+- Avoid architectural shortcuts that cause problems later
+- **Real-world example**: Proper service boundaries prevent tight coupling
+
+**2. Career Development:**
+
+**Technical Interviews:**
+- Systems design is a core interview topic at top tech companies
+- Demonstrates senior-level thinking and problem-solving
+- Shows ability to handle ambiguity and make trade-offs
+- **Real-world**: Google, Amazon, Meta all include systems design interviews
+
+**Leadership Opportunities:**
 - Lead architecture discussions and design reviews
-- Mentor junior engineers on system design principles
+- Mentor junior engineers on design principles
+- Make strategic technical decisions
+- **Real-world**: Senior engineers and architects need strong systems design skills
 
-**Business Value:**
-- Reduce infrastructure costs through efficient design
-- Enable rapid feature development with good architecture
-- Minimize downtime and improve user experience
-- Support business growth without major rewrites
+**Career Advancement:**
+- Systems design skills are essential for senior roles
+- Enables transition from developer to architect
+- Opens opportunities in high-scale systems
+- **Real-world**: Many tech leaders started with strong systems design skills
+
+**3. Business Value:**
+
+**Cost Optimization:**
+- Design efficient systems that minimize infrastructure costs
+- Right-size components and resources
+- Optimize for cost-effective scaling
+- **Real-world example**: Proper caching can reduce database costs by 80%
+
+**Faster Feature Development:**
+- Good architecture enables rapid feature development
+- Reduces time spent on refactoring and bug fixes
+- Enables parallel development by multiple teams
+- **Real-world example**: Microservices enable teams to work independently
+
+**Improved User Experience:**
+- Fast response times improve user satisfaction
+- High availability ensures users can access system
+- Scalability prevents degradation during peak usage
+- **Real-world example**: Slow systems lead to user churn
+
+**Business Growth Support:**
+- Systems that scale support business growth
+- Avoid system limitations that constrain business
+- Enable new business opportunities
+- **Real-world example**: Scalable architecture enables international expansion
+
+**Modern Systems Design Framework: RESHADED (2024-2025 Best Practices):**
+
+The RESHADED framework provides a structured approach to systems design interviews and real-world design problems. It helps translate open-ended problems into specific requirements, constraints, and success metrics.
+
+**RESHADED Framework Components:**
+
+**R - Requirements:**
+- Functional requirements (what the system should do)
+- Non-functional requirements (performance, scalability, reliability)
+- Clarify ambiguous requirements with interviewer/stakeholder
+
+**E - Estimate:**
+- Scale estimation (users, requests, data volume)
+- Capacity planning (storage, bandwidth, compute)
+- Use back-of-envelope calculations
+
+**S - System Interface:**
+- Define APIs and interfaces
+- Input/output specifications
+- Data formats and protocols
+
+**H - High-Level Design:**
+- Overall architecture (monolith vs microservices)
+- Major components and their interactions
+- Data flow and request flow
+
+**A - Algorithm/Data Structure:**
+- Core algorithms for critical operations
+- Data structures for efficient storage/retrieval
+- Optimization strategies
+
+**D - Detailed Design:**
+- Deep dive into specific components
+- Database schema design
+- API design details
+- Error handling and edge cases
+
+**E - Evaluation:**
+- Identify bottlenecks and limitations
+- Discuss trade-offs
+- Suggest improvements and optimizations
+
+**D - Discussion:**
+- Scalability considerations
+- Reliability and fault tolerance
+- Security considerations
+- Monitoring and observability
+
+**Key Goals of Systems Design:**
+
+**1. Scalability:**
+- **Definition**: System's ability to handle growth
+- **Types**:
+  - **Horizontal Scaling**: Add more instances (preferred, cloud-native)
+  - **Vertical Scaling**: Increase instance size (limited, legacy approach)
+- **Considerations**: 
+  - Current scale vs future scale
+  - Read-heavy vs write-heavy workloads
+  - Stateless vs stateful components
+  - Database scaling strategies (sharding, replication)
+- **Patterns**: Load balancing, caching, database partitioning, CDN
+- **Real-world example**: Designing for 1M users but planning for 100M
+
+**2. Reliability:**
+- **Definition**: System works correctly and consistently
+- **Aspects**:
+  - **Correctness**: System produces correct results
+  - **Consistency**: Data remains consistent
+  - **Durability**: Data is not lost
+- **Techniques**: 
+  - Redundancy, replication, error handling
+  - Data validation, transaction management
+- **Real-world example**: Financial systems require high reliability
+
+**3. Availability:**
+- **Definition**: System is accessible when needed
+- **Metrics**: 
+  - **Uptime**: Percentage of time system is available
+  - **SLA**: Service Level Agreement (e.g., 99.9% = 8.76 hours downtime/year)
+- **Techniques**: 
+  - Redundancy, failover, health checks
+  - Multiple data centers, load balancing
+- **Real-world example**: E-commerce sites need high availability during sales
+
+**4. Performance:**
+- **Definition**: System responds quickly to requests
+- **Metrics**: 
+  - **Latency**: Time for single request (e.g., < 200ms)
+  - **Throughput**: Requests per second (e.g., 10,000 QPS)
+  - **Response Time**: End-to-end time for user request
+- **Techniques**: 
+  - Caching, CDN, database optimization
+  - Load balancing, horizontal scaling
+- **Real-world example**: Search engines need sub-second response times
+
+**5. Maintainability:**
+- **Definition**: System is easy to understand, modify, and extend
+- **Aspects**:
+  - **Code Quality**: Clean, well-documented code
+  - **Modularity**: Clear separation of concerns
+  - **Testability**: Easy to test individual components
+  - **Documentation**: Clear architecture and design docs
+- **Techniques**: 
+  - Microservices for independent deployment
+  - API versioning for backward compatibility
+  - Comprehensive logging and monitoring
+- **Real-world example**: Systems that enable rapid feature development
+
+**6. Cost Efficiency:**
+- **Definition**: Optimize infrastructure and operational costs
+- **Considerations**:
+  - Right-sizing resources (not over-provisioning)
+  - Using managed services vs self-hosted
+  - Caching to reduce database load
+  - Efficient data storage and retrieval
+- **Techniques**:
+  - Auto-scaling to match demand
+  - Reserved instances for predictable workloads
+  - Data compression and archiving
+  - Cost monitoring and optimization
+- **Real-world example**: Reducing cloud costs by 40% through proper caching
+
+**Modern Systems Design Patterns (2024-2025):**
+
+**Architectural Patterns:**
+- **Microservices**: Independent, scalable services
+- **Event-Driven Architecture**: Loose coupling via events
+- **Serverless**: Function-as-a-Service for event processing
+- **Service Mesh**: Advanced traffic management (Istio, Linkerd)
+- **API Gateway**: Single entry point for microservices
+
+**Scalability Patterns:**
+- **Sharding**: Horizontal database partitioning
+- **Replication**: Multiple copies for read scaling
+- **Caching**: Multi-layer caching (CDN, application, database)
+- **Load Balancing**: Distribute traffic across instances
+- **Database Patterns**: Read replicas, write-through caching, CQRS
+
+**Reliability Patterns:**
+- **Circuit Breaker**: Prevent cascade failures
+- **Retry with Exponential Backoff**: Handle transient failures
+- **Bulkhead**: Isolate failures to specific components
+- **Health Checks**: Monitor component health
+- **Graceful Degradation**: Maintain partial functionality during failures
+
+**Data Consistency Patterns:**
+- **ACID**: Strong consistency (traditional databases)
+- **BASE**: Eventually consistent (NoSQL, distributed systems)
+- **CAP Theorem**: Choose 2 of 3 (Consistency, Availability, Partition tolerance)
+- **Eventual Consistency**: Acceptable for many use cases
+- **CQRS**: Separate read and write models 
+  - **Modularity**: Well-defined components and interfaces
+  - **Documentation**: Clear documentation and code comments
+  - **Testability**: Easy to test individual components
+- **Techniques**: 
+  - Clean architecture, SOLID principles
+  - Comprehensive testing, good documentation
+- **Real-world example**: Maintainable systems reduce development costs
+
+**6. Security:**
+- **Definition**: System protects data and prevents unauthorized access
+- **Aspects**: 
+  - **Authentication**: Verifying user identity
+  - **Authorization**: Controlling access to resources
+  - **Encryption**: Protecting data at rest and in transit
+  - **Compliance**: Meeting regulatory requirements
+- **Techniques**: 
+  - Encryption, access control, security monitoring
+  - Regular security audits, penetration testing
+- **Real-world example**: Healthcare systems must protect patient data (HIPAA)
+
+**7. Cost Efficiency:**
+- **Definition**: System operates within budget constraints
+- **Considerations**: 
+  - Infrastructure costs (servers, storage, bandwidth)
+  - Development costs (team size, timeline)
+  - Operational costs (monitoring, maintenance)
+- **Techniques**: 
+  - Right-sizing resources, using managed services
+  - Optimizing for cost-effective scaling
+- **Real-world example**: Startups need cost-efficient designs
 
 **Common System Requirements:**
 
 **Functional Requirements:**
-- What the system should do (features, capabilities)
-- User stories and use cases
-- API specifications
-- Data models and relationships
+- **Definition**: What the system should do
+- **Examples**: 
+  - User registration and authentication
+  - Product catalog browsing and search
+  - Shopping cart and checkout
+  - Order processing and tracking
+- **Documentation**: User stories, use cases, API specifications
+- **Real-world**: E-commerce system must allow users to browse products and make purchases
 
 **Non-Functional Requirements:**
-- **Performance**: Response time, throughput, latency
-- **Scalability**: Ability to handle growth
-- **Availability**: Uptime percentage (e.g., 99.9%)
-- **Reliability**: Error rate, data consistency
-- **Security**: Authentication, authorization, encryption
-- **Usability**: User experience, accessibility
+
+**Performance Requirements:**
+- **Response Time**: API response time < 200ms
+- **Throughput**: Handle 10,000 requests per second
+- **Latency**: Database query latency < 50ms
+- **Real-world**: Search results must appear in < 1 second
+
+**Scalability Requirements:**
+- **Current Scale**: 1 million users, 100K requests/day
+- **Future Scale**: 100 million users, 10M requests/day
+- **Growth Rate**: 10x growth expected in 2 years
+- **Real-world**: System must scale without major redesign
+
+**Availability Requirements:**
+- **Uptime**: 99.9% availability (8.76 hours downtime/year)
+- **RTO**: Recovery Time Objective < 1 hour
+- **RPO**: Recovery Point Objective < 15 minutes
+- **Real-world**: Financial systems need 99.99% uptime
+
+**Security Requirements:**
+- **Authentication**: OAuth2, JWT tokens
+- **Authorization**: Role-based access control (RBAC)
+- **Encryption**: TLS 1.3 for data in transit, AES-256 for data at rest
+- **Compliance**: GDPR, HIPAA, PCI-DSS
+- **Real-world**: Healthcare systems must comply with HIPAA
 
 **Constraints:**
-- **Budget**: Infrastructure and development costs
-- **Time**: Launch deadlines, development timeline
-- **Technology Stack**: Existing systems, team expertise
-- **Regulatory**: Compliance requirements (GDPR, HIPAA)
-- **Geographic**: Data residency, latency requirements
+
+**Budget Constraints:**
+- **Infrastructure**: $50K/month for cloud infrastructure
+- **Development**: Team of 10 developers, 6-month timeline
+- **Licensing**: Database licensing costs
+- **Real-world**: Startups have limited budgets
+
+**Time Constraints:**
+- **Launch Deadline**: Must launch in 6 months
+- **Market Window**: Launch before competitor
+- **Resource Availability**: Key developers available for 3 months
+- **Real-world**: Time-to-market is critical for competitive advantage
+
+**Technology Constraints:**
+- **Existing Systems**: Must integrate with legacy mainframe
+- **Vendor Requirements**: Enterprise agreement requires specific cloud provider
+- **Team Expertise**: Team knows Java and Python
+- **Real-world**: Organizations have existing technology investments
+
+**Regulatory Constraints:**
+- **Data Residency**: EU data must stay in EU regions
+- **Compliance**: Must comply with GDPR, HIPAA
+- **Audit Requirements**: Comprehensive audit trails required
+- **Real-world**: Global companies must comply with multiple regulations
 
 **Assumptions:**
-- Expected usage patterns (read-heavy vs write-heavy)
-- Growth rates (users, data, traffic)
-- User behavior (peak times, geographic distribution)
-- Data access patterns (hot vs cold data)
+
+**Usage Patterns:**
+- **Read/Write Ratio**: 10:1 read to write ratio
+- **Peak Times**: 80% of traffic during business hours
+- **Geographic Distribution**: 60% US, 30% Europe, 10% Asia
+- **Real-world**: Understanding usage patterns informs design decisions
+
+**Growth Rates:**
+- **Users**: 10% month-over-month growth
+- **Data**: 1TB new data per month
+- **Traffic**: 5% month-over-month growth
+- **Real-world**: Planning for growth prevents future problems
+
+**User Behavior:**
+- **Session Duration**: Average 15 minutes per session
+- **Actions per Session**: Average 10 actions per session
+- **Peak Concurrent Users**: 100K concurrent users during peak hours
+- **Real-world**: Understanding user behavior helps design better systems
 
 **Systems Design Process:**
 
 **1. Requirements Gathering:**
-- Understand functional requirements
-- Identify non-functional requirements
-- Clarify constraints and assumptions
+
+**Understand the Problem:**
+- What problem are we solving?
+- Who are the users?
+- What are the use cases?
+- **Example**: "Design a URL shortener like TinyURL"
+
+**Clarify Requirements:**
 - Ask clarifying questions
+- Identify edge cases
+- Understand constraints
+- **Example**: "Do we need analytics? Custom URLs? Expiration?"
+
+**Document Requirements:**
+- Functional requirements
+- Non-functional requirements
+- Constraints and assumptions
+- **Example**: Document all requirements before designing
 
 **2. Capacity Estimation:**
-- Estimate traffic (QPS, RPS)
-- Estimate storage requirements
-- Estimate bandwidth needs
-- Plan for growth
+
+**Traffic Estimation:**
+- **QPS (Queries Per Second)**: Peak queries per second
+- **RPS (Reads Per Second)**: Read operations per second
+- **WPS (Writes Per Second)**: Write operations per second
+- **Example**: 100M URLs/day = ~1,200 QPS average, ~2,400 QPS peak
+
+**Storage Estimation:**
+- **Data Size**: Size of each record
+- **Total Records**: Expected number of records
+- **Growth Rate**: Expected growth over time
+- **Example**: 100M URLs × 500 bytes = 50 GB, 5 years = 500 GB
+
+**Bandwidth Estimation:**
+- **Request Size**: Average request size
+- **Response Size**: Average response size
+- **Traffic**: Requests per second × size
+- **Example**: 2,400 QPS × 1 KB = 2.4 MB/s = 19.2 Mbps
 
 **3. System API Design:**
-- Define endpoints
-- Specify request/response formats
-- Consider versioning
-- Document error handling
+
+**Define Endpoints:**
+- RESTful API design
+- Clear endpoint naming
+- HTTP methods (GET, POST, PUT, DELETE)
+- **Example**: POST /api/v1/urls (create), GET /api/v1/urls/{shortUrl} (redirect)
+
+**Request/Response Formats:**
+- JSON for data exchange
+- Clear field names and types
+- Error response format
+- **Example**: { "longUrl": "https://...", "shortUrl": "abc123" }
+
+**Versioning:**
+- API versioning strategy
+- Backward compatibility
+- Deprecation policy
+- **Example**: /api/v1/urls, /api/v2/urls
 
 **4. Database Design:**
-- Choose database type (SQL vs NoSQL)
-- Design schema
-- Plan for scaling (sharding, replication)
-- Consider indexing strategy
+
+**Choose Database Type:**
+- **SQL**: Relational databases (PostgreSQL, MySQL)
+  - Use for: Structured data, ACID transactions, complex queries
+- **NoSQL**: Non-relational databases (MongoDB, DynamoDB, Cassandra)
+  - Use for: Unstructured data, high scale, flexible schema
+- **Example**: URL shortener might use NoSQL for scale
+
+**Schema Design:**
+- Tables/collections and fields
+- Indexes for query optimization
+- Relationships between entities
+- **Example**: URLs table: id, longUrl, shortUrl, createdAt, expiresAt
+
+**Scaling Strategy:**
+- **Replication**: Read replicas for read scaling
+- **Sharding**: Partition data across multiple databases
+- **Caching**: Cache frequently accessed data
+- **Example**: Shard by shortUrl hash, use Redis cache
 
 **5. High-Level Design:**
-- Identify major components
-- Define component interactions
-- Plan for scalability
-- Consider fault tolerance
+
+**Identify Components:**
+- Major system components
+- Component responsibilities
+- Component interactions
+- **Example**: Load Balancer → API Servers → Application Servers → Database
+
+**Define Interactions:**
+- How components communicate
+- Synchronous vs asynchronous
+- Protocols and formats
+- **Example**: REST APIs for synchronous, message queue for asynchronous
+
+**Plan for Scalability:**
+- Horizontal scaling strategy
+- Load balancing approach
+- Caching strategy
+- **Example**: Stateless API servers behind load balancer
 
 **6. Detailed Design:**
-- Deep dive into each component
-- Design algorithms and data structures
-- Plan for edge cases
-- Consider security and privacy
 
-**7. Identify Bottlenecks:**
-- Analyze potential bottlenecks
-- Plan for optimization
-- Design for monitoring
-- Plan for scaling
+**Component Deep Dive:**
+- Internal architecture of each component
+- Algorithms and data structures
+- Error handling and edge cases
+- **Example**: URL shortening algorithm (base62 encoding, distributed ID generation)
+
+**Data Flow:**
+- How data flows through system
+- Data transformations
+- Error handling and retries
+- **Example**: User request → Load Balancer → API Server → Cache → Database
+
+**Security Design:**
+- Authentication and authorization
+- Data encryption
+- Input validation
+- **Example**: API Gateway handles authentication, services validate input
+
+**7. Identify and Address Bottlenecks:**
+
+**Common Bottlenecks:**
+- **Database**: Often the bottleneck (slow queries, connection limits)
+- **Network**: Bandwidth limitations, latency
+- **CPU**: Computation-intensive operations
+- **Memory**: Insufficient RAM, memory leaks
+- **Disk I/O**: Slow disk reads/writes
+
+**Optimization Strategies:**
+- **Database**: Indexing, query optimization, read replicas, caching
+- **Network**: CDN, compression, connection pooling
+- **CPU**: Algorithm optimization, parallel processing
+- **Memory**: Caching, memory optimization
+- **Disk**: SSDs, database optimization
+
+**Monitoring and Scaling:**
+- **Metrics**: Monitor key metrics (latency, throughput, error rate)
+- **Alerts**: Set up alerts for anomalies
+- **Auto Scaling**: Automatically scale based on load
+- **Example**: CloudWatch metrics trigger Auto Scaling
 
 **Common Pitfalls:**
 
 **1. Over-engineering:**
-- Designing for scale you don't need
-- Adding complexity prematurely
-- Not considering YAGNI (You Aren't Gonna Need It)
-- Solution: Start simple, optimize when needed
+- **Problem**: Designing for scale you don't need
+- **Symptoms**: Unnecessary complexity, high costs, slow development
+- **Solution**: Start simple, optimize when needed
+- **Example**: Using microservices for a small application
 
 **2. Under-engineering:**
-- Not planning for growth
-- Ignoring non-functional requirements
-- Missing critical components
-- Solution: Plan for reasonable growth, consider requirements
+- **Problem**: Not planning for growth
+- **Symptoms**: System breaks under load, requires major rewrites
+- **Solution**: Plan for reasonable growth, consider requirements
+- **Example**: Monolithic design that can't scale
 
 **3. Ignoring Trade-offs:**
-- Not understanding consequences of choices
-- Optimizing for wrong metrics
-- Not considering costs
-- Solution: Explicitly discuss trade-offs, measure what matters
+- **Problem**: Not understanding consequences of choices
+- **Symptoms**: Optimizing for wrong metrics, unexpected costs
+- **Solution**: Explicitly discuss trade-offs, measure what matters
+- **Example**: Choosing consistency over availability when availability matters more
 
 **4. Single Point of Failure:**
-- Not planning for component failures
-- No redundancy
-- No failover mechanisms
-- Solution: Design for failure, add redundancy
+- **Problem**: Component failure brings down entire system
+- **Symptoms**: System outages, data loss
+- **Solution**: Design for failure, add redundancy
+- **Example**: Single database server with no backup
 
 **5. Poor Scalability Planning:**
-- Not considering how to scale
-- Tight coupling between components
-- Stateful design that's hard to scale
-- Solution: Design stateless services, plan scaling strategy
+- **Problem**: System can't scale when needed
+- **Symptoms**: Performance degradation, high costs
+- **Solution**: Design stateless services, plan scaling strategy
+- **Example**: Stateful services that can't scale horizontally
+
+**6. Not Considering Costs:**
+- **Problem**: Design is too expensive to operate
+- **Symptoms**: High infrastructure costs, budget overruns
+- **Solution**: Consider costs in design decisions, optimize for cost
+- **Example**: Over-provisioning resources "just in case"
 
 **Best Practices:**
 
 **1. Start with Requirements:**
-- Understand the problem before designing solution
-- Ask clarifying questions
-- Document assumptions
+- Understand the problem deeply before designing solution
+- Ask clarifying questions to fill gaps
+- Document assumptions explicitly
 - Validate requirements with stakeholders
+- **Example**: "Do we need real-time updates or is eventual consistency OK?"
 
 **2. Think in Layers:**
-- Client layer (mobile, web)
-- API layer (REST, GraphQL)
-- Application layer (business logic)
-- Data layer (databases, caches)
-- Infrastructure layer (servers, networks)
+- **Client Layer**: Mobile apps, web browsers
+- **API Layer**: REST APIs, GraphQL, gRPC
+- **Application Layer**: Business logic, services
+- **Data Layer**: Databases, caches, message queues
+- **Infrastructure Layer**: Servers, networks, load balancers
+- **Example**: Clear separation enables independent scaling
 
 **3. Design for Scale:**
-- Horizontal scaling over vertical
-- Stateless services
-- Caching strategies
-- Database scaling (read replicas, sharding)
+- **Horizontal Scaling**: Prefer adding instances over increasing size
+- **Stateless Services**: Enable horizontal scaling
+- **Caching**: Reduce load on databases and services
+- **Database Scaling**: Read replicas, sharding, partitioning
+- **Example**: Stateless API servers scale horizontally easily
 
 **4. Design for Failure:**
-- Assume components will fail
-- Add redundancy
-- Implement circuit breakers
-- Plan graceful degradation
+- **Assume Failures**: Components will fail, plan for it
+- **Add Redundancy**: Multiple instances, multiple data centers
+- **Circuit Breakers**: Prevent cascading failures
+- **Graceful Degradation**: System continues with reduced functionality
+- **Example**: If database is down, serve cached data with warning
 
 **5. Keep it Simple:**
-- Don't over-complicate
-- Use proven patterns
-- Avoid premature optimization
-- Iterate and improve
+- **Avoid Over-Complication**: Don't add complexity prematurely
+- **Use Proven Patterns**: Leverage well-known patterns and practices
+- **Avoid Premature Optimization**: Optimize when you have data
+- **Iterate and Improve**: Start simple, evolve based on needs
+- **Example**: Start with monolith, evolve to microservices if needed
 
-**Real-World Examples:**
+**6. Measure and Monitor:**
+- **Key Metrics**: Latency, throughput, error rate, availability
+- **Monitoring**: Comprehensive monitoring and alerting
+- **Logging**: Structured logging for debugging
+- **Observability**: Understand system behavior
+- **Example**: CloudWatch, Datadog, Prometheus for monitoring
 
-**Twitter-like System:**
-- Requirements: Post tweets, follow users, view timeline
-- Scale: 300M users, 500M tweets/day
-- Key challenges: Timeline generation, real-time updates
-- Solutions: Fan-out, caching, read replicas
+**Real-World System Design Examples:**
 
-**URL Shortener (TinyURL):**
-- Requirements: Shorten URLs, redirect to original
-- Scale: 100M URLs/day, 10:1 read/write ratio
-- Key challenges: Unique ID generation, high read volume
-- Solutions: Base62 encoding, caching, CDN
+**1. Twitter-like System:**
+- **Requirements**: Post tweets, follow users, view timeline
+- **Scale**: 300M users, 500M tweets/day, 200K tweets/second peak
+- **Key Challenges**: 
+  - Timeline generation (fan-out problem)
+  - Real-time updates
+  - High read volume
+- **Solutions**: 
+  - Fan-out on write (push model) for active users
+  - Fan-out on read (pull model) for inactive users
+  - Caching (Redis) for hot data
+  - Read replicas for database scaling
+- **Architecture**: Microservices, message queues, caching layers
 
-**Chat System:**
-- Requirements: Send messages, group chats, presence
-- Scale: 1B users, 50B messages/day
-- Key challenges: Real-time delivery, message ordering
-- Solutions: WebSockets, message queues, distributed systems`,
+**2. URL Shortener (TinyURL):**
+- **Requirements**: Shorten URLs, redirect to original URL
+- **Scale**: 100M URLs/day, 10:1 read/write ratio, 1,200 QPS average
+- **Key Challenges**: 
+  - Unique ID generation at scale
+  - High read volume (redirects)
+  - URL expiration and cleanup
+- **Solutions**: 
+  - Base62 encoding for short URLs
+  - Distributed ID generation (Snowflake algorithm)
+  - Caching (Redis) for hot URLs
+  - CDN for global distribution
+- **Architecture**: Load balancer, API servers, cache, database
+
+**3. Chat System (WhatsApp-like):**
+- **Requirements**: Send messages, group chats, presence, delivery status
+- **Scale**: 2B users, 100B messages/day, real-time delivery
+- **Key Challenges**: 
+  - Real-time message delivery
+  - Group chat scalability
+  - Message ordering and consistency
+  - Offline message delivery
+- **Solutions**: 
+  - WebSocket connections for real-time
+  - Message queues for reliable delivery
+  - Fan-out for group messages
+  - Database for message persistence
+- **Architecture**: WebSocket servers, message queues, databases, presence servers
+
+**4. Video Streaming (YouTube-like):**
+- **Requirements**: Upload videos, stream videos, recommendations
+- **Scale**: 2B users, 500 hours video uploaded/minute, billions of views/day
+- **Key Challenges**: 
+  - Large file storage and transfer
+  - Video encoding and processing
+  - Global content delivery
+  - Recommendation algorithm
+- **Solutions**: 
+  - Object storage (S3) for video files
+  - CDN for global distribution
+  - Transcoding pipeline for multiple formats
+  - Distributed processing for recommendations
+- **Architecture**: Upload service, transcoding pipeline, CDN, recommendation service
+
+**Conclusion:**
+
+Systems design is a critical skill for building scalable, reliable, and maintainable systems. It requires understanding requirements deeply, making informed trade-offs, and designing systems that can evolve and scale. Whether you're designing a small web application or a large-scale distributed system, the principles of systems design apply.
+
+Key principles:
+- **Start with requirements** - understand the problem first
+- **Design for scale** - plan for growth from the beginning
+- **Design for failure** - assume components will fail
+- **Keep it simple** - avoid unnecessary complexity
+- **Measure everything** - monitor and optimize based on data
+- **Make trade-offs explicit** - understand consequences of decisions
+
+Remember: There's no perfect system design. Every design involves trade-offs. The goal is to make informed decisions that balance competing concerns and meet your specific requirements. Good systems design enables you to build systems that scale, perform well, and support business goals while remaining maintainable and cost-effective.`,
 					CodeExamples: `# Example: Requirements Analysis
 # Problem: Design a URL shortener
 

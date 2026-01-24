@@ -27,7 +27,24 @@ func init() {
 - 2015: Donated to Cloud Native Computing Foundation (CNCF)
 - 2016: First stable release (v1.0)
 - 2018: Graduated from CNCF incubation (production-ready)
-- Today: Most widely adopted container orchestration platform
+- 2020+: Rapid adoption, enterprise features, security enhancements
+- 2024-2025: Latest versions (1.28+) with improved performance, security, and developer experience
+- Today: Most widely adopted container orchestration platform, de facto standard
+
+**CNCF Certification Levels (2024-2025):**
+The Cloud Native Computing Foundation offers structured certification paths:
+- **Kubernetes and Cloud Native Associate (KCNA)**: Foundational skills and knowledge
+- **Certified Kubernetes Administrator (CKA)**: Administrator competencies with performance-based exams
+- **Certified Kubernetes Application Developer (CKAD)**: Hands-on applied skills for developers
+- **Kubernetes and Cloud Security Associate (KCSA)**: Security-focused certification
+- **Specialist Certifications**: Focused exams on specific skill sets
+
+**CNCF Best Practices:**
+- Curriculum written by cloud native experts
+- Hands-on labs for learning best practices
+- Performance-based, command-line environment testing
+- Vendor-neutral, industry-accepted certification standards
+- Continuous updates to reflect latest Kubernetes features
 
 **Why Kubernetes Exists:**
 

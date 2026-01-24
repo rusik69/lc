@@ -12,34 +12,375 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is AWS?",
-					Content: `Amazon Web Services (AWS) is a comprehensive cloud computing platform provided by Amazon. It offers a wide range of cloud services including computing power, storage, databases, networking, and more.
+					Content: `Amazon Web Services (AWS) is the world's most comprehensive and widely adopted cloud computing platform, providing over 200 fully featured services from data centers globally. Launched in 2006, AWS has revolutionized how businesses build, deploy, and scale applications, transforming IT infrastructure from a capital expense to an operational expense.
 
-**AWS Overview:**
-- Launched in 2006
-- Largest cloud provider globally
-- Pay-as-you-go pricing model
-- Global infrastructure with multiple regions
-- Over 200+ services available
+**Historical Context:**
+
+**The Birth of Cloud Computing:**
+AWS emerged from Amazon's internal need to scale its e-commerce platform efficiently. In the early 2000s, Amazon faced challenges managing its massive infrastructure - building data centers, managing servers, and handling peak traffic during holiday seasons. The solution was to create a standardized, automated infrastructure platform that could be shared across teams.
+
+**Evolution and Growth:**
+- **2006**: Launch of S3 (Simple Storage Service) and EC2 (Elastic Compute Cloud)
+- **2007**: Addition of SimpleDB (precursor to DynamoDB)
+- **2009**: Introduction of Virtual Private Cloud (VPC)
+- **2012**: Launch of Redshift for data warehousing
+- **2014**: Introduction of Lambda (serverless computing)
+- **2015**: Launch of Aurora database engine
+- **2018**: Introduction of AWS Outposts for hybrid cloud
+- **2020+**: Expansion of AI/ML services, edge computing, and sustainability initiatives
+
+**Market Position:**
+AWS holds approximately 32% market share in the cloud infrastructure market (as of 2024), making it the dominant player. It serves millions of customers worldwide, from startups to enterprises, government agencies, and non-profits. Major customers include Netflix, Airbnb, NASA, Samsung, and thousands of other organizations.
+
+**What Makes AWS Different:**
+
+**1. Breadth and Depth of Services:**
+- **200+ services** covering every aspect of cloud computing
+- Continuous innovation with new services and features weekly
+- Deep integration between services
+- Comprehensive documentation and training resources
+
+**2. Global Infrastructure:**
+- **33+ geographic regions** (as of 2024)
+- **100+ Availability Zones** worldwide
+- **400+ edge locations** for content delivery
+- **Regional Edge Caches** for improved performance
+- Largest global cloud infrastructure
+
+**3. Enterprise-Grade Reliability:**
+- **99.99% availability** SLA for many services
+- **11 9's durability** for S3 (99.999999999%)
+- Built-in redundancy and fault tolerance
+- Multi-AZ deployments for high availability
+- Disaster recovery capabilities
+
+**4. Security and Compliance:**
+- **Shared Responsibility Model**: AWS secures the cloud, you secure in the cloud
+- **99 security standards and compliance certifications** (SOC, PCI-DSS, HIPAA, GDPR, etc.)
+- **Encryption** at rest and in transit
+- **Identity and Access Management** (IAM) for fine-grained control
+- **Security monitoring** with GuardDuty, Security Hub, and more
+
+**5. Cost Optimization:**
+- **Pay-as-you-go pricing**: Pay only for what you use
+- **No upfront costs** or long-term commitments
+- **Reserved Instances**: Up to 75% savings for predictable workloads
+- **Spot Instances**: Up to 90% savings for flexible workloads
+- **Savings Plans**: Flexible pricing for compute usage
+- **Free Tier**: 12 months free for new accounts
 
 **Cloud Computing Models:**
-- **Infrastructure as a Service (IaaS)**: Virtual machines, storage, networking
-- **Platform as a Service (PaaS)**: Managed platforms for development
-- **Software as a Service (SaaS)**: Complete software solutions
+
+Understanding the different service models helps you choose the right AWS services:
+
+**Infrastructure as a Service (IaaS):**
+- **What it is**: Virtualized computing resources over the internet
+- **You manage**: Operating systems, applications, data, runtime, middleware
+- **AWS manages**: Virtualization, servers, storage, networking
+- **AWS Examples**: EC2 (virtual servers), EBS (block storage), VPC (networking)
+- **Use cases**: Full control over infrastructure, custom configurations, lift-and-shift migrations
+- **When to use**: Need complete control, existing applications, compliance requirements
+
+**Platform as a Service (PaaS):**
+- **What it is**: Platform for developing, running, and managing applications
+- **You manage**: Applications and data
+- **AWS manages**: Runtime, middleware, operating systems, virtualization, servers, storage, networking
+- **AWS Examples**: Elastic Beanstalk, Lambda, RDS (managed databases), ECS/EKS (container orchestration)
+- **Use cases**: Faster development, focus on code not infrastructure, automatic scaling
+- **When to use**: Building new applications, want to reduce operational overhead, need rapid deployment
+
+**Software as a Service (SaaS):**
+- **What it is**: Complete software solution delivered over the internet
+- **You manage**: Nothing (just use the software)
+- **AWS manages**: Everything
+- **AWS Examples**: WorkSpaces (virtual desktops), WorkDocs (document management), Chime (communications)
+- **Use cases**: Ready-to-use software, no maintenance, automatic updates
+- **When to use**: Need complete solutions without development, want to focus on business logic
+
+**AWS Well-Architected Framework (2024 Update):**
+
+The AWS Well-Architected Framework provides architectural best practices across six pillars, updated in November 2024. This framework guides design decisions and helps build secure, high-performing, resilient, and efficient infrastructure.
+
+**Six Pillars of Well-Architected Framework:**
+
+**1. Operational Excellence:**
+- Automate changes, respond to events, and run procedures to gain insights
+- Key practices: Automate deployments, test procedures, learn from failures
+- Tools: CloudFormation, Systems Manager, CloudWatch, AWS Config
+
+**2. Security:**
+- Protect data, systems, and assets using cloud security best practices
+- Key practices: Identity and access management, detective controls, infrastructure protection
+- Tools: IAM, GuardDuty, Security Hub, WAF, Shield, KMS
+
+**3. Reliability:**
+- Recover from infrastructure or service disruptions, dynamically acquire resources
+- Key practices: Test recovery procedures, scale horizontally, automate recovery
+- Tools: Auto Scaling, ELB, Route 53, Multi-AZ deployments, Backup
+
+**4. Performance Efficiency:**
+- Use computing resources efficiently to meet system requirements
+- Key practices: Right-size resources, monitor performance, use managed services
+- Tools: CloudWatch, Auto Scaling, EBS optimization, S3 Transfer Acceleration
+
+**5. Cost Optimization:**
+- Avoid unnecessary costs, eliminate unneeded resources
+- Key practices: Right-size resources, use appropriate pricing models, monitor usage
+- Tools: Cost Explorer, Budgets, Reserved Instances, Savings Plans, Spot Instances
+
+**6. Sustainability (Added 2021):**
+- Minimize environmental impact of cloud workloads
+- Key practices: Maximize utilization, use managed services, optimize data transfer
+- Tools: Well-Architected Tool, sustainability dashboards
 
 **AWS Service Categories:**
-- **Compute**: EC2, Lambda, ECS, EKS
-- **Storage**: S3, EBS, EFS, Glacier
-- **Database**: RDS, DynamoDB, Redshift, ElastiCache
-- **Networking**: VPC, CloudFront, Route 53, API Gateway
-- **Security**: IAM, KMS, Secrets Manager, WAF
-- **Management**: CloudWatch, CloudFormation, Systems Manager
 
-**Key Benefits:**
-- Scalability: Scale up or down based on demand
-- Cost-effective: Pay only for what you use
-- Reliability: High availability and fault tolerance
-- Security: Enterprise-grade security features
-- Global reach: Deploy worldwide`,
+**Compute Services:**
+- **EC2 (Elastic Compute Cloud)**: Virtual servers in the cloud
+- **Lambda**: Serverless compute for running code without servers
+- **ECS (Elastic Container Service)**: Docker container orchestration
+- **EKS (Elastic Kubernetes Service)**: Managed Kubernetes
+- **Fargate**: Serverless containers
+- **Batch**: Run batch computing workloads
+- **Lightsail**: Simplified virtual private servers
+
+**Storage Services:**
+- **S3 (Simple Storage Service)**: Object storage for any amount of data
+- **EBS (Elastic Block Store)**: Persistent block storage for EC2
+- **EFS (Elastic File System)**: Managed file storage
+- **Glacier**: Archive storage for long-term backup
+- **Storage Gateway**: Hybrid cloud storage
+- **FSx**: Managed file systems (Windows, Lustre)
+
+**Database Services:**
+- **RDS (Relational Database Service)**: Managed relational databases (MySQL, PostgreSQL, Oracle, SQL Server, MariaDB, Aurora)
+- **DynamoDB**: Managed NoSQL database
+- **Redshift**: Data warehousing and analytics
+- **ElastiCache**: In-memory caching (Redis, Memcached)
+- **DocumentDB**: MongoDB-compatible database
+- **Neptune**: Graph database
+- **Timestream**: Time-series database
+
+**Networking Services:**
+- **VPC (Virtual Private Cloud)**: Isolated virtual network
+- **CloudFront**: Content delivery network (CDN)
+- **Route 53**: Domain Name System (DNS) service
+- **API Gateway**: Create and manage APIs
+- **Direct Connect**: Dedicated network connection
+- **VPN**: Site-to-site and client VPN
+- **Transit Gateway**: Central hub for VPC connectivity
+
+**Security Services:**
+- **IAM (Identity and Access Management)**: User and access management
+- **KMS (Key Management Service)**: Encryption key management
+- **Secrets Manager**: Store and rotate secrets
+- **WAF (Web Application Firewall)**: Protect web applications
+- **Shield**: DDoS protection
+- **GuardDuty**: Threat detection
+- **Security Hub**: Security findings aggregation
+- **Macie**: Data security and privacy
+
+**Management Services:**
+- **CloudWatch**: Monitoring and observability
+- **CloudFormation**: Infrastructure as code
+- **Systems Manager**: Operational insights and actions
+- **Config**: Configuration and compliance tracking
+- **CloudTrail**: API logging and auditing
+- **Trusted Advisor**: Best practice recommendations
+- **Cost Explorer**: Cost analysis and optimization
+
+**Key Benefits Explained:**
+
+**1. Scalability:**
+- **Vertical Scaling**: Increase instance size (scale up)
+- **Horizontal Scaling**: Add more instances (scale out)
+- **Auto Scaling**: Automatically adjust capacity based on demand
+- **Elastic Load Balancing**: Distribute traffic across multiple instances
+- **Real-world example**: Netflix scales from thousands to millions of concurrent users during peak hours
+
+**2. Cost-Effectiveness:**
+- **No upfront investment**: No need to purchase hardware
+- **Pay for what you use**: Metered billing (per hour, per GB, per request)
+- **Economies of scale**: AWS's massive scale reduces costs
+- **Cost optimization tools**: Reserved Instances, Savings Plans, Spot Instances
+- **Real-world example**: Startups can launch with minimal costs and scale as they grow
+
+**3. Reliability:**
+- **High Availability**: Multi-AZ deployments ensure 99.99% uptime
+- **Fault Tolerance**: Automatic failover and recovery
+- **Disaster Recovery**: Cross-region replication and backup
+- **Service Level Agreements (SLAs)**: Guaranteed uptime for critical services
+- **Real-world example**: Financial institutions rely on AWS for mission-critical applications
+
+**4. Security:**
+- **Shared Responsibility Model**: Clear division of security responsibilities
+- **Compliance**: Meet regulatory requirements (HIPAA, PCI-DSS, GDPR)
+- **Encryption**: Data encrypted at rest and in transit
+- **Network Security**: VPC, security groups, network ACLs
+- **Identity Management**: IAM for fine-grained access control
+- **Real-world example**: Healthcare organizations use AWS for HIPAA-compliant applications
+
+**5. Global Reach:**
+- **Low Latency**: Deploy close to users worldwide
+- **Data Residency**: Choose regions for compliance
+- **Content Delivery**: CloudFront delivers content from edge locations
+- **Multi-Region**: Deploy across multiple regions for disaster recovery
+- **Real-world example**: Global companies serve customers worldwide with consistent performance
+
+**Common Use Cases:**
+
+**1. Web Hosting:**
+- Host websites and web applications
+- Use EC2, S3, CloudFront, Route 53
+- Auto Scaling for traffic spikes
+- Example: E-commerce websites, blogs, corporate websites
+
+**2. Application Hosting:**
+- Run custom applications
+- Use EC2, ECS, EKS, Lambda
+- Load balancing and auto scaling
+- Example: SaaS applications, APIs, microservices
+
+**3. Data Storage and Backup:**
+- Store and backup data
+- Use S3, EBS, Glacier
+- Cross-region replication
+- Example: Data archives, backups, disaster recovery
+
+**4. Big Data and Analytics:**
+- Process and analyze large datasets
+- Use EMR, Redshift, Athena, Kinesis
+- Real-time and batch processing
+- Example: Business intelligence, data warehousing, log analysis
+
+**5. Machine Learning:**
+- Build and deploy ML models
+- Use SageMaker, Rekognition, Comprehend
+- Pre-trained models and custom training
+- Example: Image recognition, natural language processing, recommendation systems
+
+**6. DevOps and CI/CD:**
+- Automate software delivery
+- Use CodePipeline, CodeBuild, CodeDeploy
+- Infrastructure as code with CloudFormation
+- Example: Continuous integration, automated deployments
+
+**Getting Started:**
+
+**1. Create AWS Account:**
+- Visit aws.amazon.com
+- Provide email and payment information
+- Verify identity
+- Access AWS Management Console
+
+**2. Set Up Billing Alerts:**
+- Configure billing alerts in CloudWatch
+- Set up budgets in AWS Budgets
+- Monitor costs regularly
+- Use Cost Explorer for analysis
+
+**3. Secure Your Account:**
+- Enable MFA (Multi-Factor Authentication) on root account
+- Create IAM users (don't use root account)
+- Follow principle of least privilege
+- Enable CloudTrail for audit logging
+
+**4. Explore Free Tier:**
+- 12 months free for new accounts
+- Always free tier for some services
+- Limited usage amounts
+- Great for learning and testing
+
+**5. Learn the Fundamentals:**
+- Start with core services (EC2, S3, IAM, VPC)
+- Use AWS documentation and tutorials
+- Take AWS training courses
+- Practice with hands-on labs
+
+**Best Practices for Beginners:**
+
+**1. Start Small:**
+- Begin with free tier services
+- Test in a single region
+- Use simple architectures
+- Learn one service at a time
+
+**2. Use Infrastructure as Code:**
+- Use CloudFormation or Terraform
+- Version control your infrastructure
+- Reproducible deployments
+- Easier to manage and update
+
+**3. Monitor Costs:**
+- Set up billing alerts
+- Use cost allocation tags
+- Review Cost Explorer regularly
+- Clean up unused resources
+
+**4. Follow Security Best Practices:**
+- Never share credentials
+- Use IAM roles instead of access keys
+- Enable MFA everywhere
+- Follow principle of least privilege
+
+**5. Plan for High Availability:**
+- Use multiple Availability Zones
+- Implement auto scaling
+- Set up health checks
+- Design for failure
+
+**Common Pitfalls to Avoid:**
+
+**1. Ignoring Costs:**
+- **Problem**: Services running 24/7 can accumulate costs
+- **Solution**: Set up billing alerts, use cost allocation tags, review regularly
+- **Example**: Leaving EC2 instances running when not needed
+
+**2. Poor Security Practices:**
+- **Problem**: Using root account, weak passwords, exposed credentials
+- **Solution**: Use IAM users, enable MFA, rotate credentials regularly
+- **Example**: Committing AWS access keys to public repositories
+
+**3. Single Point of Failure:**
+- **Problem**: Deploying in single AZ, no backups
+- **Solution**: Use multiple AZs, implement backups, design for failure
+- **Example**: Database in single AZ without backups
+
+**4. Not Using Managed Services:**
+- **Problem**: Managing infrastructure yourself (databases, containers)
+- **Solution**: Use managed services (RDS, ECS, Lambda)
+- **Example**: Installing MySQL on EC2 instead of using RDS
+
+**5. Lack of Monitoring:**
+- **Problem**: No visibility into application performance
+- **Solution**: Set up CloudWatch, create alarms, monitor metrics
+- **Example**: Not knowing when application is down
+
+**Real-World Success Stories:**
+
+**Netflix:**
+- Migrated entire infrastructure to AWS
+- Handles billions of hours of streaming monthly
+- Uses auto scaling for peak traffic
+- Leverages multiple AWS services for content delivery
+
+**Airbnb:**
+- Uses AWS for global platform
+- Handles millions of bookings daily
+- Uses EC2, S3, RDS, CloudFront
+- Scales automatically with demand
+
+**NASA:**
+- Uses AWS for space mission data
+- Processes petabytes of satellite imagery
+- Uses S3, EC2, Redshift
+- Enables scientific research globally
+
+**Conclusion:**
+
+AWS provides a comprehensive, secure, and scalable cloud computing platform that enables businesses to innovate faster, reduce costs, and scale globally. Understanding AWS fundamentals is the first step toward building cloud-native applications and leveraging the power of cloud computing. Whether you're a developer, architect, or business leader, AWS offers the tools and services needed to transform your organization's IT infrastructure.
+
+The key to success with AWS is to start small, learn continuously, follow best practices, and leverage the extensive documentation and training resources available. With over 200 services and continuous innovation, AWS provides everything needed to build, deploy, and scale applications in the cloud.`,
 					CodeExamples: `# AWS CLI Basic Commands
 # Install AWS CLI
 pip install awscli
@@ -78,37 +419,398 @@ s3.upload_file('local-file.txt', 'my-bucket', 'remote-file.txt')`,
 				},
 				{
 					Title: "AWS Global Infrastructure",
-					Content: `AWS operates a global infrastructure designed for high availability, low latency, and scalability.
+					Content: `AWS operates the world's most comprehensive, secure, and reliable global cloud infrastructure, spanning 33+ geographic regions with 100+ Availability Zones and 400+ edge locations worldwide. Understanding this infrastructure is crucial for designing highly available, low-latency, and compliant applications.
+
+**Why Global Infrastructure Matters:**
+
+**1. Low Latency:**
+- Deploy applications close to users
+- Reduce round-trip time for requests
+- Improve user experience
+- Critical for real-time applications
+
+**2. High Availability:**
+- Multiple data centers per region
+- Automatic failover capabilities
+- Disaster recovery across regions
+- 99.99% uptime SLA for many services
+
+**3. Compliance and Data Residency:**
+- Meet regulatory requirements
+- Keep data in specific geographic locations
+- Comply with GDPR, HIPAA, and other regulations
+- Government and compliance-specific regions
+
+**4. Scalability:**
+- Scale globally without infrastructure management
+- Handle traffic spikes automatically
+- Distribute load across regions
+- Support millions of users worldwide
 
 **AWS Infrastructure Components:**
-- **Regions**: Geographic areas with multiple Availability Zones
-- **Availability Zones (AZs)**: Isolated data centers within a region
-- **Edge Locations**: Points of presence for CloudFront and Route 53
-- **Regional Edge Caches**: Additional caching layer between CloudFront and origin
 
-**Regions:**
-- Independent geographic areas
-- Each region has multiple Availability Zones
-- Data residency and compliance options
-- Choose region based on latency and compliance
+**1. Regions:**
 
-**Availability Zones:**
-- Physically separate data centers
-- Connected by low-latency links
-- Designed for fault isolation
-- Use multiple AZs for high availability
+**What Are Regions:**
+A region is a geographic area containing multiple, isolated Availability Zones. Each region is completely independent and isolated from other regions, providing fault tolerance and stability.
 
-**Edge Locations:**
-- Points of presence worldwide
-- Used by CloudFront CDN
-- Cache content closer to users
-- Reduce latency for global users
+**Key Characteristics:**
+- **Independence**: Each region operates independently
+- **Isolation**: Complete isolation from other regions
+- **Multiple AZs**: Each region has at least 3 Availability Zones
+- **Data Residency**: Data stays within the region (unless explicitly replicated)
+- **Compliance**: Some regions meet specific compliance requirements
+
+**Region Selection Criteria:**
+
+**1. Latency:**
+- Choose region closest to your users
+- Lower latency = better user experience
+- Use CloudFront for global distribution
+- Test latency from different locations
+
+**2. Compliance:**
+- Data residency requirements (GDPR, etc.)
+- Government regulations
+- Industry-specific requirements
+- Compliance certifications per region
+
+**3. Service Availability:**
+- Not all services available in all regions
+- New services launch in select regions first
+- Check service availability before choosing region
+- Some services are region-specific
+
+**4. Cost:**
+- Pricing varies by region
+- Data transfer costs between regions
+- Some regions are more expensive
+- Consider total cost of ownership
+
+**5. Disaster Recovery:**
+- Deploy across multiple regions
+- Cross-region replication
+- Backup and recovery strategies
+- Business continuity planning
+
+**Major AWS Regions (as of 2024):**
+
+**North America:**
+- **us-east-1** (N. Virginia): Largest region, most services, lowest latency for US East Coast
+- **us-east-2** (Ohio): Good for US Midwest
+- **us-west-1** (N. California): Good for US West Coast
+- **us-west-2** (Oregon): Popular, good pricing
+- **ca-central-1** (Canada): For Canadian data residency
+
+**Europe:**
+- **eu-west-1** (Ireland): Largest European region
+- **eu-west-2** (London): UK data residency
+- **eu-west-3** (Paris): France data residency
+- **eu-central-1** (Frankfurt): Germany, GDPR compliance
+- **eu-north-1** (Stockholm): Nordic countries
+- **eu-south-1** (Milan): Italy
+
+**Asia Pacific:**
+- **ap-southeast-1** (Singapore): Southeast Asia hub
+- **ap-southeast-2** (Sydney): Australia, New Zealand
+- **ap-northeast-1** (Tokyo): Japan
+- **ap-northeast-2** (Seoul): South Korea
+- **ap-south-1** (Mumbai): India
+- **ap-east-1** (Hong Kong): Greater China
+
+**Middle East:**
+- **me-south-1** (Bahrain): Middle East
+- **me-central-1** (UAE): United Arab Emirates
+
+**South America:**
+- **sa-east-1** (São Paulo): Brazil, Latin America
+
+**China:**
+- **cn-north-1** (Beijing): Operated by Sinnet
+- **cn-northwest-1** (Ningxia): Operated by NWCD
+
+**Special Regions:**
+- **AWS GovCloud (US)**: For US government workloads
+- **AWS GovCloud (US-West)**: Additional government region
+
+**2. Availability Zones (AZs):**
+
+**What Are Availability Zones:**
+An Availability Zone is one or more discrete data centers with redundant power, networking, and connectivity, housed in separate facilities. AZs within a region are connected through low-latency links but are physically separated to reduce the risk of correlated failures.
+
+**Key Characteristics:**
+- **Physical Separation**: Each AZ is in a different physical location
+- **Fault Isolation**: Failures in one AZ don't affect others
+- **Low-Latency Links**: High-bandwidth, low-latency connectivity between AZs
+- **Redundant Infrastructure**: Power, networking, and connectivity redundancy
+- **Independent Operations**: Each AZ operates independently
+
+**How Availability Zones Work:**
+
+**Architecture:**
+
+    Region (e.g., us-east-1)
+    ├── Availability Zone 1 (us-east-1a)
+    │   ├── Data Center 1
+    │   └── Data Center 2 (redundancy)
+    ├── Availability Zone 2 (us-east-1b)
+    │   ├── Data Center 3
+    │   └── Data Center 4 (redundancy)
+    └── Availability Zone 3 (us-east-1c)
+        ├── Data Center 5
+        └── Data Center 6 (redundancy)
+
+**AZ Naming:**
+- AZ names are region-specific (us-east-1a, us-east-1b, etc.)
+- Names are randomized per account (your us-east-1a ≠ my us-east-1a)
+- This prevents everyone from using the same AZ
+- Use AZ IDs for consistent references across accounts
+
+**Multi-AZ Deployment Benefits:**
+
+**1. High Availability:**
+- Automatic failover if one AZ fails
+- 99.99% availability SLA
+- No single point of failure
+- Continuous operation during AZ failures
+
+**2. Fault Tolerance:**
+- Isolated failure domains
+- Redundant infrastructure
+- Automatic recovery
+- Data replication across AZs
+
+**3. Load Distribution:**
+- Distribute traffic across AZs
+- Better performance
+- Reduced latency
+- Improved scalability
+
+**Best Practices for AZs:**
+
+**1. Always Use Multiple AZs:**
+- Deploy across at least 2 AZs (preferably 3)
+- Never deploy production in single AZ
+- Use multiple AZs for databases, applications, load balancers
+- Test failover scenarios
+
+**2. Understand AZ Mapping:**
+- AZ names differ per account
+- Use AZ IDs for consistent references
+- Don't hardcode AZ names
+- Use availability zone APIs
+
+**3. Plan for AZ Failures:**
+- Design for single AZ failure
+- Implement automatic failover
+- Test disaster recovery procedures
+- Monitor AZ health
+
+**4. Cost Considerations:**
+- Data transfer between AZs is free
+- Cross-AZ data transfer costs apply
+- Consider AZ placement for cost optimization
+- Use same AZ when possible (with caution)
+
+**3. Edge Locations:**
+
+**What Are Edge Locations:**
+Edge locations are points of presence (PoPs) in cities around the world where CloudFront caches content and Route 53 resolves DNS queries. They are separate from regions and AZs, designed to deliver content with the lowest possible latency.
+
+**Key Characteristics:**
+- **400+ locations** worldwide
+- **Content Caching**: Store frequently accessed content
+- **Low Latency**: Deliver content from nearest edge location
+- **Global Distribution**: Serve users worldwide
+- **Automatic Routing**: Route users to nearest edge
+
+**CloudFront Edge Locations:**
+- Cache static and dynamic content
+- Reduce origin server load
+- Improve performance globally
+- Support live streaming
+- Handle DDoS protection
+
+**Route 53 Edge Locations:**
+- DNS query resolution
+- Low-latency DNS responses
+- Global DNS distribution
+- Health check monitoring
+- Traffic routing policies
+
+**How Edge Locations Work:**
+
+**Content Delivery Flow:**
+
+    User Request
+        ↓
+    Route 53 (Edge Location) - DNS Resolution
+        ↓
+    CloudFront (Edge Location) - Check Cache
+        ↓
+    Cache Hit → Return Cached Content (Fast!)
+        ↓
+    Cache Miss → Fetch from Origin → Cache → Return
+
+**Benefits:**
+- **Reduced Latency**: Content served from nearby edge location
+- **Lower Bandwidth Costs**: Reduced origin server traffic
+- **Better Performance**: Faster page loads and downloads
+- **Global Reach**: Serve users worldwide efficiently
+- **Scalability**: Handle traffic spikes automatically
+
+**4. Regional Edge Caches:**
+
+**What Are Regional Edge Caches:**
+Regional Edge Caches are CloudFront locations that sit between edge locations and your origin server. They provide an additional caching layer for content that doesn't change frequently but isn't popular enough to stay in edge locations.
+
+**Key Characteristics:**
+- **Additional Caching Layer**: Between edge locations and origin
+- **Larger Cache**: More storage than edge locations
+- **Less Frequent Eviction**: Content stays cached longer
+- **Cost Optimization**: Reduce origin requests
+- **Performance**: Faster than fetching from origin
+
+**Use Cases:**
+- Content with moderate popularity
+- Large files (videos, software downloads)
+- Content that changes infrequently
+- Reducing origin server load
+- Cost optimization for global distribution
+
+**Infrastructure Architecture:**
+
+**Complete AWS Infrastructure:**
+
+    Global AWS Infrastructure
+    │
+    ├── Regions (33+)
+    │   ├── Region 1 (e.g., us-east-1)
+    │   │   ├── Availability Zone 1 (us-east-1a)
+    │   │   │   ├── Data Center 1
+    │   │   │   └── Data Center 2
+    │   │   ├── Availability Zone 2 (us-east-1b)
+    │   │   │   ├── Data Center 3
+    │   │   │   └── Data Center 4
+    │   │   └── Availability Zone 3 (us-east-1c)
+    │   │       ├── Data Center 5
+    │   │       └── Data Center 6
+    │   └── Region 2 (e.g., eu-west-1)
+    │       └── ...
+    │
+    ├── Edge Locations (400+)
+    │   ├── CloudFront Edge Locations
+    │   │   ├── Cache static content
+    │   │   └── Serve dynamic content
+    │   └── Route 53 Edge Locations
+    │       ├── DNS resolution
+    │       └── Health checks
+    │
+    └── Regional Edge Caches
+        ├── Additional caching layer
+        └── Larger cache storage
 
 **Best Practices:**
-- Deploy across multiple AZs for high availability
-- Choose regions based on user location
-- Use CloudFront for global content delivery
-- Consider data residency requirements`,
+
+**1. Multi-AZ Deployment:**
+- **Always deploy across multiple AZs** for production workloads
+- Use at least 2 AZs (preferably 3) for high availability
+- Distribute resources evenly across AZs
+- Test failover scenarios regularly
+- Monitor AZ health and performance
+
+**2. Region Selection:**
+- **Choose region closest to users** for lowest latency
+- Consider **data residency requirements** (GDPR, HIPAA, etc.)
+- Check **service availability** in chosen region
+- Compare **pricing** across regions
+- Plan for **disaster recovery** across regions
+
+**3. Content Delivery:**
+- **Use CloudFront** for global content delivery
+- **Cache static content** at edge locations
+- **Optimize cache policies** for your content
+- **Monitor cache hit ratios** and performance
+- **Use Regional Edge Caches** for moderate popularity content
+
+**4. Network Optimization:**
+- **Use VPC endpoints** to keep traffic within AWS network
+- **Minimize cross-region data transfer** (costs apply)
+- **Use Direct Connect** for consistent performance
+- **Optimize data transfer** patterns
+- **Monitor network performance** and costs
+
+**5. Disaster Recovery:**
+- **Deploy across multiple regions** for disaster recovery
+- **Implement cross-region replication** for critical data
+- **Test disaster recovery procedures** regularly
+- **Document recovery procedures** and runbooks
+- **Monitor and alert** on regional issues
+
+**Common Pitfalls:**
+
+**1. Single AZ Deployment:**
+- **Problem**: Deploying production in single AZ
+- **Risk**: Complete outage if AZ fails
+- **Solution**: Always use multiple AZs
+- **Example**: Database in single AZ without replication
+
+**2. Wrong Region Selection:**
+- **Problem**: Choosing region far from users
+- **Impact**: High latency, poor user experience
+- **Solution**: Choose region closest to users, use CloudFront
+- **Example**: US users accessing EU region (high latency)
+
+**3. Ignoring Data Residency:**
+- **Problem**: Not considering compliance requirements
+- **Risk**: Regulatory violations, legal issues
+- **Solution**: Understand requirements, choose appropriate regions
+- **Example**: EU data stored in US region (GDPR violation)
+
+**4. Not Using CloudFront:**
+- **Problem**: Serving content directly from origin
+- **Impact**: High latency, high costs, poor performance
+- **Solution**: Use CloudFront for global content delivery
+- **Example**: Serving images/videos directly from S3 to global users
+
+**5. Cross-Region Data Transfer Costs:**
+- **Problem**: Unnecessary data transfer between regions
+- **Impact**: High costs, poor performance
+- **Solution**: Minimize cross-region transfers, use VPC endpoints
+- **Example**: Frequent data sync between regions without optimization
+
+**Real-World Examples:**
+
+**Netflix:**
+- Deploys across multiple regions worldwide
+- Uses CloudFront for content delivery
+- Handles billions of hours of streaming monthly
+- Automatically routes users to nearest edge location
+
+**Airbnb:**
+- Multi-region deployment for global platform
+- Uses multiple AZs for high availability
+- CloudFront for static asset delivery
+- Route 53 for global DNS resolution
+
+**Financial Services:**
+- Deploy in compliance-specific regions
+- Multi-AZ for high availability
+- Cross-region disaster recovery
+- Meet regulatory requirements (data residency)
+
+**Conclusion:**
+
+Understanding AWS global infrastructure is fundamental to designing highly available, performant, and compliant applications. By leveraging regions, Availability Zones, edge locations, and regional edge caches effectively, you can build applications that scale globally, provide excellent user experience, and meet compliance requirements.
+
+The key principles are:
+- **Deploy across multiple AZs** for high availability
+- **Choose regions wisely** based on latency, compliance, and cost
+- **Use CloudFront** for global content delivery
+- **Plan for disaster recovery** across regions
+- **Monitor and optimize** your infrastructure continuously
+
+Remember: AWS infrastructure is designed for scale, reliability, and performance. By following best practices and understanding the infrastructure components, you can leverage AWS's global reach to build world-class applications.`,
 					CodeExamples: `# List all AWS regions
 aws ec2 describe-regions
 
@@ -211,36 +913,344 @@ aws ce get-cost-and-usage \\
 			Lessons: []problems.Lesson{
 				{
 					Title: "IAM Fundamentals",
-					Content: `IAM (Identity and Access Management) is AWS's service for managing access to AWS resources securely.
+					Content: `Identity and Access Management (IAM) is the foundation of AWS security, providing fine-grained access control to AWS services and resources. IAM enables you to manage who can do what in your AWS account, following the principle of least privilege and ensuring secure access to cloud resources.
 
-**IAM Concepts:**
-- **Users**: Individual people or applications
-- **Groups**: Collection of users with shared permissions
-- **Roles**: Temporary credentials for AWS services or users
-- **Policies**: Documents that define permissions
-- **Root Account**: Master account (use sparingly)
+**Why IAM Matters:**
 
-**IAM Best Practices:**
-- Never share root account credentials
-- Use IAM users instead of root account
-- Enable MFA (Multi-Factor Authentication)
-- Follow principle of least privilege
-- Use roles for applications
-- Rotate credentials regularly
+**1. Security Foundation:**
+- First line of defense for AWS security
+- Controls access to all AWS services
+- Prevents unauthorized access
+- Enables audit trails and compliance
 
-**Policy Types:**
-- **Identity-based policies**: Attached to users, groups, or roles
-- **Resource-based policies**: Attached to resources (S3 buckets, etc.)
-- **Permission boundaries**: Maximum permissions
-- **Service control policies**: Organization-level permissions
+**2. Principle of Least Privilege:**
+- Grant minimum permissions needed
+- Reduce attack surface
+- Limit damage from compromised credentials
+- Follow security best practices
+
+**3. Compliance and Auditing:**
+- Track who did what (CloudTrail integration)
+- Meet compliance requirements
+- Audit access patterns
+- Demonstrate security controls
+
+**4. Operational Efficiency:**
+- Centralized access management
+- Easy permission updates
+- Role-based access control
+- Automated credential management
+
+**IAM Core Concepts:**
+
+**1. Users:**
+
+**What Are IAM Users:**
+IAM users represent people or applications that need access to AWS resources. Each user has a unique name and credentials (access keys or password) for authentication.
+
+**User Characteristics:**
+- **Unique Identity**: Each user has unique name and credentials
+- **Long-term Credentials**: Access keys don't expire (unless rotated)
+- **Direct Access**: Users can sign in to AWS Console or use CLI/SDK
+- **Individual Permissions**: Each user can have specific permissions
+- **MFA Support**: Can enable Multi-Factor Authentication
+
+**When to Use Users:**
+- Individual people who need AWS access
+- Applications that need long-term credentials (not recommended)
+- Service accounts for specific purposes
+- Development and testing environments
+
+**User Best Practices:**
+- Create separate users for each person/application
+- Never share user credentials
+- Enable MFA for all users
+- Use descriptive user names
+- Regularly review and remove unused users
+- Rotate access keys regularly
+
+**2. Groups:**
+
+**What Are IAM Groups:**
+IAM groups are collections of IAM users. Groups allow you to manage permissions for multiple users at once by attaching policies to the group rather than individual users.
+
+**Group Characteristics:**
+- **Collection of Users**: Multiple users can belong to a group
+- **Permission Management**: Attach policies to groups
+- **Inheritance**: Users inherit group permissions
+- **No Nesting**: Groups cannot contain other groups
+- **No Direct Access**: Groups cannot sign in or have credentials
+
+**When to Use Groups:**
+- Organize users by job function (Developers, Admins, etc.)
+- Manage permissions for teams
+- Simplify permission management
+- Apply consistent permissions
+
+**Group Best Practices:**
+- Create groups based on job functions
+- Use descriptive group names
+- Attach policies to groups, not individual users
+- Users can belong to multiple groups
+- Regularly review group membership
+
+**Common Group Patterns:**
+- **Administrators**: Full access to AWS account
+- **Developers**: Access to development resources
+- **ReadOnlyUsers**: Read-only access for monitoring
+- **BillingUsers**: Access to billing and cost management
+- **SecurityAuditors**: Access to security logs and compliance
+
+**3. Roles:**
+
+**What Are IAM Roles:**
+IAM roles are similar to users but are intended to be assumed by trusted entities (users, applications, or AWS services). Roles provide temporary credentials that expire automatically, making them more secure than long-term access keys.
+
+**Role Characteristics:**
+- **Temporary Credentials**: Credentials expire after session duration
+- **Assumable**: Entities assume roles to get credentials
+- **Trust Policy**: Defines who can assume the role
+- **Permission Policy**: Defines what the role can do
+- **No Long-term Credentials**: More secure than users
+
+**When to Use Roles:**
+- **EC2 Instances**: Applications running on EC2
+- **Lambda Functions**: Serverless functions
+- **Cross-Account Access**: Access resources in other accounts
+- **Federated Access**: Users from external identity providers
+- **AWS Services**: Services that need to access other services
+
+**Role Types:**
+- **Service Roles**: Used by AWS services (EC2, Lambda, etc.)
+- **Service-Linked Roles**: Predefined roles for specific services
+- **Cross-Account Roles**: Access resources in other accounts
+- **Federated Roles**: Assumed by external identity providers
+
+**Role Best Practices:**
+- Use roles instead of access keys when possible
+- Set appropriate session duration
+- Use least privilege permissions
+- Enable CloudTrail for role assumption tracking
+- Use external ID for cross-account access
+
+**4. Policies:**
+
+**What Are IAM Policies:**
+Policies are JSON documents that define permissions. They specify what actions are allowed or denied on which resources under what conditions.
 
 **Policy Structure:**
-- Version: Policy language version
-- Statement: Array of permission statements
-- Effect: Allow or Deny
-- Action: API actions allowed/denied
-- Resource: AWS resources affected
-- Condition: Optional conditions`,
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::my-bucket/*",
+                "Condition": {
+                    "IpAddress": {
+                        "aws:SourceIp": "203.0.113.0/24"
+                    }
+                }
+            }
+        ]
+    }
+
+**Policy Elements:**
+- **Version**: Policy language version (always use "2012-10-17")
+- **Statement**: Array of permission statements
+- **Effect**: Allow or Deny
+- **Action**: API actions (e.g., s3:GetObject, ec2:RunInstances)
+- **Resource**: AWS resources (ARNs)
+- **Condition**: Optional conditions (IP, time, tags, etc.)
+
+**Policy Types:**
+
+**1. Identity-Based Policies:**
+- Attached to users, groups, or roles
+- Define what the identity can do
+- Most common policy type
+- Can be managed or inline
+
+**2. Resource-Based Policies:**
+- Attached to resources (S3 buckets, Lambda functions, etc.)
+- Define who can access the resource
+- Cross-account access possible
+- Examples: S3 bucket policies, Lambda resource policies
+
+**3. Permission Boundaries:**
+- Set maximum permissions for users/roles
+- Cannot grant more than boundary allows
+- Useful for delegating permission management
+- Applied to users and roles
+
+**4. Service Control Policies (SCPs):**
+- Organization-level policies
+- Applied to accounts or OUs
+- Cannot be overridden by IAM policies
+- Used for centralized governance
+
+**5. Session Policies:**
+- Temporary policies for role sessions
+- Further restrict permissions
+- Applied when assuming roles
+- Cannot grant more than role's permissions
+
+**Policy Evaluation Logic:**
+
+**How AWS Evaluates Permissions:**
+1. **Explicit Deny**: Always wins (highest priority)
+2. **Explicit Allow**: Grants permission
+3. **Implicit Deny**: Default (no permission)
+
+**Evaluation Order:**
+1. Check for explicit Deny
+2. Check for explicit Allow
+3. Default to Deny if no match
+
+**Important Rules:**
+- Deny always overrides Allow
+- All policies are evaluated
+- Conditions must be met for Allow
+- Resource-based policies evaluated separately
+
+**5. Root Account:**
+
+**What Is Root Account:**
+The root account is the email address used to create the AWS account. It has complete, unrestricted access to all AWS services and resources.
+
+**Root Account Characteristics:**
+- **Complete Access**: Can do anything in the account
+- **Cannot Be Restricted**: No IAM policies apply
+- **Billing Access**: Always has billing access
+- **Account Management**: Can close account, change support plan
+- **Should Not Be Used**: For day-to-day operations
+
+**Root Account Best Practices:**
+- **Never use for daily operations**: Create IAM users/roles instead
+- **Enable MFA**: Critical security requirement
+- **Lock away credentials**: Store securely, use only when necessary
+- **Monitor usage**: Enable CloudTrail, review root account activity
+- **Use only for**: Account management tasks that require root
+
+**IAM Best Practices:**
+
+**1. Never Share Credentials:**
+- Each person/application should have own credentials
+- Never share access keys or passwords
+- Use roles for shared access
+- Rotate compromised credentials immediately
+
+**2. Enable MFA Everywhere:**
+- Enable MFA on root account (mandatory)
+- Enable MFA for privileged users
+- Use hardware MFA for high-security accounts
+- Virtual MFA apps for convenience
+
+**3. Follow Principle of Least Privilege:**
+- Grant minimum permissions needed
+- Start with no permissions, add as needed
+- Regularly review and remove unused permissions
+- Use permission boundaries for delegation
+
+**4. Use Roles Instead of Access Keys:**
+- Roles provide temporary credentials
+- Access keys are long-term and risky
+- Use roles for EC2, Lambda, ECS
+- Use roles for cross-account access
+
+**5. Regular Audits:**
+- Review IAM users, groups, roles regularly
+- Remove unused credentials
+- Review CloudTrail logs
+- Check for overly permissive policies
+- Use Access Analyzer for policy review
+
+**6. Use Managed Policies:**
+- AWS managed policies for common use cases
+- Customer managed policies for reusability
+- Avoid inline policies when possible
+- Version control managed policies
+
+**7. Tagging and Organization:**
+- Use consistent naming conventions
+- Tag IAM resources for organization
+- Document policy purposes
+- Use groups for team management
+
+**Common Pitfalls:**
+
+**1. Using Root Account:**
+- **Problem**: Using root account for daily operations
+- **Risk**: Complete account compromise if credentials leaked
+- **Solution**: Create IAM users, never use root
+- **Example**: Developer using root account credentials
+
+**2. Overly Permissive Policies:**
+- **Problem**: Granting "*" (all actions) on "*" (all resources)
+- **Risk**: Unauthorized access, compliance violations
+- **Solution**: Grant specific permissions only
+- **Example**: Policy allowing s3:* on * (all buckets)
+
+**3. Hardcoded Credentials:**
+- **Problem**: Access keys in code, config files, repositories
+- **Risk**: Credential theft, unauthorized access
+- **Solution**: Use IAM roles, Secrets Manager, environment variables
+- **Example**: Access keys committed to GitHub
+
+**4. Not Enabling MFA:**
+- **Problem**: Single-factor authentication only
+- **Risk**: Account takeover if password compromised
+- **Solution**: Enable MFA for all users, especially root
+- **Example**: Root account without MFA
+
+**5. Not Rotating Credentials:**
+- **Problem**: Using same credentials indefinitely
+- **Risk**: Compromised credentials remain valid
+- **Solution**: Rotate access keys regularly (every 90 days)
+- **Example**: Access keys unchanged for years
+
+**6. Ignoring CloudTrail:**
+- **Problem**: No visibility into IAM activity
+- **Risk**: Undetected unauthorized access
+- **Solution**: Enable CloudTrail, monitor logs
+- **Example**: No audit trail for IAM changes
+
+**Real-World Examples:**
+
+**Startup Scenario:**
+- Create IAM users for each developer
+- Group developers into "Developers" group
+- Attach managed policies (PowerUserAccess)
+- Enable MFA for all users
+- Use roles for applications
+
+**Enterprise Scenario:**
+- Multiple accounts via Organizations
+- Service Control Policies for governance
+- Cross-account roles for access
+- Federated access via SAML/OIDC
+- Centralized IAM management
+
+**Microservices Architecture:**
+- Each service has its own IAM role
+- Roles have minimal permissions
+- Use VPC endpoints to reduce permissions
+- Monitor role usage with CloudTrail
+- Automate role creation with CloudFormation
+
+**Conclusion:**
+
+IAM is the cornerstone of AWS security. By understanding users, groups, roles, and policies, and following security best practices, you can build a secure, compliant, and manageable AWS environment. Remember:
+
+- **Never use root account** for daily operations
+- **Enable MFA** everywhere, especially root
+- **Follow least privilege** principle
+- **Use roles** instead of access keys
+- **Regular audits** and credential rotation
+- **Monitor** IAM activity with CloudTrail
+
+Proper IAM configuration is not optional—it's essential for secure cloud operations. Invest time in designing a good IAM structure from the start, and you'll avoid security issues and compliance problems down the road.`,
 					CodeExamples: `# Create IAM user
 aws iam create-user --user-name john-doe
 
@@ -516,35 +1526,336 @@ s3 = boto3.client(
 			Lessons: []problems.Lesson{
 				{
 					Title: "EC2 Fundamentals",
-					Content: `Amazon Elastic Compute Cloud (EC2) provides resizable compute capacity in the cloud.
+					Content: `Amazon Elastic Compute Cloud (EC2) is AWS's core compute service, providing resizable virtual servers in the cloud. EC2 eliminates the need to invest in hardware upfront, allowing you to launch virtual servers, configure security and networking, and manage storage with complete control.
 
-**EC2 Concepts:**
-- **Instance**: Virtual server in the cloud
-- **AMI (Amazon Machine Image)**: Template for instances
-- **Instance Type**: CPU, memory, storage, networking capacity
-- **Security Group**: Virtual firewall
-- **Key Pair**: SSH key for access
-- **EBS Volume**: Persistent block storage
+**Why EC2 Matters:**
 
-**Instance Types:**
-- **General Purpose**: Balanced compute, memory, networking (t3, m5)
-- **Compute Optimized**: High-performance processors (c5, c6)
-- **Memory Optimized**: Large memory for databases (r5, x1)
-- **Storage Optimized**: High I/O for databases (i3, d2)
-- **Accelerated Computing**: GPU instances (p3, g4)
+**1. Flexibility:**
+- Choose from hundreds of instance types
+- Select operating systems and software
+- Scale capacity up or down instantly
+- Pay only for what you use
+
+**2. Control:**
+- Root access to instances
+- Complete control over software stack
+- Custom configurations
+- Full administrative access
+
+**3. Integration:**
+- Integrates with all AWS services
+- Works with VPC, S3, RDS, and more
+- Part of comprehensive cloud architecture
+- Enables hybrid cloud deployments
+
+**4. Cost-Effective:**
+- No upfront costs
+- Multiple pricing options
+- Pay only for running instances
+- Significant cost savings vs on-premises
+
+**EC2 Core Concepts:**
+
+**1. Instances:**
+
+**What Are EC2 Instances:**
+An EC2 instance is a virtual server running in AWS's cloud. It's similar to a physical server but virtualized, allowing you to launch, configure, and manage servers programmatically.
+
+**Instance Characteristics:**
+- **Virtual Servers**: Running on physical AWS hardware
+- **Configurable**: Choose CPU, memory, storage, networking
+- **Scalable**: Resize or add instances as needed
+- **Temporary**: Can be stopped, terminated, or replaced
+- **Isolated**: Each instance is isolated from others
+
+**Instance Lifecycle:**
+
+    Launch → Pending → Running → Stopping → Stopped → Terminating → Terminated
+                                  ↓
+                             Rebooting → Running
+
+**2. AMIs (Amazon Machine Images):**
+
+**What Are AMIs:**
+An AMI is a template that contains the software configuration (operating system, application server, applications) required to launch an instance.
+
+**AMI Components:**
+- **Root Volume**: Contains OS and applications
+- **Launch Permissions**: Who can use the AMI
+- **Block Device Mapping**: Volume attachments
+- **Kernel and RAM Disk**: For paravirtualized instances
+
+**AMI Types:**
+- **Public AMIs**: Provided by AWS or community
+- **Private AMIs**: Your custom AMIs
+- **Marketplace AMIs**: Pre-configured software (may have fees)
+- **Shared AMIs**: Shared by other AWS accounts
+
+**AMI Best Practices:**
+- Use latest AMIs for security patches
+- Create custom AMIs for consistent deployments
+- Test AMIs before production use
+- Document AMI contents and purpose
+- Keep AMI library organized
+
+**3. Instance Types:**
+
+**Understanding Instance Families:**
+
+**General Purpose (t3, t4g, m5, m6i):**
+- **Use Cases**: Web servers, small databases, development
+- **Balance**: Compute, memory, networking
+- **Examples**: t3.micro, m5.large, m6i.xlarge
+- **Characteristics**: Burstable or consistent performance
+
+**Compute Optimized (c5, c6i, c7i):**
+- **Use Cases**: High-performance computing, batch processing, gaming servers
+- **Focus**: High CPU performance
+- **Examples**: c5.xlarge, c6i.2xlarge
+- **Characteristics**: Latest generation processors
+
+**Memory Optimized (r5, r6i, x1, x2ie):**
+- **Use Cases**: Databases, in-memory caches, big data
+- **Focus**: Large memory capacity
+- **Examples**: r5.2xlarge, x1.32xlarge
+- **Characteristics**: High memory-to-vCPU ratio
+
+**Storage Optimized (i3, i4i, d2, d3):**
+- **Use Cases**: NoSQL databases, data warehousing, file systems
+- **Focus**: High I/O performance, large storage
+- **Examples**: i3.xlarge, d3.2xlarge
+- **Characteristics**: NVMe SSD, high IOPS
+
+**Accelerated Computing (p3, p4, g4, g5):**
+- **Use Cases**: Machine learning, graphics rendering, video encoding
+- **Focus**: GPUs, FPGAs, specialized hardware
+- **Examples**: p3.2xlarge, g4dn.xlarge
+- **Characteristics**: GPU instances, specialized workloads
+
+**Instance Type Naming:**
+- **Format**: family.generation.size
+- **Example**: m5.2xlarge
+  - m = General purpose
+  - 5 = 5th generation
+  - 2xlarge = Size (8 vCPUs, 32 GB RAM)
+
+**Choosing Instance Types:**
+- **Analyze Workload**: CPU, memory, storage, network needs
+- **Start Small**: Begin with smaller instances, scale up
+- **Right-Size**: Match instance to actual needs
+- **Consider Cost**: Balance performance and cost
+- **Test Performance**: Benchmark different types
+
+**4. Security Groups:**
+
+**What Are Security Groups:**
+Security groups act as virtual firewalls controlling inbound and outbound traffic for EC2 instances. They are stateful, meaning return traffic is automatically allowed.
+
+**Security Group Rules:**
+- **Type**: Protocol (TCP, UDP, ICMP, etc.)
+- **Port Range**: Single port or range
+- **Source/Destination**: IP address, CIDR block, or security group
+- **Description**: Optional rule description
+
+**Security Group Characteristics:**
+- **Stateful**: Return traffic automatically allowed
+- **Default Deny**: All traffic denied by default
+- **Multiple Groups**: Instance can belong to multiple groups
+- **VPC-Specific**: Security groups belong to VPCs
+
+**Security Group Best Practices:**
+- Follow principle of least privilege
+- Use specific IP ranges, not 0.0.0.0/0
+- Separate security groups by function
+- Document security group rules
+- Review and update regularly
+
+**5. Key Pairs:**
+
+**What Are Key Pairs:**
+Key pairs are used to securely connect to EC2 instances. They consist of a public key (stored by AWS) and a private key (you keep secure).
+
+**Key Pair Types:**
+- **RSA**: Traditional, widely supported
+- **ED25519**: Modern, more secure (recommended)
+- **EC2 Key Pair**: Managed by AWS
+- **Import Key Pair**: Import your own public key
+
+**Key Pair Best Practices:**
+- Store private keys securely (never share)
+- Use different key pairs for different environments
+- Rotate key pairs regularly
+- Use SSH agent for convenience
+- Consider using Systems Manager Session Manager (no keys needed)
+
+**6. EBS Volumes:**
+
+**What Are EBS Volumes:**
+Elastic Block Store (EBS) provides persistent block storage volumes for EC2 instances. Unlike instance store (ephemeral), EBS volumes persist independently of instance lifecycle.
+
+**EBS Volume Types:**
+- **gp3**: Latest general purpose SSD (default, recommended)
+- **gp2**: Previous generation general purpose SSD
+- **io1/io2**: Provisioned IOPS SSD (high performance)
+- **st1**: Throughput Optimized HDD
+- **sc1**: Cold HDD (lowest cost)
+
+**EBS Characteristics:**
+- **Persistent**: Survives instance termination
+- **Attachable**: Can attach/detach volumes
+- **Resizable**: Can increase size dynamically
+- **Snapshottable**: Create backups
+- **Encryptable**: Encryption at rest
 
 **Pricing Models:**
-- **On-Demand**: Pay per hour, no commitment
-- **Reserved Instances**: 1-3 year commitment, up to 75% savings
-- **Spot Instances**: Bid on unused capacity, up to 90% savings
-- **Savings Plans**: Flexible pricing model
+
+**1. On-Demand Instances:**
+- **Pricing**: Pay per hour/second
+- **Commitment**: None
+- **Use Cases**: Short-term, unpredictable workloads
+- **Benefits**: No upfront costs, flexible
+- **Drawbacks**: Highest hourly rate
+
+**2. Reserved Instances:**
+- **Pricing**: Up to 75% discount vs On-Demand
+- **Commitment**: 1 or 3 years
+- **Types**: Standard, Convertible, Scheduled
+- **Use Cases**: Predictable, steady-state workloads
+- **Benefits**: Significant cost savings
+- **Drawbacks**: Upfront payment, less flexibility
+
+**3. Spot Instances:**
+- **Pricing**: Up to 90% discount vs On-Demand
+- **Commitment**: None (can be interrupted)
+- **Use Cases**: Fault-tolerant, flexible workloads
+- **Benefits**: Lowest cost
+- **Drawbacks**: Can be interrupted with 2-minute notice
+
+**4. Savings Plans:**
+- **Pricing**: Up to 72% discount
+- **Commitment**: 1 or 3 years
+- **Types**: Compute, EC2 Instance
+- **Use Cases**: Flexible compute usage
+- **Benefits**: Flexible, automatic discount
+- **Drawbacks**: Less discount than RIs
 
 **Best Practices:**
-- Choose right instance type for workload
-- Use Reserved Instances for predictable workloads
-- Enable termination protection for production
-- Use tags for organization
-- Monitor instance metrics`,
+
+**1. Instance Management:**
+- **Right-Size**: Match instance to workload needs
+- **Use Auto Scaling**: Automatically adjust capacity
+- **Tag Instances**: Organize and track resources
+- **Monitor Performance**: Use CloudWatch metrics
+- **Terminate Unused**: Stop or terminate idle instances
+
+**2. Security:**
+- **Use Security Groups**: Control network access
+- **Enable Termination Protection**: Prevent accidental termination
+- **Use IAM Roles**: Instead of access keys
+- **Enable VPC Flow Logs**: Monitor network traffic
+- **Regular Updates**: Keep AMIs and software updated
+
+**3. Cost Optimization:**
+- **Use Reserved Instances**: For predictable workloads
+- **Use Spot Instances**: For fault-tolerant workloads
+- **Right-Size Instances**: Don't over-provision
+- **Monitor Costs**: Use Cost Explorer
+- **Clean Up**: Terminate unused instances
+
+**4. High Availability:**
+- **Multi-AZ Deployment**: Deploy across Availability Zones
+- **Use Load Balancers**: Distribute traffic
+- **Auto Scaling**: Handle traffic spikes
+- **Health Checks**: Monitor instance health
+- **Backup Strategy**: Regular snapshots and AMIs
+
+**5. Performance:**
+- **Choose Right Instance Type**: Match to workload
+- **Use Enhanced Networking**: For better network performance
+- **Optimize Storage**: Use appropriate EBS volume types
+- **Monitor Metrics**: Track CPU, memory, network, disk
+- **Benchmark**: Test performance before production
+
+**Common Pitfalls:**
+
+**1. Over-Provisioning:**
+- **Problem**: Choosing instance types too large
+- **Impact**: Wasted costs, poor resource utilization
+- **Solution**: Start small, monitor, right-size based on metrics
+- **Example**: Using m5.4xlarge when t3.medium would suffice
+
+**2. Under-Provisioning:**
+- **Problem**: Instance too small for workload
+- **Impact**: Poor performance, user experience issues
+- **Solution**: Monitor metrics, scale up when needed
+- **Example**: Running database on t2.micro
+
+**3. Not Using Auto Scaling:**
+- **Problem**: Manual scaling, over-provisioning for peaks
+- **Impact**: High costs or poor performance during spikes
+- **Solution**: Implement Auto Scaling groups
+- **Example**: Running 10 instances 24/7 for peak traffic 2 hours/day
+
+**4. Poor Security Group Configuration:**
+- **Problem**: Overly permissive rules (0.0.0.0/0)
+- **Impact**: Security vulnerabilities, unauthorized access
+- **Solution**: Use least privilege, specific IP ranges
+- **Example**: Allowing SSH (port 22) from 0.0.0.0/0
+
+**5. Not Backing Up:**
+- **Problem**: No EBS snapshots or AMIs
+- **Impact**: Data loss, long recovery times
+- **Solution**: Regular snapshots, automated backups
+- **Example**: Instance failure with no backups
+
+**6. Ignoring Costs:**
+- **Problem**: Leaving instances running 24/7
+- **Impact**: Unexpected high bills
+- **Solution**: Stop/terminate when not needed, use scheduling
+- **Example**: Development instances running over weekend
+
+**Real-World Examples:**
+
+**Web Application:**
+- **Architecture**: Auto Scaling group behind Application Load Balancer
+- **Instance Type**: t3.medium (general purpose)
+- **Deployment**: Multiple AZs for high availability
+- **Scaling**: Auto Scaling based on CPU/memory
+- **Cost**: On-Demand for variable traffic, Reserved for baseline
+
+**Database Server:**
+- **Architecture**: RDS Multi-AZ (managed) or EC2 with replication
+- **Instance Type**: r5.2xlarge (memory optimized)
+- **Storage**: io2 EBS volumes for high IOPS
+- **Backup**: Automated daily snapshots
+- **Cost**: Reserved Instances for predictable workload
+
+**Batch Processing:**
+- **Architecture**: Spot Fleet for cost optimization
+- **Instance Type**: c5.xlarge (compute optimized)
+- **Deployment**: Spot Instances with On-Demand fallback
+- **Fault Tolerance**: Checkpointing, retry logic
+- **Cost**: Up to 90% savings with Spot Instances
+
+**Machine Learning Training:**
+- **Architecture**: GPU instances for training
+- **Instance Type**: p3.2xlarge (GPU accelerated)
+- **Storage**: High-throughput EBS or instance store
+- **Scaling**: Multiple instances for distributed training
+- **Cost**: Spot Instances for training workloads
+
+**Conclusion:**
+
+EC2 is the foundation of AWS compute services, providing flexible, scalable, and cost-effective virtual servers. By understanding instance types, pricing models, security, and best practices, you can build reliable, secure, and cost-optimized applications.
+
+Key takeaways:
+- **Choose right instance type** for your workload
+- **Use multiple pricing models** to optimize costs
+- **Implement security best practices** (security groups, IAM roles)
+- **Design for high availability** (multi-AZ, Auto Scaling)
+- **Monitor and optimize** continuously
+
+EC2's flexibility and integration with other AWS services make it the go-to choice for most compute workloads. Whether you're running simple web applications or complex distributed systems, EC2 provides the foundation you need.`,
 					CodeExamples: `# Launch EC2 instance
 aws ec2 run-instances \\
     --image-id ami-0c55b159cbfafe1f0 \\

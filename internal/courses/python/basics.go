@@ -31,9 +31,15 @@ func init() {
 - **Open Source**: Free to use, modify, and distribute
 
 **Python Versions:**
-- **Python 2.x**: Legacy version, end of life January 1, 2020
-- **Python 3.x**: Current version (3.8+ recommended, 3.11+ for latest features)
-- **Always use Python 3** for new projects - Python 2 is deprecated
+- **Python 2.x**: Legacy version, end of life January 1, 2020 (DO NOT USE)
+- **Python 3.x**: Current version
+  - **Python 3.8+**: Recommended minimum (type hints, walrus operator)
+  - **Python 3.9+**: Better type hints, dictionary merge operators
+  - **Python 3.10+**: Structural pattern matching, better error messages
+  - **Python 3.11+**: Faster performance, better error messages, exception groups
+  - **Python 3.12+**: Latest features, improved performance
+- **Always use Python 3** for new projects - Python 2 is deprecated and unsupported
+- **Check current version**: python --version or python3 --version
 
 **Performance Characteristics:**
 - Slower than compiled languages (C, C++, Go) for CPU-intensive tasks
@@ -287,32 +293,85 @@ python3.11 -m venv myenv311
 - Wrong indentation level
 - Solution: Use consistent 4-space indentation, understand scope rules
 
-**Best Practices:**
+**Best Practices (2024-2025 Standards):**
 
 **1. Use Consistent Indentation:**
-- Always use 4 spaces (PEP 8)
+- Always use 4 spaces (PEP 8 standard)
 - Configure editor to insert spaces, not tabs
 - Use python -tt to detect mixed indentation
+- Most modern editors (VS Code, PyCharm) handle this automatically
 
 **2. Use Main Guard:**
 - Allows script to be imported or run
 - Prevents code execution on import
 - Enables testing and reuse
+- Standard pattern: if __name__ == "__main__":
 
-**3. Write Docstrings:**
+**3. Write Docstrings (PEP 257):**
 - Document modules, functions, classes
-- Use triple-quoted strings
+- Use triple-quoted strings (""" or ''')
 - Follow PEP 257 conventions
+- Use Google, NumPy, or reStructuredText style consistently
+- Include: description, parameters, return values, raises, examples
 
-**4. Follow PEP 8:**
-- Python style guide
-- Use linters (flake8, pylint, black)
-- Format code consistently
+**4. Follow PEP 8 (Python Style Guide):**
+- **Naming**: snake_case for variables/functions, PascalCase for classes, UPPER_CASE for constants
+- **Line length**: Maximum 79 characters (or 88-99 with black formatter)
+- **Imports**: Standard library → third-party → local, each group separated by blank line
+- **Whitespace**: Use blank lines to separate functions/classes
+- **Use tools**: 
+  - **black**: Automatic code formatter (most popular)
+  - **ruff**: Fast linter and formatter (replacing flake8)
+  - **pylint**: Comprehensive linting
+  - **mypy**: Static type checking
+  - **isort**: Import sorting
 
-**5. Use Type Hints (Python 3.5+):**
-- Improves code clarity
-- Enables static type checking
-- Better IDE support
+**5. Use Type Hints (Python 3.5+, Recommended 3.9+):**
+- Improves code clarity and documentation
+- Enables static type checking with mypy
+- Better IDE support (autocomplete, error detection)
+- Use typing module for complex types (List, Dict, Optional, Union)
+- Python 3.9+: Use built-in types (list[int] instead of List[int])
+- Python 3.10+: Use union operator (int | str instead of Union[int, str])
+
+**6. Code Quality Tools (2024 Best Practices):**
+- **ruff**: Fast, modern linter (replaces flake8, isort, and more)
+- **black**: Uncompromising code formatter
+- **mypy**: Static type checker
+- **pytest**: Modern testing framework
+- **pre-commit**: Git hooks for code quality checks
+- **tox**: Testing across multiple Python versions
+
+**7. Project Structure Best Practices:**
+- Use virtual environments (venv) for every project
+- Create requirements.txt or pyproject.toml for dependencies
+- Use src/ layout for packages (recommended by PEP 420)
+- Include README.md, LICENSE, .gitignore
+- Use setup.py or pyproject.toml for package configuration
+- Follow Python packaging best practices (PEP 517, PEP 518)
+
+**8. Testing Best Practices:**
+- Write unit tests for all functions (aim for high coverage)
+- Use pytest (modern, powerful testing framework)
+- Test edge cases and error conditions
+- Use fixtures for test data setup
+- Mock external dependencies
+- Run tests automatically in CI/CD
+
+**9. Error Handling:**
+- Use specific exceptions, not bare except clauses
+- Log errors appropriately (use logging module)
+- Provide meaningful error messages
+- Use context managers (with statements) for resource management
+- Consider using exception groups (Python 3.11+)
+
+**10. Modern Python Features (2024):**
+- **f-strings**: Use f-strings for string formatting (Python 3.6+)
+- **Dataclasses**: Use @dataclass for simple data containers (Python 3.7+)
+- **Type hints**: Use type hints throughout codebase
+- **Path objects**: Use pathlib.Path instead of os.path (Python 3.4+)
+- **Enum**: Use Enum for constants (Python 3.4+)
+- **Structural pattern matching**: Use match/case for complex conditionals (Python 3.10+)
 
 **Real-World Examples:**
 

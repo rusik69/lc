@@ -12,50 +12,380 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is a Computer Network?",
-					Content: `A computer network is a collection of interconnected devices (computers, servers, routers, switches) that can communicate and share resources with each other.
+					Content: `A computer network is a collection of interconnected devices (computers, servers, routers, switches, and other hardware) that can communicate with each other and share resources. Networks enable devices to exchange data, share hardware and software resources, and provide services to users and applications.
+
+**Why Networks Exist:**
+
+**The Problem Networks Solve:**
+Before networks, each computer was isolated. To share data, you had to physically transfer files using floppy disks or other storage media. Networks eliminate this limitation, enabling instant communication and resource sharing.
+
+**Historical Context:**
+- **1960s**: ARPANET (precursor to internet) developed
+- **1970s**: Ethernet protocol developed
+- **1980s**: Local Area Networks (LANs) become common
+- **1990s**: Internet becomes publicly available
+- **2000s**: Wireless networking (WiFi) becomes widespread
+- **2010s**: Cloud computing and mobile networks
+- **2020s**: 5G, edge computing, IoT networks
+- **2024-2025**: 6G research, network automation, AI-powered networking, zero-trust architectures
+
+**Modern Networking Best Practices (2024-2025):**
+
+**1. Network Automation:**
+- **Infrastructure as Code**: Define networks programmatically
+- **Automation Tools**: Ansible, Terraform, Python scripts
+- **API-Driven**: Use APIs instead of manual configuration
+- **Benefits**: Consistency, faster deployment, reduced errors
+
+**2. Zero Trust Architecture:**
+- **Never Trust, Always Verify**: Verify every connection
+- **Micro-segmentation**: Isolate network segments
+- **Identity-Based**: Access based on identity, not location
+- **Continuous Monitoring**: Monitor all network activity
+
+**3. Software-Defined Networking (SDN):**
+- **Centralized Control**: Programmable network control
+- **Separation of Control and Data Planes**: Flexible management
+- **Network Virtualization**: Virtual networks on physical infrastructure
+- **Use Cases**: Data centers, cloud networks, WAN
+
+**4. Network Observability:**
+- **Comprehensive Monitoring**: Metrics, logs, traces
+- **Real-Time Visibility**: Understand network behavior
+- **Proactive Problem Detection**: Identify issues before users notice
+- **Tools**: Prometheus, Grafana, network analyzers
+
+**5. Cloud Networking:**
+- **Hybrid Cloud**: Connect on-premises and cloud networks
+- **Multi-Cloud**: Connect multiple cloud providers
+- **Edge Computing**: Deploy services closer to users
+- **SD-WAN**: Software-defined wide area networking
+
+**6. Security-First Approach:**
+- **Encryption**: Encrypt data in transit (TLS, VPN)
+- **Network Segmentation**: Isolate sensitive systems
+- **Intrusion Detection**: Monitor for threats
+- **Regular Audits**: Assess network security regularly
 
 **Key Concepts:**
-- **Nodes**: Devices connected to the network (computers, printers, servers)
-- **Links**: Physical or wireless connections between nodes
-- **Protocols**: Rules and standards for communication
-- **Topology**: Physical or logical arrangement of network devices
+
+**1. Nodes:**
+- **Definition**: Any device connected to the network
+- **Examples**: Computers, servers, printers, smartphones, IoT devices
+- **Role**: Send and receive data
+- **Identification**: Each node has unique address (IP address, MAC address)
+
+**2. Links:**
+- **Definition**: Connections between nodes
+- **Types**: 
+  - **Physical**: Ethernet cables, fiber optic cables
+  - **Wireless**: Radio waves (WiFi, Bluetooth, cellular)
+- **Characteristics**: Bandwidth, latency, reliability
+
+**3. Protocols:**
+- **Definition**: Rules and standards for communication
+- **Purpose**: Ensure devices can communicate effectively
+- **Examples**: TCP/IP, HTTP, HTTPS, FTP, SMTP
+- **Layers**: Different protocols at different network layers
+
+**4. Topology:**
+- **Definition**: Physical or logical arrangement of network devices
+- **Types**: Star, bus, ring, mesh, hybrid
+- **Impact**: Affects performance, reliability, cost
 
 **Types of Networks:**
 
-**LAN (Local Area Network):**
-- Covers small geographic area (home, office, building)
-- High-speed connections
-- Privately owned
-- Examples: Home WiFi, office network
+**1. LAN (Local Area Network):**
 
-**WAN (Wide Area Network):**
-- Covers large geographic area (cities, countries)
-- Uses leased lines or internet
-- Examples: Corporate networks, internet
+**Characteristics:**
+- **Geographic Scope**: Small area (home, office, building, campus)
+- **Speed**: High-speed connections (100 Mbps to 10 Gbps+)
+- **Ownership**: Privately owned and managed
+- **Cost**: Relatively low cost
+- **Technology**: Ethernet, WiFi
 
-**MAN (Metropolitan Area Network):**
-- Covers city or metropolitan area
-- Larger than LAN, smaller than WAN
-- Examples: City-wide WiFi, cable networks
+**Use Cases:**
+- Home networks (connecting computers, phones, smart devices)
+- Office networks (connecting workstations, printers, servers)
+- School networks (connecting classrooms, labs, administrative systems)
+- Small business networks
 
-**PAN (Personal Area Network):**
-- Very small network (personal devices)
-- Examples: Bluetooth, USB connections
+**Examples:**
+- Home WiFi network connecting laptops, phones, smart TVs
+- Office Ethernet network connecting workstations and servers
+- School network connecting classrooms and computer labs
+
+**Advantages:**
+- High speed and low latency
+- Easy to manage and secure
+- Cost-effective for small areas
+- Reliable (controlled environment)
+
+**2. WAN (Wide Area Network):**
+
+**Characteristics:**
+- **Geographic Scope**: Large area (cities, countries, continents)
+- **Speed**: Variable (depends on connection type)
+- **Ownership**: Can be private or public (internet)
+- **Cost**: Higher cost (leased lines, internet connections)
+- **Technology**: Leased lines, MPLS, internet, satellite
+
+**Use Cases:**
+- Corporate networks connecting multiple offices
+- Internet (largest WAN)
+- Banking networks
+- Government networks
+
+**Examples:**
+- Corporate network connecting offices in different cities
+- Internet connecting billions of devices worldwide
+- Bank network connecting branches nationwide
+
+**Advantages:**
+- Connects distant locations
+- Enables remote access
+- Supports global operations
+- Scalable to large size
+
+**3. MAN (Metropolitan Area Network):**
+
+**Characteristics:**
+- **Geographic Scope**: City or metropolitan area
+- **Speed**: High-speed (fiber optic typically)
+- **Ownership**: Usually service provider or municipality
+- **Cost**: Moderate cost
+- **Technology**: Fiber optic, wireless (WiMAX)
+
+**Use Cases:**
+- City-wide WiFi networks
+- Cable TV networks
+- Municipal networks
+- University campus networks spanning city
+
+**Examples:**
+- City-wide public WiFi
+- Cable internet provider network
+- University network connecting multiple campuses
+
+**4. PAN (Personal Area Network):**
+
+**Characteristics:**
+- **Geographic Scope**: Very small (personal space, few meters)
+- **Speed**: Low to moderate
+- **Ownership**: Personal
+- **Cost**: Very low
+- **Technology**: Bluetooth, USB, infrared
+
+**Use Cases:**
+- Connecting personal devices
+- Wireless headphones to phone
+- Smartwatch to smartphone
+- File transfer between nearby devices
+
+**Examples:**
+- Bluetooth connection between phone and headphones
+- USB connection between computer and external drive
+- Wireless mouse/keyboard connection
+
+**5. Other Network Types:**
+
+**CAN (Campus Area Network):**
+- Connects multiple LANs within a campus
+- Example: University campus with multiple buildings
+
+**SAN (Storage Area Network):**
+- Dedicated network for storage devices
+- High-speed, specialized for storage access
+- Example: Data center storage network
+
+**VPN (Virtual Private Network):**
+- Secure connection over public network
+- Creates private network over internet
+- Example: Remote worker accessing company network
 
 **Why Networks Matter:**
-- **Resource Sharing**: Share files, printers, internet
-- **Communication**: Email, messaging, video calls
-- **Collaboration**: Multiple users work together
-- **Centralized Management**: Manage resources from one location
-- **Cost Efficiency**: Share expensive resources
+
+**1. Resource Sharing:**
+- **Files**: Share files between devices without physical transfer
+- **Printers**: Multiple users share same printer
+- **Storage**: Network-attached storage (NAS) for shared storage
+- **Internet**: Share internet connection among multiple devices
+- **Applications**: Access applications running on servers
+- **Real-world**: Office network allows all employees to share printers and files
+
+**2. Communication:**
+- **Email**: Send messages instantly across the globe
+- **Messaging**: Real-time messaging (Slack, Teams, WhatsApp)
+- **Video Calls**: Face-to-face communication (Zoom, Teams)
+- **VoIP**: Voice over IP phone calls
+- **Collaboration**: Real-time collaboration on documents
+- **Real-world**: Teams collaborate on projects remotely via network
+
+**3. Centralized Management:**
+- **User Accounts**: Centralized user management (Active Directory)
+- **Software Updates**: Deploy updates to all devices
+- **Backup**: Centralized backup systems
+- **Monitoring**: Monitor all devices from central location
+- **Security**: Centralized security policies and enforcement
+- **Real-world**: IT department manages hundreds of computers from central console
+
+**4. Cost Efficiency:**
+- **Shared Resources**: Share expensive hardware (printers, servers)
+- **Bulk Purchasing**: Better pricing for network licenses
+- **Reduced Duplication**: Avoid buying same software/hardware multiple times
+- **Cloud Services**: Access cloud services instead of buying hardware
+- **Real-world**: Small business shares one high-end printer instead of buying multiple
+
+**5. Scalability:**
+- **Add Devices**: Easily add new devices to network
+- **Expand Coverage**: Extend network to new locations
+- **Scale Services**: Scale services as business grows
+- **Cloud Integration**: Integrate with cloud services
+- **Real-world**: Company adds new offices and connects them to corporate network
+
+**6. Reliability and Redundancy:**
+- **Backup Connections**: Multiple paths for reliability
+- **Load Distribution**: Distribute load across multiple servers
+- **Failover**: Automatic failover if one component fails
+- **Disaster Recovery**: Backup systems in different locations
+- **Real-world**: Data center uses redundant network paths for high availability
 
 **Network Components:**
-- **NIC (Network Interface Card)**: Hardware connecting device to network
-- **Cables**: Physical connections (Ethernet, fiber optic)
-- **Wireless**: Radio waves (WiFi, Bluetooth)
-- **Switches**: Connect devices on same network
-- **Routers**: Connect different networks
-- **Servers**: Provide services to network clients`,
+
+**1. NIC (Network Interface Card):**
+- **What it is**: Hardware connecting device to network
+- **Types**: Ethernet NIC, WiFi adapter, fiber optic NIC
+- **Function**: Converts data between computer and network format
+- **MAC Address**: Unique hardware address assigned to NIC
+- **Example**: Ethernet card in computer, WiFi adapter in laptop
+
+**2. Cables:**
+- **Ethernet Cable**: Twisted pair copper cable (Cat5e, Cat6, Cat7)
+  - Common in offices and homes
+  - Speeds: 100 Mbps to 10 Gbps
+  - Maximum length: ~100 meters
+- **Fiber Optic Cable**: Glass or plastic fibers transmitting light
+  - Very high speed (10 Gbps to 100 Gbps+)
+  - Long distance (kilometers)
+  - Used in data centers and long-distance connections
+- **Coaxial Cable**: Used for cable internet and TV
+  - Moderate speed
+  - Used by cable providers
+
+**3. Wireless:**
+- **WiFi (802.11)**: Wireless local area networking
+  - Standards: 802.11n, 802.11ac (WiFi 5), 802.11ax (WiFi 6)
+  - Range: ~30-100 meters indoors
+  - Speeds: 150 Mbps to 9.6 Gbps (WiFi 6E)
+- **Bluetooth**: Short-range wireless (PAN)
+  - Range: ~10 meters
+  - Used for personal devices
+- **Cellular**: Mobile networks (3G, 4G, 5G)
+  - Wide area coverage
+  - Used for mobile internet
+
+**4. Switches:**
+- **What it is**: Network device connecting devices on same network
+- **Function**: Forwards data to correct destination based on MAC address
+- **Layer**: Operates at Layer 2 (Data Link)
+- **Types**: 
+  - **Unmanaged**: Plug and play, basic switching
+  - **Managed**: Configurable, advanced features (VLANs, QoS)
+- **Example**: Office switch connecting all workstations
+
+**5. Routers:**
+- **What it is**: Network device connecting different networks
+- **Function**: Routes data between networks based on IP address
+- **Layer**: Operates at Layer 3 (Network)
+- **Features**: 
+  - **NAT (Network Address Translation)**: Share one public IP
+  - **Firewall**: Security features
+  - **DHCP**: Assign IP addresses automatically
+- **Example**: Home router connecting home network to internet
+
+**6. Servers:**
+- **What it is**: Computer providing services to network clients
+- **Types**:
+  - **File Server**: Stores and shares files
+  - **Web Server**: Hosts websites
+  - **Database Server**: Stores and manages databases
+  - **Mail Server**: Handles email
+  - **DNS Server**: Resolves domain names to IP addresses
+- **Example**: Web server hosting company website
+
+**7. Other Components:**
+- **Access Points**: Extend WiFi coverage
+- **Modems**: Convert between digital and analog signals
+- **Gateways**: Connect networks with different protocols
+- **Bridges**: Connect network segments
+- **Repeaters**: Amplify signals for longer distances
+
+**Network Architecture:**
+
+**Client-Server Model:**
+- **Clients**: Request services (browsers, email clients)
+- **Servers**: Provide services (web servers, email servers)
+- **Centralized**: Services centralized on servers
+- **Example**: Web browser (client) requests webpage from web server
+
+**Peer-to-Peer (P2P) Model:**
+- **Peers**: Devices act as both clients and servers
+- **Decentralized**: No central server
+- **Examples**: File sharing (BitTorrent), blockchain networks
+
+**Hybrid Model:**
+- **Combination**: Mix of client-server and P2P
+- **Example**: Some services centralized, others distributed
+
+**Real-World Network Examples:**
+
+**Home Network:**
+- Router connects to internet
+- WiFi provides wireless access
+- Devices: Laptops, phones, smart TVs, IoT devices
+- Shared: Internet connection, printer, network storage
+
+**Office Network:**
+- Switches connect workstations
+- Servers provide file sharing, email, applications
+- Router connects to internet
+- Firewall provides security
+- WiFi for mobile devices
+
+**Data Center Network:**
+- High-speed switches (10 Gbps to 100 Gbps+)
+- Redundant paths for reliability
+- Load balancers distribute traffic
+- Firewalls for security
+- Multiple servers for scalability
+
+**Cloud Network:**
+- Virtual networks (VPCs)
+- Software-defined networking
+- Global distribution
+- Auto-scaling
+- Multiple availability zones
+
+**Conclusion:**
+
+Computer networks are the foundation of modern computing and communication. They enable everything from simple file sharing to global internet communication, from local office networks to worldwide cloud infrastructure.
+
+Understanding networks is essential for:
+- **System Administrators**: Managing network infrastructure
+- **Network Engineers**: Designing and maintaining networks
+- **DevOps Engineers**: Understanding cloud networking
+- **Software Developers**: Building network applications
+- **Cybersecurity Professionals**: Securing network infrastructure
+- **Anyone in IT**: Networks are fundamental to all IT work
+
+Key takeaways:
+- **Networks enable communication** and resource sharing
+- **Different network types** serve different purposes
+- **Network components** work together to enable communication
+- **Protocols** ensure devices can communicate
+- **Topology** affects performance and reliability
+
+As you learn networking, remember that networks are about enabling communication and sharing resources efficiently and securely. Whether you're setting up a home network or designing a global cloud infrastructure, understanding these fundamentals is essential for success.`,
 					CodeExamples: `# Check network interfaces (Linux)
 ip addr show
 # or

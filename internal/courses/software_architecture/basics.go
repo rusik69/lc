@@ -12,102 +12,410 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Software Architecture?",
-					Content: `Software architecture is the fundamental structure of a software system, the discipline of creating such structures, and the documentation of these structures.
+					Content: `Software architecture is the fundamental structure of a software system, the discipline of creating such structures, and the documentation of these structures. It represents the significant design decisions that shape a system's structure, behavior, and quality attributes. Understanding software architecture is essential for building systems that are scalable, maintainable, reliable, and aligned with business goals.
 
-**Definition:**
-Software architecture represents the significant decisions about the organization of a software system. These decisions include:
-- Selection of structural elements and their interfaces
-- Behavior as collaboration among those elements
-- Composition of structural and behavioral elements into larger subsystems
-- Architectural style that guides this organization
+**The Essence of Software Architecture:**
 
-**Why This Matters:**
-Architecture decisions are hard to change once implemented. They form the foundation that all other development work builds upon. Making the right architectural decisions early can save significant time and cost, while poor decisions can lead to technical debt and system failures.
+**What Architecture Really Is:**
+Software architecture is not just about choosing technologies or drawing diagrams. It's about making strategic decisions that have long-term consequences for the system. These decisions form the foundation upon which all other development work is built.
 
-**Key Characteristics:**
-- **Structure**: How components are organized and connected
-- **Behavior**: How components interact and collaborate
-- **Non-functional Requirements**: Performance, security, scalability, maintainability
-- **Trade-offs**: Balancing competing concerns and constraints
+**Key Definition (IEEE 1471):**
+"Architecture is the fundamental organization of a system embodied in its components, their relationships to each other and to the environment, and the principles guiding its design and evolution."
+
+**What Makes a Decision "Architectural":**
+- **System-wide Impact**: Affects multiple components or the entire system
+- **Hard to Change**: Expensive or time-consuming to modify later
+- **Quality Attributes**: Directly impacts non-functional requirements
+- **Structural**: Defines how the system is organized
+- **Strategic**: Aligns with business goals and constraints
 
 **Why Architecture Matters:**
-- **Foundation**: Provides the foundation for all development work
-- **Communication**: Serves as a communication tool among stakeholders
-- **Constraints**: Imposes constraints on implementation
-- **Quality**: Directly impacts system quality attributes
-- **Evolution**: Enables and constrains system evolution
+
+**1. Foundation for Development:**
+- **Guides Implementation**: Architecture decisions guide how code is organized
+- **Enables Parallel Work**: Clear architecture allows teams to work independently
+- **Reduces Rework**: Good architecture prevents costly refactoring
+- **Real-world example**: Microservices architecture enables multiple teams to develop services independently
+
+**2. Quality Attributes:**
+- **Performance**: Architecture directly impacts system performance
+  - Example: Monolithic vs microservices affects latency and throughput
+- **Scalability**: Architecture determines how well system scales
+  - Example: Stateless services scale horizontally better than stateful
+- **Reliability**: Architecture affects system reliability
+  - Example: Redundant components improve availability
+- **Security**: Architecture influences security posture
+  - Example: Network segmentation improves security isolation
+
+**3. Cost Implications:**
+- **Development Cost**: Architecture affects development speed and cost
+- **Operational Cost**: Architecture impacts infrastructure and maintenance costs
+- **Technical Debt**: Poor architecture leads to technical debt
+- **Real-world example**: Monolithic architecture may be cheaper initially but becomes expensive to scale
+
+**4. Business Alignment:**
+- **Time to Market**: Architecture affects how quickly features can be delivered
+- **Competitive Advantage**: Good architecture enables rapid innovation
+- **Risk Management**: Architecture helps manage technical and business risks
+- **Real-world example**: Microservices enable faster feature delivery for large organizations
+
+**5. Communication Tool:**
+- **Stakeholder Communication**: Architecture helps communicate system design
+- **Team Alignment**: Shared understanding of system structure
+- **Documentation**: Architecture serves as living documentation
+- **Onboarding**: Helps new team members understand the system
 
 **Architecture vs Design:**
 
-Understanding the difference helps clarify responsibilities:
+**Understanding the Distinction:**
 
-**Architecture (High-level):**
-- System-wide structure and organization
-- Significant decisions that are hard to change
-- Focus on quality attributes and constraints
-- Example: "System uses microservices architecture"
+**Architecture (Strategic, High-Level):**
+- **Scope**: System-wide, cross-cutting concerns
+- **Decisions**: Hard to change, expensive to modify
+- **Focus**: Structure, quality attributes, constraints
+- **Stakeholders**: Architects, business leaders, technical leads
+- **Examples**: 
+  - "System uses microservices architecture"
+  - "Database is sharded by user ID"
+  - "Services communicate via message queue"
+  - "API Gateway handles authentication"
 
-**Design (Detailed):**
-- Component-level structure and implementation
-- Decisions that are easier to change
-- Focus on functionality and code organization
-- Example: "UserService uses Spring Boot with dependency injection"
+**Design (Tactical, Detailed):**
+- **Scope**: Component-level, local concerns
+- **Decisions**: Easier to change, less expensive
+- **Focus**: Functionality, code organization, algorithms
+- **Stakeholders**: Developers, technical leads
+- **Examples**:
+  - "UserService uses Spring Boot with dependency injection"
+  - "Database connection pool size is 20"
+  - "Cache TTL is 3600 seconds"
+  - "Uses JWT for authentication tokens"
 
-**Key Insight:** Architecture is a subset of design - the most important design decisions that have system-wide impact.
+**Key Insight:**
+Architecture is a subset of design - it's the most important design decisions that have system-wide impact. Not all design decisions are architectural, but all architectural decisions are design decisions.
+
+**Visual Comparison:**
+
+**Architecture Level:**
+
+    System: E-commerce Platform
+    ├── Architecture: Microservices
+    ├── Communication: REST APIs + Message Queue
+    ├── Data Strategy: Database per service
+    ├── Deployment: Kubernetes clusters
+    └── Security: API Gateway + OAuth2
+
+**Design Level:**
+
+    Service: User Service
+    ├── Framework: Spring Boot 2.7
+    ├── Database: PostgreSQL 14
+    ├── Connection Pool: HikariCP, size 20
+    ├── Cache: Redis, TTL 3600s
+    └── Authentication: JWT tokens
 
 **Architectural Drivers:**
 
-These are the forces that shape architectural decisions:
+These are the forces that shape architectural decisions. Understanding them is crucial for making good architectural choices.
 
-**Functional Requirements:**
-- What the system must do
-- Business capabilities and features
-- User stories and use cases
+**1. Functional Requirements:**
+- **What**: What the system must do
+- **Examples**: 
+  - User registration and authentication
+  - Product catalog browsing
+  - Order processing and payment
+  - Real-time notifications
+- **Impact**: Functional requirements drive component identification
+- **Real-world**: E-commerce system needs user, product, order, payment components
 
-**Quality Attributes:**
-- Performance: Response time, throughput
-- Security: Authentication, authorization, data protection
-- Availability: Uptime, fault tolerance
-- Usability: User experience, accessibility
-- Scalability: Ability to handle growth
-- Maintainability: Ease of modification and extension
+**2. Quality Attributes (Non-Functional Requirements):**
 
-**Constraints:**
-- Technology: Existing infrastructure, vendor requirements
-- Budget: Cost limitations
-- Time: Deadlines and schedules
-- Regulations: Compliance requirements (GDPR, HIPAA, etc.)
-- Team: Skills and expertise available
+**Performance:**
+- **Response Time**: How fast the system responds
+  - Example: API response time < 200ms
+- **Throughput**: How much work the system can do
+  - Example: Handle 10,000 requests per second
+- **Latency**: Time for data to travel
+  - Example: Database query latency < 50ms
 
-**Stakeholder Concerns:**
-- **Business**: ROI, time-to-market, competitive advantage
-- **Users**: Performance, reliability, ease of use
-- **Developers**: Maintainability, developer experience
-- **Operations**: Deployability, monitoring, support
+**Scalability:**
+- **Horizontal Scaling**: Add more instances
+  - Example: Stateless services scale horizontally
+- **Vertical Scaling**: Increase instance size
+  - Example: Database server with more RAM/CPU
+- **Elasticity**: Automatic scaling based on load
+  - Example: Auto Scaling groups in cloud
+
+**Availability:**
+- **Uptime**: Percentage of time system is available
+  - Example: 99.9% uptime (8.76 hours downtime/year)
+- **Fault Tolerance**: System continues operating despite failures
+  - Example: Multiple availability zones
+- **Recovery Time**: Time to recover from failure
+  - Example: RTO (Recovery Time Objective) < 1 hour
+
+**Security:**
+- **Authentication**: Verifying user identity
+  - Example: OAuth2, JWT tokens
+- **Authorization**: Controlling access to resources
+  - Example: Role-based access control (RBAC)
+- **Data Protection**: Encrypting sensitive data
+  - Example: Encryption at rest and in transit
+- **Compliance**: Meeting regulatory requirements
+  - Example: GDPR, HIPAA, PCI-DSS
+
+**Maintainability:**
+- **Modifiability**: Ease of making changes
+  - Example: Modular architecture enables easier changes
+- **Testability**: Ease of testing
+  - Example: Dependency injection enables unit testing
+- **Debuggability**: Ease of finding and fixing bugs
+  - Example: Comprehensive logging and monitoring
+
+**Usability:**
+- **User Experience**: How easy the system is to use
+- **Accessibility**: Support for users with disabilities
+- **Performance**: Fast response times improve usability
+
+**3. Constraints:**
+
+**Technology Constraints:**
+- **Existing Infrastructure**: Must work with current systems
+  - Example: Integrate with legacy mainframe system
+- **Vendor Requirements**: Must use specific vendors
+  - Example: Enterprise agreement requires specific cloud provider
+- **Team Expertise**: Team's skills and experience
+  - Example: Team knows Java, so use Java-based technologies
+
+**Budget Constraints:**
+- **Infrastructure Costs**: Cloud/hardware costs
+  - Example: Budget of $50K/month for infrastructure
+- **Development Costs**: Team size and timeline
+  - Example: Team of 10 developers, 6-month timeline
+- **Licensing Costs**: Software licenses
+  - Example: Database licensing costs
+
+**Time Constraints:**
+- **Deadlines**: Launch dates, milestones
+  - Example: Must launch in 6 months
+- **Market Windows**: Competitive timing
+  - Example: Launch before competitor
+- **Resource Availability**: Team availability
+  - Example: Key developers available for 3 months
+
+**Regulatory Constraints:**
+- **Compliance**: GDPR, HIPAA, PCI-DSS
+  - Example: Healthcare system must comply with HIPAA
+- **Data Residency**: Data must stay in specific regions
+  - Example: EU data must stay in EU regions
+- **Audit Requirements**: Audit trails and logging
+  - Example: Financial system requires comprehensive audit logs
+
+**4. Stakeholder Concerns:**
+
+**Business Stakeholders:**
+- **ROI**: Return on investment
+- **Time to Market**: Speed of delivery
+- **Competitive Advantage**: Market differentiation
+- **Risk Management**: Business risks
+- **Example**: "We need to launch in 3 months to beat competitor"
+
+**Users:**
+- **Performance**: Fast response times
+- **Reliability**: System works when needed
+- **Ease of Use**: Intuitive interface
+- **Privacy**: Data protection
+- **Example**: "Users expect < 2 second page loads"
+
+**Developers:**
+- **Developer Experience**: Good tooling and frameworks
+- **Maintainability**: Easy to understand and modify
+- **Productivity**: Fast development cycles
+- **Learning Curve**: Technologies team knows
+- **Example**: "Developers prefer technologies they know"
+
+**Operations:**
+- **Deployability**: Easy to deploy and update
+- **Monitoring**: Visibility into system health
+- **Support**: Easy to troubleshoot issues
+- **Cost**: Operational costs
+- **Example**: "Operations team needs comprehensive monitoring"
+
+**Common Architectural Patterns:**
+
+**1. Layered Architecture:**
+- **Structure**: System organized in layers
+- **Layers**: Presentation, Business Logic, Data Access, Database
+- **Use Cases**: Traditional enterprise applications
+- **Pros**: Clear separation of concerns, easy to understand
+- **Cons**: Can lead to performance issues, tight coupling
+
+**2. Microservices Architecture:**
+- **Structure**: System composed of small, independent services
+- **Characteristics**: Each service has own database, deploys independently
+- **Use Cases**: Large, complex systems, multiple teams
+- **Pros**: Independent scaling, technology diversity, team autonomy
+- **Cons**: Increased complexity, network latency, distributed system challenges
+
+**3. Event-Driven Architecture:**
+- **Structure**: Components communicate via events
+- **Characteristics**: Loose coupling, asynchronous communication
+- **Use Cases**: Real-time systems, IoT, event processing
+- **Pros**: Scalability, loose coupling, real-time processing
+- **Cons**: Eventual consistency, debugging complexity
+
+**4. Service-Oriented Architecture (SOA):**
+- **Structure**: Services communicate via well-defined interfaces
+- **Characteristics**: Reusable services, standardized interfaces
+- **Use Cases**: Enterprise integration, legacy system integration
+- **Pros**: Reusability, standardization, integration
+- **Cons**: Complexity, performance overhead
+
+**5. Serverless Architecture:**
+- **Structure**: Functions as a service, managed services
+- **Characteristics**: No server management, pay per use
+- **Use Cases**: Event processing, APIs, scheduled tasks
+- **Pros**: No infrastructure management, automatic scaling, cost-effective
+- **Cons**: Cold starts, vendor lock-in, debugging challenges
+
+**Architectural Decision Making:**
+
+**Decision Framework:**
+
+**1. Identify Options:**
+- List possible architectural approaches
+- Consider different patterns and technologies
+- Research industry best practices
+
+**2. Evaluate Trade-offs:**
+- **Performance vs Complexity**: Simpler may be slower
+- **Cost vs Features**: More features cost more
+- **Time vs Quality**: Faster delivery may sacrifice quality
+- **Flexibility vs Simplicity**: More flexible may be more complex
+
+**3. Consider Context:**
+- **Team Size**: Small team may prefer simpler architecture
+- **Timeline**: Tight deadlines may require simpler solutions
+- **Scale**: Current and future scale requirements
+- **Budget**: Available resources
+
+**4. Document Decisions:**
+- **Architecture Decision Records (ADRs)**: Document decisions and rationale
+- **Trade-offs**: Explicitly document trade-offs made
+- **Alternatives Considered**: Document why alternatives were rejected
+- **Consequences**: Document expected consequences
 
 **Common Misconceptions:**
 
 **Myth 1: Architecture is just diagrams**
-- Reality: Architecture includes decisions, rationale, and trade-offs, not just visual representations
+- **Reality**: Architecture includes decisions, rationale, trade-offs, and principles
+- **Diagrams**: Are a tool for communication, not the architecture itself
+- **Example**: A diagram showing microservices doesn't explain why microservices were chosen
 
 **Myth 2: Architecture is only about technology choices**
-- Reality: Architecture encompasses structure, behavior, quality attributes, and business alignment
+- **Reality**: Architecture encompasses structure, behavior, quality attributes, and business alignment
+- **Technology**: Is one aspect, but not the only aspect
+- **Example**: Choosing microservices is architectural, but so is deciding on data consistency model
 
 **Myth 3: Architecture is only for large systems**
-- Reality: Even small systems benefit from architectural thinking, though the formality may differ
+- **Reality**: Even small systems benefit from architectural thinking
+- **Formality**: May differ, but principles apply
+- **Example**: Small web app still needs to consider scalability, security, maintainability
 
 **Myth 4: Architecture is a one-time activity**
-- Reality: Architecture evolves with the system and must be continuously evaluated and refined
+- **Reality**: Architecture evolves with the system
+- **Continuous**: Must be continuously evaluated and refined
+- **Example**: System may start monolithic and evolve to microservices
 
 **Myth 5: Architecture doesn't need to evolve**
-- Reality: As requirements change, architecture must adapt to remain effective
+- **Reality**: As requirements change, architecture must adapt
+- **Evolution**: Architecture that doesn't evolve becomes technical debt
+- **Example**: Architecture designed for 1M users may not work for 100M users
 
-**Key Takeaways:**
-- Architecture represents significant, system-wide decisions
-- It balances functional requirements, quality attributes, constraints, and stakeholder concerns
-- Architecture is not just diagrams or technology choices
-- It must evolve with the system to remain effective
-- Good architecture enables future development and system evolution`,
+**Myth 6: Perfect architecture exists**
+- **Reality**: All architectures involve trade-offs
+- **Context**: Best architecture depends on context
+- **Example**: Microservices aren't always better than monoliths
+
+**Real-World Architecture Examples:**
+
+**Netflix Architecture:**
+- **Pattern**: Microservices
+- **Scale**: 200+ million subscribers, billions of requests/day
+- **Key Decisions**: 
+  - Microservices for scale and team autonomy
+  - Multiple regions for global reach
+  - Chaos engineering for reliability
+- **Trade-offs**: Complexity vs scalability
+
+**Amazon Architecture:**
+- **Pattern**: Service-oriented architecture
+- **Scale**: Millions of products, billions of transactions
+- **Key Decisions**:
+  - Two-pizza teams (small teams)
+  - Service boundaries aligned with business capabilities
+  - Database per service
+- **Trade-offs**: Operational complexity vs business agility
+
+**Uber Architecture:**
+- **Pattern**: Microservices + Event-driven
+- **Scale**: Millions of rides daily, real-time matching
+- **Key Decisions**:
+  - Microservices for different domains (rides, payments, maps)
+  - Event-driven for real-time updates
+  - Multiple data centers for reliability
+- **Trade-offs**: Eventual consistency vs real-time requirements
+
+**Best Practices:**
+
+**1. Start Simple:**
+- Begin with simplest architecture that meets requirements
+- Avoid over-engineering
+- Evolve architecture as needs become clear
+- **Example**: Start with monolith, evolve to microservices if needed
+
+**2. Make Decisions Explicit:**
+- Document architectural decisions
+- Explain rationale and trade-offs
+- Review decisions regularly
+- **Example**: Use Architecture Decision Records (ADRs)
+
+**3. Consider Quality Attributes:**
+- Identify critical quality attributes early
+- Design architecture to support quality attributes
+- Measure and validate quality attributes
+- **Example**: If performance is critical, design for low latency
+
+**4. Design for Evolution:**
+- Architecture should enable, not prevent, evolution
+- Plan for change
+- Avoid over-constraining implementation
+- **Example**: Use interfaces and abstractions
+
+**5. Involve Stakeholders:**
+- Get input from all stakeholders
+- Balance competing concerns
+- Communicate architecture decisions
+- **Example**: Regular architecture reviews with team
+
+**6. Validate Architecture:**
+- Prototype risky decisions
+- Measure quality attributes
+- Review architecture regularly
+- **Example**: Load testing to validate performance
+
+**Conclusion:**
+
+Software architecture is the foundation of successful software systems. It represents the strategic decisions that shape a system's structure, behavior, and quality attributes. Good architecture enables teams to build systems that are scalable, maintainable, reliable, and aligned with business goals.
+
+Key principles:
+- **Architecture is about decisions**, not just diagrams or technology
+- **Trade-offs are inevitable** - there's no perfect architecture
+- **Context matters** - best architecture depends on your situation
+- **Architecture evolves** - it's not a one-time activity
+- **Quality attributes drive decisions** - understand what matters most
+
+Remember: Architecture is a means to an end, not an end in itself. The goal is to build systems that meet business needs while maintaining quality attributes. Good architecture enables this by providing a solid foundation for development and evolution.`,
 					CodeExamples: `Architecture Decision Example:
 
 Problem: Need to support 1M concurrent users

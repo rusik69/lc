@@ -12,192 +12,250 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction to HTML",
-					Content: `HTML (HyperText Markup Language) is the foundational markup language of the World Wide Web. It provides the structural skeleton for every web page you visit, defining how content is organized and displayed. Understanding HTML deeply is essential for web development, as it forms the base layer that CSS styles and JavaScript enhances.
+					Content: `HTML (HyperText Markup Language) is the foundational markup language of the World Wide Web. Created in 1991 by Tim Berners-Lee, HTML provides the structural skeleton for every web page you visit, defining how content is organized, displayed, and understood by browsers, search engines, and assistive technologies. Understanding HTML deeply is essential for web development, as it forms the base layer that CSS styles and JavaScript enhances.
 
-**What is HTML?**
+**What HTML Really Is:**
 
-HTML is a markup language, not a programming language. It doesn't execute logic or perform calculations - instead, it describes the structure and meaning of content. HTML uses tags (markup) to label different parts of content, telling browsers how to interpret and display that content.
+**Markup Language, Not Programming Language:**
+HTML is a markup language, meaning it describes the structure and meaning of content rather than executing logic or performing calculations. It uses tags (markup) to label different parts of content, telling browsers how to interpret and display that content.
+
+**Key Characteristics:**
+- **Declarative**: Describes what content is, not how to process it
+- **Hierarchical**: Elements nest inside other elements (tree structure)
+- **Semantic**: Elements convey meaning about content
+- **Standardized**: Defined by W3C (World Wide Web Consortium) and WHATWG
+
+**How HTML Works:**
+1. **Author writes HTML**: Developer creates HTML document
+2. **Browser parses HTML**: Browser reads and interprets HTML
+3. **DOM created**: Browser creates Document Object Model (DOM)
+4. **Page rendered**: Browser displays page based on DOM
+5. **User interacts**: User interacts with rendered page
 
 **Historical Context:**
 
-**Early Days:**
-- HTML was created by Tim Berners-Lee in 1991
-- Originally designed to share scientific documents
-- Simple tags for headings, paragraphs, and links
-- Evolved from SGML (Standard Generalized Markup Language)
+**The Birth of the Web (1991):**
+- **Tim Berners-Lee**: Created HTML while working at CERN
+- **Original Purpose**: Share scientific documents between researchers
+- **First Web Page**: info.cern.ch (still accessible!)
+- **Simple Design**: Basic tags for headings, paragraphs, and links
+- **Evolution from SGML**: Based on SGML (Standard Generalized Markup Language)
 
-**Evolution:**
-- HTML 2.0 (1995): First standardized version
-- HTML 3.2 (1997): Added tables, applets, text flow
-- HTML 4.01 (1999): Major update, deprecated many presentational elements
-- XHTML (2000): XML-based strict version
-- HTML5 (2014): Current standard, major overhaul with semantic elements
+**HTML Evolution Timeline:**
+
+**HTML 1.0 (1991):**
+- First version, never officially standardized
+- Very basic: headings, paragraphs, links, lists
+- No images, tables, or forms
+
+**HTML 2.0 (1995):**
+- First official standard (RFC 1866)
+- Added forms, images, tables
+- Established basic structure still used today
+
+**HTML 3.2 (1997):**
+- Added tables, applets, text flow
+- More presentational elements
+- W3C took over standardization
+
+**HTML 4.01 (1999):**
+- Major update, last version before HTML5
+- Deprecated many presentational elements (moved to CSS)
+- Strict, Transitional, and Frameset variants
+- Still widely used today (legacy sites)
+
+**XHTML 1.0 (2000):**
+- XML-based version of HTML
+- Stricter syntax requirements
+- All tags must be closed, attributes quoted
+- Less forgiving than HTML
+
+**HTML5 (2014 - Current):**
+- Major overhaul, current standard
+- Introduced semantic elements (header, nav, article, etc.)
+- New input types, audio/video elements
+- Better form validation
+- Improved accessibility features
+- Living Standard: Continuously updated by WHATWG
+
+**HTML5.1, HTML5.2, HTML5.3:**
+- Incremental updates to HTML5
+- New features and improvements
+- Better accessibility, new APIs
 
 **Why HTML Matters:**
 
 **1. Foundation of the Web:**
-- Every web page is built on HTML
-- Browsers parse HTML to render pages
-- Without HTML, there's no web content
-- Essential skill for any web developer
+- **Universal**: Every web page is built on HTML
+- **Browser Support**: All browsers understand HTML
+- **Essential Skill**: Required for any web developer
+- **No Alternative**: There's no web without HTML
+- **Real-world**: Over 1.9 billion websites use HTML
 
-**2. Accessibility:**
-- Proper HTML structure enables screen readers
-- Semantic HTML helps assistive technologies
-- Improves experience for users with disabilities
-- Legal requirement in many jurisdictions (ADA, WCAG)
+**2. Accessibility (Critical):**
+
+**What is Web Accessibility:**
+Making websites usable by people with disabilities, including:
+- **Visual Impairments**: Blindness, low vision, color blindness
+- **Hearing Impairments**: Deafness, hard of hearing
+- **Motor Impairments**: Limited dexterity, paralysis
+- **Cognitive Impairments**: Learning disabilities, attention disorders
+
+**How HTML Enables Accessibility:**
+- **Semantic HTML**: Screen readers understand structure
+- **Alt Text**: Images described for visually impaired
+- **Proper Headings**: Navigation for screen reader users
+- **Form Labels**: Associates labels with form inputs
+- **ARIA Attributes**: Additional accessibility information
+
+**Legal Requirements:**
+- **ADA (Americans with Disabilities Act)**: US law requires accessibility
+- **WCAG (Web Content Accessibility Guidelines)**: International standard
+- **Section 508**: US federal accessibility requirements
+- **EN 301 549**: European accessibility standard
+- **Real-world**: Companies face lawsuits for inaccessible websites
 
 **3. SEO (Search Engine Optimization):**
-- Search engines use HTML structure to understand content
-- Semantic HTML helps search engines index pages
-- Proper heading hierarchy improves rankings
-- Meta tags provide search engine information
+
+**How Search Engines Use HTML:**
+- **Crawl**: Search engines read HTML to understand content
+- **Index**: HTML structure helps categorize content
+- **Rank**: Semantic HTML improves search rankings
+- **Display**: HTML meta tags appear in search results
+
+**HTML Elements That Help SEO:**
+- **Title Tag**: Appears in search results, critical for SEO
+- **Meta Description**: Summary in search results
+- **Heading Hierarchy**: H1-H6 help structure content
+- **Semantic Elements**: Help search engines understand content
+- **Alt Text**: Images indexed by search engines
+- **Schema Markup**: Structured data for rich snippets
+
+**Real-world Impact:**
+- Proper HTML structure can improve search rankings significantly
+- Semantic HTML helps search engines understand content better
+- Good SEO drives organic traffic and business growth
 
 **4. Maintainability:**
-- Well-structured HTML is easier to maintain
-- Clear structure helps team collaboration
-- Easier to style with CSS
-- Easier to enhance with JavaScript
 
-**HTML Document Structure:**
+**Well-Structured HTML Benefits:**
+- **Easier to Understand**: Clear structure is self-documenting
+- **Easier to Modify**: Changes are straightforward
+- **Easier to Style**: CSS targets clear structure
+- **Easier to Script**: JavaScript manipulates clear DOM
+- **Team Collaboration**: Others can understand your code
 
-**Every HTML Document Follows This Structure:**
+**Bad HTML Problems:**
+- **Div Soup**: Overuse of divs makes structure unclear
+- **Nested Tables**: Old layout technique, hard to maintain
+- **Inline Styles**: Mixing presentation with structure
+- **Poor Semantics**: Hard to understand content meaning
 
-**1. DOCTYPE Declaration:**
-- Tells browser which HTML version to use
-- HTML5: <!DOCTYPE html>
-- Must be first line (before any HTML)
-- Not case-sensitive but lowercase is standard
+**5. Performance:**
 
-**2. html Element:**
-- Root element of entire document
-- Contains all other elements
-- lang attribute specifies language: <html lang="en">
-- Helps with accessibility and SEO
+**How HTML Affects Performance:**
+- **Page Size**: Clean HTML is smaller, loads faster
+- **Parsing Speed**: Well-formed HTML parses faster
+- **Render Performance**: Proper structure renders efficiently
+- **SEO Impact**: Faster pages rank better
 
-**3. head Section:**
-- Contains metadata (information about the page)
-- Not displayed to users (except title)
-- Includes: title, meta tags, links to CSS/JS, etc.
-- Critical for SEO, accessibility, and page configuration
+**Performance Best Practices:**
+- **Minimize HTML**: Remove unnecessary whitespace and comments
+- **Proper Structure**: Helps browser optimize rendering
+- **Lazy Loading**: Defer non-critical content
+- **Semantic HTML**: Enables browser optimizations
 
-**4. body Section:**
-- Contains visible content
-- Everything users see and interact with
-- Includes: headings, paragraphs, images, links, forms, etc.
-- Structure here determines page layout
+**6. Cross-Browser Compatibility:**
 
-**HTML Versions:**
+**HTML Standards Ensure Compatibility:**
+- **W3C Standards**: Ensure browsers interpret HTML consistently
+- **Progressive Enhancement**: Start with HTML, enhance with CSS/JS
+- **Graceful Degradation**: Works even if CSS/JS fails
+- **Testing**: Valid HTML works across browsers
 
-**HTML5 (Current Standard, 2014):**
-- Latest and current standard
-- Introduced semantic elements (header, nav, article, etc.)
-- Added new input types, audio/video elements
-- Better form validation
-- Improved accessibility features
-- Use this for all new projects
+**Modern HTML Features:**
 
-**XHTML (XML-based HTML):**
-- Stricter version of HTML
-- Must be well-formed XML
-- All tags must be closed
-- Attributes must be quoted
-- Less forgiving than HTML
-- Still used in some contexts
+**HTML5 Semantic Elements:**
+- **header**: Page or section header
+- **nav**: Navigation links
+- **main**: Main content area (one per page)
+- **article**: Independent, reusable content
+- **section**: Thematic grouping of content
+- **aside**: Sidebar, complementary content
+- **footer**: Page or section footer
+- **figure/figcaption**: Images with captions
+- **time**: Dates and times (machine-readable)
 
-**HTML4 (Legacy):**
-- Older standard, deprecated
-- Still works but not recommended
-- Many presentational elements (deprecated)
-- Less semantic structure
-- Only maintain existing HTML4 sites
+**Benefits of Semantic HTML:**
+- **Accessibility**: Screen readers understand structure
+- **SEO**: Search engines understand content hierarchy
+- **Maintainability**: Code is self-documenting
+- **Styling**: Easier to target with CSS
+- **Future-Proof**: Works with new technologies
 
-**Key Concepts:**
+**HTML5 Form Enhancements:**
+- **New Input Types**: email, url, tel, date, time, number, range, color
+- **Built-in Validation**: Browser validates input automatically
+- **Placeholder Text**: Hints for users
+- **Required Fields**: Mark fields as required
+- **Pattern Matching**: Regex validation
+- **Better UX**: Native controls improve user experience
 
-**1. Elements and Tags:**
+**HTML5 Media Elements:**
+- **audio**: Native audio playback
+- **video**: Native video playback
+- **source**: Multiple format support
+- **track**: Subtitles and captions
+- **Benefits**: No plugins needed, better accessibility
 
-**Elements:**
-- Building blocks of HTML
-- Consist of start tag, content, and end tag
-- Example: <p>Content</p>
-- Some elements are self-closing: <img />
+**HTML5 APIs:**
+- **Canvas**: 2D graphics and animations
+- **SVG**: Vector graphics
+- **Geolocation**: User location
+- **Local Storage**: Client-side storage
+- **Web Workers**: Background processing
+- **WebSockets**: Real-time communication
 
-**Tags:**
-- Markup that defines elements
-- Start tag: <tagname>
-- End tag: </tagname>
-- Content goes between tags
+**Best Practices (MDN Curriculum 2024-2025):**
 
-**2. Attributes:**
-
-**What Are Attributes:**
-- Provide additional information about elements
-- Placed in start tag: <img src="image.jpg" alt="Description">
-- Name="value" format
-- Some attributes are boolean (presence = true)
-
-**Common Attributes:**
-- id: Unique identifier
-- class: One or more class names
-- src: Source URL (images, scripts, etc.)
-- href: Hyperlink reference
-- alt: Alternative text (accessibility)
-- title: Tooltip text
-
-**3. Semantic HTML:**
-
-**What is Semantic HTML:**
-- Using HTML elements that convey meaning
-- Not just presentation, but structure and meaning
-- Helps browsers, search engines, and assistive technologies
-
-**Semantic Elements (HTML5):**
-- header: Page or section header
-- nav: Navigation links
-- main: Main content area
-- article: Independent content piece
-- section: Thematic grouping
-- aside: Sidebar content
-- footer: Page or section footer
-
-**Benefits:**
-- Better accessibility
-- Improved SEO
-- Easier to style
-- More maintainable code
-
-**4. Document Object Model (DOM):**
-
-**What is DOM:**
-- HTML is parsed into DOM tree
-- DOM represents document structure
-- JavaScript manipulates DOM
-- Understanding HTML structure helps with JavaScript
-
-**DOM Tree Structure:**
-- html is root
-- Elements are nodes
-- Nested elements are child nodes
-- Forms hierarchical tree structure
-
-**HTML Best Practices:**
-
-**1. Use Semantic Elements:**
-- Prefer semantic elements over divs
-- Use header, nav, main, article, section, aside, footer
-- Improves accessibility and SEO
+**1. Use Semantic HTML:**
+- Choose elements that convey meaning
+- Use semantic elements (header, nav, article, etc.)
+- Avoid div soup (overusing divs)
+- **Example**: Use <nav> for navigation, not <div class="nav">
+- **Why**: Improves accessibility, SEO, and maintainability
 
 **2. Proper Document Structure:**
 - Always include DOCTYPE
-- Use lang attribute on html element
-- Include proper head section
-- Organize body content logically
+- Use proper heading hierarchy (H1 to H2 to H3)
+- One H1 per page
+- Logical content flow
+- Use <main> element for main content (one per page)
 
-**3. Accessibility:**
-- Use alt attributes for images
-- Proper heading hierarchy (h1 → h2 → h3)
-- Use labels for form inputs
-- Ensure keyboard navigation works
+**3. Accessibility First (Critical Gap Identified by MDN):**
+- Always include alt text for images (descriptive, not "image" or "photo")
+- Use proper form labels (associate with inputs using 'for' attribute or wrapping)
+- Ensure keyboard navigation works (tab order, focus indicators)
+- Test with screen readers (NVDA, JAWS, VoiceOver)
+- Follow WCAG 2.1 Level AA guidelines (minimum standard)
+- Use ARIA attributes when semantic HTML isn't sufficient
+- Ensure color contrast meets WCAG standards (4.5:1 for normal text)
+- **Legal Requirement**: ADA compliance required in many jurisdictions
+
+**4. Performance and Responsive Design:**
+- Mobile-first approach: Design for mobile, enhance for desktop
+- Use responsive images (srcset, sizes attributes)
+- Optimize images (WebP format, appropriate sizing)
+- Minimize HTML size (remove unnecessary whitespace in production)
+- Use lazy loading for below-the-fold content
+- Consider Core Web Vitals (LCP, FID, CLS)
+
+**5. Privacy Considerations:**
+- Be transparent about data collection
+- Use secure connections (HTTPS)
+- Respect user privacy preferences
+- Implement proper cookie consent
+- Follow GDPR, CCPA, and other privacy regulations
 
 **4. Valid HTML:**
 - Validate your HTML
@@ -211,32 +269,63 @@ HTML is a markup language, not a programming language. It doesn't execute logic 
 - JavaScript for behavior
 - Keep concerns separated
 
+**6. Performance:**
+- Minimize HTML size (remove comments, whitespace in production)
+- Use semantic HTML (enables browser optimizations)
+- Lazy load non-critical content (loading="lazy" attribute)
+- Optimize images and media (appropriate formats, sizes)
+- Use modern image formats (WebP, AVIF) with fallbacks
+- Preload critical resources (fonts, CSS, JavaScript)
+- Minimize render-blocking resources
+
+**7. Debugging and Problem-Solving Skills:**
+- Use browser developer tools effectively (Chrome DevTools, Firefox DevTools)
+- Validate HTML with W3C validator
+- Test across multiple browsers (Chrome, Firefox, Safari, Edge)
+- Use browser compatibility tools (Can I Use, MDN Browser Compatibility)
+- Understand common HTML errors and how to fix them
+- Learn to read and interpret error messages
+
+**8. Soft Skills (MDN Curriculum Emphasis):**
+- **Learning Mindset**: Continuous learning, staying updated with web standards
+- **Collaboration**: Working effectively in teams, code reviews
+- **Teamwork**: Contributing to open source, sharing knowledge
+- **Feedback**: Giving and receiving constructive feedback
+- **Research**: Finding solutions, reading documentation, asking questions
+- **Planning**: Breaking down projects, estimating time, managing scope
+
 **Common Mistakes:**
 
 **1. Missing DOCTYPE:**
-- Causes quirks mode
-- Inconsistent rendering
-- Always include DOCTYPE
+- **Problem**: Causes quirks mode, inconsistent rendering
+- **Solution**: Always include <!DOCTYPE html>
+- **Impact**: Pages render differently across browsers
 
 **2. Improper Nesting:**
-- Closing tags in wrong order
-- Example: <p><strong>text</p></strong> (wrong)
-- Correct: <p><strong>text</strong></p>
+- **Problem**: Closing tags in wrong order
+- **Example**: <p><strong>text</p></strong> (wrong)
+- **Correct**: <p><strong>text</strong></p>
+- **Impact**: Invalid HTML, rendering issues
 
 **3. Forgetting Alt Text:**
-- Images without alt attributes
-- Hurts accessibility
-- Always include alt text
+- **Problem**: Images without alt attributes
+- **Solution**: Always include alt text
+- **Impact**: Hurts accessibility and SEO
 
 **4. Using Presentational Elements:**
-- <font>, <center>, <b> (deprecated)
-- Use CSS instead
-- Use semantic alternatives
+- **Problem**: Using deprecated elements (<font>, <center>, <b>)
+- **Solution**: Use CSS instead, semantic alternatives
+- **Impact**: Deprecated elements may not work in future
 
 **5. Missing Closing Tags:**
-- Some elements require closing tags
-- Browsers may auto-close, but be explicit
-- Self-closing tags: <img />, <br />, <hr />
+- **Problem**: Some elements require closing tags
+- **Solution**: Be explicit, don't rely on browser auto-closing
+- **Impact**: Invalid HTML, potential rendering issues
+
+**6. Div Soup:**
+- **Problem**: Overusing divs instead of semantic elements
+- **Solution**: Use semantic HTML5 elements
+- **Impact**: Hard to maintain, poor accessibility
 
 **Real-World Applications:**
 
@@ -247,10 +336,10 @@ HTML is a markup language, not a programming language. It doesn't execute logic 
 - Essential for full-stack development
 
 **2. Email Development:**
-- HTML emails use HTML
-- Different constraints than web pages
+- HTML emails use HTML (with constraints)
 - Table-based layouts often needed
-- Inline styles required
+- Inline styles required (limited CSS support)
+- Different from web development
 
 **3. Documentation:**
 - Many documentation tools use HTML
@@ -270,35 +359,39 @@ HTML is a markup language, not a programming language. It doesn't execute logic 
 - Understanding HTML helps content creation
 - WYSIWYG editors generate HTML
 
-**Modern HTML Features:**
+**Modern HTML Development:**
 
-**1. HTML5 Semantic Elements:**
-- Better document structure
-- Improved accessibility
-- Cleaner code
+**HTML5 Living Standard:**
+- Continuously updated by WHATWG
+- New features added regularly
+- Browser support varies
+- Use feature detection
 
-**2. Form Enhancements:**
-- New input types (email, date, number, etc.)
-- Built-in validation
-- Better user experience
+**Progressive Enhancement:**
+- Start with HTML (works everywhere)
+- Add CSS for styling
+- Add JavaScript for interactivity
+- Ensures basic functionality always works
 
-**3. Media Elements:**
-- <audio> and <video> tags
-- Native media support
-- No plugins needed
-
-**4. Canvas and SVG:**
-- <canvas> for graphics
-- <svg> for vector graphics
-- Enables rich visual content
-
-**5. Web Components:**
+**Web Components:**
 - Custom elements
 - Shadow DOM
 - HTML templates
 - Reusable components
+- Future of web development
 
-Understanding HTML deeply is the foundation of web development. It's not just about knowing tags - it's about understanding how to structure content semantically, create accessible pages, and build maintainable code that works across all browsers and devices.`,
+**Conclusion:**
+
+HTML is the foundation of the web. Understanding HTML deeply is essential for building accessible, maintainable, and performant websites. Modern HTML5 provides powerful semantic elements, form enhancements, and APIs that enable rich web experiences while maintaining accessibility and SEO benefits.
+
+Key principles:
+- **Use semantic HTML**: Convey meaning, not just presentation
+- **Accessibility first**: Make websites usable by everyone
+- **Valid HTML**: Ensures cross-browser compatibility
+- **Separation of concerns**: HTML for structure, CSS for presentation, JS for behavior
+- **Progressive enhancement**: Start with HTML, enhance with CSS/JS
+
+Remember: Good HTML is the foundation of good web development. Invest time in learning HTML properly, and it will pay dividends throughout your web development career. Whether you're building simple static sites or complex web applications, HTML is where it all starts.`,
 					CodeExamples: `<!DOCTYPE html>
 <html lang="en">
 <head>

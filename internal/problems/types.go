@@ -13,16 +13,16 @@ type TestCase struct {
 
 // Problem represents a coding problem with its test cases and solution
 type Problem struct {
-	ID            int
-	Title         string
-	Description   string
-	Difficulty    string // "Easy", "Medium", "Hard"
-	Topic         string // Data structure/algorithm topic (e.g., "Arrays", "Hash Tables")
-	Signature     string
-	TestCases     []TestCase
-	Solution      string // Go solution
+	ID             int
+	Title          string
+	Description    string
+	Difficulty     string // "Easy", "Medium", "Hard"
+	Topic          string // Data structure/algorithm topic (e.g., "Arrays", "Hash Tables")
+	Signature      string
+	TestCases      []TestCase
+	Solution       string // Go solution
 	PythonSolution string // Python solution
-	Explanation   string
+	Explanation    string
 }
 
 // Lesson represents educational content within a course module
@@ -43,36 +43,36 @@ type CourseModule struct {
 }
 
 var (
-	allProblems            []Problem
-	problemsMu             sync.RWMutex
-	allModules             []CourseModule
-	modulesMu              sync.RWMutex
-	allSystemsDesignModules []CourseModule
-	systemsDesignMu        sync.RWMutex
-	allGolangModules       []CourseModule
-	golangMu               sync.RWMutex
-	allPythonModules       []CourseModule
-	pythonMu               sync.RWMutex
-	allKubernetesModules   []CourseModule
-	kubernetesMu            sync.RWMutex
-	allMachineLearningModules []CourseModule
-	machineLearningMu        sync.RWMutex
-	allLinuxModules          []CourseModule
-	linuxMu                  sync.RWMutex
-	allNetworkingModules     []CourseModule
-	networkingMu             sync.RWMutex
-	allFrontendModules       []CourseModule
-	frontendMu               sync.RWMutex
-	allDevOpsModules         []CourseModule
-	devopsMu                 sync.RWMutex
+	allProblems                    []Problem
+	problemsMu                     sync.RWMutex
+	allModules                     []CourseModule
+	modulesMu                      sync.RWMutex
+	allSystemsDesignModules        []CourseModule
+	systemsDesignMu                sync.RWMutex
+	allGolangModules               []CourseModule
+	golangMu                       sync.RWMutex
+	allPythonModules               []CourseModule
+	pythonMu                       sync.RWMutex
+	allKubernetesModules           []CourseModule
+	kubernetesMu                   sync.RWMutex
+	allMachineLearningModules      []CourseModule
+	machineLearningMu              sync.RWMutex
+	allLinuxModules                []CourseModule
+	linuxMu                        sync.RWMutex
+	allNetworkingModules           []CourseModule
+	networkingMu                   sync.RWMutex
+	allFrontendModules             []CourseModule
+	frontendMu                     sync.RWMutex
+	allDevOpsModules               []CourseModule
+	devopsMu                       sync.RWMutex
 	allSoftwareArchitectureModules []CourseModule
-	softwareArchitectureMu   sync.RWMutex
-	allAWSModules            []CourseModule
-	awsMu                    sync.RWMutex
+	softwareArchitectureMu         sync.RWMutex
+	allAWSModules                  []CourseModule
+	awsMu                          sync.RWMutex
 	allComputerArchitectureModules []CourseModule
-	computerArchitectureMu   sync.RWMutex
-	allAzureModules          []CourseModule
-	azureMu                  sync.RWMutex
+	computerArchitectureMu         sync.RWMutex
+	allAzureModules                []CourseModule
+	azureMu                        sync.RWMutex
 )
 
 func init() {
@@ -162,7 +162,7 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 	if len(sig) >= 5 && sig[:5] == "func " {
 		sig = sig[5:]
 	}
-	
+
 	// Extract function name (everything before first '(')
 	funcNameEnd := 0
 	for i, r := range sig {
@@ -174,9 +174,9 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 	if funcNameEnd == 0 {
 		return "def solution():\n    pass"
 	}
-	
+
 	funcName := strings.TrimSpace(sig[:funcNameEnd])
-	
+
 	// Extract parameters
 	paramsStart := funcNameEnd
 	paramsEnd := strings.Index(sig[paramsStart:], ")")
@@ -184,10 +184,10 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 		return "def " + funcName + "():\n    pass"
 	}
 	paramsEnd += paramsStart
-	
+
 	paramsStr := strings.TrimSpace(sig[paramsStart+1 : paramsEnd])
 	var params []string
-	
+
 	if paramsStr != "" {
 		paramParts := strings.Split(paramsStr, ",")
 		for _, part := range paramParts {
@@ -196,7 +196,7 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 			if len(fields) >= 2 {
 				paramName := fields[0]
 				paramType := fields[1]
-				
+
 				// Convert Go types to Python types (order matters - do complex types first)
 				pyType := paramType
 				pyType = strings.ReplaceAll(pyType, "[]*ListNode", "List[Optional[ListNode]]")
@@ -210,12 +210,12 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 				pyType = strings.ReplaceAll(pyType, "string", "str")
 				pyType = strings.ReplaceAll(pyType, "bool", "bool")
 				// Keep int as int (no change needed)
-				
+
 				params = append(params, paramName+": "+pyType)
 			}
 		}
 	}
-	
+
 	// Extract return type
 	returnType := "None"
 	remaining := strings.TrimSpace(sig[paramsEnd+1:])
@@ -236,7 +236,7 @@ func (p *Problem) goToPythonSignature(goSig string) string {
 	} else if strings.Contains(remaining, "*TreeNode") {
 		returnType = "Optional[TreeNode]"
 	}
-	
+
 	return "def " + funcName + "(" + strings.Join(params, ", ") + ") -> " + returnType
 }
 
