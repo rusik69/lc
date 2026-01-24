@@ -12,32 +12,43 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Understanding Pointers",
-					Content: `**Pointers:**
-- Store memory address of a value
-- Type: *Type (pointer to Type)
-- Zero value is nil
-- Use & to get address
-- Use * to dereference
+					Content: `Pointers are just variables that hold the memory address of another variable. They are crucial in Go for sharing data and efficient memory usage.
 
-**Why Pointers?**
-- Modify function arguments
-- Avoid copying large structs
-- Share data between functions
-- Represent optional values`,
+**The "&" and "*" Operators:**
+*   **& (Address Of):** "Where is this variable stored?" -> Returns memory address.
+*   **(*) (Dereference):** "What value is at this address?" -> Returns the value.
+
+**Stack vs Heap (Simplified):**
+*   **Stack:** Fast, local memory. Variables created here are cleaned up when the function returns.
+*   **Heap:** Persistent memory. Variables created here stay until the Garbage Collector (GC) decides they are no longer needed.
+*   *Note:* You don't manage this manually, but knowing it helps performance. If you return a pointer to a local variable, Go "escapes" it to the heap automatically.
+
+**When to use Pointers:**
+1.  **Modifying Data:** If a function needs to change a variable passed to it.
+2.  **Efficiency:** To avoid copying a massive struct (value mostly read-only).
+3.  **Consistency:** If some methods on a struct need a pointer receiver, use pointer receivers for all of them.`,
 					CodeExamples: `package main
 
 import "fmt"
 
 func main() {
-    x := 42
-    p := &x  // p is pointer to x
+    count := 10
     
-    fmt.Println(x)   // 42
-    fmt.Println(p)   // Memory address
-    fmt.Println(*p)  // 42 (dereference)
-    
-    *p = 21  // Modify through pointer
-    fmt.Println(x)   // 21
+    // Pass by value (copy)
+    increment(count)
+    fmt.Println(count) // Still 10!
+
+    // Pass by reference (pointer)
+    incrementPtr(&count)
+    fmt.Println(count) // Now 11!
+}
+
+func increment(x int) {
+    x++ // Only modifies the copy
+}
+
+func incrementPtr(x *int) {
+    *x++ // Goes to the address and modifies the value
 }`,
 				},
 				{
@@ -511,36 +522,41 @@ func main() {
 }`,
 				},
 				{
-					Title: "Slice Internals",
-					Content: `**Slice Structure:**
-A slice is a struct containing:
-- Pointer to underlying array
-- Length (current elements)
-- Capacity (total allocated space)
+					Title: "Slice Internals: Length vs Capacity",
+					Content: `Slices are not arrays. They are a "view" into an underlying array. Understanding this distinction is key to avoiding bugs and performance issues.
 
-**Important Behaviors:**
-- Slicing creates new slice but shares underlying array
-- Modifying slice can affect other slices sharing same array
-- Append may create new array if capacity exceeded
-- Use copy() to create independent slice`,
+**Anatomy of a Slice:**
+A slice is a tiny struct with three fields:
+1.  **Pointer:** Points to the start of the data in the underlying array.
+2.  **Length (len):** How many elements are in the slice *right now*.
+3.  **Capacity (cap):** How many elements *can* be in the slice before it needs to grow (reallocate).
+
+**Visualizing Append:**
+When you 'append()' to a slice:
+1.  If 'len < cap', it just places the new item in the array and increases 'len'. Fast!
+2.  If 'len == cap', the array is full. Go creates a *new*, bigger array (usually 2x size), copies everything over, updates the pointer, and then adds the item. Slower!
+
+**Gotcha sharing:**
+Slicing 'b := a[1:3]' does NOT copy data. 'b' points to the same array as 'a'. Changing 'b[0]' changes 'a[1]'. Use 'copy()' if you need independent data.`,
 					CodeExamples: `package main
 
 import "fmt"
 
 func main() {
-    original := []int{1, 2, 3, 4, 5}
+    // initialize: len=0, cap=5
+    numbers := make([]int, 0, 5) 
     
-    // Slice shares underlying array
-    slice1 := original[1:4]  // [2, 3, 4]
-    slice1[0] = 99
-    fmt.Println(original)  // [1, 99, 3, 4, 5] - modified!
+    for i := 0; i < 8; i++ {
+        numbers = append(numbers, i)
+        // Watch capacity jump: 5 -> 10 when we hit 6th element
+        fmt.Printf("Len: %d, Cap: %d\n", len(numbers), cap(numbers))
+    }
     
-    // Independent copy
-    slice2 := make([]int, len(original))
-    copy(slice2, original)
-    slice2[0] = 100
-    fmt.Println(original)  // [1, 99, 3, 4, 5] - unchanged
-    fmt.Println(slice2)    // [100, 99, 3, 4, 5]
+    // Slice Trap
+    original := []int{1, 2, 3}
+    view := original[:]
+    view[0] = 999
+    fmt.Println(original[0]) // Prints 999!
 }`,
 				},
 				{

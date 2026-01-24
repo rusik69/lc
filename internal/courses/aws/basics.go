@@ -12,831 +12,120 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is AWS?",
-					Content: `Amazon Web Services (AWS) is the world's most comprehensive and widely adopted cloud computing platform, providing over 200 fully featured services from data centers globally. Launched in 2006, AWS has revolutionized how businesses build, deploy, and scale applications, transforming IT infrastructure from a capital expense to an operational expense.
-
-**Historical Context:**
-
-**The Birth of Cloud Computing:**
-AWS emerged from Amazon's internal need to scale its e-commerce platform efficiently. In the early 2000s, Amazon faced challenges managing its massive infrastructure - building data centers, managing servers, and handling peak traffic during holiday seasons. The solution was to create a standardized, automated infrastructure platform that could be shared across teams.
-
-**Evolution and Growth:**
-- **2006**: Launch of S3 (Simple Storage Service) and EC2 (Elastic Compute Cloud)
-- **2007**: Addition of SimpleDB (precursor to DynamoDB)
-- **2009**: Introduction of Virtual Private Cloud (VPC)
-- **2012**: Launch of Redshift for data warehousing
-- **2014**: Introduction of Lambda (serverless computing)
-- **2015**: Launch of Aurora database engine
-- **2018**: Introduction of AWS Outposts for hybrid cloud
-- **2020+**: Expansion of AI/ML services, edge computing, and sustainability initiatives
-
-**Market Position:**
-AWS holds approximately 32% market share in the cloud infrastructure market (as of 2024), making it the dominant player. It serves millions of customers worldwide, from startups to enterprises, government agencies, and non-profits. Major customers include Netflix, Airbnb, NASA, Samsung, and thousands of other organizations.
-
-**What Makes AWS Different:**
-
-**1. Breadth and Depth of Services:**
-- **200+ services** covering every aspect of cloud computing
-- Continuous innovation with new services and features weekly
-- Deep integration between services
-- Comprehensive documentation and training resources
-
-**2. Global Infrastructure:**
-- **33+ geographic regions** (as of 2024)
-- **100+ Availability Zones** worldwide
-- **400+ edge locations** for content delivery
-- **Regional Edge Caches** for improved performance
-- Largest global cloud infrastructure
-
-**3. Enterprise-Grade Reliability:**
-- **99.99% availability** SLA for many services
-- **11 9's durability** for S3 (99.999999999%)
-- Built-in redundancy and fault tolerance
-- Multi-AZ deployments for high availability
-- Disaster recovery capabilities
-
-**4. Security and Compliance:**
-- **Shared Responsibility Model**: AWS secures the cloud, you secure in the cloud
-- **99 security standards and compliance certifications** (SOC, PCI-DSS, HIPAA, GDPR, etc.)
-- **Encryption** at rest and in transit
-- **Identity and Access Management** (IAM) for fine-grained control
-- **Security monitoring** with GuardDuty, Security Hub, and more
-
-**5. Cost Optimization:**
-- **Pay-as-you-go pricing**: Pay only for what you use
-- **No upfront costs** or long-term commitments
-- **Reserved Instances**: Up to 75% savings for predictable workloads
-- **Spot Instances**: Up to 90% savings for flexible workloads
-- **Savings Plans**: Flexible pricing for compute usage
-- **Free Tier**: 12 months free for new accounts
-
-**Cloud Computing Models:**
-
-Understanding the different service models helps you choose the right AWS services:
-
-**Infrastructure as a Service (IaaS):**
-- **What it is**: Virtualized computing resources over the internet
-- **You manage**: Operating systems, applications, data, runtime, middleware
-- **AWS manages**: Virtualization, servers, storage, networking
-- **AWS Examples**: EC2 (virtual servers), EBS (block storage), VPC (networking)
-- **Use cases**: Full control over infrastructure, custom configurations, lift-and-shift migrations
-- **When to use**: Need complete control, existing applications, compliance requirements
-
-**Platform as a Service (PaaS):**
-- **What it is**: Platform for developing, running, and managing applications
-- **You manage**: Applications and data
-- **AWS manages**: Runtime, middleware, operating systems, virtualization, servers, storage, networking
-- **AWS Examples**: Elastic Beanstalk, Lambda, RDS (managed databases), ECS/EKS (container orchestration)
-- **Use cases**: Faster development, focus on code not infrastructure, automatic scaling
-- **When to use**: Building new applications, want to reduce operational overhead, need rapid deployment
-
-**Software as a Service (SaaS):**
-- **What it is**: Complete software solution delivered over the internet
-- **You manage**: Nothing (just use the software)
-- **AWS manages**: Everything
-- **AWS Examples**: WorkSpaces (virtual desktops), WorkDocs (document management), Chime (communications)
-- **Use cases**: Ready-to-use software, no maintenance, automatic updates
-- **When to use**: Need complete solutions without development, want to focus on business logic
-
-**AWS Well-Architected Framework (2024 Update):**
-
-The AWS Well-Architected Framework provides architectural best practices across six pillars, updated in November 2024. This framework guides design decisions and helps build secure, high-performing, resilient, and efficient infrastructure.
-
-**Six Pillars of Well-Architected Framework:**
-
-**1. Operational Excellence:**
-- Automate changes, respond to events, and run procedures to gain insights
-- Key practices: Automate deployments, test procedures, learn from failures
-- Tools: CloudFormation, Systems Manager, CloudWatch, AWS Config
-
-**2. Security:**
-- Protect data, systems, and assets using cloud security best practices
-- Key practices: Identity and access management, detective controls, infrastructure protection
-- Tools: IAM, GuardDuty, Security Hub, WAF, Shield, KMS
-
-**3. Reliability:**
-- Recover from infrastructure or service disruptions, dynamically acquire resources
-- Key practices: Test recovery procedures, scale horizontally, automate recovery
-- Tools: Auto Scaling, ELB, Route 53, Multi-AZ deployments, Backup
-
-**4. Performance Efficiency:**
-- Use computing resources efficiently to meet system requirements
-- Key practices: Right-size resources, monitor performance, use managed services
-- Tools: CloudWatch, Auto Scaling, EBS optimization, S3 Transfer Acceleration
-
-**5. Cost Optimization:**
-- Avoid unnecessary costs, eliminate unneeded resources
-- Key practices: Right-size resources, use appropriate pricing models, monitor usage
-- Tools: Cost Explorer, Budgets, Reserved Instances, Savings Plans, Spot Instances
-
-**6. Sustainability (Added 2021):**
-- Minimize environmental impact of cloud workloads
-- Key practices: Maximize utilization, use managed services, optimize data transfer
-- Tools: Well-Architected Tool, sustainability dashboards
-
-**AWS Service Categories:**
-
-**Compute Services:**
-- **EC2 (Elastic Compute Cloud)**: Virtual servers in the cloud
-- **Lambda**: Serverless compute for running code without servers
-- **ECS (Elastic Container Service)**: Docker container orchestration
-- **EKS (Elastic Kubernetes Service)**: Managed Kubernetes
-- **Fargate**: Serverless containers
-- **Batch**: Run batch computing workloads
-- **Lightsail**: Simplified virtual private servers
-
-**Storage Services:**
-- **S3 (Simple Storage Service)**: Object storage for any amount of data
-- **EBS (Elastic Block Store)**: Persistent block storage for EC2
-- **EFS (Elastic File System)**: Managed file storage
-- **Glacier**: Archive storage for long-term backup
-- **Storage Gateway**: Hybrid cloud storage
-- **FSx**: Managed file systems (Windows, Lustre)
-
-**Database Services:**
-- **RDS (Relational Database Service)**: Managed relational databases (MySQL, PostgreSQL, Oracle, SQL Server, MariaDB, Aurora)
-- **DynamoDB**: Managed NoSQL database
-- **Redshift**: Data warehousing and analytics
-- **ElastiCache**: In-memory caching (Redis, Memcached)
-- **DocumentDB**: MongoDB-compatible database
-- **Neptune**: Graph database
-- **Timestream**: Time-series database
-
-**Networking Services:**
-- **VPC (Virtual Private Cloud)**: Isolated virtual network
-- **CloudFront**: Content delivery network (CDN)
-- **Route 53**: Domain Name System (DNS) service
-- **API Gateway**: Create and manage APIs
-- **Direct Connect**: Dedicated network connection
-- **VPN**: Site-to-site and client VPN
-- **Transit Gateway**: Central hub for VPC connectivity
-
-**Security Services:**
-- **IAM (Identity and Access Management)**: User and access management
-- **KMS (Key Management Service)**: Encryption key management
-- **Secrets Manager**: Store and rotate secrets
-- **WAF (Web Application Firewall)**: Protect web applications
-- **Shield**: DDoS protection
-- **GuardDuty**: Threat detection
-- **Security Hub**: Security findings aggregation
-- **Macie**: Data security and privacy
-
-**Management Services:**
-- **CloudWatch**: Monitoring and observability
-- **CloudFormation**: Infrastructure as code
-- **Systems Manager**: Operational insights and actions
-- **Config**: Configuration and compliance tracking
-- **CloudTrail**: API logging and auditing
-- **Trusted Advisor**: Best practice recommendations
-- **Cost Explorer**: Cost analysis and optimization
-
-**Key Benefits Explained:**
-
-**1. Scalability:**
-- **Vertical Scaling**: Increase instance size (scale up)
-- **Horizontal Scaling**: Add more instances (scale out)
-- **Auto Scaling**: Automatically adjust capacity based on demand
-- **Elastic Load Balancing**: Distribute traffic across multiple instances
-- **Real-world example**: Netflix scales from thousands to millions of concurrent users during peak hours
-
-**2. Cost-Effectiveness:**
-- **No upfront investment**: No need to purchase hardware
-- **Pay for what you use**: Metered billing (per hour, per GB, per request)
-- **Economies of scale**: AWS's massive scale reduces costs
-- **Cost optimization tools**: Reserved Instances, Savings Plans, Spot Instances
-- **Real-world example**: Startups can launch with minimal costs and scale as they grow
-
-**3. Reliability:**
-- **High Availability**: Multi-AZ deployments ensure 99.99% uptime
-- **Fault Tolerance**: Automatic failover and recovery
-- **Disaster Recovery**: Cross-region replication and backup
-- **Service Level Agreements (SLAs)**: Guaranteed uptime for critical services
-- **Real-world example**: Financial institutions rely on AWS for mission-critical applications
-
-**4. Security:**
-- **Shared Responsibility Model**: Clear division of security responsibilities
-- **Compliance**: Meet regulatory requirements (HIPAA, PCI-DSS, GDPR)
-- **Encryption**: Data encrypted at rest and in transit
-- **Network Security**: VPC, security groups, network ACLs
-- **Identity Management**: IAM for fine-grained access control
-- **Real-world example**: Healthcare organizations use AWS for HIPAA-compliant applications
-
-**5. Global Reach:**
-- **Low Latency**: Deploy close to users worldwide
-- **Data Residency**: Choose regions for compliance
-- **Content Delivery**: CloudFront delivers content from edge locations
-- **Multi-Region**: Deploy across multiple regions for disaster recovery
-- **Real-world example**: Global companies serve customers worldwide with consistent performance
-
-**Common Use Cases:**
-
-**1. Web Hosting:**
-- Host websites and web applications
-- Use EC2, S3, CloudFront, Route 53
-- Auto Scaling for traffic spikes
-- Example: E-commerce websites, blogs, corporate websites
-
-**2. Application Hosting:**
-- Run custom applications
-- Use EC2, ECS, EKS, Lambda
-- Load balancing and auto scaling
-- Example: SaaS applications, APIs, microservices
-
-**3. Data Storage and Backup:**
-- Store and backup data
-- Use S3, EBS, Glacier
-- Cross-region replication
-- Example: Data archives, backups, disaster recovery
-
-**4. Big Data and Analytics:**
-- Process and analyze large datasets
-- Use EMR, Redshift, Athena, Kinesis
-- Real-time and batch processing
-- Example: Business intelligence, data warehousing, log analysis
-
-**5. Machine Learning:**
-- Build and deploy ML models
-- Use SageMaker, Rekognition, Comprehend
-- Pre-trained models and custom training
-- Example: Image recognition, natural language processing, recommendation systems
-
-**6. DevOps and CI/CD:**
-- Automate software delivery
-- Use CodePipeline, CodeBuild, CodeDeploy
-- Infrastructure as code with CloudFormation
-- Example: Continuous integration, automated deployments
-
-**Getting Started:**
-
-**1. Create AWS Account:**
-- Visit aws.amazon.com
-- Provide email and payment information
-- Verify identity
-- Access AWS Management Console
-
-**2. Set Up Billing Alerts:**
-- Configure billing alerts in CloudWatch
-- Set up budgets in AWS Budgets
-- Monitor costs regularly
-- Use Cost Explorer for analysis
-
-**3. Secure Your Account:**
-- Enable MFA (Multi-Factor Authentication) on root account
-- Create IAM users (don't use root account)
-- Follow principle of least privilege
-- Enable CloudTrail for audit logging
-
-**4. Explore Free Tier:**
-- 12 months free for new accounts
-- Always free tier for some services
-- Limited usage amounts
-- Great for learning and testing
-
-**5. Learn the Fundamentals:**
-- Start with core services (EC2, S3, IAM, VPC)
-- Use AWS documentation and tutorials
-- Take AWS training courses
-- Practice with hands-on labs
-
-**Best Practices for Beginners:**
-
-**1. Start Small:**
-- Begin with free tier services
-- Test in a single region
-- Use simple architectures
-- Learn one service at a time
-
-**2. Use Infrastructure as Code:**
-- Use CloudFormation or Terraform
-- Version control your infrastructure
-- Reproducible deployments
-- Easier to manage and update
-
-**3. Monitor Costs:**
-- Set up billing alerts
-- Use cost allocation tags
-- Review Cost Explorer regularly
-- Clean up unused resources
-
-**4. Follow Security Best Practices:**
-- Never share credentials
-- Use IAM roles instead of access keys
-- Enable MFA everywhere
-- Follow principle of least privilege
-
-**5. Plan for High Availability:**
-- Use multiple Availability Zones
-- Implement auto scaling
-- Set up health checks
-- Design for failure
-
-**Common Pitfalls to Avoid:**
-
-**1. Ignoring Costs:**
-- **Problem**: Services running 24/7 can accumulate costs
-- **Solution**: Set up billing alerts, use cost allocation tags, review regularly
-- **Example**: Leaving EC2 instances running when not needed
-
-**2. Poor Security Practices:**
-- **Problem**: Using root account, weak passwords, exposed credentials
-- **Solution**: Use IAM users, enable MFA, rotate credentials regularly
-- **Example**: Committing AWS access keys to public repositories
-
-**3. Single Point of Failure:**
-- **Problem**: Deploying in single AZ, no backups
-- **Solution**: Use multiple AZs, implement backups, design for failure
-- **Example**: Database in single AZ without backups
-
-**4. Not Using Managed Services:**
-- **Problem**: Managing infrastructure yourself (databases, containers)
-- **Solution**: Use managed services (RDS, ECS, Lambda)
-- **Example**: Installing MySQL on EC2 instead of using RDS
-
-**5. Lack of Monitoring:**
-- **Problem**: No visibility into application performance
-- **Solution**: Set up CloudWatch, create alarms, monitor metrics
-- **Example**: Not knowing when application is down
-
-**Real-World Success Stories:**
-
-**Netflix:**
-- Migrated entire infrastructure to AWS
-- Handles billions of hours of streaming monthly
-- Uses auto scaling for peak traffic
-- Leverages multiple AWS services for content delivery
-
-**Airbnb:**
-- Uses AWS for global platform
-- Handles millions of bookings daily
-- Uses EC2, S3, RDS, CloudFront
-- Scales automatically with demand
-
-**NASA:**
-- Uses AWS for space mission data
-- Processes petabytes of satellite imagery
-- Uses S3, EC2, Redshift
-- Enables scientific research globally
-
-**Conclusion:**
-
-AWS provides a comprehensive, secure, and scalable cloud computing platform that enables businesses to innovate faster, reduce costs, and scale globally. Understanding AWS fundamentals is the first step toward building cloud-native applications and leveraging the power of cloud computing. Whether you're a developer, architect, or business leader, AWS offers the tools and services needed to transform your organization's IT infrastructure.
-
-The key to success with AWS is to start small, learn continuously, follow best practices, and leverage the extensive documentation and training resources available. With over 200 services and continuous innovation, AWS provides everything needed to build, deploy, and scale applications in the cloud.`,
-					CodeExamples: `# AWS CLI Basic Commands
-# Install AWS CLI
-pip install awscli
-
-# Configure AWS credentials
-aws configure
-
-# List all S3 buckets
-aws s3 ls
-
-# Create an S3 bucket
-aws s3 mb s3://my-bucket-name
-
-# List EC2 instances
-aws ec2 describe-instances
-
-# Create EC2 instance
-aws ec2 run-instances \\
-    --image-id ami-0c55b159cbfafe1f0 \\
-    --instance-type t2.micro \\
-    --key-name my-key-pair
-
-# AWS SDK Example (Python)
-import boto3
-
-# Create S3 client
-s3 = boto3.client('s3')
-
-# List buckets
-response = s3.list_buckets()
-for bucket in response['Buckets']:
-    print(bucket['Name'])
-
-# Upload file to S3
-s3.upload_file('local-file.txt', 'my-bucket', 'remote-file.txt')`,
+					Content: `Amazon Web Services (AWS) is the world's most comprehensive cloud platform. It provides on-demand delivery of IT resources over the Internet with pay-as-you-go pricing.
+
+**In simpler terms:**
+Instead of buying, owning, and maintaining physical data centers and servers, you can access functionality like electricity from a utility.
+
+**Why AWS?**
+*   **Market Leader:** ~32% market share (2024). If you know AWS, you know the cloud standard.
+*   **Scale:** From a single instance to thousands in minutes.
+*   **Services:** Over 200+ services. Not just "servers" (EC2), but "serverless" (Lambda), AI/ML, Satellites, and Quantum Computing.
+
+**Global Infrastructure:**
+AWS is built around **Regions** and **Availability Zones (AZs)**.
+
+` + "```" + `
+Region (e.g., us-east-1 N. Virginia)
+│
+├── Availability Zone A (us-east-1a) ───┐
+│   [ Data Center ]                     │  <-- Low Latency Link
+├── Availability Zone B (us-east-1b) ───┤      (< 2ms)
+│   [ Data Center ]                     │
+└── Availability Zone C (us-east-1c) ───┘
+    [ Data Center ]
+` + "```" + `
+
+*   **Region:** A physical location around the world (e.g., N. Virginia, Tokyo, Frankfurt).
+*   **Availability Zone (AZ):** One or more discrete data centers with redundant power and networking.
+*   **Edge Locations:** Points of Presence (PoPs) for caching content (CloudFront) closer to users.
+
+**Key takeaway:** Always design for failure. Deploy your application across *multiple* AZs. If one AZ goes down (flood, fire, power cut), your app keeps running in the others.`,
+					CodeExamples: `# Install AWS CLI (The absolute first step)
+# https://aws.amazon.com/cli/
+
+# Configure your keys (Access Key ID & Secret Access Key)
+$ aws configure
+AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name [None]: us-east-1
+Default output format [None]: json
+
+# Test it out
+$ aws s3 ls
+# Lists all your S3 buckets`,
 				},
 				{
 					Title: "AWS Global Infrastructure",
-					Content: `AWS operates the world's most comprehensive, secure, and reliable global cloud infrastructure, spanning 33+ geographic regions with 100+ Availability Zones and 400+ edge locations worldwide. Understanding this infrastructure is crucial for designing highly available, low-latency, and compliant applications.
+					Content: `AWS has the most extensive global footprint of any cloud provider. It is built on three main layers:
 
-**Why Global Infrastructure Matters:**
+**1. Regions (The "Where")**
+A physical location in the world where AWS clusters data centers.
+*   **Examples:** 'us-east-1' (N. Virginia), 'eu-central-1' (Frankfurt).
+*   **Rule:** Data *never* leaves a region unless you explicitly move it. This is critical for GDPR/compliance.
 
-**1. Low Latency:**
-- Deploy applications close to users
-- Reduce round-trip time for requests
-- Improve user experience
-- Critical for real-time applications
+**2. Availability Zones (The "Resilience")**
+Inside every Region, there are 3+ Availability Zones (AZs).
+*   **What acts is it:** A distinct location with its own power, cooling, and networking.
+*   **Why:** If one AZ fails (fire, flood), the others stay up.
+*   **Latency:** < 2ms latency between AZs in the same region.
 
-**2. High Availability:**
-- Multiple data centers per region
-- Automatic failover capabilities
-- Disaster recovery across regions
-- 99.99% uptime SLA for many services
-
-**3. Compliance and Data Residency:**
-- Meet regulatory requirements
-- Keep data in specific geographic locations
-- Comply with GDPR, HIPAA, and other regulations
-- Government and compliance-specific regions
-
-**4. Scalability:**
-- Scale globally without infrastructure management
-- Handle traffic spikes automatically
-- Distribute load across regions
-- Support millions of users worldwide
-
-**AWS Infrastructure Components:**
-
-**1. Regions:**
-
-**What Are Regions:**
-A region is a geographic area containing multiple, isolated Availability Zones. Each region is completely independent and isolated from other regions, providing fault tolerance and stability.
-
-**Key Characteristics:**
-- **Independence**: Each region operates independently
-- **Isolation**: Complete isolation from other regions
-- **Multiple AZs**: Each region has at least 3 Availability Zones
-- **Data Residency**: Data stays within the region (unless explicitly replicated)
-- **Compliance**: Some regions meet specific compliance requirements
-
-**Region Selection Criteria:**
-
-**1. Latency:**
-- Choose region closest to your users
-- Lower latency = better user experience
-- Use CloudFront for global distribution
-- Test latency from different locations
-
-**2. Compliance:**
-- Data residency requirements (GDPR, etc.)
-- Government regulations
-- Industry-specific requirements
-- Compliance certifications per region
-
-**3. Service Availability:**
-- Not all services available in all regions
-- New services launch in select regions first
-- Check service availability before choosing region
-- Some services are region-specific
-
-**4. Cost:**
-- Pricing varies by region
-- Data transfer costs between regions
-- Some regions are more expensive
-- Consider total cost of ownership
-
-**5. Disaster Recovery:**
-- Deploy across multiple regions
-- Cross-region replication
-- Backup and recovery strategies
-- Business continuity planning
-
-**Major AWS Regions (as of 2024):**
-
-**North America:**
-- **us-east-1** (N. Virginia): Largest region, most services, lowest latency for US East Coast
-- **us-east-2** (Ohio): Good for US Midwest
-- **us-west-1** (N. California): Good for US West Coast
-- **us-west-2** (Oregon): Popular, good pricing
-- **ca-central-1** (Canada): For Canadian data residency
-
-**Europe:**
-- **eu-west-1** (Ireland): Largest European region
-- **eu-west-2** (London): UK data residency
-- **eu-west-3** (Paris): France data residency
-- **eu-central-1** (Frankfurt): Germany, GDPR compliance
-- **eu-north-1** (Stockholm): Nordic countries
-- **eu-south-1** (Milan): Italy
-
-**Asia Pacific:**
-- **ap-southeast-1** (Singapore): Southeast Asia hub
-- **ap-southeast-2** (Sydney): Australia, New Zealand
-- **ap-northeast-1** (Tokyo): Japan
-- **ap-northeast-2** (Seoul): South Korea
-- **ap-south-1** (Mumbai): India
-- **ap-east-1** (Hong Kong): Greater China
-
-**Middle East:**
-- **me-south-1** (Bahrain): Middle East
-- **me-central-1** (UAE): United Arab Emirates
-
-**South America:**
-- **sa-east-1** (São Paulo): Brazil, Latin America
-
-**China:**
-- **cn-north-1** (Beijing): Operated by Sinnet
-- **cn-northwest-1** (Ningxia): Operated by NWCD
-
-**Special Regions:**
-- **AWS GovCloud (US)**: For US government workloads
-- **AWS GovCloud (US-West)**: Additional government region
-
-**2. Availability Zones (AZs):**
-
-**What Are Availability Zones:**
-An Availability Zone is one or more discrete data centers with redundant power, networking, and connectivity, housed in separate facilities. AZs within a region are connected through low-latency links but are physically separated to reduce the risk of correlated failures.
-
-**Key Characteristics:**
-- **Physical Separation**: Each AZ is in a different physical location
-- **Fault Isolation**: Failures in one AZ don't affect others
-- **Low-Latency Links**: High-bandwidth, low-latency connectivity between AZs
-- **Redundant Infrastructure**: Power, networking, and connectivity redundancy
-- **Independent Operations**: Each AZ operates independently
-
-**How Availability Zones Work:**
-
-**Architecture:**
-
-    Region (e.g., us-east-1)
-    ├── Availability Zone 1 (us-east-1a)
-    │   ├── Data Center 1
-    │   └── Data Center 2 (redundancy)
-    ├── Availability Zone 2 (us-east-1b)
-    │   ├── Data Center 3
-    │   └── Data Center 4 (redundancy)
-    └── Availability Zone 3 (us-east-1c)
-        ├── Data Center 5
-        └── Data Center 6 (redundancy)
-
-**AZ Naming:**
-- AZ names are region-specific (us-east-1a, us-east-1b, etc.)
-- Names are randomized per account (your us-east-1a ≠ my us-east-1a)
-- This prevents everyone from using the same AZ
-- Use AZ IDs for consistent references across accounts
-
-**Multi-AZ Deployment Benefits:**
-
-**1. High Availability:**
-- Automatic failover if one AZ fails
-- 99.99% availability SLA
-- No single point of failure
-- Continuous operation during AZ failures
-
-**2. Fault Tolerance:**
-- Isolated failure domains
-- Redundant infrastructure
-- Automatic recovery
-- Data replication across AZs
-
-**3. Load Distribution:**
-- Distribute traffic across AZs
-- Better performance
-- Reduced latency
-- Improved scalability
-
-**Best Practices for AZs:**
-
-**1. Always Use Multiple AZs:**
-- Deploy across at least 2 AZs (preferably 3)
-- Never deploy production in single AZ
-- Use multiple AZs for databases, applications, load balancers
-- Test failover scenarios
-
-**2. Understand AZ Mapping:**
-- AZ names differ per account
-- Use AZ IDs for consistent references
-- Don't hardcode AZ names
-- Use availability zone APIs
-
-**3. Plan for AZ Failures:**
-- Design for single AZ failure
-- Implement automatic failover
-- Test disaster recovery procedures
-- Monitor AZ health
-
-**4. Cost Considerations:**
-- Data transfer between AZs is free
-- Cross-AZ data transfer costs apply
-- Consider AZ placement for cost optimization
-- Use same AZ when possible (with caution)
-
-**3. Edge Locations:**
-
-**What Are Edge Locations:**
-Edge locations are points of presence (PoPs) in cities around the world where CloudFront caches content and Route 53 resolves DNS queries. They are separate from regions and AZs, designed to deliver content with the lowest possible latency.
-
-**Key Characteristics:**
-- **400+ locations** worldwide
-- **Content Caching**: Store frequently accessed content
-- **Low Latency**: Deliver content from nearest edge location
-- **Global Distribution**: Serve users worldwide
-- **Automatic Routing**: Route users to nearest edge
-
-**CloudFront Edge Locations:**
-- Cache static and dynamic content
-- Reduce origin server load
-- Improve performance globally
-- Support live streaming
-- Handle DDoS protection
-
-**Route 53 Edge Locations:**
-- DNS query resolution
-- Low-latency DNS responses
-- Global DNS distribution
-- Health check monitoring
-- Traffic routing policies
-
-**How Edge Locations Work:**
-
-**Content Delivery Flow:**
-
-    User Request
-        ↓
-    Route 53 (Edge Location) - DNS Resolution
-        ↓
-    CloudFront (Edge Location) - Check Cache
-        ↓
-    Cache Hit → Return Cached Content (Fast!)
-        ↓
-    Cache Miss → Fetch from Origin → Cache → Return
-
-**Benefits:**
-- **Reduced Latency**: Content served from nearby edge location
-- **Lower Bandwidth Costs**: Reduced origin server traffic
-- **Better Performance**: Faster page loads and downloads
-- **Global Reach**: Serve users worldwide efficiently
-- **Scalability**: Handle traffic spikes automatically
-
-**4. Regional Edge Caches:**
-
-**What Are Regional Edge Caches:**
-Regional Edge Caches are CloudFront locations that sit between edge locations and your origin server. They provide an additional caching layer for content that doesn't change frequently but isn't popular enough to stay in edge locations.
-
-**Key Characteristics:**
-- **Additional Caching Layer**: Between edge locations and origin
-- **Larger Cache**: More storage than edge locations
-- **Less Frequent Eviction**: Content stays cached longer
-- **Cost Optimization**: Reduce origin requests
-- **Performance**: Faster than fetching from origin
-
-**Use Cases:**
-- Content with moderate popularity
-- Large files (videos, software downloads)
-- Content that changes infrequently
-- Reducing origin server load
-- Cost optimization for global distribution
-
-**Infrastructure Architecture:**
-
-**Complete AWS Infrastructure:**
-
-    Global AWS Infrastructure
-    │
-    ├── Regions (33+)
-    │   ├── Region 1 (e.g., us-east-1)
-    │   │   ├── Availability Zone 1 (us-east-1a)
-    │   │   │   ├── Data Center 1
-    │   │   │   └── Data Center 2
-    │   │   ├── Availability Zone 2 (us-east-1b)
-    │   │   │   ├── Data Center 3
-    │   │   │   └── Data Center 4
-    │   │   └── Availability Zone 3 (us-east-1c)
-    │   │       ├── Data Center 5
-    │   │       └── Data Center 6
-    │   └── Region 2 (e.g., eu-west-1)
-    │       └── ...
-    │
-    ├── Edge Locations (400+)
-    │   ├── CloudFront Edge Locations
-    │   │   ├── Cache static content
-    │   │   └── Serve dynamic content
-    │   └── Route 53 Edge Locations
-    │       ├── DNS resolution
-    │       └── Health checks
-    │
-    └── Regional Edge Caches
-        ├── Additional caching layer
-        └── Larger cache storage
+**Visual Hierarchy:**
+` + "```" + `
+[ User in London ]
+      |
+      v
+[ Edge Location (London) ]  <-- Caches content for speed
+      |
+      v
+[ Region (eu-west-2 London) ]
+      |
+      +--- [ AZ A ] <-- App Server
+      |
+      +--- [ AZ B ] <-- App Server (Backup)
+` + "```" + `
 
 **Best Practices:**
+1.  **Select the right Region:** Balance **Latency**, **Cost**, and **Features**.
+2.  **Multi-AZ is mandatory:** For production, always run in at least 2 AZs.`,
+					CodeExamples: `# Find the fastest region for you
+# (Ping test from your terminal)
+$ ping dynamodb.us-east-1.amazonaws.com
+$ ping dynamodb.eu-west-1.amazonaws.com
 
-**1. Multi-AZ Deployment:**
-- **Always deploy across multiple AZs** for production workloads
-- Use at least 2 AZs (preferably 3) for high availability
-- Distribute resources evenly across AZs
-- Test failover scenarios regularly
-- Monitor AZ health and performance
+# List all enabled regions
+$ aws ec2 describe-regions --output table`,
+				},
+				{
+					Title: "Core AWS Services",
+					Content: `AWS has over 200 services, but you only need to master a few to get started. These are the building blocks of the cloud.
 
-**2. Region Selection:**
-- **Choose region closest to users** for lowest latency
-- Consider **data residency requirements** (GDPR, HIPAA, etc.)
-- Check **service availability** in chosen region
-- Compare **pricing** across regions
-- Plan for **disaster recovery** across regions
+**1. Compute (The "Brains")**
+*   **EC2 (Elastic Compute Cloud):** Virtual servers (VMs). You manage the OS.
+*   **Lambda:** Serverless code. You upload code, AWS runs it. No servers to manage.
 
-**3. Content Delivery:**
-- **Use CloudFront** for global content delivery
-- **Cache static content** at edge locations
-- **Optimize cache policies** for your content
-- **Monitor cache hit ratios** and performance
-- **Use Regional Edge Caches** for moderate popularity content
+**2. Storage (The "Hard Drive")**
+*   **S3 (Simple Storage Service):** Unlimited object storage for files (images, backups). Durable (11 9s).
+*   **EBS (Elastic Block Store):** Hard drives for your EC2 instances.
 
-**4. Network Optimization:**
-- **Use VPC endpoints** to keep traffic within AWS network
-- **Minimize cross-region data transfer** (costs apply)
-- **Use Direct Connect** for consistent performance
-- **Optimize data transfer** patterns
-- **Monitor network performance** and costs
+**3. Networking (The "Cables")**
+*   **VPC (Virtual Private Cloud):** Your private network in the cloud.
+*   **LB (Load Balancer):** Distributes traffic across servers.
 
-**5. Disaster Recovery:**
-- **Deploy across multiple regions** for disaster recovery
-- **Implement cross-region replication** for critical data
-- **Test disaster recovery procedures** regularly
-- **Document recovery procedures** and runbooks
-- **Monitor and alert** on regional issues
+**4. Databases (The "Memory")**
+*   **RDS (Relational Database Service):** Managed SQL (MySQL, Postgres). AWS handles backups/patches.
+*   **DynamoDB:** Fast, flexible NoSQL database. Single-digit millisecond latency.
 
-**Common Pitfalls:**
+**5. Security (The "Bouncer")**
+*   **IAM (Identity & Access Management):** Controls who can do what (Users, Roles, Permissions).`,
+					CodeExamples: `# S3: List buckets
+$ aws s3 ls
 
-**1. Single AZ Deployment:**
-- **Problem**: Deploying production in single AZ
-- **Risk**: Complete outage if AZ fails
-- **Solution**: Always use multiple AZs
-- **Example**: Database in single AZ without replication
+# EC2: List running instances
+$ aws ec2 describe-instances --filters "Name=instance-state-name,Values=running"
 
-**2. Wrong Region Selection:**
-- **Problem**: Choosing region far from users
-- **Impact**: High latency, poor user experience
-- **Solution**: Choose region closest to users, use CloudFront
-- **Example**: US users accessing EU region (high latency)
-
-**3. Ignoring Data Residency:**
-- **Problem**: Not considering compliance requirements
-- **Risk**: Regulatory violations, legal issues
-- **Solution**: Understand requirements, choose appropriate regions
-- **Example**: EU data stored in US region (GDPR violation)
-
-**4. Not Using CloudFront:**
-- **Problem**: Serving content directly from origin
-- **Impact**: High latency, high costs, poor performance
-- **Solution**: Use CloudFront for global content delivery
-- **Example**: Serving images/videos directly from S3 to global users
-
-**5. Cross-Region Data Transfer Costs:**
-- **Problem**: Unnecessary data transfer between regions
-- **Impact**: High costs, poor performance
-- **Solution**: Minimize cross-region transfers, use VPC endpoints
-- **Example**: Frequent data sync between regions without optimization
-
-**Real-World Examples:**
-
-**Netflix:**
-- Deploys across multiple regions worldwide
-- Uses CloudFront for content delivery
-- Handles billions of hours of streaming monthly
-- Automatically routes users to nearest edge location
-
-**Airbnb:**
-- Multi-region deployment for global platform
-- Uses multiple AZs for high availability
-- CloudFront for static asset delivery
-- Route 53 for global DNS resolution
-
-**Financial Services:**
-- Deploy in compliance-specific regions
-- Multi-AZ for high availability
-- Cross-region disaster recovery
-- Meet regulatory requirements (data residency)
-
-**Conclusion:**
-
-Understanding AWS global infrastructure is fundamental to designing highly available, performant, and compliant applications. By leveraging regions, Availability Zones, edge locations, and regional edge caches effectively, you can build applications that scale globally, provide excellent user experience, and meet compliance requirements.
-
-The key principles are:
-- **Deploy across multiple AZs** for high availability
-- **Choose regions wisely** based on latency, compliance, and cost
-- **Use CloudFront** for global content delivery
-- **Plan for disaster recovery** across regions
-- **Monitor and optimize** your infrastructure continuously
-
-Remember: AWS infrastructure is designed for scale, reliability, and performance. By following best practices and understanding the infrastructure components, you can leverage AWS's global reach to build world-class applications.`,
-					CodeExamples: `# List all AWS regions
-aws ec2 describe-regions
-
-# List Availability Zones in a region
-aws ec2 describe-availability-zones --region us-east-1
-
-# Deploy resources across multiple AZs
-# CloudFormation example
-Resources:
-  ApplicationLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Subnets:
-        - !Ref PublicSubnet1  # AZ 1
-        - !Ref PublicSubnet2  # AZ 2
-        - !Ref PublicSubnet3  # AZ 3
-      Scheme: internet-facing
-
-# Multi-AZ RDS instance
-Resources:
-  Database:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      Engine: mysql
-      MultiAZ: true
-      AvailabilityZone: us-east-1a`,
+# IAM: Who am I?
+$ aws sts get-caller-identity`,
 				},
 				{
 					Title: "AWS Account and Billing",
@@ -2611,7 +1900,7 @@ s3.delete_object(Bucket='my-bucket', Key='remote-file.txt')`,
 				},
 				{
 					Title: "S3 Versioning and Lifecycle",
-				Content: `S3 versioning keeps multiple versions of objects, and lifecycle policies automate transitions and deletions.
+					Content: `S3 versioning keeps multiple versions of objects, and lifecycle policies automate transitions and deletions.
 
 **Versioning:**
 - Keeps multiple versions of same object

@@ -11,491 +11,64 @@ func init() {
 			Order:       0,
 			Lessons: []problems.Lesson{
 				{
-					Title: "What is DevOps?",
-					Content: `DevOps is a transformative cultural and technical movement that bridges the traditional gap between software development (Dev) and IT operations (Ops). Coined around 2009, DevOps represents a fundamental shift in how software is built, deployed, and operated. It's not just a set of tools or practices—it's a philosophy that emphasizes collaboration, automation, and continuous improvement to deliver high-quality software faster and more reliably.
-
-**The Core Problem DevOps Solves:**
-
-**Traditional IT Challenges:**
-
-**The Great Divide:**
-In traditional organizations, Development and Operations were separate teams with conflicting goals:
-- **Development Teams**: Wanted to deploy frequently, move fast, innovate
-- **Operations Teams**: Wanted stability, control, predictability
-- **Result**: Conflict, slow deployments, finger-pointing, poor collaboration
-
-**The Deployment Problem:**
-- **Infrequent Deployments**: Deployments happened monthly or quarterly
-- **Manual Processes**: Error-prone manual deployment steps
-- **Long Feedback Loops**: Issues discovered days or weeks after deployment
-- **"Works on My Machine"**: Code worked in dev but failed in production
-- **Blame Game**: Dev blamed Ops, Ops blamed Dev
-
-**The Cost of Slow Deployments:**
-- **Market Impact**: Competitors move faster
-- **Technical Debt**: Accumulates when fixes are delayed
-- **Team Frustration**: Developers frustrated by slow releases
-- **Business Impact**: Features delayed, bugs unfixed, users unhappy
-
-**What DevOps Really Is:**
-
-DevOps is often misunderstood. It's not:
-- ❌ Just automation
-- ❌ Just tools
-- ❌ Just CI/CD
-- ❌ Just a job title
-- ❌ Just for startups
-
-DevOps is:
-- ✅ **Culture**: Collaboration, shared responsibility, continuous learning
-- ✅ **Practices**: CI/CD, Infrastructure as Code, monitoring, automation
-- ✅ **Tools**: Technologies that enable DevOps practices
-- ✅ **Mindset**: "You build it, you run it" philosophy
-
-**The Three Pillars of DevOps:**
-
-**1. Culture (Most Important):**
-
-**Breaking Down Silos:**
-- **Traditional**: Separate Dev and Ops teams, different goals
-- **DevOps**: Cross-functional teams, shared goals
-- **Impact**: Better collaboration, faster problem resolution
-
-**Shared Ownership:**
-- **Traditional**: Dev writes code, Ops runs it (handoff)
-- **DevOps**: Teams own entire lifecycle (build, deploy, run, monitor)
-- **Impact**: Better quality, faster fixes, shared responsibility
-
-**Blameless Culture:**
-- **Traditional**: Blame individuals for failures
-- **DevOps**: Learn from failures, improve systems
-- **Impact**: Psychological safety, continuous improvement
-
-**"You Build It, You Run It":**
-- **Traditional**: Dev builds, Ops runs (disconnect)
-- **DevOps**: Teams responsible for their services end-to-end
-- **Impact**: Better understanding, faster fixes, higher quality
-
-**Continuous Learning:**
-- **Traditional**: Fixed processes, slow to change
-- **DevOps**: Experiment, learn, improve continuously
-- **Impact**: Innovation, adaptation, improvement
-
-**Real-World Example:**
-Netflix's "Freedom and Responsibility" culture empowers teams to own their services completely, leading to rapid innovation and high reliability.
-
-**2. Practices:**
-
-**Continuous Integration (CI):**
-- **What**: Developers merge code frequently (multiple times per day)
-- **How**: Automated builds and tests on every commit
-- **Why**: Catch integration issues early, reduce merge conflicts
-- **Tools**: Jenkins, GitLab CI, GitHub Actions, CircleCI
-- **Real-world**: Companies deploy code multiple times per day
-
-**Continuous Delivery/Deployment (CD):**
-- **Continuous Delivery**: Code always deployable, manual approval gate
-- **Continuous Deployment**: Automated deployment to production
-- **Why**: Faster time to market, reduced deployment risk
-- **Tools**: Same as CI, plus deployment automation
-- **Real-world**: Amazon deploys every 11.6 seconds on average
-
-**Infrastructure as Code (IaC):**
-- **What**: Define infrastructure in code (version controlled)
-- **How**: Use tools like Terraform, CloudFormation, Ansible
-- **Why**: Reproducible, versioned, testable infrastructure
-- **Benefits**: Consistency, faster provisioning, disaster recovery
-- **Real-world**: Infrastructure changes are code-reviewed like application code
-
-**Monitoring and Observability:**
-- **What**: Comprehensive monitoring of applications and infrastructure
-- **How**: Metrics, logs, traces, dashboards, alerts
-- **Why**: Proactive problem detection, faster incident response
-- **Tools**: Prometheus, Grafana, Datadog, New Relic, CloudWatch
-- **Real-world**: Companies detect and fix issues before users notice
-
-**Automated Testing:**
-- **What**: Automated tests at multiple levels
-- **Types**: Unit, integration, end-to-end, performance, security
-- **Why**: Catch bugs early, ensure quality, enable fast deployments
-- **Tools**: JUnit, pytest, Selenium, JMeter, OWASP ZAP
-- **Real-world**: Comprehensive test suites enable confident deployments
-
-**Version Control Everything:**
-- **What**: Version control for code, infrastructure, configs, docs
-- **How**: Git for code, GitOps for infrastructure
-- **Why**: History, rollback, collaboration, audit trail
-- **Real-world**: Everything is versioned, nothing is manual
-
-**3. Tools:**
-
-**CI/CD Platforms:**
-- **Jenkins**: Open-source, highly customizable, plugin ecosystem
-- **GitLab CI**: Integrated with GitLab, easy to use
-- **GitHub Actions**: Integrated with GitHub, growing rapidly
-- **CircleCI**: Cloud-based, easy setup
-- **Azure DevOps**: Microsoft's integrated platform
-
-**Configuration Management:**
-- **Ansible**: Agentless, YAML-based, easy to learn
-- **Puppet**: Declarative, mature, enterprise-focused
-- **Chef**: Ruby-based, flexible, powerful
-- **SaltStack**: Fast, scalable, event-driven
-
-**Infrastructure as Code:**
-- **Terraform**: Multi-cloud, declarative, state management
-- **CloudFormation**: AWS-native, JSON/YAML
-- **Pulumi**: Code-based (Python, Go, TypeScript), modern
-- **Ansible**: Can also provision infrastructure
-
-**Containers and Orchestration:**
-- **Docker**: Container platform, industry standard
-- **Kubernetes**: Container orchestration, de facto standard
-- **Docker Compose**: Multi-container applications
-- **Helm**: Kubernetes package manager
-
-**Monitoring and Observability:**
-- **Prometheus**: Metrics collection and alerting
-- **Grafana**: Visualization and dashboards
-- **ELK Stack**: Elasticsearch, Logstash, Kibana (logs)
-- **Datadog**: Comprehensive monitoring platform
-- **New Relic**: Application performance monitoring
-
-**Version Control:**
-- **Git**: Distributed version control, industry standard
-- **GitHub**: Code hosting and collaboration
-- **GitLab**: Integrated DevOps platform
-- **Bitbucket**: Atlassian's Git hosting
-
-**Historical Context:**
-
-**The Evolution:**
-
-**Pre-DevOps Era (1990s-2000s):**
-- **Waterfall Development**: Long release cycles (months/years)
-- **Separate Teams**: Dev and Ops in silos
-- **Manual Processes**: Error-prone manual deployments
-- **Slow Feedback**: Issues discovered weeks later
-- **Example**: Software releases happened quarterly or annually
-
-**Agile Movement (2000s):**
-- **Short Iterations**: 2-4 week sprints
-- **Faster Development**: But deployment still slow
-- **Problem**: Dev moved fast, but Ops couldn't keep up
-- **Example**: Features developed in 2 weeks, deployed in 2 months
-
-**DevOps Emergence (2009-2010s):**
-- **2009**: Term "DevOps" coined by Patrick Debois
-- **2010s**: Rapid adoption, tooling explosion
-- **Focus**: Bridge Dev-Ops gap, automate everything
-- **Example**: Companies like Netflix, Amazon leading the way
-
-**Modern DevOps (2020s-2025):**
-- **GitOps**: Infrastructure managed via Git (ArgoCD, Flux)
-- **Cloud-Native**: Built for cloud from the start (Kubernetes, serverless)
-- **Platform Engineering**: Self-service platforms for developers (internal developer platforms)
-- **AI/ML Integration**: AI-powered operations (AIOps, predictive analytics)
-- **Observability**: Comprehensive monitoring (metrics, logs, traces)
-- **Security Integration**: DevSecOps, shift-left security, SBOM
-- **Example**: Kubernetes, serverless, AIOps, platform engineering, GitOps workflows
-
-**Latest Trends (2024-2025):**
-- **Platform Engineering**: Building internal developer platforms (IDPs) for self-service
-- **AIOps**: AI-powered operations for predictive maintenance and anomaly detection
-- **FinOps**: Cloud financial management and cost optimization
-- **Supply Chain Security**: SBOM (Software Bill of Materials), dependency scanning
-- **Edge Computing**: Deploying applications closer to users
-- **Service Mesh**: Advanced traffic management and security (Istio, Linkerd)
-- **Chaos Engineering**: Proactive failure testing (Chaos Monkey, Gremlin)
-
-**Key Milestones:**
-- **2009**: DevOpsDays conference, term "DevOps" popularized
-- **2011**: "The Phoenix Project" book published
-- **2013**: Docker released, containerization revolution
-- **2014**: Kubernetes released, orchestration standard
-- **2015**: "The DevOps Handbook" published
-- **2020s**: GitOps, Platform Engineering, AIOps
-
-**Why DevOps Matters:**
-
-**Business Impact:**
-
-**1. Faster Time to Market:**
-- **Traditional**: Months to deploy features
-- **DevOps**: Hours or minutes to deploy
-- **Impact**: Competitive advantage, faster innovation
-- **Real-world**: Companies deploying multiple times per day
-
-**2. Higher Quality:**
-- **Automated Testing**: Catches bugs early
-- **Continuous Integration**: Prevents integration issues
-- **Monitoring**: Proactive problem detection
-- **Impact**: Fewer production incidents, better user experience
-
-**3. Reduced Costs:**
-- **Automation**: Reduces manual work
-- **Efficiency**: Faster deployments, less downtime
-- **Right-Sizing**: Better resource utilization
-- **Impact**: Lower operational costs
-
-**4. Improved Reliability:**
-- **Infrastructure as Code**: Reproducible, consistent
-- **Automated Deployments**: Less human error
-- **Monitoring**: Proactive issue detection
-- **Impact**: Higher uptime, better SLA
-
-**5. Better Team Culture:**
-- **Collaboration**: Better teamwork
-- **Shared Ownership**: Everyone responsible
-- **Learning**: Continuous improvement culture
-- **Impact**: Higher job satisfaction, retention
-
-**Technical Impact:**
-
-**1. Faster Deployments:**
-- **Traditional**: Days or weeks
-- **DevOps**: Minutes or seconds
-- **Example**: Amazon: 11.6 seconds average deployment time
-
-**2. More Frequent Releases:**
-- **Traditional**: Monthly or quarterly
-- **DevOps**: Daily or multiple times per day
-- **Example**: Netflix: Hundreds of deployments per day
-
-**3. Faster Recovery:**
-- **Traditional**: Hours or days to fix issues
-- **DevOps**: Minutes to detect and fix
-- **Example**: Automated rollback capabilities
-
-**4. Better Scalability:**
-- **Infrastructure as Code**: Scale automatically
-- **Containers**: Easy horizontal scaling
-- **Cloud**: Elastic infrastructure
-- **Example**: Auto-scaling based on load
-
-**DevOps Metrics (DORA Metrics):**
-
-**Deployment Frequency:**
-- How often deployments happen
-- **Elite**: Multiple times per day
-- **High**: Once per day to once per week
-- **Medium**: Once per week to once per month
-- **Low**: Once per month to once per 6 months
-
-**Lead Time:**
-- Time from code commit to production
-- **Elite**: Less than 1 hour
-- **High**: 1 day to 1 week
-- **Medium**: 1 week to 1 month
-- **Low**: 1 month to 6 months
-
-**Mean Time to Recovery (MTTR):**
-- Time to recover from failure
-- **Elite**: Less than 1 hour
-- **High**: Less than 1 day
-- **Medium**: 1 day to 1 week
-- **Low**: 1 week to 1 month
-
-**Change Failure Rate:**
-- Percentage of deployments causing failure
-- **Elite**: 0-15%
-- **High**: 16-30%
-- **Medium**: 31-45%
-- **Low**: 46-60%
-
-**Common Misconceptions:**
-
-**Myth 1: DevOps is Just Automation**
-- **Reality**: Automation is important, but culture is more important
-- **Truth**: You can automate everything and still not have DevOps
-- **Example**: Automated deployments without collaboration still fails
-
-**Myth 2: DevOps Eliminates Ops**
-- **Reality**: Ops skills are still needed, just integrated differently
-- **Truth**: Ops becomes part of development teams
-- **Example**: Site Reliability Engineers (SREs) are Ops engineers in Dev teams
-
-**Myth 3: DevOps is Only for Startups**
-- **Reality**: Large enterprises benefit greatly from DevOps
-- **Truth**: Many large companies are DevOps leaders
-- **Example**: Amazon, Netflix, Google are DevOps pioneers
-
-**Myth 4: DevOps Requires Cloud**
-- **Reality**: DevOps principles apply to on-premises too
-- **Truth**: Cloud makes DevOps easier, but not required
-- **Example**: Many companies do DevOps on-premises
-
-**Myth 5: DevOps is Expensive**
-- **Reality**: DevOps saves money long-term
-- **Truth**: Initial investment pays off through efficiency
-- **Example**: Reduced downtime, faster deployments save money
-
-**Getting Started with DevOps:**
-
-**1. Start with Culture:**
-- Break down silos
-- Encourage collaboration
-- Share responsibility
-- Learn from failures
-
-**2. Automate Gradually:**
-- Start with most painful processes
-- Automate deployments first
-- Then infrastructure provisioning
-- Then monitoring and alerting
-
-**3. Measure Everything:**
-- Track deployment frequency
-- Measure lead time
-- Monitor failure rates
-- Track recovery time
-
-**4. Continuous Improvement:**
-- Regular retrospectives
-- Experiment with new tools
-- Learn from others
-- Share knowledge
-
-**Real-World DevOps Success Stories:**
-
-**Amazon:**
-- Deploys every 11.6 seconds on average
-- Thousands of deployments per day
-- "Two-pizza teams" own services end-to-end
-- Infrastructure as Code standard
-
-**Netflix:**
-- Hundreds of deployments per day
-- Chaos Engineering for resilience
-- Comprehensive monitoring
-- "Freedom and Responsibility" culture
-
-**Etsy:**
-- Deploys 50+ times per day
-- Comprehensive monitoring
-- Blameless post-mortems
-- Strong DevOps culture
-
-**Conclusion:**
-
-DevOps is not a destination—it's a journey. It's about continuously improving how you build, deploy, and operate software. The key is to start with culture, automate gradually, measure everything, and continuously improve.
-
-Remember:
-- **Culture is most important**: Tools don't create DevOps, culture does
-- **Start small**: Don't try to change everything at once
-- **Measure progress**: Use DORA metrics to track improvement
-- **Learn continuously**: DevOps evolves, keep learning
-- **Focus on value**: Automate what provides value, not everything
-
-DevOps has transformed how software is delivered, enabling companies to move faster, deliver higher quality, and respond to market changes quickly. Whether you're a developer, operations engineer, or manager, understanding DevOps is essential for modern software delivery.`,
-					CodeExamples: `# DevOps Toolchain Example
-# Version Control
-git init
-git add .
-git commit -m "Initial commit"
-
-# CI/CD Pipeline (GitHub Actions)
-# .github/workflows/ci.yml
+					Title: "DevOps Fundamentals",
+					Content: `DevOps is the union of people, process, and technology to continually provide value to customers. It’s a culture shift that removes the high-wall between Development and Operations.
+
+**1. The Pillars of DevOps (C.A.L.M.S.)**
+*   **Culture:** Shared responsibility and trust.
+*   **Automation:** If you do it twice, automate it.
+*   **Lean:** Small batch sizes, fast feedback loops.
+*   **Measurement:** Use data (DORA metrics) to improve.
+*   **Sharing:** Open communication and shared goals.
+
+**2. The CI/CD Lifecycle**
+` + "```" + `
+[ Plan ] -> [ Code ] -> [ Build ] -> [ Test ] ──┐
+                                               │
+[ Monitor ] <- [ Operate ] <- [ Deploy ] <─────┘
+` + "```" + `
+
+**3. Key Practices**
+*   **Continuous Integration (CI):** Automate builds/tests on every commit.
+*   **Continuous Delivery (CD):** Code is always deployable.
+*   **Infrastructure as Code (IaC):** Manage servers using code (Terraform/Ansible).
+*   **Observability:** Logs, Metrics, and Traces to understand system health.
+
+**4. DORA Metrics (Success Indicators)**
+1.  **Deployment Frequency:** How often you ship code.
+2.  **Lead Time for Changes:** Time from commit to production.
+3.  **Change Failure Rate:** % of deployments that cause a fail.
+4.  **MTTR:** Mean Time to Recovery from a failure.`,
+					CodeExamples: `# 1. Automated CI (GitHub Actions)
 name: CI
 on: [push]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: npm install
-      - run: npm test
-      - run: npm run build
+      - uses: actions/checkout@v3
+      - run: npm install && npm test
 
-# Infrastructure as Code (Terraform)
-# main.tf
+# 2. Infrastructure as Code (Terraform)
 resource "aws_instance" "web" {
-    ami           = "ami-0c55b159cbfafe1f0"
-    instance_type = "t2.micro"
-}
-
-# Configuration Management (Ansible)
-# playbook.yml
-- hosts: webservers
-  tasks:
-    - name: Install nginx
-      apt:
-        name: nginx
-        state: present`,
+  ami           = "ami-xyz"
+  instance_type = "t2.micro"
+}`,
 				},
 				{
-					Title: "DevOps Culture and Practices",
-					Content: `DevOps culture emphasizes collaboration, shared responsibility, and continuous improvement.
+					Title: "Historical Evolution",
+					Content: `**The Old Way (Silos):**
+*   **Dev:** "I built it, now it's Ops' problem."
+*   **Ops:** "I won't deploy this, it might break my stable server."
+*   **Result:** Slow releases (months), manual errors, and friction.
 
-**Cultural Aspects:**
-- **Shared Responsibility**: Everyone owns the entire lifecycle
-- **Fail Fast**: Learn from failures quickly
-- **Continuous Learning**: Always improving
-- **Blameless Culture**: Focus on systems, not people
-- **Automation First**: Automate everything possible
+**The Agile Era:**
+Development got faster, but the "Wall of Confusion" remained between Dev and Ops.
 
-**Key Practices:**
-- **Infrastructure as Code**: Version control infrastructure
-- **Continuous Integration**: Merge code frequently
-- **Continuous Delivery**: Deploy automatically
-- **Microservices**: Small, independent services
-- **Monitoring**: Comprehensive observability
-- **Security**: DevSecOps integration
-
-**Common Anti-patterns:**
-- Siloed teams
-- Manual deployments
-- Long release cycles
-- Lack of automation
-- Poor monitoring
-- Blame culture
-
-**Success Metrics:**
-- Deployment frequency
-- Lead time for changes
-- Mean time to recovery (MTTR)
-- Change failure rate`,
-					CodeExamples: `# Example: Automated Deployment Pipeline
-# Stage 1: Build
-docker build -t myapp:latest .
-
-# Stage 2: Test
-docker run myapp:latest npm test
-
-# Stage 3: Security Scan
-docker scan myapp:latest
-
-# Stage 4: Deploy
-docker push myapp:latest
-kubectl apply -f deployment.yaml
-
-# Monitoring Check
-curl http://myapp/health
-
-# Example: Infrastructure as Code
-# terraform/main.tf
-terraform {
-    required_providers {
-        aws = {
-            source  = "hashicorp/aws"
-            version = "~> 4.0"
-        }
-    }
-}
-
-provider "aws" {
-    region = "us-east-1"
-}
-
-resource "aws_instance" "app" {
-    ami           = "ami-0c55b159cbfafe1f0"
-    instance_type = "t2.micro"
-    
-    tags = {
-        Name = "DevOps-App"
-        Environment = "production"
-    }
-}`,
+**The DevOps Era (Modern):**
+*   **Platform Engineering:** Self-service for developers.
+*   **GitOps:** Managing infrastructure via PRs.
+*   **AIOps:** Using AI to predict issues.`,
 				},
 			},
 			ProblemIDs: []int{},

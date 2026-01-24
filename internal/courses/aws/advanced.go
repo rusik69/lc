@@ -11,107 +11,46 @@ func init() {
 			Order:       9,
 			Lessons: []problems.Lesson{
 				{
-					Title: "VPC Peering and Connectivity",
-					Content: `VPC peering allows you to connect VPCs together, enabling resources in different VPCs to communicate.
+					Title: "Advanced Networking: Peering vs Transit Gateway",
+					Content: `As your AWS footprint grows, connecting VPCs becomes complex. You have two main options:
 
-**VPC Peering:**
-- Connect two VPCs in same or different regions
-- Private IP communication
-- No single point of failure
-- No bandwidth bottleneck
-- Non-transitive (must peer directly)
+**1. VPC Peering (The "Direct Cable")**
+*   **What is it:** A direct, 1:1 network connection between two VPCs.
+*   **Pros:** Lowest latency, no extra "hop", supports Security Group referencing.
+*   **Cons:** Non-transitive (A<->B and B<->C does NOT mean A<->C). Mesh topology gets messy (N^2 connections).
 
-**VPN Connections:**
-- **Site-to-Site VPN**: Connect on-premises network to VPC
-- **Client VPN**: Connect individual users to VPC
-- Uses IPsec tunnels
-- Supports static and dynamic routing
+**2. AWS Transit Gateway (The "Cloud Router")**
+*   **What is it:** A central hub that connects VPCs and on-premises networks.
+*   **Pros:** Hub-and-spoke topology (cleaner), transitive routing, centralized control.
+*   **Cons:** Extra hop (slightly higher latency), higher cost (processing fees).
 
-**AWS Direct Connect:**
-- Dedicated network connection to AWS
-- Bypass internet
-- Consistent network performance
-- Lower latency
-- Higher bandwidth options
+**Decision Matrix:**
+*   Connecting 2-5 VPCs? -> **VPC Peering** (Simple, cheap).
+*   Connecting 100+ VPCs? -> **Transit Gateway** (Manageable).
+*   Need transitive routing (VPN -> VPC A -> VPC B)? -> **Transit Gateway**.
+*   Need absolute lowest latency/highest bandwidth? -> **VPC Peering**.
 
-**Transit Gateway:**
-- Central hub for VPC and VPN connections
-- Simplifies network architecture
-- Supports transitive routing
-- Route tables for segmentation
-- Supports peering across regions
+**Visual:**
+` + "```" + `
+[ VPC A ] <--- Peering ---> [ VPC B ]  (Simple)
 
-**Best Practices:**
-- Use Transit Gateway for complex networks
-- Plan CIDR blocks to avoid overlap
-- Use route tables for network segmentation
-- Monitor network traffic
-- Document network architecture`,
-					CodeExamples: `# Create VPC peering connection
-aws ec2 create-vpc-peering-connection \\
-    --vpc-id vpc-12345678 \\
-    --peer-vpc-id vpc-87654321 \\
-    --peer-region us-west-2
+      [ VPC A ]
+          |
+[ VPN ]--[ Transit Gateway ]--[ VPC B ] (Hub-and-Spoke)
+          |
+      [ VPC C ]
+` + "```" + `
 
-# Accept peering connection
-aws ec2 accept-vpc-peering-connection \\
-    --vpc-peering-connection-id pcx-12345678
-
-# Add route to peer VPC
-aws ec2 create-route \\
-    --route-table-id rtb-12345678 \\
-    --destination-cidr-block 10.1.0.0/16 \\
-    --vpc-peering-connection-id pcx-12345678
-
-# Create VPN connection
-aws ec2 create-vpn-connection \\
-    --type ipsec.1 \\
-    --customer-gateway-id cgw-12345678 \\
-    --vpn-gateway-id vgw-12345678 \\
-    --options TunnelOptions='[{
-        "PreSharedKey": "shared-key-123",
-        "TunnelInsideCidr": "169.254.1.0/30"
-    }]'
+**PrivateLink (VPC Endpoints):**
+Don't forget PrivateLink for securely accessing AWS services (S3, DynamoDB) or SaaS without exposing traffic to the public internet.`,
+					CodeExamples: `# Create VPC Peering
+aws ec2 create-vpc-peering-connection --vpc-id vpc-1 --peer-vpc-id vpc-2
 
 # Create Transit Gateway
-aws ec2 create-transit-gateway \\
-    --description "Central transit gateway" \\
-    --options AmazonSideAsn=64512
+aws ec2 create-transit-gateway --description "Main TGW"
 
-# Attach VPC to Transit Gateway
-aws ec2 create-transit-gateway-vpc-attachment \\
-    --transit-gateway-id tgw-12345678 \\
-    --vpc-id vpc-12345678 \\
-    --subnet-ids subnet-12345678 subnet-87654321
-
-# Create Transit Gateway route table
-aws ec2 create-transit-gateway-route-table \\
-    --transit-gateway-id tgw-12345678
-
-# Using boto3
-import boto3
-
-ec2 = boto3.client('ec2')
-
-# Create VPC peering
-response = ec2.create_vpc_peering_connection(
-    VpcId='vpc-12345678',
-    PeerVpcId='vpc-87654321',
-    PeerRegion='us-west-2'
-)
-peering_id = response['VpcPeeringConnection']['VpcPeeringConnectionId']
-
-# Accept peering
-ec2.accept_vpc_peering_connection(
-    VpcPeeringConnectionId=peering_id
-)
-
-# Add route
-ec2.create_route(
-    RouteTableId='rtb-12345678',
-    DestinationCidrBlock='10.1.0.0/16',
-    VpcPeeringConnectionId=peering_id
-)`,
+# Route Table: Send traffic to TGW
+aws ec2 create-route --route-table-id rtb-1 --destination-cidr-block 10.0.0.0/8 --transit-gateway-id tgw-1`,
 				},
 			},
 			ProblemIDs: []int{},
@@ -123,110 +62,57 @@ ec2.create_route(
 			Order:       10,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Encryption and Secrets Management",
-					Content: `AWS provides multiple services for encryption and secrets management.
+					Title: "Security Best Practices: IAM Masterclass",
+					Content: `IAM is the most critical service in AWS. If you mess up IAM, you get hacked. Period.
 
-**AWS KMS (Key Management Service):**
-- Managed encryption keys
-- Customer Master Keys (CMKs)
-- Automatic key rotation
-- Integration with many AWS services
-- Audit via CloudTrail
+**1. The "Whose" and "What"**
+*   **Principal:** The entity (User, Role, App) trying to do something.
+*   **Action:** The verb (s3:ListBuckets, ec2:StartInstances).
+*   **Resource:** The object (arn:aws:s3:::my-photos).
+*   **Condition:** The constraints (IpAddress, Date).
 
-**Secrets Manager:**
-- Store and retrieve secrets
-- Automatic rotation
-- Integration with RDS, Redshift, DocumentDB
-- Fine-grained access control
-- Audit secrets access
+**2. IAM Policy Visualized:**
+` + "```" + `
+{
+  "Effect": "Allow",          <-- Green Light
+  "Principal": { "AWS": "arn:aws:iam::123:user/Bob" },
+  "Action": "s3:GetObject",   <-- Can READ
+  "Resource": "arn:aws:s3:::my-bucket/*",
+  "Condition": {              <-- BUT ONLY IF...
+     "IpAddress": { "aws:SourceIp": "1.2.3.4/32" }
+  }
+}
+` + "```" + `
 
-**Encryption Types:**
-- **Encryption at Rest**: Data stored encrypted
-- **Encryption in Transit**: Data encrypted during transmission (TLS/SSL)
-- **Client-Side Encryption**: Encrypt before sending to AWS
+**3. Best Practices (The Holy Grail):**
+*   **Root Account:** Lock it away. Enable MFA. Never use it for daily tasks.
+*   **Least Privilege:** Give *only* the permissions needed. Start with 0 and add.
+*   **Roles > Users:** Use Roles for applications (EC2, Lambda). Never embed Access Keys in code.
+*   **Secrets Manager:** Store DB passwords here, not in environment variables.
 
-**Use Cases:**
-- Database credentials
-- API keys
-- Certificates
-- Encryption keys
+**4. Encryption everywhere:**
+*   **At Rest:** Click the "Enable Encryption" checkbox (S3, EBS, RDS). It uses KMS.
+*   **In Transit:** Use HTTPS (TLS 1.2+).`,
+					CodeExamples: `# Create an IAM User
+aws iam create-user --user-name Alice
 
-**Best Practices:**
-- Enable encryption by default
-- Use KMS for key management
-- Use Secrets Manager for secrets
-- Rotate keys and secrets regularly
-- Monitor key usage
-- Use least privilege access`,
-					CodeExamples: `# Create KMS key
-aws kms create-key \\
-    --description "Encryption key for S3" \\
-    --key-usage ENCRYPT_DECRYPT \\
-    --key-spec SYMMETRIC_DEFAULT
+# Create a Policy (JSON)
+echo '{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": "*",
+        "Resource": "*"
+    }]
+}' > admin-policy.json
 
-# Enable automatic key rotation
-aws kms enable-key-rotation --key-id 12345678-1234-1234-1234-123456789012
+# DANGER: The above policy is "AdministratorAccess". Be careful.
 
-# Create alias for key
-aws kms create-alias \\
-    --alias-name alias/my-s3-key \\
-    --target-key-id 12345678-1234-1234-1234-123456789012
+# Attach Policy to User
+aws iam put-user-policy --user-name Alice --policy-name AdminAccess --policy-document file://admin-policy.json
 
-# Encrypt S3 object with KMS
-aws s3 cp file.txt s3://my-bucket/file.txt \\
-    --sse aws:kms \\
-    --sse-kms-key-id alias/my-s3-key
-
-# Create secret in Secrets Manager
-aws secretsmanager create-secret \\
-    --name db-credentials \\
-    --description "Database credentials" \\
-    --secret-string '{"username":"admin","password":"SecretPassword123"}'
-
-# Retrieve secret
-aws secretsmanager get-secret-value \\
-    --secret-id db-credentials
-
-# Rotate secret automatically
-aws secretsmanager rotate-secret \\
-    --secret-id db-credentials \\
-    --rotation-lambda-arn arn:aws:lambda:us-east-1:123456789012:function:rotate-db-credentials
-
-# Using boto3
-import boto3
-import json
-
-kms = boto3.client('kms')
-secrets = boto3.client('secretsmanager')
-
-# Create KMS key
-key_response = kms.create_key(
-    Description='Encryption key for S3',
-    KeyUsage='ENCRYPT_DECRYPT',
-    KeySpec='SYMMETRIC_DEFAULT'
-)
-key_id = key_response['KeyMetadata']['KeyId']
-
-# Create alias
-kms.create_alias(
-    AliasName='alias/my-s3-key',
-    TargetKeyId=key_id
-)
-
-# Create secret
-secrets.create_secret(
-    Name='db-credentials',
-    Description='Database credentials',
-    SecretString=json.dumps({
-        'username': 'admin',
-        'password': 'SecretPassword123'
-    })
-)
-
-# Retrieve secret
-response = secrets.get_secret_value(SecretId='db-credentials')
-secret = json.loads(response['SecretString'])
-print(f"Username: {secret['username']}")`,
+# Check who called the API (Debug permissions)
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=Alice`,
 				},
 				{
 					Title: "AWS WAF and Shield",

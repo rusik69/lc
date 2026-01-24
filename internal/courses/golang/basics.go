@@ -12,280 +12,29 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Go?",
-					Content: `Go (also known as Golang) is an open-source programming language developed by Google in 2007 and released publicly in 2009. It was designed by three legendary computer scientists: Robert Griesemer (who worked on the Java HotSpot compiler and V8 JavaScript engine), Rob Pike (co-creator of UTF-8 and Unix), and Ken Thompson (co-creator of Unix and B language). Go was created to address the challenges Google faced with large-scale software development: slow compilation, complex dependency management, and difficulty writing concurrent programs.
+					Content: `Go (Golang) is the language of the cloud. Born at Google, it was designed to solve specific problems: slow builds, uncontrolled dependencies, and the difficulty of writing efficient concurrent software.
 
-**Historical Context:**
+**Why Go Won:**
+*   **Simplicity:** You can learn the entire language spec in a weekend. No complex inheritance, no operator overloading, no magic.
+*   **Performance:** Compiles to machine code. Fast startup, low memory footprint. It feels like Python but runs like C.
+*   **Concurrency:** Goroutines and Channels make writing high-performance concurrent programs (like web servers) incredibly easy.
+*   **Tools:** The compiler is fast. The standard library is rich (especially for networking). The tooling ('gofmt', 'go test') is world-class.
 
-Go emerged from Google's frustration with existing languages. C++ compilation was too slow for their massive codebase, Java felt too verbose, and dynamic languages like Python couldn't meet performance requirements. Google needed a language that combined:
-- The speed and safety of compiled languages
-- The simplicity and readability of modern languages
-- Built-in support for concurrency (critical for distributed systems)
-- Fast compilation times (even for large projects)
-
-**Design Philosophy - "Less is More":**
-
-Go follows a philosophy of simplicity and pragmatism. The language designers made deliberate choices to keep the language small and focused:
-
-**1. Simplicity Over Cleverness:**
-- No operator overloading (reduces complexity)
-- No generics initially (added in Go 1.18, but carefully designed)
-- No exceptions (explicit error handling)
-- No inheritance (composition over inheritance)
-- Minimal keywords (only 25 keywords)
-
-**2. Readability First:**
-- Code should be easy to read and understand
-- Consistent formatting enforced by gofmt
-- Clear naming conventions
-- Explicit is better than implicit
-
-**3. Fast Compilation:**
-- Compiler designed for speed, not just correctness
-- Dependency analysis is fast
-- No separate linking step
-- Compile times measured in seconds, not minutes
-
-**4. Concurrency Built-In:**
-- Goroutines: lightweight threads
-- Channels: communication between goroutines
-- Select: multiplexing channel operations
-- Designed for modern multi-core processors
-
-**5. Practical Over Perfect:**
-- Good enough is better than perfect
-- Real-world usability over theoretical purity
-- Tools and ecosystem matter as much as language
+**Who uses it?**
+Docker, Kubernetes, Terraform, Prometheus, Uber, Netflix, Twitch. If it's infrastructure or backend, it's likely written in Go.
 
 **Key Features:**
-
-**1. Statically Typed with Type Inference:**
-- Type safety at compile time (catches errors early)
-- Type inference reduces verbosity: x := 42 (not var x int = 42)
-- Strong typing prevents many common bugs
-- No implicit conversions (explicit is better)
-
-**2. Garbage Collected:**
-- Automatic memory management
-- No manual memory allocation/deallocation
-- Low-latency GC (designed for low pause times)
-- Tuned for server workloads
-
-**3. Built-in Concurrency Primitives:**
-- Goroutines: Start thousands of concurrent operations
-- Channels: Safe communication between goroutines
-- Select: Handle multiple channels elegantly
-- CSP (Communicating Sequential Processes) model
-
-**4. Fast Compilation:**
-- Compiles to native machine code
-- No virtual machine overhead
-- Fast dependency resolution
-- Parallel compilation support
-
-**5. Simple Dependency Management:**
-- Go modules (since Go 1.11)
-- Versioning built into language
-- No complex build tools needed
-- Reproducible builds
-
-**6. Cross-Platform Compilation:**
-- Compile for any platform from any platform
-- GOOS and GOARCH environment variables
-- Single binary deployment (no runtime dependencies)
-- Great for containerization
-
-**7. Rich Standard Library:**
-- HTTP server and client
-- JSON/XML encoding/decoding
-- Cryptography
-- Database drivers (database/sql interface)
-- Testing framework
-- Profiling and benchmarking tools
-
-**Why Use Go?**
-
-**1. Backend Services and APIs:**
-- Excellent HTTP server performance
-- Simple concurrency model for handling requests
-- Fast startup time (important for serverless)
-- Low memory footprint
-- Used by: Google, Netflix, Uber, Dropbox, Cloudflare
-
-**2. Microservices Architecture:**
-- Small binary size (easy to deploy)
-- Fast startup (important for containers)
-- Good performance characteristics
-- Simple deployment model
-- Used by: Docker, Kubernetes, Prometheus, etcd
-
-**3. Cloud-Native Development:**
-- Perfect for containers (small binaries)
-- Fast cold starts (serverless)
-- Good for distributed systems
-- Used extensively in Kubernetes ecosystem
-
-**4. CLI Tools:**
-- Single binary deployment
-- Fast execution
-- Cross-platform
-- Examples: Docker, Kubernetes (kubectl), Terraform, Hugo
-
-**5. Network Programming:**
-- Excellent for network services
-- Built-in concurrency for handling connections
-- Good performance for I/O-bound operations
-- Used by: Caddy, Traefik, InfluxDB
-
-**6. DevOps and Infrastructure:**
-- Infrastructure as Code tools
-- Monitoring and observability tools
-- CI/CD tools
-- Examples: Terraform, Prometheus, Grafana
-
-**Real-World Adoption:**
-
-**Major Companies Using Go:**
-- **Google**: Core infrastructure, Kubernetes, gRPC
-- **Uber**: High-performance services, geofencing
-- **Dropbox**: Backend services, file synchronization
-- **Netflix**: Content delivery, microservices
-- **Cloudflare**: Edge computing, DDoS protection
-- **Docker**: Container runtime and orchestration
-- **Kubernetes**: Container orchestration platform
-- **Prometheus**: Monitoring and alerting
-- **etcd**: Distributed key-value store
-- **CockroachDB**: Distributed SQL database
-
-**Performance Characteristics:**
-
-**Compilation Speed:**
-- Compiles large projects in seconds
-- Much faster than C++/Java for similar codebases
-- Parallel compilation support
-- Incremental builds are fast
-
-**Runtime Performance:**
-- Comparable to C/C++ for many workloads
-- Better than Java for startup time
-- Much better than Python/Ruby for CPU-intensive tasks
-- Excellent for I/O-bound concurrent operations
-
-**Memory Usage:**
-- Lower than Java (no JVM overhead)
-- Higher than C/C++ (garbage collection overhead)
-- Efficient for server workloads
-- GC tuned for low latency
-
-**When Go is a Good Choice:**
-
-**1. Backend Services:**
-- REST APIs
-- gRPC services
-- Microservices
-- Web servers
-
-**2. Distributed Systems:**
-- Service mesh
-- Message queues
-- Distributed databases
-- Coordination services
-
-**3. DevOps Tools:**
-- Infrastructure automation
-- Monitoring tools
-- CI/CD pipelines
-- Deployment tools
-
-**4. Network Services:**
-- Proxies
-- Load balancers
-- DNS servers
-- Network monitoring
-
-**5. Data Processing:**
-- ETL pipelines
-- Stream processing
-- Data aggregation
-- Log processing
-
-**When Go Might Not Be the Best Choice:**
-
-**1. GUI Applications:**
-- Limited GUI frameworks
-- Better options: Electron, Qt, native frameworks
-
-**2. Mobile Development:**
-- Not designed for mobile
-- Better options: Swift, Kotlin, React Native
-
-**3. Scientific Computing:**
-- Limited numerical libraries
-- Better options: Python (NumPy), Julia, R
-
-**4. Machine Learning:**
-- Limited ML libraries
-- Better options: Python (TensorFlow, PyTorch)
-
-**5. Rapid Prototyping:**
-- Compilation step adds friction
-- Better options: Python, JavaScript
-
-**Go's Unique Strengths:**
-
-**1. Concurrency Model:**
-- Goroutines are lightweight (2KB stack, can have millions)
-- Channels provide safe communication
-- Select makes multiplexing elegant
-- No shared memory by default (prevents race conditions)
-
-**2. Tooling:**
-- gofmt: Automatic code formatting
-- go vet: Static analysis
-- golangci-lint: Comprehensive linting
-- go test: Built-in testing
-- go doc: Documentation generation
-- pprof: Profiling tools
-
-**3. Community and Ecosystem:**
-- Growing rapidly
-- Strong open-source community
-- Excellent documentation
-- Active development (regular releases)
-
-**4. Deployment Simplicity:**
-- Single binary (no dependencies)
-- Cross-compilation is trivial
-- Perfect for containers
-- Easy to distribute
-
-**Learning Go:**
-
-**Prerequisites:**
-- Basic programming knowledge
-- Understanding of concepts like functions, variables, types
-- Familiarity with command-line tools
-
-**Learning Path:**
-1. Language basics (syntax, types, functions)
-2. Concurrency (goroutines, channels)
-3. Standard library (HTTP, JSON, etc.)
-4. Best practices and idioms
-5. Advanced topics (interfaces, reflection, etc.)
-
-**Resources:**
-- Official tour: tour.golang.org
-- Effective Go: golang.org/doc/effective_go
-- Go by Example: gobyexample.com
-- Standard library docs: pkg.go.dev
-
-Go represents a pragmatic approach to systems programming, combining the performance of compiled languages with the simplicity and productivity of modern languages. Its focus on concurrency, simplicity, and fast compilation makes it an excellent choice for building scalable, maintainable software systems.`,
+1.  **Statically Typed:** Catches errors at compile time.
+2.  **Garbage Collected:** You don't manage memory manually.
+3.  **Compiled:** Single binary deployment. No "DLL hell".
+4.  **Opinionated:** 'gofmt' formats your code. No more arguments about tabs vs spaces.`,
 					CodeExamples: `// Hello World in Go
 package main
 
 import "fmt"
 
 func main() {
-    fmt.Println("Hello, World!")
+    fmt.Println("Hello, Cloud!")
 }`,
 				},
 				{
@@ -618,111 +367,53 @@ CMD ["./app"]`,
 				},
 				{
 					Title: "Go Toolchain",
-					Content: `The Go toolchain provides essential commands for building, testing, and managing Go code.
+					Content: `Go treats its toolchain as a first-class feature. There's no need for external build systems like Make or Maven for most projects.
 
 **Essential Commands:**
 
-**1. go build:**
-- Compiles packages and dependencies
-- Creates executable binary
-- Example: go build ./cmd/myapp
-- Output: Executable file (or .exe on Windows)
+*   **go run main.go**: Compiles and runs your code. Great for development.
+*   **go build**: Compiles your code into a binary executable.
+*   **go test ./...**: Runs all tests in your project.
+*   **go fmt ./...**: Formats your code. RUN THIS OFTEN.
+*   **go mod tidy**: Adds missing dependencies and removes unused ones from 'go.mod'.
+*   **go get [package]**: Downloads and installs a dependency.
 
-**2. go run:**
-- Compiles and runs Go program
-- Convenient for quick testing
-- Example: go run main.go
-- No binary left behind
-
-**3. go test:**
-- Runs tests in package
-- Example: go test ./...
-- Flags: -v (verbose), -cover (coverage), -bench (benchmarks)
-
-**4. go mod:**
-- Module management commands
-- go mod init: Create new module
-- go mod tidy: Add/remove dependencies
-- go mod download: Download dependencies
-- go mod vendor: Create vendor directory
-
-**5. go fmt:**
-- Formats Go code
-- Enforces standard formatting
-- Example: go fmt ./...
-- Usually run automatically by editors
-
-**6. go vet:**
-- Reports suspicious code
-- Catches common mistakes
-- Example: go vet ./...
-- Run before committing
-
-**7. go get:**
-- Add/update dependencies
-- Example: go get github.com/gin-gonic/gin
-- Updates go.mod and go.sum
-
-**8. go install:**
-- Compile and install binary
-- Installs to $GOPATH/bin or $GOBIN
-- Example: go install example.com/cmd/tool
-
-**9. go doc:**
-- Show documentation
-- Example: go doc fmt.Println
-- Web server: godoc -http=:6060
-
-**10. go generate:**
-- Run code generators
-- Uses //go:generate comments
-- Example: go generate ./...
-
-**Development Workflow:**
-1. go mod init (create project)
-2. Write code
-3. go fmt (format)
-4. go vet (check)
-5. go test (test)
-6. go build (build)
-7. go run (run)`,
-					CodeExamples: `// Project structure
+**Project Structure (Standard Layout):**
+` + "```" + `
 myproject/
-  go.mod
-  go.sum
-  cmd/
-    myapp/
-      main.go
-  internal/
-    handlers/
-      handlers.go
-  pkg/
-    utils/
-      utils.go
-  go.mod
+├── go.mod          // Dependencies and version
+├── go.sum          // Checksums for security
+├── main.go         // Entry point
+├── internal/       // Private library code (can't be imported by others)
+│   └── auth/       // Auth package
+├── pkg/            // Public library code (can be imported)
+│   └── utils/
+└── cmd/            // If you have multiple binaries
+    └── server/
+        └── main.go
+` + "```" + `
 
-// Build
-go build ./cmd/myapp
+**Best Practices:**
+1.  **Use Go Modules:** Always run 'go mod init' when starting.
+2.  **Format:** Use 'go fmt' or configure your editor to run it on save.
+3.  **Check:** Use 'go vet' to catch common bugs before committing.`,
+					CodeExamples: `// Common Workflow
+// 1. Initialize
+// go mod init github.com/myuser/myproject
 
-// Run
-go run ./cmd/myapp/main.go
+// 2. Add dependency
+// go get github.com/gin-gonic/gin
 
-// Test
-go test ./...
-go test -v ./internal/handlers
-go test -cover ./...
+// 3. Write code...
 
-// Format
-go fmt ./...
+// 4. Tidy up modules
+// go mod tidy
 
-// Vet
-go vet ./...
+// 5. Test
+// go test ./...
 
-// Get dependency
-go get github.com/gin-gonic/gin@v1.9.1
-
-// Install tool
-go install golang.org/x/tools/cmd/goimports@latest`,
+// 6. Build
+// go build -o myapp`,
 				},
 				{
 					Title: "Go Workspace Setup",

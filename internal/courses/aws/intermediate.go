@@ -11,112 +11,36 @@ func init() {
 			Order:       5,
 			Lessons: []problems.Lesson{
 				{
-					Title: "RDS Fundamentals",
-					Content: `Amazon Relational Database Service (RDS) makes it easy to set up, operate, and scale relational databases.
+					Title: "RDS vs DynamoDB (SQL vs NoSQL)",
+					Content: `Choosing the right database is the most critical architectural decision.
 
-**RDS Database Engines:**
-- **MySQL**: Popular open-source database
-- **PostgreSQL**: Advanced open-source database
-- **MariaDB**: MySQL fork
-- **Oracle**: Enterprise database
-- **SQL Server**: Microsoft database
-- **Aurora**: MySQL/PostgreSQL compatible, high performance
+**1. Amazon RDS (Relational Database Service)**
+*   **What is it:** Managed SQL (MySQL, Postgres, Aurora).
+*   **Use case:** Complex relationships, transactions (ACID), e-commerce systems, legacy app migration.
+*   **Scaling:** Vertical (bigger instance). Harder to scale horizontally (read replicas help, but write is single-master except for Multi-Master Aurora).
 
-**RDS Features:**
-- Automated backups
-- Multi-AZ deployments for high availability
-- Read replicas for read scaling
-- Automated patching
-- Monitoring and metrics
-- Encryption at rest and in transit
+**2. Amazon DynamoDB (NoSQL)**
+*   **What is it:** Serverless key-value store.
+*   **Use case:** Massive scale, simple lookup patterns (shopping cart, user session, gaming leaderboard).
+*   **Scaling:** Horizontal (more partitions). Can handle millions of requests/sec. Single-digit millisecond latency.
 
-**Instance Classes:**
-- **db.t3**: Burstable performance
-- **db.m5**: General purpose
-- **db.r5**: Memory optimized
-- **db.x1**: Memory optimized (large)
+**Decision Matrix:**
+*   Need joins like ` + "`SELECT * FROM Users JOIN Orders`" + `? -> **RDS**
+*   Need consistent schema? -> **RDS**
+*   Need to scale to 10M users with zero maintenance? -> **DynamoDB**
+*   storing JSON documents? -> **DynamoDB** (or DocumentDB)
 
-**Storage Types:**
-- **General Purpose SSD (gp2)**: Balanced price/performance
-- **Provisioned IOPS SSD (io1)**: High I/O workloads
-- **Magnetic**: Legacy, not recommended
+**Modern Pattern:**
+Use **DynamoDB** as the default for new microservices. Use **Aurora** if you strictly need relational features.`,
+					CodeExamples: `# Create RDS (SQL)
+aws rds create-db-instance --db-instance-identifier mydb --engine mysql --db-instance-class db.t3.micro
 
-**Best Practices:**
-- Use Multi-AZ for production
-- Enable automated backups
-- Use read replicas for read-heavy workloads
-- Monitor performance metrics
-- Use parameter groups for tuning`,
-					CodeExamples: `# Create RDS MySQL instance
-aws rds create-db-instance \\
-    --db-instance-identifier mydb \\
-    --db-instance-class db.t3.micro \\
-    --engine mysql \\
-    --engine-version 8.0 \\
-    --master-username admin \\
-    --master-user-password MyPassword123 \\
-    --allocated-storage 20 \\
-    --storage-type gp2 \\
-    --vpc-security-group-ids sg-12345678 \\
-    --db-subnet-group-name default \\
-    --backup-retention-period 7 \\
-    --storage-encrypted
-
-# Create Multi-AZ instance
-aws rds create-db-instance \\
-    --db-instance-identifier mydb-multiaz \\
-    --db-instance-class db.t3.micro \\
-    --engine mysql \\
-    --master-username admin \\
-    --master-user-password MyPassword123 \\
-    --allocated-storage 20 \\
-    --multi-az \\
-    --vpc-security-group-ids sg-12345678
-
-# Create read replica
-aws rds create-db-instance-read-replica \\
-    --db-instance-identifier mydb-replica \\
-    --source-db-instance-identifier mydb \\
-    --db-instance-class db.t3.micro
-
-# Create DB snapshot
-aws rds create-db-snapshot \\
-    --db-instance-identifier mydb \\
-    --db-snapshot-identifier mydb-snapshot-2024-01-01
-
-# Restore from snapshot
-aws rds restore-db-instance-from-db-snapshot \\
-    --db-instance-identifier mydb-restored \\
-    --db-snapshot-identifier mydb-snapshot-2024-01-01 \\
-    --db-instance-class db.t3.micro
-
-# Using boto3
-import boto3
-
-rds = boto3.client('rds')
-
-# Create DB instance
-response = rds.create_db_instance(
-    DBInstanceIdentifier='mydb',
-    DBInstanceClass='db.t3.micro',
-    Engine='mysql',
-    EngineVersion='8.0',
-    MasterUsername='admin',
-    MasterUserPassword='MyPassword123',
-    AllocatedStorage=20,
-    StorageType='gp2',
-    VpcSecurityGroupIds=['sg-12345678'],
-    DBSubnetGroupName='default',
-    BackupRetentionPeriod=7,
-    StorageEncrypted=True
-)
-
-# Create read replica
-rds.create_db_instance_read_replica(
-    DBInstanceIdentifier='mydb-replica',
-    SourceDBInstanceIdentifier='mydb',
-    DBInstanceClass='db.t3.micro'
-)`,
+# Create DynamoDB (NoSQL)
+aws dynamodb create-table \\
+    --table-name Users \\
+    --attribute-definitions AttributeName=UserId,AttributeType=S \\
+    --key-schema AttributeName=UserId,KeyType=HASH \\
+    --billing-mode PAY_PER_REQUEST`,
 				},
 				{
 					Title: "RDS Backups and Snapshots",
@@ -697,127 +621,41 @@ for member in members:
 			Order:       6,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Lambda Fundamentals",
-					Content: `AWS Lambda lets you run code without provisioning or managing servers.
+					Title: "Serverless Patterns: Lambda & API Gateway",
+					Content: `The most common serverless pattern in AWS is the **API Gateway -> Lambda -> DynamoDB** stack.
 
-**Lambda Concepts:**
-- **Function**: Your code that runs in Lambda
-- **Runtime**: Programming language environment
-- **Handler**: Entry point for your function
-- **Event**: JSON data passed to function
-- **Context**: Runtime information
-- **Trigger**: Event source that invokes function
+**Architecture Flow:**
+1.  **Client** sends HTTP Request (GET /users).
+2.  **API Gateway** receives it, checks authorization (Cognito/IAM), and triggers Lambda.
+3.  **Lambda** (Compute) spins up, runs your code (logic), talks to the DB.
+4.  **DynamoDB** (Storage) returns the data.
+5.  **Lambda** returns JSON to API Gateway -> Client.
 
-**Supported Runtimes:**
-- Node.js (JavaScript/TypeScript)
-- Python
-- Java
-- Go
-- .NET
-- Ruby
-- Custom runtime
+**Why this rocks:**
+*   **Scale to Zero:** Cost is $0.00 if no one visits your site.
+*   **Infinite Scale:** Can handle 10,000 requests/second instantly.
+*   **No Ops:** No OS to patch, no servers to reboot.
 
-**Lambda Features:**
-- Pay per request
-- Automatic scaling
-- No server management
-- Integrated with many AWS services
-- Built-in monitoring
-
-**Use Cases:**
-- Event-driven applications
-- Data processing
-- Real-time file processing
-- API backends
-- Scheduled tasks
-- Microservices
-
-**Best Practices:**
-- Keep functions small and focused
-- Use environment variables for configuration
-- Implement proper error handling
-- Set appropriate timeout and memory
-- Use layers for shared code
-- Monitor and log appropriately`,
-					CodeExamples: `# Create Lambda function (Python)
-# lambda_function.py
-import json
-
-def lambda_handler(event, context):
-    # Process event
-    name = event.get('name', 'World')
-    
-    return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'message': f'Hello, {name}!'
-        })
-    }
-
-# Deploy Lambda function
-# Package function
-zip -r function.zip lambda_function.py
-
-# Create function
+**Key best practices:**
+*   **Stateless:** Lambda functions are ephemeral. Never save files to local disk expecting them to be there next time. Use S3.
+*   **Cold Starts:** Initial request might take 1-2s. Keep functions small or use "Provisioned Concurrency" for critical paths.
+*   **Timeouts:** API Gateway has a hard 29s timeout. For long tasks, use SQS (Queue) in between.`,
+					CodeExamples: `# 1. Create a Lambda Function
 aws lambda create-function \\
-    --function-name hello-world \\
-    --runtime python3.11 \\
-    --role arn:aws:iam::123456789012:role/lambda-execution-role \\
+    --function-name GetUser \\
+    --runtime python3.9 \\
+    --role arn:aws:iam::123456789012:role/service-role/role \\
     --handler lambda_function.lambda_handler \\
     --zip-file fileb://function.zip
 
-# Invoke function
-aws lambda invoke \\
-    --function-name hello-world \\
-    --payload '{"name": "AWS"}' \\
-    response.json
+# 2. Create an API Gateway (HTTP API is cheaper/faster than REST API)
+aws apigatewayv2 create-api \\
+    --name my-api \\
+    --protocol-type HTTP \\
+    --target arn:aws:lambda:us-east-1:123456789012:function:GetUser
 
-# Update function code
-aws lambda update-function-code \\
-    --function-name hello-world \\
-    --zip-file fileb://function.zip
-
-# Create function with environment variables
-aws lambda create-function \\
-    --function-name my-function \\
-    --runtime python3.11 \\
-    --role arn:aws:iam::123456789012:role/lambda-execution-role \\
-    --handler lambda_function.lambda_handler \\
-    --zip-file fileb://function.zip \\
-    --environment Variables="{DB_HOST=db.example.com,DB_NAME=mydb}"
-
-# Using boto3
-import boto3
-import zipfile
-
-lambda_client = boto3.client('lambda')
-
-# Create deployment package
-with zipfile.ZipFile('function.zip', 'w') as zip_file:
-    zip_file.write('lambda_function.py')
-
-# Create function
-with open('function.zip', 'rb') as zip_file:
-    response = lambda_client.create_function(
-        FunctionName='hello-world',
-        Runtime='python3.11',
-        Role='arn:aws:iam::123456789012:role/lambda-execution-role',
-        Handler='lambda_function.lambda_handler',
-        Code={'ZipFile': zip_file.read()},
-        Environment={
-            'Variables': {
-                'DB_HOST': 'db.example.com',
-                'DB_NAME': 'mydb'
-            }
-        }
-    )
-
-# Invoke function
-response = lambda_client.invoke(
-    FunctionName='hello-world',
-    Payload=json.dumps({'name': 'AWS'})
-)
-result = json.loads(response['Payload'].read())`,
+# 3. Invoke it directly to test
+aws lambda invoke --function-name GetUser response.json`,
 				},
 				{
 					Title: "Lambda Triggers and Event Sources",

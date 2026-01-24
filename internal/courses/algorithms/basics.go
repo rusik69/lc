@@ -12,222 +12,74 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction",
-					Content: `Welcome to Data Structures and Algorithms! This comprehensive course will teach you how to solve complex programming problems efficiently and write code that scales.
+					Content: `Welcome to the world of Data Structures and Algorithms! This is one of the most critical topics in computer science and software engineering. Whether you're a student, a self-taught developer, or an experienced engineer looking to sharpen your skills, mastering these concepts will transform the way you write code.
 
-**What You'll Learn:**
+**Why This Course?**
 
-**Fundamental Data Structures:**
-- **Arrays & Hash Tables**: The building blocks of most algorithms
-- **Linked Lists**: Dynamic memory allocation and pointer manipulation
-- **Stacks & Queues**: LIFO and FIFO data structures for specific use cases
-- **Trees**: Hierarchical data organization (binary trees, BSTs, AVL trees, etc.)
-- **Graphs**: Modeling relationships and networks
-- **Heaps**: Priority queues and efficient min/max operations
-- **Tries**: Efficient string storage and prefix matching
+1.  **Write Better Code:** You'll learn to write code that is not just correct, but also efficient and scalable.
+2.  **Solve Hard Problems:** You'll gain the toolkit to tackle complex algorithmic challenges with confidence.
+3.  **Career Advancement:** These are the fundamental skills tested in technical interviews at top tech companies.
+4.  **System Design:** Understanding data structures is the first step towards designing large-scale distributed systems.
 
-**Essential Algorithms:**
-- **Sorting Algorithms**: From simple bubble sort to efficient quicksort and mergesort
-- **Searching Algorithms**: Linear search, binary search, and advanced search techniques
-- **Dynamic Programming**: Breaking down complex problems into simpler subproblems
-- **Greedy Algorithms**: Making locally optimal choices for global optimization
-- **Graph Algorithms**: BFS, DFS, shortest paths (Dijkstra, Bellman-Ford), minimum spanning trees
-- **String Algorithms**: Pattern matching, string manipulation, and text processing
+**What We Will Cover:**
 
-**Problem-Solving Techniques:**
-- **Two Pointers**: Efficiently solving problems with sorted arrays or linked lists
-- **Sliding Window**: Optimizing subarray/substring problems
-- **Divide and Conquer**: Breaking problems into smaller, manageable pieces
-- **Backtracking**: Exploring all possibilities systematically
-- **Recursion**: Solving problems by solving smaller instances
+*   **Fundamental Data Structures:**
+    *   **Arrays & Strings:** The bedrock of data storage.
+    *   **Linked Lists:** Understanding pointers and dynamic memory.
+    *   **Stacks & Queues:** managing data flow (LIFO/FIFO).
+    *   **Trees & Graphs:** Modeling hierarchical and relational data.
+    *   **Hash Tables:** The magic of O(1) lookups.
 
-**Complexity Analysis:**
-- **Big O Notation**: Understanding time and space complexity
-- **Best, Average, and Worst Case Analysis**: When each matters
-- **Space-Time Tradeoffs**: Optimizing for time vs memory
-- **Amortized Analysis**: Understanding average performance over sequences of operations
+*   **Essential Algorithms:**
+    *   **Sorting & Searching:** Organizing and retrieving data efficiently.
+    *   **Recursion:** solving problems by breaking them down.
+    *   **Dynamic Programming:** Optimizing recursive solutions.
+    *   **Greedy Algorithms:** Making locally optimal choices.
 
-**Why This Matters:**
+**How to Succeed:**
 
-**Professional Development:**
-- Write efficient code that scales to millions of users
-- Optimize existing codebases and identify bottlenecks
-- Make informed decisions about data structure choices
-- Understand the performance implications of your code
+*   **Active Practice:** Don't just read; write code. Implement these structures from scratch.
+*   **Visualize:** Draw diagrams. deeply understanding the flow of data is key.
+*   **Analyze:** Always ask yourself: "What is the time complexity? What is the space complexity?"
 
-**Technical Interviews:**
-- Solve coding problems under time pressure
-- Explain your thought process clearly
-- Analyze time and space complexity on the fly
-- Handle edge cases and optimize solutions
+Let's begin this journey together!`,
+					CodeExamples: `// Example: Why efficiency matters
+// Problem: Find if a number exists in a list
 
-**System Understanding:**
-- Understand how databases index data (B-trees, hash indexes)
-- Comprehend how compilers parse code (trees, stacks)
-- Grasp how operating systems manage memory (heaps, stacks)
-- Learn how search engines rank pages (graph algorithms)
-
-**Real-World Applications:**
-
-**Web Development:**
-- **User Sessions**: Hash tables for O(1) session lookups (Redis, Memcached)
-- **Caching**: LRU caches using hash tables + doubly linked lists
-- **Rate Limiting**: Sliding window algorithms for API throttling
-- **Search Autocomplete**: Tries for prefix matching (Google, Amazon)
-- **Content Delivery**: Consistent hashing for CDN distribution
-
-**Game Development:**
-- **Pathfinding**: A* algorithm for NPC movement (games like Civilization, Age of Empires)
-- **Collision Detection**: Spatial data structures (quadtrees, octrees) for efficient collision checks
-- **Game State Management**: State machines and graph algorithms for game logic
-- **Procedural Generation**: Graph algorithms for dungeon generation
-
-**Data Science & Machine Learning:**
-- **Feature Engineering**: Efficient data structures for preprocessing (pandas DataFrames)
-- **Model Training**: Optimized data structures for gradient descent (NumPy arrays)
-- **Recommendation Systems**: Graph algorithms for collaborative filtering (Netflix, Spotify)
-- **Clustering**: K-means, hierarchical clustering algorithms
-- **Time Series Analysis**: Efficient storage and querying of temporal data
-
-**System Design & Infrastructure:**
-- **Database Indexing**: B-trees for range queries, hash indexes for exact lookups
-- **Load Balancing**: Consistent hashing for distributed systems
-- **Distributed Systems**: Consensus algorithms (Raft, Paxos) for coordination
-- **Caching Strategies**: LRU, LFU, and other eviction policies
-- **Message Queues**: Priority queues for task scheduling
-
-**Case Studies & Real-World Examples:**
-
-**Case Study 1: Browser History (Deques)**
-- Problem: Implement browser back/forward navigation
-- Solution: Use double-ended queue (deque) for O(1) operations
-- Real-world: Chrome, Firefox, Safari all use deque-like structures
-- Why it matters: Millions of users, billions of operations daily
-
-**Case Study 2: Search Autocomplete (Tries)**
-- Problem: Suggest completions as user types (Google search)
-- Solution: Trie (prefix tree) for efficient prefix matching
-- Real-world: Google, Amazon, GitHub all use tries for autocomplete
-- Performance: O(m) where m is length of prefix, not total dictionary size
-
-**Case Study 3: Content Moderation (Priority Queues)**
-- Problem: Process user reports by priority/severity
-- Solution: Priority queue (heap) to always process most urgent first
-- Real-world: Social media platforms prioritize critical content
-- Impact: Faster response to harmful content
-
-**Case Study 4: GPS Navigation (Shortest Path Algorithms)**
-- Problem: Find fastest route between two points
-- Solution: Dijkstra's or A* algorithm on road network graph
-- Real-world: Google Maps, Waze, Uber routing
-- Scale: Millions of nodes (intersections), billions of queries daily
-
-**Course Structure:**
-Each module contains comprehensive lessons explaining concepts in depth, followed by practice problems to reinforce your learning. The course progresses from fundamentals to advanced topics, building your knowledge systematically.
-
-**Learning Approach (Best Practices 2024-2025):**
-
-1. **Understand the Concept**: Read the explanation thoroughly, focus on "why" not just "how"
-2. **Study the Code**: Analyze examples in multiple languages, trace through manually
-3. **Practice with Case Studies**: Work through real-world scenarios (browsing history, autocomplete, etc.)
-4. **Solve Problems**: Practice problems to internalize patterns and build intuition
-5. **Review Regularly**: Revisit concepts as you encounter them in problems
-6. **Build Intuition**: Recognize when to apply each technique - pattern recognition is key
-7. **Object-Oriented Design**: Focus on abstract data types and interfaces before implementations
-8. **Algorithm Analysis**: Rigorously examine time/space complexity for every solution
-9. **Real-World Connection**: Always connect theoretical concepts to practical applications
-
-**Prerequisites:**
-- Basic programming knowledge (variables, loops, functions)
-- Understanding of basic data types (integers, strings, arrays)
-- Familiarity with at least one programming language (Go, Python, Java, etc.)
-
-**Success Tips:**
-- Don't rush through concepts - understanding is more important than speed
-- Practice regularly - consistency beats intensity
-- Draw diagrams for complex data structures
-- Trace through code examples manually
-- Solve problems before looking at solutions
-- Review and revisit previous topics regularly`,
-					CodeExamples: `// Example: Understanding the problem-solving process
-// Problem: Find the maximum number in an array
-
-// Approach 1: Simple iteration - O(n) time, O(1) space
-// This is the most straightforward approach
-func findMax(nums []int) int {
-    if len(nums) == 0 {
-        panic("empty array")
-    }
-    max := nums[0]
-    // Iterate through all elements
-    for i := 1; i < len(nums); i++ {
-        if nums[i] > max {
-            max = nums[i]  // Update max if we find a larger value
+// Naive Approach (Linear Search)
+// Imagine searching for a name in an unsorted pile of papers.
+// You have to look at every single paper.
+func contains(list []int) bool {
+    for _, num := range list {
+        if num == target {
+            return true
         }
     }
-    return max
+    return false
 }
+// Time Complexity: O(n) - Linear time. 
+// If list has 1,000,000 items, we might do 1,000,000 checks.
 
-// Approach 2: Using recursion - O(n) time, O(n) space (call stack)
-// More elegant but uses more memory
-func findMaxRecursive(nums []int, index int) int {
-    if index == len(nums)-1 {
-        return nums[index]
+// Efficient Approach (Binary Search)
+// Imagine searching for a name in a sorted phone book.
+// You open the middle, see if the name is before or after, and cut the search space in half.
+func binarySearch(list []int, target int) bool {
+    low, high := 0, len(list)-1
+    for low <= high {
+        mid := low + (high-low)/2
+        if list[mid] == target {
+            return true
+        }
+        if list[mid] < target {
+            low = mid + 1
+        } else {
+            high = mid - 1
+        }
     }
-    maxRest := findMaxRecursive(nums, index+1)
-    if nums[index] > maxRest {
-        return nums[index]
-    }
-    return maxRest
+    return false
 }
-
-// Approach 3: Divide and conquer - O(n) time, O(log n) space
-// Demonstrates divide-and-conquer thinking
-func findMaxDivideConquer(nums []int, left, right int) int {
-    if left == right {
-        return nums[left]
-    }
-    mid := (left + right) / 2
-    maxLeft := findMaxDivideConquer(nums, left, mid)
-    maxRight := findMaxDivideConquer(nums, mid+1, right)
-    if maxLeft > maxRight {
-        return maxLeft
-    }
-    return maxRight
-}
-
-# Python equivalent - showing multiple approaches
-def find_max(nums):
-    """Find maximum using simple iteration."""
-    if not nums:
-        raise ValueError("empty array")
-    max_val = nums[0]
-    for num in nums[1:]:
-        if num > max_val:
-            max_val = num
-    return max_val
-
-# Pythonic approach using built-in
-def find_max_builtin(nums):
-    """Using Python's built-in max function."""
-    return max(nums) if nums else None
-
-# Using reduce (functional approach)
-from functools import reduce
-def find_max_reduce(nums):
-    """Using reduce for functional programming style."""
-    return reduce(lambda a, b: a if a > b else b, nums)
-
-# Example usage and comparison
-if __name__ == "__main__":
-    test_array = [3, 7, 2, 9, 1, 5, 8, 4]
-    print(f"Array: {test_array}")
-    print(f"Max (iteration): {find_max(test_array)}")
-    print(f"Max (builtin): {find_max_builtin(test_array)}")
-    print(f"Max (reduce): {find_max_reduce(test_array)}")
-    
-    # Time complexity: All O(n) - must check every element
-    # Space complexity: O(1) for iteration, O(n) for recursion
-    # Best approach: Simple iteration (most readable and efficient)`,
+// Time Complexity: O(log n) - Logarithmic time.
+// If list has 1,000,000 items, we only need ~20 checks!`,
 				},
 				{
 					Title: "What Are Data Structures?",
@@ -345,29 +197,29 @@ Data structures are not just containers for data - they define how data is organ
 
 **Decision Framework:**
 
-1. **What operations do you need?**
-   - Random access? → Array
-   - Fast lookups? → Hash table
-   - Maintain order? → Tree or sorted array
-   - Insert/delete frequently? → Linked list or tree
-   - Need min/max quickly? → Heap
+1.  **What operations do you need?**
+    - Random access? → Array
+    - Fast lookups? → Hash table
+    - Maintain order? → Tree or sorted array
+    - Insert/delete frequently? → Linked list or tree
+    - Need min/max quickly? → Heap
 
-2. **What are your constraints?**
-   - Memory limited? → Arrays (more compact)
-   - Need fast access? → Hash table or array
-   - Need ordering? → Tree or sorted array
-   - Cache performance critical? → Arrays (better locality)
+2.  **What are your constraints?**
+    - Memory limited? → Arrays (more compact)
+    - Need fast access? → Hash table or array
+    - Need ordering? → Tree or sorted array
+    - Cache performance critical? → Arrays (better locality)
 
-3. **What's your access pattern?**
-   - Sequential? → Array or linked list
-   - Random? → Array or hash table
-   - Hierarchical? → Tree
-   - Need prefix matching? → Trie
+3.  **What's your access pattern?**
+    - Sequential? → Array or linked list
+    - Random? → Array or hash table
+    - Hierarchical? → Tree
+    - Need prefix matching? → Trie
 
-4. **What's your data size?**
-   - Small (< 100 elements): Any structure works, choose for clarity
-   - Medium (100-10K): Consider hash tables, balanced trees
-   - Large (> 10K): Optimize for cache locality, consider specialized structures
+4.  **What's your data size?**
+    - Small (< 100 elements): Any structure works, choose for clarity
+    - Medium (100-10K): Consider hash tables, balanced trees
+    - Large (> 10K): Optimize for cache locality, consider specialized structures
 
 **Real-World Examples:**
 
@@ -672,186 +524,85 @@ class ListNode:
 				},
 				{
 					Title: "Complexity Analysis",
-					Content: `Complexity analysis is the mathematical foundation for understanding how algorithms perform as input size grows. It's crucial for writing efficient code and making informed decisions about which algorithms to use.
+					Content: `Complexity Analysis is the heartbeat of efficient software. It allows us to predict how our code will perform as the data grows from 10 users to 10 million.
 
-**Why Analyze Complexity?**
+**The Big O Notation**
 
-**Predict Performance:**
-- Understand how your algorithm will perform on large datasets
-- Estimate execution time before running code
-- Identify potential bottlenecks before they become problems
-- Make scalability predictions for production systems
+Big O notation describes the **worst-case scenario** or the **upper bound** of an algorithm's growth rate. It helps us answer: "If I double my input data, how much longer will the program take?"
 
-**Compare Algorithms:**
-- Objectively compare different approaches to the same problem
-- Choose the best algorithm for your specific use case
-- Understand trade-offs between different solutions
-- Justify algorithm choices in code reviews and interviews
+**Common Time Complexities:**
 
-**Optimize Code:**
-- Identify the slowest parts of your code (bottlenecks)
-- Focus optimization efforts where they'll have the most impact
-- Avoid premature optimization by understanding what matters
-- Make informed decisions about when to optimize
+1.  **O(1) - Constant Time:** 
+    *   The best possible complexity.
+    *   The operation takes the same amount of time regardless of input size.
+    *   *Example:* Accessing a specific index in an array arr[5].
 
-**Design Decisions:**
-- Choose appropriate data structures based on access patterns
-- Design systems that scale efficiently
-- Make trade-offs between time and space complexity
-- Understand when good enough is actually good enough
+2.  **O(log n) - Logarithmic Time:**
+    *   Highly efficient. The time grows very slowly as input increases.
+    *   Usually means we are cutting the problem in half at each step.
+    *   *Example:* Binary Search.
 
-**What We Analyze:**
+3.  **O(n) - Linear Time:**
+    *   Performance grows directly proportionally to the input.
+    *   *Example:* Looping through a list of names.
 
-**1. Time Complexity:**
-- Measures how execution time grows with input size
-- Expressed in terms of input size (usually 'n')
-- Focuses on the number of operations, not actual time
-- Independent of hardware and programming language
+4.  **O(n log n) - Linearithmic Time:**
+    *   Slightly slower than linear, but standard for efficient sorting.
+    *   *Example:* Merge Sort, Heap Sort.
 
-**2. Space Complexity:**
-- Measures how memory usage grows with input size
-- Includes both input space and auxiliary space
-- Often focuses on auxiliary space (extra space beyond input)
-- Critical for memory-constrained environments
+5.  **O(n²) - Quadratic Time:**
+    *   Performance degrades significantly with large inputs.
+    *   Usually involves nested loops (a loop inside a loop).
+    *   *Example:* Comparing every item with every other item (Bubble Sort).
 
-**Common Scenarios:**
+6.  **O(2^n) - Exponential Time:**
+    *   Very slow. The operation count doubles with each new input element.
+    *   *Example:* Recursively calculating Fibonacci numbers (without caching).
 
-**Best Case:**
-- Minimum time/space needed for any input
-- Often not representative of real-world performance
-- Useful for understanding algorithm potential
-- Example: Finding an item at the first position in an array
+**Space Complexity**
 
-**Average Case:**
-- Expected time/space for typical or random input
-- More realistic than best case for most scenarios
-- Requires probability analysis
-- Example: Average search time in a hash table
+Just as we measure time, we must also measure memory.
+*   **O(1) Space:** Algorithm uses a fixed amount of extra memory (a few variables).
+*   **O(n) Space:** Algorithm needs to store a copy of the input or use a stack/recursion depth proportional to input.
 
-**Worst Case:**
-- Maximum time/space needed for any input
-- Most important for guarantees and reliability
-- Ensures algorithm never performs worse than this
-- Example: Searching for an item not in an array
+**Why does this matter?**
 
-**Key Insight:** We usually focus on worst-case complexity because we want guarantees about performance. In production systems, you need to know the worst-case performance to ensure reliability and meet SLAs.
+Imagine you have a website with 1,000 users. An O(n²) algorithm takes 1,000 * 1,000 = 1,000,000 operations.
+Now your site grows to 1,000,000 users. That same algorithm now takes 1,000,000,000,000 operations.
+Your server crashes. Your users leave.
+Understanding complexity is how you build systems that **scale**.`,
+					CodeExamples: `// Example: Visualizing complexity
+// Input: n (number of items)
 
-**Understanding Growth Rates:**
-
-**Constant O(1):**
-- Execution time doesn't depend on input size
-- Examples: Array access, hash table lookup
-- Ideal but often not achievable
-
-**Logarithmic O(log n):**
-- Grows very slowly with input size
-- Examples: Binary search, balanced tree operations
-- Excellent for large datasets
-
-**Linear O(n):**
-- Grows proportionally with input size
-- Examples: Iterating through an array, linear search
-- Acceptable for most use cases
-
-**Linearithmic O(n log n):**
-- Common in efficient sorting algorithms
-- Examples: Merge sort, heap sort
-- Good balance between efficiency and simplicity
-
-**Quadratic O(n²):**
-- Grows quickly, becomes slow for large inputs
-- Examples: Nested loops, bubble sort
-- Often indicates need for optimization
-
-**Exponential O(2ⁿ):**
-- Grows extremely quickly, often impractical
-- Examples: Naive recursive Fibonacci, generating all subsets
-- Usually indicates need for better algorithm
-
-**Practical Considerations:**
-
-**Constants Matter:**
-- O(100n) might be slower than O(n²) for small inputs
-- Real-world performance depends on constants
-- Profile code to understand actual performance
-
-**Input Characteristics:**
-- Sorted vs unsorted data affects many algorithms
-- Data distribution matters for hash tables
-- Real-world data often has patterns
-
-**Memory Hierarchy:**
-- Cache misses can dominate performance
-- Sequential access often faster than random access
-- Data structure choice affects cache performance
-
-**When Complexity Analysis Matters:**
-- Large datasets (millions or billions of items)
-- Performance-critical code (real-time systems, games)
-- Scalable systems (web services, databases)
-- Resource-constrained environments (mobile, embedded)
-
-**When It Matters Less:**
-- Small, fixed-size inputs
-- Code that runs infrequently
-- Prototypes and proof-of-concepts
-- Code where correctness is more important than speed`,
-					CodeExamples: `// Example: Analyzing complexity step by step
-
-// O(1) - Constant time
-// No matter how large the array, this takes the same time
-func getFirst(arr []int) int {
-    if len(arr) == 0 {
-        return -1  // Edge case handling
-    }
-    return arr[0]  // Single operation, always O(1)
+// O(1) - Constant
+func constant(n int) {
+    print("Hello") // Always runs once
 }
 
-// O(n) - Linear time
-// Time grows linearly with array size
-func sumArray(arr []int) int {
-    sum := 0
-    // This loop runs n times (once per element)
-    for _, val := range arr {
-        sum += val  // Each iteration: O(1)
+// O(n) - Linear
+func linear(n int) {
+    for i := 0; i < n; i++ {
+        print(i) // Runs n times
     }
-    // Total: n * O(1) = O(n)
-    return sum
 }
 
-// O(n²) - Quadratic time
-// Time grows quadratically with array size
-func findPairs(arr []int) int {
-    count := 0
-    // Outer loop: n iterations
-    for i := 0; i < len(arr); i++ {
-        // Inner loop: (n-1) + (n-2) + ... + 1 = n(n-1)/2 iterations
-        for j := i + 1; j < len(arr); j++ {
-            count++  // Each iteration: O(1)
+// O(n^2) - Quadratic
+func quadratic(n int) {
+    for i := 0; i < n; i++ {
+        for j := 0; j < n; j++ {
+            print(i, j) // Runs n * n times
         }
     }
-    // Total: n(n-1)/2 * O(1) = O(n²)
-    return count
 }
 
-// O(log n) - Logarithmic time
-// Time grows logarithmically (very slowly)
-func binarySearch(arr []int, target int) int {
-    left, right := 0, len(arr)-1
-    // Each iteration eliminates half the remaining elements
-    // After k iterations: n/2^k elements remain
-    // When n/2^k = 1: k = log₂(n)
-    for left <= right {
-        mid := (left + right) / 2
-        if arr[mid] == target {
-            return mid
-        } else if arr[mid] < target {
-            left = mid + 1
-        } else {
-            right = mid - 1
-        }
+// O(log n) - Logarithmic
+func logarithmic(n int) {
+    for i := n; i > 0; i /= 2 {
+        print(i) // Runs log2(n) times
     }
-    return -1  // Total: O(log n)
+    // If n = 8: 8, 4, 2, 1 (4 steps)
+    // If n = 16: 16, 8, 4, 2, 1 (5 steps)
+    // Doubling n only adds 1 step!
 }
 
 // O(n log n) - Linearithmic time

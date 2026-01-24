@@ -11,846 +11,113 @@ func init() {
 			Order:       0,
 			Lessons: []problems.Lesson{
 				{
-					Title: "What is Azure?",
-					Content: `Microsoft Azure is a comprehensive cloud computing platform and infrastructure created by Microsoft for building, deploying, and managing applications and services through Microsoft-managed data centers. Launched in 2010, Azure has grown to become the second-largest cloud provider globally, serving millions of customers worldwide.
-
-**Historical Context:**
-
-**The Birth of Azure:**
-Azure was announced in 2008 as "Windows Azure" and officially launched in 2010. Microsoft recognized the shift toward cloud computing and created Azure to compete with Amazon Web Services. The platform has evolved significantly, rebranding to "Microsoft Azure" in 2014 and continuously expanding its services.
-
-**Evolution Timeline:**
-- **2010**: Public launch with core services (Compute, Storage, SQL Database)
-- **2012**: Introduction of Virtual Machines and Virtual Networks
-- **2014**: Rebranding to Microsoft Azure, expansion of services
-- **2016**: Introduction of Azure Functions (serverless)
-- **2017**: Launch of Azure Kubernetes Service (AKS)
-- **2018**: Expansion of AI/ML services, Azure Arc for hybrid cloud
-- **2020+**: Focus on sustainability, edge computing, and industry-specific solutions
-- **2024-2025**: Azure Well-Architected Framework updates, enhanced AI services, improved security
-
-**Azure Well-Architected Framework (2024-2025):**
-
-The Azure Well-Architected Framework provides architectural best practices across five pillars, similar to AWS but tailored for Azure services. This framework guides design decisions and helps build secure, high-performing, resilient, and efficient infrastructure.
-
-**Five Pillars of Azure Well-Architected Framework:**
-
-**1. Reliability:**
-- Ability to recover from failures and meet business requirements
-- Key practices: Design for failure, implement redundancy, automate recovery
-- Tools: Availability Zones, Azure Site Recovery, Load Balancer, Traffic Manager
-
-**2. Security:**
-- Protect applications and data from threats
-- Key practices: Defense in depth, identity and access management, encryption
-- Tools: Azure AD, Key Vault, Security Center, Azure Firewall, DDoS Protection
-
-**3. Cost Optimization:**
-- Manage costs to maximize value
-- Key practices: Right-size resources, use appropriate pricing models, monitor spending
-- Tools: Cost Management, Reserved Instances, Spot VMs, Azure Advisor
-
-**4. Operational Excellence:**
-- Deploy and operate workloads effectively
-- Key practices: Automate operations, monitor and alert, document processes
-- Tools: Azure Monitor, Azure Automation, Azure DevOps, Application Insights
-
-**5. Performance Efficiency:**
-- Meet performance requirements efficiently
-- Key practices: Right-size resources, optimize data access, use caching
-- Tools: Azure Cache for Redis, CDN, Application Gateway, Azure Monitor
-
-**Market Position:**
-Azure holds approximately 23% market share in the cloud infrastructure market (as of 2024), making it the second-largest provider after AWS. It's particularly strong in enterprise environments, especially those already using Microsoft technologies (Windows Server, Active Directory, Office 365).
-
-**What Makes Azure Different:**
-
-**1. Microsoft Integration:**
-- **Seamless Integration**: Deep integration with Microsoft ecosystem
-- **Active Directory**: Native Azure AD integration
-- **Office 365**: Tight integration with Microsoft 365
-- **Windows Server**: Easy migration from on-premises Windows
-- **.NET Framework**: Excellent support for .NET applications
-- **Visual Studio**: Integrated development experience
-
-**2. Enterprise Focus:**
-- **Enterprise Agreements**: Flexible pricing for large organizations
-- **Hybrid Cloud**: Strong hybrid cloud capabilities (Azure Arc, Azure Stack)
-- **Compliance**: Extensive compliance certifications (more than any cloud provider)
-- **Enterprise Support**: Comprehensive support options
-- **SLAs**: Strong service level agreements
-
-**3. Global Infrastructure:**
-- **60+ regions** worldwide (as of 2024)
-- **Availability Zones** in major regions
-- **Edge locations** for content delivery
-- **Government clouds** (Azure Government, Azure China)
-- **Data residency** options for compliance
-
-**4. Comprehensive Services:**
-- **200+ services** covering all aspects of cloud computing
-- **AI and Machine Learning**: Azure AI, Cognitive Services, Azure ML
-- **IoT**: Azure IoT Hub, IoT Central, IoT Edge
-- **Analytics**: Azure Synapse Analytics, Azure Databricks
-- **DevOps**: Azure DevOps, GitHub integration
-- **Containers**: AKS, Container Instances, App Service
-
-**5. Developer-Friendly:**
-- **Multiple Languages**: Support for .NET, Java, Python, Node.js, Go, etc.
-- **SDKs**: Comprehensive SDKs for all major languages
-- **CLI and PowerShell**: Native PowerShell support
-- **Visual Studio Integration**: Seamless IDE integration
-- **Documentation**: Extensive documentation and learning resources
-
-**Cloud Computing Models:**
-
-**Infrastructure as a Service (IaaS):**
-- **What it is**: Virtualized computing resources over the internet
-- **You manage**: Operating systems, applications, data, runtime, middleware
-- **Azure manages**: Virtualization, servers, storage, networking
-- **Azure Examples**: Virtual Machines, Virtual Networks, Managed Disks
-- **Use cases**: Lift-and-shift migrations, custom configurations, full control
-- **When to use**: Need complete control, existing applications, compliance requirements
-
-**Platform as a Service (PaaS):**
-- **What it is**: Platform for developing, running, and managing applications
-- **You manage**: Applications and data
-- **Azure manages**: Runtime, middleware, operating systems, virtualization, servers, storage, networking
-- **Azure Examples**: App Service, Azure Functions, Azure SQL Database, Azure Cosmos DB
-- **Use cases**: Faster development, focus on code, automatic scaling, managed services
-- **When to use**: Building new applications, want to reduce operational overhead, need rapid deployment
-
-**Software as a Service (SaaS):**
-- **What it is**: Complete software solution delivered over the internet
-- **You manage**: Nothing (just use the software)
-- **Azure manages**: Everything
-- **Azure Examples**: Office 365, Dynamics 365, Azure AD
-- **Use cases**: Ready-to-use software, no maintenance, automatic updates
-- **When to use**: Need complete solutions, want to focus on business logic
-
-**Azure Service Categories:**
-
-**Compute Services:**
-- **Virtual Machines**: Windows and Linux VMs with full control
-- **App Service**: Managed platform for web apps and APIs
-- **Azure Functions**: Serverless compute for event-driven applications
-- **Container Instances**: Run containers without managing servers
-- **Azure Kubernetes Service (AKS)**: Managed Kubernetes orchestration
-- **Azure Batch**: Run large-scale parallel and high-performance computing
-- **Azure Spring Apps**: Managed Spring Boot applications
-
-**Storage Services:**
-- **Blob Storage**: Object storage for unstructured data (images, videos, backups)
-- **File Storage**: Managed file shares using SMB protocol
-- **Queue Storage**: Message queuing for reliable application messaging
-- **Table Storage**: NoSQL key-value store for structured data
-- **Disk Storage**: Persistent disks for VMs
-- **Azure NetApp Files**: Enterprise-grade file storage
-
-**Database Services:**
-- **Azure SQL Database**: Managed SQL Server in the cloud
-- **Azure Cosmos DB**: Globally distributed NoSQL database
-- **Azure Database for PostgreSQL**: Managed PostgreSQL
-- **Azure Database for MySQL**: Managed MySQL
-- **Azure Database for MariaDB**: Managed MariaDB
-- **Azure Cache for Redis**: Managed Redis cache
-- **Azure Synapse Analytics**: Analytics and data warehousing
-
-**Networking Services:**
-- **Virtual Network (VNet)**: Isolated network in Azure
-- **Load Balancer**: Distribute incoming traffic
-- **Application Gateway**: Layer 7 load balancing with WAF
-- **VPN Gateway**: Connect on-premises to Azure
-- **ExpressRoute**: Dedicated private connection to Azure
-- **Azure Front Door**: Global content delivery and DDoS protection
-- **Azure DNS**: DNS hosting and domain management
-
-**Security Services:**
-- **Azure Active Directory (Azure AD)**: Identity and access management
-- **Key Vault**: Secrets and certificate management
-- **Azure Security Center**: Unified security management
-- **Azure Policy**: Governance and compliance
-- **Azure Sentinel**: Cloud-native SIEM (Security Information and Event Management)
-- **Azure DDoS Protection**: DDoS attack mitigation
-- **Azure Firewall**: Managed network security
-
-**Management Services:**
-- **Azure Monitor**: Comprehensive monitoring and observability
-- **Azure Resource Manager**: Infrastructure as code and resource management
-- **Azure Automation**: Automate cloud and on-premises management
-- **Azure Backup**: Backup and disaster recovery
-- **Azure Site Recovery**: Disaster recovery orchestration
-- **Azure Cost Management**: Cost tracking and optimization
-- **Azure Advisor**: Best practice recommendations
-
-**AI and Machine Learning:**
-- **Azure AI Services**: Pre-built AI capabilities (vision, speech, language)
-- **Azure Machine Learning**: End-to-end ML platform
-- **Azure Cognitive Services**: APIs for AI capabilities
-- **Azure Bot Service**: Build intelligent bots
-- **Azure Databricks**: Apache Spark-based analytics platform
-
-**Key Benefits Explained:**
-
-**1. Scalability:**
-- **Vertical Scaling**: Increase VM size (scale up)
-- **Horizontal Scaling**: Add more instances (scale out)
-- **Auto Scaling**: Automatically adjust capacity based on demand
-- **Load Balancing**: Distribute traffic across multiple instances
-- **Real-world example**: E-commerce sites scale from hundreds to millions of users during sales events
-
-**2. Cost-Effectiveness:**
-- **Pay-as-you-go**: Pay only for what you use
-- **Reserved Instances**: Up to 72% savings with commitments
-- **Spot VMs**: Up to 90% savings for flexible workloads
-- **Azure Hybrid Benefit**: Use existing Windows Server and SQL Server licenses
-- **Free Tier**: 12 months free for new accounts, always-free services
-
-**3. Reliability:**
-- **99.95% to 99.99% SLA**: Depending on service and configuration
-- **Availability Zones**: Deploy across multiple zones for high availability
-- **Geo-redundancy**: Replicate data across regions
-- **Automatic Failover**: Built-in redundancy and failover
-- **Real-world example**: Financial institutions rely on Azure for mission-critical applications
-
-**4. Security:**
-- **Shared Responsibility Model**: Clear division of security responsibilities
-- **Compliance**: More compliance certifications than any cloud provider
-- **Encryption**: Data encrypted at rest and in transit
-- **Network Security**: Network Security Groups, Azure Firewall, DDoS Protection
-- **Identity Management**: Azure AD for comprehensive identity and access management
-- **Real-world example**: Healthcare organizations use Azure for HIPAA-compliant applications
-
-**5. Global Reach:**
-- **60+ regions** worldwide
-- **Low Latency**: Deploy close to users globally
-- **Data Residency**: Choose regions for compliance
-- **Content Delivery**: Azure Front Door and CDN for global distribution
-- **Multi-Region**: Deploy across multiple regions for disaster recovery
-
-**6. Hybrid Cloud:**
-- **Azure Arc**: Extend Azure services to on-premises and other clouds
-- **Azure Stack**: Run Azure services in your datacenter
-- **VPN and ExpressRoute**: Secure connectivity to on-premises
-- **Seamless Integration**: Unified management across cloud and on-premises
-- **Real-world example**: Enterprises gradually migrate workloads while maintaining on-premises infrastructure
-
-**Common Use Cases:**
-
-**1. Web Applications:**
-- Host websites and web applications
-- Use App Service, Virtual Machines, Azure Functions
-- Auto Scaling for traffic spikes
-- Example: E-commerce websites, corporate websites, APIs
-
-**2. Enterprise Applications:**
-- Run Windows Server workloads
-- Migrate on-premises applications
-- Use Virtual Machines, App Service
-- Example: Line-of-business applications, ERP systems
-
-**3. Data Analytics:**
-- Process and analyze large datasets
-- Use Azure Synapse Analytics, Azure Databricks, HDInsight
-- Real-time and batch processing
-- Example: Business intelligence, data warehousing, big data analytics
-
-**4. Machine Learning:**
-- Build and deploy ML models
-- Use Azure Machine Learning, Cognitive Services
-- Pre-trained models and custom training
-- Example: Image recognition, natural language processing, predictive analytics
-
-**5. DevOps and CI/CD:**
-- Automate software delivery
-- Use Azure DevOps, GitHub Actions
-- Infrastructure as code with ARM templates, Bicep, Terraform
-- Example: Continuous integration, automated deployments, infrastructure automation
-
-**6. Hybrid Cloud:**
-- Extend on-premises to cloud
-- Use Azure Arc, Azure Stack, VPN, ExpressRoute
-- Unified management and governance
-- Example: Gradual cloud migration, edge computing, multi-cloud strategies
-
-**Getting Started:**
-
-**1. Create Azure Account:**
-- Visit azure.microsoft.com
-- Sign up with Microsoft account or work/school account
-- Provide payment information (free tier available)
-- Access Azure Portal
-
-**2. Set Up Billing Alerts:**
-- Configure spending limits and alerts
-- Set up budgets in Cost Management
-- Monitor costs regularly
-- Use Cost Analysis for detailed breakdowns
-
-**3. Secure Your Account:**
-- Enable Multi-Factor Authentication (MFA)
-- Use Azure AD for identity management
-- Follow principle of least privilege
-- Enable Azure Security Center
-
-**4. Explore Free Tier:**
-- 12 months free for new accounts
-- Always free tier for some services
-- $200 credit for first 30 days
-- Great for learning and testing
-
-**5. Learn the Fundamentals:**
-- Start with core services (Virtual Machines, Storage, Networking)
-- Use Azure documentation and tutorials
-- Take Microsoft Learn courses
-- Practice with hands-on labs
-
-**Best Practices for Beginners:**
-
-**1. Start Small:**
-- Begin with free tier services
-- Test in a single region
-- Use simple architectures
-- Learn one service at a time
-
-**2. Use Infrastructure as Code:**
-- Use ARM templates, Bicep, or Terraform
-- Version control your infrastructure
-- Reproducible deployments
-- Easier to manage and update
-
-**3. Monitor Costs:**
-- Set up spending alerts
-- Use cost allocation tags
-- Review Cost Analysis regularly
-- Clean up unused resources
-
-**4. Follow Security Best Practices:**
-- Enable MFA everywhere
-- Use Azure AD for identity management
-- Follow principle of least privilege
-- Enable Security Center recommendations
-
-**5. Plan for High Availability:**
-- Use Availability Zones
-- Implement auto scaling
-- Set up health checks
-- Design for failure
-
-**Common Pitfalls to Avoid:**
-
-**1. Ignoring Costs:**
-- **Problem**: Services running 24/7 can accumulate costs
-- **Solution**: Set up spending alerts, use cost allocation tags, review regularly
-- **Example**: Leaving Virtual Machines running when not needed
-
-**2. Poor Security Practices:**
-- **Problem**: Weak passwords, exposed credentials, no MFA
-- **Solution**: Enable MFA, use Azure AD, rotate credentials regularly
-- **Example**: Using default passwords or committing credentials to repositories
-
-**3. Single Point of Failure:**
-- **Problem**: Deploying in single region/zone, no backups
-- **Solution**: Use multiple regions/zones, implement backups, design for failure
-- **Example**: Database in single region without geo-replication
-
-**4. Not Using Managed Services:**
-- **Problem**: Managing infrastructure yourself (databases, containers)
-- **Solution**: Use managed services (Azure SQL Database, AKS, App Service)
-- **Example**: Installing SQL Server on VM instead of using Azure SQL Database
-
-**5. Lack of Monitoring:**
-- **Problem**: No visibility into application performance
-- **Solution**: Set up Azure Monitor, create alerts, monitor metrics
-- **Example**: Not knowing when application is down or performing poorly
-
-**Real-World Success Stories:**
-
-**BMW:**
-- Uses Azure for connected car services
-- Processes millions of telemetry data points
-- Leverages Azure IoT Hub and Azure Functions
-- Enables real-time vehicle monitoring
-
-**eBay:**
-- Migrated critical workloads to Azure
-- Uses Azure for global marketplace platform
-- Leverages Azure's global infrastructure
-- Handles billions of transactions
-
-**Walgreens:**
-- Uses Azure for digital transformation
-- Leverages Azure AI for customer insights
-- Uses Azure for healthcare applications
-- Improves customer experience
-
-**Conclusion:**
-
-Microsoft Azure provides a comprehensive, secure, and scalable cloud computing platform that enables businesses to innovate faster, reduce costs, and scale globally. With deep Microsoft integration, strong enterprise focus, and extensive compliance certifications, Azure is particularly well-suited for organizations already using Microsoft technologies.
-
-Understanding Azure fundamentals is the first step toward building cloud-native applications and leveraging the power of cloud computing. Whether you're a developer, architect, or business leader, Azure offers the tools and services needed to transform your organization's IT infrastructure.
-
-The key to success with Azure is to start small, learn continuously, follow best practices, and leverage the extensive documentation and training resources available through Microsoft Learn. With over 200 services and continuous innovation, Azure provides everything needed to build, deploy, and scale applications in the cloud.`,
-					CodeExamples: `# Azure CLI Basic Commands
-# Install Azure CLI
-# Windows: Download MSI installer
-# macOS: brew install azure-cli
-# Linux: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-# Login to Azure
-az login
-
-# Set subscription
-az account set --subscription "My Subscription"
-
-# List all resource groups
-az group list
-
-# Create resource group
-az group create --name myResourceGroup --location eastus
-
-# List virtual machines
-az vm list
-
-# Create virtual machine
-az vm create \\
-    --resource-group myResourceGroup \\
-    --name myVM \\
-    --image UbuntuLTS \\
-    --admin-username azureuser \\
-    --generate-ssh-keys
-
-# Azure PowerShell Example
-# Install Azure PowerShell module
-Install-Module -Name Az -AllowClobber
-
-# Login
-Connect-AzAccount
-
-# Create resource group
-New-AzResourceGroup -Name myResourceGroup -Location eastus
-
-# Create storage account
-New-AzStorageAccount \\
-    -ResourceGroupName myResourceGroup \\
-    -Name mystorageaccount \\
-    -Location eastus \\
-    -SkuName Standard_LRS`,
+					Title: "What is Microsoft Azure?",
+					Content: `Microsoft Azure is the world's second-largest cloud platform, providing on-demand computing power, storage, and networking. It is the go-to choice for enterprises deeply integrated with the Microsoft ecosystem.
+
+**In simpler terms:**
+Instead of managing your own servers and data centers, you rent them from Microsoft.
+
+**Why Azure?**
+*   **The Enterprise Standard:** If your company uses Windows, Active Directory, or Office 365, Azure is the natural fit.
+*   **Hybrid Power:** Superior tools for connecting on-premises data centers to the cloud (Azure Arc).
+*   **Services:** Over 200+ services. Everything from Virtual Machines to AI (OpenAI models).
+
+**Global Infrastructure:**
+Azure uses **Regions** and **Availability Zones** to keep your apps running.
+
+` + "```" + `
+Region (e.g., East US)
+│
+├── Availability Zone 1 ───────────┐
+│   [ Data Center ]                │  <-- High-Speed Link
+├── Availability Zone 2 ───────────┤      (< 2ms)
+│   [ Data Center ]                │
+└── Availability Zone 3 ───────────┘
+    [ Data Center ]
+` + "```" + `
+
+*   **Region:** A geographic area (e.g., UK South, East US) containing one or more datacenters.
+*   **Availability Zone (AZ):** Physically separate locations within a region with independent power and cooling.
+*   **Geographies:** Higher-level boundaries (usually countries) for data residency and compliance.
+
+**Key takeaway:** To avoid downtime, always deploy your app across multiple **Availability Zones**. If one data center has a power cut, your app stays up in the others.`,
+					CodeExamples: `# Install Azure CLI
+# https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
+
+# Login to your account
+$ az login
+
+# Set your default subscription (if you have multiple)
+$ az account set --subscription "My Enterprise Subscription"
+
+# Test it out: List all resource groups
+$ az group list --output table`,
 				},
 				{
 					Title: "Azure Global Infrastructure",
-					Content: `Azure operates one of the world's largest cloud infrastructures, spanning 60+ regions across 140+ countries with millions of servers and exabytes of storage capacity. Understanding Azure's global infrastructure is crucial for designing highly available, low-latency, and compliant applications.
-
-**Why Global Infrastructure Matters:**
-
-**1. Low Latency:**
-- Deploy applications close to users worldwide
-- Reduce round-trip time for requests
-- Improve user experience significantly
-- Critical for real-time applications and gaming
-
-**2. High Availability:**
-- Multiple data centers per region
-- Automatic failover capabilities
-- Disaster recovery across regions
-- 99.95% to 99.99% uptime SLA depending on configuration
-
-**3. Compliance and Data Residency:**
-- Meet regulatory requirements (GDPR, HIPAA, etc.)
-- Keep data in specific geographic locations
-- Government and compliance-specific regions
-- Industry-specific compliance (healthcare, finance, government)
-
-**4. Scalability:**
-- Scale globally without infrastructure management
-- Handle traffic spikes automatically
-- Distribute load across regions
-- Support millions of users worldwide
-
-**Azure Infrastructure Components:**
-
-**1. Regions:**
-
-**What Are Azure Regions:**
-An Azure region is a set of datacenters deployed within a latency-defined perimeter and connected through a dedicated regional low-latency network. Each region contains multiple datacenters to ensure high availability.
-
-**Key Characteristics:**
-- **Independence**: Each region operates independently
-- **Isolation**: Complete isolation from other regions
-- **Multiple Datacenters**: Each region has multiple datacenters
-- **Data Residency**: Data stays within the region (unless explicitly replicated)
-- **Compliance**: Some regions meet specific compliance requirements
-
-**Region Selection Criteria:**
-
-**1. Latency:**
-- Choose region closest to your users
-- Lower latency = better user experience
-- Use Azure Front Door for global distribution
-- Test latency from different locations
-
-**2. Compliance:**
-- Data residency requirements (GDPR, etc.)
-- Government regulations
-- Industry-specific requirements
-- Compliance certifications per region
-
-**3. Service Availability:**
-- Not all services available in all regions
-- New services launch in select regions first
-- Check service availability before choosing region
-- Some services are region-specific
-
-**4. Cost:**
-- Pricing varies by region
-- Data transfer costs between regions
-- Some regions are more expensive
-- Consider total cost of ownership
-
-**5. Disaster Recovery:**
-- Deploy across multiple regions
-- Cross-region replication
-- Backup and recovery strategies
-- Business continuity planning
-
-**Major Azure Regions (as of 2024):**
-
-**United States:**
-- **East US** (Virginia): Largest US region, most services
-- **East US 2** (Virginia): Additional capacity
-- **West US** (California): Good for US West Coast
-- **West US 2** (Washington): Popular, good pricing
-- **West US 3** (Arizona): Additional West Coast region
-- **Central US** (Iowa): US Midwest
-- **South Central US** (Texas): US South
-- **North Central US** (Illinois): US North Central
-
-**Europe:**
-- **West Europe** (Netherlands): Largest European region
-- **North Europe** (Ireland): Good for UK and Nordic countries
-- **UK South** (London): UK data residency
-- **UK West** (Cardiff): Additional UK region
-- **France Central** (Paris): France data residency
-- **France South** (Marseille): Additional France region
-- **Germany West Central** (Frankfurt): Germany, GDPR compliance
-- **Switzerland North** (Zurich): Switzerland
-- **Norway East** (Oslo): Norway
-- **Sweden Central** (Gävle): Sweden
-
-**Asia Pacific:**
-- **Southeast Asia** (Singapore): Southeast Asia hub
-- **East Asia** (Hong Kong): Greater China
-- **Japan East** (Tokyo): Japan
-- **Japan West** (Osaka): Additional Japan region
-- **Korea Central** (Seoul): South Korea
-- **Australia East** (New South Wales): Australia
-- **Australia Southeast** (Victoria): Additional Australia region
-- **India Central** (Pune): India
-- **India South** (Chennai): Additional India region
-- **China East** (Shanghai): Operated by 21Vianet
-- **China North** (Beijing): Operated by 21Vianet
-
-**Middle East:**
-- **UAE North** (Dubai): United Arab Emirates
-- **UAE Central** (Abu Dhabi): Additional UAE region
-
-**South America:**
-- **Brazil South** (São Paulo): Brazil, Latin America
-
-**Africa:**
-- **South Africa North** (Johannesburg): South Africa
-- **South Africa West** (Cape Town): Additional South Africa region
-
-**Special Regions:**
-- **Azure Government**: For US government workloads
-- **Azure China**: Operated by 21Vianet and China Telecom
-
-**2. Availability Zones:**
-
-**What Are Availability Zones:**
-Availability Zones are physically separate locations within an Azure region. Each Availability Zone consists of one or more datacenters equipped with independent power, cooling, and networking.
-
-**Key Characteristics:**
-- **Physical Separation**: Each zone is in a different physical location
-- **Fault Isolation**: Failures in one zone don't affect others
-- **Low-Latency Links**: High-bandwidth, low-latency connectivity between zones
-- **Independent Infrastructure**: Power, networking, and connectivity redundancy
-- **Independent Operations**: Each zone operates independently
-
-**How Availability Zones Work:**
-
-**Architecture:**
-
-    Region (e.g., East US)
-    ├── Availability Zone 1
-    │   ├── Datacenter 1
-    │   └── Datacenter 2 (redundancy)
-    ├── Availability Zone 2
-    │   ├── Datacenter 3
-    │   └── Datacenter 4 (redundancy)
-    └── Availability Zone 3
-        ├── Datacenter 5
-        └── Datacenter 6 (redundancy)
-
-**Zone-Redundant Services:**
-- Automatically replicate across zones
-- High availability built-in
-- No single point of failure
-- Examples: Zone-redundant storage, SQL Database
-
-**Zonal Services:**
-- Deploy to specific zone
-- You choose zone placement
-- Examples: Virtual Machines, managed disks
-
-**Multi-Zone Deployment Benefits:**
-
-**1. High Availability:**
-- Automatic failover if one zone fails
-- 99.99% availability SLA (with zone redundancy)
-- No single point of failure
-- Continuous operation during zone failures
-
-**2. Fault Tolerance:**
-- Isolated failure domains
-- Redundant infrastructure
-- Automatic recovery
-- Data replication across zones
-
-**3. Load Distribution:**
-- Distribute traffic across zones
-- Better performance
-- Reduced latency
-- Improved scalability
-
-**Best Practices for Availability Zones:**
-
-**1. Always Use Multiple Zones:**
-- Deploy across at least 2 zones (preferably 3)
-- Never deploy production in single zone
-- Use multiple zones for VMs, databases, load balancers
-- Test failover scenarios
-
-**2. Understand Zone Mapping:**
-- Zone names are consistent (Zone 1, Zone 2, Zone 3)
-- Use zone-redundant services when available
-- Plan zone placement for optimal performance
-- Consider zone costs (data transfer between zones)
-
-**3. Plan for Zone Failures:**
-- Design for single zone failure
-- Implement automatic failover
-- Test disaster recovery procedures
-- Monitor zone health
-
-**4. Cost Considerations:**
-- Data transfer between zones may incur costs
-- Zone-redundant services may cost more
-- Consider cost vs availability trade-offs
-- Use zones strategically
-
-**3. Edge Locations:**
-
-**What Are Edge Locations:**
-Azure edge locations are points of presence (PoPs) in cities around the world where Azure CDN and Azure Front Door cache content and optimize delivery. They are separate from regions, designed to deliver content with the lowest possible latency.
-
-**Key Characteristics:**
-- **100+ edge locations** worldwide
-- **Content Caching**: Store frequently accessed content
-- **Low Latency**: Deliver content from nearest edge location
-- **Global Distribution**: Serve users worldwide
-- **Automatic Routing**: Route users to nearest edge
-
-**Azure CDN Edge Locations:**
-- Cache static and dynamic content
-- Reduce origin server load
-- Improve performance globally
-- Support live streaming
-- Handle DDoS protection
-
-**Azure Front Door Edge Locations:**
-- Global load balancing
-- DDoS protection
-- Web Application Firewall (WAF)
-- SSL termination
-- Content caching
-
-**How Edge Locations Work:**
-
-**Content Delivery Flow:**
-
-    User Request
-        ↓
-    Azure Front Door (Edge Location) - Check Cache
-        ↓
-    Cache Hit → Return Cached Content (Fast!)
-        ↓
-    Cache Miss → Fetch from Origin → Cache → Return
-
-**Benefits:**
-- **Reduced Latency**: Content served from nearby edge location
-- **Lower Bandwidth Costs**: Reduced origin server traffic
-- **Better Performance**: Faster page loads and downloads
-- **Global Reach**: Serve users worldwide efficiently
-- **Scalability**: Handle traffic spikes automatically
-
-**4. Azure Arc:**
-
-**What Is Azure Arc:**
-Azure Arc extends Azure management and services to any infrastructure, including on-premises datacenters, edge locations, and other cloud providers.
-
-**Key Capabilities:**
-- **Unified Management**: Manage resources across cloud, on-premises, and edge
-- **Azure Services**: Run Azure services anywhere
-- **Consistent Governance**: Apply Azure policies everywhere
-- **Unified Security**: Extend Azure security to all resources
-
-**Use Cases:**
-- Hybrid cloud deployments
-- Multi-cloud management
-- Edge computing
-- On-premises Azure services
-
-**Infrastructure Architecture:**
-
-**Complete Azure Infrastructure:**
-
-    Global Azure Infrastructure
-    │
-    ├── Regions (60+)
-    │   ├── Region 1 (e.g., East US)
-    │   │   ├── Availability Zone 1
-    │   │   │   ├── Datacenter 1
-    │   │   │   └── Datacenter 2
-    │   │   ├── Availability Zone 2
-    │   │   │   ├── Datacenter 3
-    │   │   │   └── Datacenter 4
-    │   │   └── Availability Zone 3
-    │   │       ├── Datacenter 5
-    │   │       └── Datacenter 6
-    │   └── Region 2 (e.g., West Europe)
-    │       └── ...
-    │
-    ├── Edge Locations (100+)
-    │   ├── Azure CDN Edge Locations
-    │   │   ├── Cache static content
-    │   │   └── Serve dynamic content
-    │   └── Azure Front Door Edge Locations
-    │       ├── Global load balancing
-    │       └── DDoS protection
-    │
-    └── Azure Arc
-        ├── On-premises datacenters
-        ├── Edge locations
-        └── Other cloud providers
-
-**Best Practices:**
-
-**1. Multi-Zone Deployment:**
-- **Always deploy across multiple zones** for production workloads
-- Use at least 2 zones (preferably 3) for high availability
-- Distribute resources evenly across zones
-- Test failover scenarios regularly
-- Monitor zone health and performance
-
-**2. Region Selection:**
-- **Choose region closest to users** for lowest latency
-- Consider **data residency requirements** (GDPR, HIPAA, etc.)
-- Check **service availability** in chosen region
-- Compare **pricing** across regions
-- Plan for **disaster recovery** across regions
-
-**3. Content Delivery:**
-- **Use Azure Front Door** for global load balancing and content delivery
-- **Use Azure CDN** for static content caching
-- **Optimize cache policies** for your content
-- **Monitor performance** and cache hit ratios
-- **Use edge locations** for global user base
-
-**4. Network Optimization:**
-- **Use Virtual Network peering** to keep traffic within Azure network
-- **Minimize cross-region data transfer** (costs apply)
-- **Use ExpressRoute** for consistent performance
-- **Optimize data transfer** patterns
-- **Monitor network performance** and costs
-
-**5. Disaster Recovery:**
-- **Deploy across multiple regions** for disaster recovery
-- **Implement cross-region replication** for critical data
-- **Test disaster recovery procedures** regularly
-- **Document recovery procedures** and runbooks
-- **Monitor and alert** on regional issues
-
-**Common Pitfalls:**
-
-**1. Single Zone Deployment:**
-- **Problem**: Deploying production in single zone
-- **Risk**: Complete outage if zone fails
-- **Solution**: Always use multiple zones
-- **Example**: Virtual Machine in single zone without redundancy
-
-**2. Wrong Region Selection:**
-- **Problem**: Choosing region far from users
-- **Impact**: High latency, poor user experience
-- **Solution**: Choose region closest to users, use Azure Front Door
-- **Example**: US users accessing Asia Pacific region (high latency)
-
-**3. Ignoring Data Residency:**
-- **Problem**: Not considering compliance requirements
-- **Risk**: Regulatory violations, legal issues
-- **Solution**: Understand requirements, choose appropriate regions
-- **Example**: EU data stored in US region (GDPR violation)
-
-**4. Not Using Content Delivery:**
-- **Problem**: Serving content directly from origin
-- **Impact**: High latency, high costs, poor performance
-- **Solution**: Use Azure Front Door or Azure CDN for global content delivery
-- **Example**: Serving images/videos directly from Storage Account to global users
-
-**5. Cross-Region Data Transfer Costs:**
-- **Problem**: Unnecessary data transfer between regions
-- **Impact**: High costs, poor performance
-- **Solution**: Minimize cross-region transfers, use VNet peering
-- **Example**: Frequent data sync between regions without optimization
-
-**Real-World Examples:**
-
-**Netflix (Azure Example):**
-- Uses Azure for some workloads
-- Leverages Azure's global infrastructure
-- Uses Azure CDN for content delivery
-- Handles millions of concurrent users
-
-**Enterprise Migration:**
-- Multi-region deployment for global presence
-- Uses Availability Zones for high availability
-- Azure Front Door for global load balancing
-- Meets compliance requirements with regional deployment
-
-**Conclusion:**
-
-Understanding Azure global infrastructure is fundamental to designing highly available, performant, and compliant applications. By leveraging regions, Availability Zones, edge locations, and Azure Arc effectively, you can build applications that scale globally, provide excellent user experience, and meet compliance requirements.
-
-The key principles are:
-- **Deploy across multiple zones** for high availability
-- **Choose regions wisely** based on latency, compliance, and cost
-- **Use Azure Front Door and CDN** for global content delivery
-- **Plan for disaster recovery** across regions
-- **Monitor and optimize** your infrastructure continuously
-
-Remember: Azure infrastructure is designed for scale, reliability, and performance. By following best practices and understanding the infrastructure components, you can leverage Azure's global reach to build world-class applications.`,
-					CodeExamples: `# List all Azure regions
-az account list-locations --output table
-
-# Get available regions for a service
-az vm list-sizes --location eastus
-
-# Create resource in specific region
-az group create --name myRG --location westeurope
-
-# Check service availability
-az provider show --namespace Microsoft.Compute --query "resourceTypes[?resourceType=='virtualMachines'].locations"`,
+					Content: `Azure has 60+ regions worldwide—the most of any provider. It’s organized into four layers:
+
+**1. Geographies (The "Compliance")**
+Usually a country (e.g., United Kingdom, Germany) or a large area.
+*   **Purpose:** Ensures data residency. Data doesn't leave the geography without your permission.
+
+**2. Regions (The "Where")**
+A set of datacenters connected through a dedicated low-latency network.
+*   **Examples:** UK South (London), East US (Virginia).
+*   **Regional Pairs:** Every region is "paired" with another at least 300 miles away (e.g., East US and West US). If a massive disaster hits one, your data is safe in the other.
+
+**3. Availability Zones (The "Resilience")**
+Individual datacenters inside a region.
+*   **What it is:** A location with its own power, cooling, and network.
+*   **SLA:** 99.99% for VMs across two or more AZs.
+
+**4. Edge Locations (The "Speed")**
+*   **Purpose:** Not for hosting servers, but for caching content (CDN) and global load balancing (Front Door).
+*   **Count:** 100+ points-of-presence (PoPs).
+
+**Decision Tree:**
+*   Need speed for local users? -> Choose the closest **Region**.
+*   Need data to stay in a country? -> Choose the right **Geography**.
+*   Need 24/7 uptime? -> Use multiple **Availability Zones**.`,
+					CodeExamples: `# Find the closest region to you (Ping)
+# Standard Azure endpoints
+$ ping eastus.api.azure.com
+$ ping uksouth.api.azure.com
+
+# List all available locations
+$ az account list-locations --output table`,
 				},
+				{
+					Title: "Core Azure Services",
+					Content: `Azure has hundreds of services, but these 6 are the foundations of almost every architecture.
+
+**1. Compute (The "Brains")**
+*   **Virtual Machines (IaaS):** Total control. You manage the OS.
+*   **Azure Functions (FaaS):** Serverless. Upload code, it runs on demand.
+*   **App Service (PaaS):** Managed web hosting for Java, .NET, Python, etc.
+
+**2. Networking (The "Cables")**
+*   **VNet (Virtual Network):** Your private space in Azure.
+*   **Load Balancer:** Distributes traffic between servers.
+
+**3. Storage & DB (The "Memory")**
+*   **Blob Storage:** Unlimited "bucket" for files (photos, backups). Equivalent to AWS S3.
+*   **Azure SQL Database:** Managed SQL Server.
+*   **Cosmos DB:** Global NoSQL database (like DynamoDB but Multi-Model).
+
+**Visual Architecture:**
+` + "```" + `
+[ User ] -> [ App Service ] -> [ VNet ] -> [ SQL Database ]
+                              |
+                     [ Blob Storage (Photos) ]
+` + "```" + ``,
+					CodeExamples: `# Storage: Create a storage account
+$ az storage account create -n mystore -g myRG -l eastus --sku Standard_LRS
+
+# Compute: Create a basic Linux VM
+$ az vm create -n myVM -g myRG --image UbuntuLTS --generate-ssh-keys`,
+				},
+
 				{
 					Title: "Azure Pricing and Billing",
 					Content: `Understanding Azure pricing and billing is crucial for managing costs and optimizing cloud spending.

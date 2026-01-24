@@ -12,57 +12,35 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction to Dynamic Programming",
-					Content: `Dynamic Programming (DP) is a powerful method for solving complex problems by breaking them down into simpler subproblems and storing the results to avoid recomputation.
+					Content: `Dynamic Programming (DP) is less about programming and more about smart recursion. It's an optimization technique that turns exponential-time algorithms into polynomial-time ones.
 
-**Core Concept:**
-Instead of solving the same subproblem multiple times (like naive recursion), DP solves each subproblem once and stores the result for future use.
+**The core idea:** "Those who cannot remember the past are condemned to repeat it."
+In code, this means: "If we've solved this subproblem before, don't solve it again. Look it up."
 
-**Key Characteristics:**
+**Two Pillars of DP:**
 
-1. **Overlapping Subproblems**:
-   - Same subproblems appear multiple times
-   - Example: Fibonacci - fib(5) needs fib(3) and fib(4), fib(4) needs fib(3) again
-   - Without DP: Exponential time O(2^n)
-   - With DP: Linear time O(n)
+1.  **Overlapping Subproblems:**
+    *   The problem can be broken down into smaller pieces.
+    *   The SAME pieces are needed multiple times.
+    *   *Example:* In Fibonacci, fib(5) asks for fib(3) and fib(4). fib(4) AGAIN asks for fib(3).
 
-2. **Optimal Substructure**:
-   - Optimal solution contains optimal solutions to subproblems
-   - Example: Shortest path from A→C via B = shortest A→B + shortest B→C
-   - Can combine optimal subproblem solutions
+2.  **Optimal Substructure:**
+    *   The optimal solution to a big problem can be built from optimal solutions to small problems.
+    *   *Example:* Shortest path A to C is shortest A to B + shortest B to C.
 
-**Two Main Approaches:**
+**Top-Down vs Bottom-Up:**
 
-1. **Top-down (Memoization)**:
-   - Start with full problem, break down recursively
-   - Cache results as you compute them
-   - More intuitive, natural recursion
-   - Space: O(n) for recursion stack + memo
+*   **Top-Down (Memoization):**
+    *   Start at the goal, recurse down.
+    *   "I need fib(10). To get that, I need fib(9) and fib(8)..."
+    *   Store results in a map/array as you go.
+    *   *Pros:* Only solves what is needed. Easier to write from recursive logic.
 
-2. **Bottom-up (Tabulation)**:
-   - Start with base cases, build up iteratively
-   - Fill table/dp array systematically
-   - More efficient (no recursion overhead)
-   - Space: Can often optimize to O(1) with careful variable management
-
-**When to Use DP:**
-- **Optimization**: "maximum", "minimum", "longest", "shortest"
-- **Counting**: "number of ways", "how many paths"
-- **Decision**: "can we achieve X?", "is it possible?"
-- **Overlapping Subproblems**: Recursive solution repeats work
-- **Optimal Substructure**: Can build solution from subproblems
-
-**DP Problem Identification:**
-- Problem asks for optimal value (max/min)
-- Can be broken into smaller similar problems
-- Brute force would be exponential
-- Greedy doesn't work (need to consider all possibilities)
-
-**Common DP Patterns:**
-- 1D DP: dp[i] = optimal value up to position i
-- 2D DP: dp[i][j] = optimal value at position (i,j)
-- Knapsack: Choosing items with constraints
-- LCS: Longest Common Subsequence
-- Edit Distance: Minimum operations to transform`,
+*   **Bottom-Up (Tabulation):**
+    *   Start at the base case, build up.
+    *   "I compute fib(0), then fib(1), then fib(2)... up to fib(10)."
+    *   Fill a table (array) iteratively.
+    *   *Pros:* No recursion overhead. Often easier to optimize space.`,
 					CodeExamples: `// Go: Fibonacci with memoization
 func fib(n int) int {
     memo := make(map[int]int)
@@ -91,67 +69,43 @@ def fib(n, memo={}):
 				},
 				{
 					Title: "DP Patterns",
-					Content: `**Common DP Patterns:**
+					Content: `Recognizing the pattern is 90% of solving a DP problem. Here are the most common templates.
 
-1. **1D DP**: dp[i] represents optimal value up to position i
-   - Examples: Climbing stairs, House robber, Coin change
-   - Recurrence: dp[i] = f(dp[i-1], dp[i-2], ...)
+**1. 1D DP (Linear)**
+*   **Concept:** The answer depends on previous steps in a single line.
+*   **Recurrence:** 'dp[i] = dp[i-1] + dp[i-2]' (like Climbing Stairs)
+*   **Space:** often O(n), can be optimized to O(1).
 
-2. **2D DP**: dp[i][j] represents optimal value at position (i, j)
-   - Examples: Unique paths, Edit distance, LCS
-   - Recurrence: dp[i][j] = f(dp[i-1][j], dp[i][j-1], ...)
+**2. 2D DP (Grid/Matrix)**
+*   **Concept:** Moving through a grid or comparing two strings.
+*   **Recurrence:** 'dp[i][j] = dp[i-1][j] + dp[i][j-1]' (like Unique Paths)
+*   **Space:** O(n*m).
 
-3. **Knapsack Problems**: Choosing items with weight/value constraints
-   - 0/1 Knapsack: Each item used at most once
-   - Unbounded Knapsack: Items can be reused
-   - Fractional Knapsack: Greedy (not DP)
+**3. Knapsack Pattern (0/1)**
+*   **Concept:** You have a capacity and items with weights/values. Take it or leave it.
+*   **Question:** Max value within weight limit?
+*   **State:** 'dp[i][w]' = max value using first i items with weight limit w.
 
-4. **Longest Common Subsequence (LCS)**: Finding longest common pattern
-   - Compare two sequences character by character
-   - Build solution incrementally
+**4. Unbounded Knapsack**
+*   **Concept:** Same as above, but you can use an item infinite times involved.
+*   **Example:** Coin Change (fewest coins to make amount X).
 
-5. **Edit Distance**: Minimum operations to transform one string to another
-   - Operations: Insert, Delete, Replace
-   - Used in: Spell checkers, DNA alignment, diff algorithms
+**5. Longest Common Subsequence (LCS)**
+*   **Concept:** Comparing two strings to find commonalities.
+*   **State:** 'dp[i][j]' = LCS length of string A[:i] and string B[:j].
+*   **Logic:** If chars match, '1 + dp[i-1][j-1]'. If not, 'max(dp[i-1][j], dp[i][j-1])'.
 
-6. **Interval DP**: dp[i][j] = optimal value for interval from i to j
-   - Examples: Matrix chain multiplication, Palindrome partitioning
+**6. Interval DP**
+*   **Concept:** Solving for a range [i, j].
+*   **Logic:** Combine valid sub-intervals [i, k] and [k+1, j].
+*   **Example:** Matrix Chain Multiplication, Burst Balloons.
 
-7. **State Machine DP**: Track state transitions
-   - Examples: Buy/sell stock with restrictions, State transitions
-
-**Steps to Solve DP Problems:**
-
-1. **Identify Subproblems**:
-   - What smaller problems need to be solved?
-   - How do they relate to the main problem?
-
-2. **Define State**:
-   - What does dp[i] or dp[i][j] represent?
-   - What information do we need to track?
-
-3. **Find Recurrence Relation**:
-   - How do we compute dp[i] from previous states?
-   - What are the transitions?
-
-4. **Set Base Cases**:
-   - What are the smallest subproblems?
-   - What are their known values?
-
-5. **Implement**:
-   - Choose: Memoization (top-down) or Tabulation (bottom-up)
-   - Consider space optimization
-
-6. **Optimize** (if needed):
-   - Reduce space complexity
-   - Optimize time if possible
-
-**Common Mistakes:**
-- Forgetting base cases
-- Incorrect recurrence relation
-- Off-by-one errors in indices
-- Not handling edge cases
-- Confusing state definition`,
+**How to Solve Any DP Problem:**
+1.  **Define State:** What does 'dp[i]' mean? (e.g., "max profit at day i")
+2.  **Find Recurrence:** How does 'dp[i]' relate to 'dp[i-1]'?
+3.  **Base Cases:** What is 'dp[0]'?
+4.  **Order of Computation:** Do we loop i from 0 to n?
+5.  **Location of Answer:** Is it 'dp[n]'? Or 'max(dp)'?`,
 					CodeExamples: `// Go: 1D DP - Climbing stairs
 func climbStairs(n int) int {
     if n <= 2 {

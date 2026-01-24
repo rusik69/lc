@@ -12,118 +12,47 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction to Generics",
-					Content: `**What are Generics?**
+					Content: `Generics (added in Go 1.18) allow you to write functions and data structures that work with *any* type, without sacrificing type safety or performance.
 
-Generics were introduced in Go 1.18 (March 2022) to enable writing code that works with multiple types while maintaining type safety. Before generics, Go developers had to use interfaces, type assertions, or code generation to achieve similar functionality.
+**The Old Way (Pre-1.18):**
+You had to use 'interface{}' (now called 'any') and use runtime type assertions. It was slow and unsafe (panic if you guessed wrong).
 
-**Why Generics Matter:**
+**The New Way (Generics):**
+You define "Type Parameters". It's like a function parameter, but for types.
 
-**1. Type Safety:**
-- Compile-time type checking
-- No runtime type assertions needed
-- Prevents type-related bugs
+**Syntax:**
+'func FunctionName[T Constraint](param T) T { ... }'
 
-**2. Code Reuse:**
-- Write functions that work with multiple types
-- Reduce code duplication
-- Maintainable and DRY (Don't Repeat Yourself)
+*   **[T any]**: 'T' is the name of the generic type. 'any' is the constraint (allows anything).
+*   **(param T)**: The function takes an argument of type 'T'.
 
-**3. Performance:**
-- No runtime overhead (unlike interfaces with type assertions)
-- Compiler generates specific code for each type
-- Same performance as non-generic code
-
-**4. Better APIs:**
-- More expressive function signatures
-- Clearer intent in code
-- Better IDE support and autocomplete
-
-**Key Concepts:**
-
-**Type Parameters:**
-- Syntax: func FunctionName[T TypeConstraint](param T) T
-- T is a type parameter (can be any name)
-- TypeConstraint defines what types T can be
-
-**Type Constraints:**
-- Define what types are allowed
-- Can be interfaces or type sets
-- Built-in constraints: comparable, any, constraints package
-
-**Generic Functions:**
-- Functions that work with type parameters
-- Type inferred from arguments
-- Can be explicitly specified
-
-**Generic Types:**
-- Types that can work with multiple underlying types
-- Examples: Stack[T], Queue[T], Tree[T]
-
-**Real-World Applications:**
-- Collections: Generic stacks, queues, trees
-- Algorithms: Generic sorting, searching, filtering
-- Utilities: Generic min/max, map/filter/reduce
-- Data structures: Generic linked lists, heaps, graphs`,
+**Real-World Use Cases:**
+1.  **Collections:** Sets, Stacks, Queues, Linked Lists that work on *any* type.
+2.  **Utility Functions:** 'Map', 'Filter', 'Reduce', 'Min', 'Max'.
+3.  **Database Code:** Repositories that work for any struct ID type.`,
 					CodeExamples: `package main
 
 import "fmt"
 
-// Generic function - works with any comparable type
-func Max[T comparable](a, b T) T {
-    // Note: This is simplified - real implementation needs constraints.Ordered
-    return a  // Placeholder
-}
-
-// Generic function with constraints
-func Find[T comparable](slice []T, value T) int {
+// Generic Function
+// [T comparable] means T must be a type that supports == and !=
+func FindIndex[T comparable](slice []T, target T) int {
     for i, v := range slice {
-        if v == value {
+        if v == target {
             return i
         }
     }
     return -1
 }
 
-// Generic type
-type Stack[T any] struct {
-    items []T
-}
-
-func (s *Stack[T]) Push(item T) {
-    s.items = append(s.items, item)
-}
-
-func (s *Stack[T]) Pop() (T, bool) {
-    if len(s.items) == 0 {
-        var zero T
-        return zero, false
-    }
-    item := s.items[len(s.items)-1]
-    s.items = s.items[:len(s.items)-1]
-    return item, true
-}
-
 func main() {
-    // Type inference
-    index := Find([]int{1, 2, 3, 4, 5}, 3)
-    fmt.Println(index)  // 2
-    
-    // Explicit type specification
-    index2 := Find[string]([]string{"a", "b", "c"}, "b")
-    fmt.Println(index2)  // 1
-    
-    // Generic type
-    intStack := Stack[int]{}
-    intStack.Push(1)
-    intStack.Push(2)
-    val, _ := intStack.Pop()
-    fmt.Println(val)  // 2
-    
-    stringStack := Stack[string]{}
-    stringStack.Push("hello")
-    stringStack.Push("world")
-    str, _ := stringStack.Pop()
-    fmt.Println(str)  // world
+    // Works with ints!
+    ints := []int{10, 20, 30}
+    fmt.Println(FindIndex(ints, 20)) // 1
+
+    // Works with strings!
+    strs := []string{"foo", "bar", "baz"}
+    fmt.Println(FindIndex(strs, "baz")) // 2
 }`,
 				},
 				{
@@ -584,40 +513,53 @@ func main() {
 				},
 				{
 					Title: "Error Handling Patterns",
-					Content: `**Common Patterns:**
-- Check error immediately after function call
-- Return early on error
-- Wrap errors with context
-- Use errors.Is() and errors.As() for error inspection
+					Content: `Go doesn't have exceptions. We treats errors as values. This forces you to handle failure cases explicitly, leading to reliable software.
 
-**Best Practices:**
-- Always check errors
-- Provide context with errors
-- Don't ignore errors with _`,
+**The Golden Rules:**
+1.  **Check errors immediately:** Don't ignore them.
+2.  **Add context:** If an error occurs, wrap it with more info using '%w'.
+3.  **Sentinel Errors:** Use 'errors.Is' to check for specific error types (like 'ErrNotFound').
+
+**Modern Error Checking (Go 1.13+):**
+*   **errors.Is(err, target):** Checks if 'err' matches 'target' (even if wrapped).
+*   **errors.As(err, &target):** Checks if 'err' can be cast to a specific custom error type.
+
+**Don't panic!**
+Only use 'panic()' for unrecoverable startup errors (like missing config). For everything else, return an error.`,
 					CodeExamples: `package main
 
 import (
     "errors"
     "fmt"
+    "os"
 )
 
-func processFile(filename string) error {
-    // Simulate file operation
-    if filename == "" {
-        return errors.New("filename cannot be empty")
+var ErrNotFound = errors.New("user not found")
+
+func findUser(id int) error {
+    if id == 0 {
+        return ErrNotFound
+    }
+    // Simulate DB failure
+    if id < 0 {
+        return fmt.Errorf("database connection failed: %w", errors.New("connection timeout"))
     }
     return nil
 }
 
 func main() {
-    err := processFile("")
-    if err != nil {
-        fmt.Println("Error:", err)
+    err := findUser(0)
+    
+    // Check for specific error
+    if errors.Is(err, ErrNotFound) {
+        fmt.Println("User missing!")
         return
     }
     
-    // Success path
-    fmt.Println("File processed")
+    // Check for other errors
+    if err != nil {
+        fmt.Printf("Critical error: %v\n", err)
+    }
 }`,
 				},
 				{

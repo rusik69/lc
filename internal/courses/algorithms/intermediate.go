@@ -12,432 +12,59 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "Linked Lists Basics",
-					Content: `A linked list is a fundamental linear data structure where elements are stored in nodes, each containing data and a reference (pointer) to the next node. Unlike arrays, elements are not stored in contiguous memory locations, which gives linked lists unique properties and trade-offs.
+					Content: `Linked Lists are one of the most flexible data structures. Imagine a treasure hunt: each clue (node) tells you where to find the next one (pointer). You can't just jump to the 10th clue; you have to follow the trail from the beginning.
 
-**Understanding Linked Lists:**
-
-**Node Structure:**
-- Each node contains: data (value) and next (pointer to next node)
-- Last node's next pointer is null/nil (indicates end)
-- Head pointer points to first node
-- Optional tail pointer points to last node
-
-**Visual Representation:**
+**Visualize a Linked List:**
 ` + "```" + `
-Singly Linked List:
-Head -> [10|next] -> [20|next] -> [30|nil]
-         Node 1       Node 2       Node 3
+[ HEAD ] -> [ Node 1 ] -> [ Node 2 ] -> [ Node 3 ] -> [ NULL ]
+            (Data|Next)   (Data|Next)   (Data|Next)
 ` + "```" + `
 
-**Types of Linked Lists:**
+**Why use Linked Lists over Arrays?**
 
-**1. Singly Linked List:**
+1.  **Dynamic Size:** Arrays are fixed. If you need 101 items and your array holds 100, you have to create a new array and copy everything. Linked Lists just add a new node.
+2.  **Efficient Insertions:** Inserting at the beginning of an array is O(n) because you have to shift everyone over. In a Linked List, it's O(1) - just change one pointer.
+3.  **Memory Usage:** Arrays need a contiguous block of memory. Linked Lists can be scattered across memory, which is useful when memory is fragmented.
 
-**Structure:**
-- Each node has: data and next pointer
-- Can only traverse forward (head to tail)
-- Last node's next is null
-
-**Advantages:**
-- Less memory overhead (one pointer per node)
-- Simple implementation
-- Efficient forward traversal
-
-**Disadvantages:**
-- Cannot traverse backward
-- Must traverse from head to reach any node
-- Cannot delete node without previous node reference
-
-**Use Cases:**
-- Simple lists where backward traversal not needed
-- Implementing stack (LIFO)
-- Memory-constrained environments
-
-**2. Doubly Linked List:**
-
-**Structure:**
-- Each node has: data, next pointer, and prev pointer
-- Can traverse both forward and backward
-- First node's prev is null, last node's next is null
-
-**Advantages:**
-- Bidirectional traversal
-- Can delete node with just node reference (no need for previous)
-- More flexible operations
-
-**Disadvantages:**
-- More memory overhead (two pointers per node)
-- More complex implementation
-- Need to update both next and prev pointers
-
-**Use Cases:**
-- Need backward traversal
-- Frequent deletions by node reference
-- Implementing deque (double-ended queue)
-
-**3. Circular Linked List:**
-
-**Structure:**
-- Last node points back to first node
-- No null pointer at end
-- Can be singly or doubly linked
-
-**Advantages:**
-- No null pointer to check
-- Can start traversal from any node
-- Useful for round-robin algorithms
-
-**Disadvantages:**
-- Need to track when we've completed a cycle
-- More complex termination conditions
-- Risk of infinite loops if not careful
-
-**Use Cases:**
-- Round-robin scheduling
-- Circular buffers
-- Problems requiring cyclic processing
-
-**Memory Structure Comparison:**
-
-**Array:**
-` + "```" + `
-Memory: [10][20][30][40]
-        All elements contiguous
-        Cache-friendly (spatial locality)
-        Fixed size (or expensive resizing)
-` + "```" + `
-
-**Linked List:**
-` + "```" + `
-Memory: [10|ptr] -> [20|ptr] -> [30|ptr] -> [40|nil]
-        Nodes scattered in memory
-        Cache-unfriendly (random access)
-        Dynamic size (easy growth)
-` + "```" + `
-
-**Advantages of Linked Lists:**
-
-**1. Dynamic Size:**
-- Grow and shrink as needed
-- No need to pre-allocate size
-- Only allocate memory for elements that exist
-
-**2. Efficient Insertion/Deletion:**
-- Insert at head: O(1) - just update head pointer
-- Insert at known position: O(1) - just update pointers
-- Delete at known position: O(1) - just update pointers
-- No shifting of elements needed (unlike arrays)
-
-**3. Memory Efficiency:**
-- Only allocate what you need
-- No wasted space for unused capacity
-- Can free memory when nodes deleted
-
-**4. Flexibility:**
-- Easy to rearrange elements
-- Can split and merge lists efficiently
-- Can insert/delete without affecting other elements
-
-**Disadvantages of Linked Lists:**
-
-**1. No Random Access:**
-- Cannot access element by index directly
-- Must traverse from head to reach element
-- Accessing kth element: O(k) time
-
-**2. Extra Memory Overhead:**
-- Need to store pointers (8 bytes per pointer on 64-bit)
-- Singly linked: 1 pointer per node
-- Doubly linked: 2 pointers per node
-
-**3. Cache Unfriendly:**
-- Nodes scattered in memory (not contiguous)
-- Poor spatial locality
-- Cache misses more frequent than arrays
-
-**4. No Backward Traversal (Singly Linked):**
-- Cannot traverse backward
-- Need doubly linked list for bidirectional traversal
+**The Downside:**
+*   **No Random Access:** You can't say "give me the 5th element". You have to walk from the head. O(n) access time.
+*   **Extra Memory:** Each node needs extra space for the pointer.
+*   **Cache Unfriendly:** Nodes are scattered, leading to more cache misses compared to arrays.
 
 **Common Operations:**
+*   **Traversal:** Walking through the list. O(n).
+*   **Insertion (Head):** O(1).
+*   **Deletion (Head):** O(1).
+*   **Search:** O(n).
 
-**1. Insert at Head:**
-- Create new node
-- Set new node's next to current head
-- Update head to new node
-- Time: O(1)
-
-**2. Insert at Tail:**
-- If tail pointer maintained: O(1)
-- Otherwise: traverse to end, then insert: O(n)
-
-**3. Insert at Position:**
-- Traverse to position: O(k) where k is position
-- Update pointers: O(1)
-- Total: O(n) worst case
-
-**4. Delete at Head:**
-- Update head to head.next
-- Free old head node
-- Time: O(1)
-
-**5. Delete at Position:**
-- Find node at position: O(k)
-- Update pointers: O(1)
-- Total: O(n) worst case
-
-**6. Search:**
-- Linear search from head
-- Time: O(n) worst case
-- No binary search possible (no random access)
-
-**Common Patterns:**
-
-**1. Dummy Node:**
-- Use dummy head node to simplify edge cases
-- Avoids special handling for empty list
-- Simplifies insertion/deletion at head
-
-**2. Two Pointers:**
-- Fast/slow pointers for cycle detection
-- Fast/slow pointers for finding middle
-- Two pointers for finding kth from end
-
-**3. Reverse:**
-- Iterative reversal: O(n) time, O(1) space
-- Recursive reversal: O(n) time, O(n) space
-- Partial reversal: reverse sublist
-
-**4. Merge:**
-- Merge two sorted lists: O(n+m) time
-- Use two pointers, compare and merge
-- Efficient for combining sorted data
-
-**When to Use Linked Lists:**
-
-**Good For:**
-- Unknown or frequently changing size
-- Frequent insertions/deletions in middle
-- Don't need random access
-- Implementing other data structures (stack, queue)
-- Memory allocation constraints
-
-**Not Ideal For:**
-- Need random access by index
-- Cache performance critical
-- Memory overhead is concern
-- Frequent searching
-
-**Common Mistakes:**
-
-**1. Losing Reference:**
-- Not saving next pointer before updating
-- Results in losing rest of list
-- Always save next before modifying
-
-**2. Not Handling Empty List:**
-- Forgetting to check if head is null
-- Accessing null pointer causes crash
-- Always check empty case first
-
-**3. Off-by-One Errors:**
-- Incorrect loop termination
-- Stopping one node too early/late
-- Carefully track current and next
-
-**4. Pointer Updates:**
-- Forgetting to update pointers correctly
-- Updating in wrong order
-- Need to update all affected pointers
-
-**5. Memory Leaks:**
-- Not freeing deleted nodes (in languages with manual memory)
-- Losing reference to allocated memory
-- Always free memory when deleting`,
-					CodeExamples: `// Go: Comprehensive linked list operations
-
-// ===== BASIC NODE STRUCTURE =====
+**Pro Tip:** Always use a **Dummy Head** to simplify edge cases. A dummy head is a node that points to the actual head. It eliminates the need to check 'if head is null' for every operation.`,
+					CodeExamples: `// Go: Essential Linked List Operations
+// Basic structure
 type ListNode struct {
     Val  int
     Next *ListNode
 }
 
-// ===== INSERT OPERATIONS =====
-// Insert at head
-func insertAtHead(head *ListNode, val int) *ListNode {
-    newNode := &ListNode{Val: val, Next: head}
-    return newNode  // New head
-}
-
-// Insert at tail
-func insertAtTail(head *ListNode, val int) *ListNode {
-    newNode := &ListNode{Val: val, Next: nil}
-    if head == nil {
-        return newNode
-    }
-    curr := head
-    for curr.Next != nil {
-        curr = curr.Next
-    }
-    curr.Next = newNode
-    return head
-}
-
-// Insert at position
-func insertAtPosition(head *ListNode, val int, pos int) *ListNode {
-    if pos == 0 {
-        return &ListNode{Val: val, Next: head}
-    }
-    curr := head
-    for i := 0; i < pos-1 && curr != nil; i++ {
-        curr = curr.Next
-    }
-    if curr == nil {
-        return head  // Position out of bounds
-    }
-    newNode := &ListNode{Val: val, Next: curr.Next}
-    curr.Next = newNode
-    return head
-}
-
-// ===== DELETE OPERATIONS =====
-// Delete at head
-func deleteAtHead(head *ListNode) *ListNode {
-    if head == nil {
-        return nil
-    }
-    return head.Next
-}
-
-// Delete by value
-func deleteByValue(head *ListNode, val int) *ListNode {
-    if head == nil {
-        return nil
-    }
-    if head.Val == val {
-        return head.Next
-    }
-    curr := head
-    for curr.Next != nil {
-        if curr.Next.Val == val {
-            curr.Next = curr.Next.Next
-            return head
-        }
-        curr = curr.Next
-    }
-    return head
-}
-
-// Delete at position
-func deleteAtPosition(head *ListNode, pos int) *ListNode {
-    if head == nil {
-        return nil
-    }
-    if pos == 0 {
-        return head.Next
-    }
-    curr := head
-    for i := 0; i < pos-1 && curr != nil && curr.Next != nil; i++ {
-        curr = curr.Next
-    }
-    if curr != nil && curr.Next != nil {
-        curr.Next = curr.Next.Next
-    }
-    return head
-}
-
-// ===== SEARCH OPERATIONS =====
-// Search for value
-func search(head *ListNode, val int) bool {
-    curr := head
-    for curr != nil {
-        if curr.Val == val {
-            return true
-        }
-        curr = curr.Next
-    }
-    return false
-}
-
-// Get node at index
-func getNodeAt(head *ListNode, index int) *ListNode {
-    curr := head
-    for i := 0; i < index && curr != nil; i++ {
-        curr = curr.Next
-    }
-    return curr
-}
-
-// ===== TRAVERSAL =====
-// Print list
+// 1. Traverse and Print
 func printList(head *ListNode) {
-    curr := head
-    for curr != nil {
-        fmt.Print(curr.Val, " -> ")
-        curr = curr.Next
+    current := head
+    for current != nil {
+        fmt.Printf("%d -> ", current.Val)
+        current = current.Next
     }
     fmt.Println("nil")
 }
 
-// Get length
-func getLength(head *ListNode) int {
-    length := 0
-    curr := head
-    for curr != nil {
-        length++
-        curr = curr.Next
-    }
-    return length
+// 2. Insert at Head (O(1))
+func insertHead(head *ListNode, val int) *ListNode {
+    newNode := &ListNode{Val: val, Next: head}
+    return newNode // This is the new head
 }
 
-// ===== REVERSE OPERATIONS =====
-// Reverse entire list (iterative)
-func reverseList(head *ListNode) *ListNode {
-    var prev *ListNode
-    curr := head
-    for curr != nil {
-        next := curr.Next  // Save next
-        curr.Next = prev   // Reverse link
-        prev = curr        // Move prev forward
-        curr = next        // Move curr forward
-    }
-    return prev  // New head
-}
-
-// Reverse entire list (recursive)
-func reverseListRecursive(head *ListNode) *ListNode {
-    if head == nil || head.Next == nil {
-        return head
-    }
-    newHead := reverseListRecursive(head.Next)
-    head.Next.Next = head
-    head.Next = nil
-    return newHead
-}
-
-// ===== DUMMY NODE PATTERN =====
-// Remove duplicates using dummy node
-func removeDuplicates(head *ListNode) *ListNode {
-    dummy := &ListNode{Val: 0, Next: head}
-    curr := dummy
-    
-    for curr.Next != nil && curr.Next.Next != nil {
-        if curr.Next.Val == curr.Next.Next.Val {
-            val := curr.Next.Val
-            for curr.Next != nil && curr.Next.Val == val {
-                curr.Next = curr.Next.Next
-            }
-        } else {
-            curr = curr.Next
-        }
-    }
-    
-    return dummy.Next
-}
-
-// ===== TWO POINTERS PATTERN =====
-// Find middle node
-func findMiddle(head *ListNode) *ListNode {
+// 3. Find Middle (Tortoise and Hare Algorithm)
+// One pointer moves 1 step, the other moves 2 steps.
+// When fast reaches the end, slow is at the middle.
+func middleNode(head *ListNode) *ListNode {
     slow, fast := head, head
     for fast != nil && fast.Next != nil {
         slow = slow.Next
@@ -446,331 +73,101 @@ func findMiddle(head *ListNode) *ListNode {
     return slow
 }
 
-// Find kth from end
-func findKthFromEnd(head *ListNode, k int) *ListNode {
-    fast := head
-    for i := 0; i < k && fast != nil; i++ {
-        fast = fast.Next
-    }
-    if fast == nil {
-        return nil  // k > length
-    }
-    slow := head
-    for fast != nil {
+// 4. Detect Cycle (Floyd's Cycle Finding)
+// If fast catches up to slow, there is a cycle.
+func hasCycle(head *ListNode) bool {
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
         slow = slow.Next
-        fast = fast.Next
+        fast = fast.Next.Next
+        if slow == fast {
+            return true
+        }
     }
-    return slow
+    return false
 }
 
-# Python: Comprehensive linked list operations
-
-# ===== BASIC NODE STRUCTURE =====
+// Python equivalents
+# Node class
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
-# ===== INSERT OPERATIONS =====
-# Insert at head
-def insert_at_head(head, val):
-    return ListNode(val, head)
-
-# Insert at tail
-def insert_at_tail(head, val):
-    new_node = ListNode(val)
-    if not head:
-        return new_node
-    curr = head
-    while curr.next:
-        curr = curr.next
-    curr.next = new_node
-    return head
-
-# Insert at position
-def insert_at_position(head, val, pos):
-    if pos == 0:
-        return ListNode(val, head)
-    curr = head
-    for i in range(pos - 1):
-        if not curr:
-            return head  # Position out of bounds
-        curr = curr.next
-    if not curr:
-        return head
-    new_node = ListNode(val, curr.next)
-    curr.next = new_node
-    return head
-
-# ===== DELETE OPERATIONS =====
-# Delete at head
-def delete_at_head(head):
-    if not head:
-        return None
-    return head.next
-
-# Delete by value
-def delete_by_value(head, val):
-    if not head:
-        return None
-    if head.val == val:
-        return head.next
-    curr = head
-    while curr.next:
-        if curr.next.val == val:
-            curr.next = curr.next.next
-            return head
-        curr = curr.next
-    return head
-
-# Delete at position
-def delete_at_position(head, pos):
-    if not head:
-        return None
-    if pos == 0:
-        return head.next
-    curr = head
-    for i in range(pos - 1):
-        if not curr or not curr.next:
-            return head
-        curr = curr.next
-    if curr.next:
-        curr.next = curr.next.next
-    return head
-
-# ===== SEARCH OPERATIONS =====
-# Search for value
-def search(head, val):
-    curr = head
-    while curr:
-        if curr.val == val:
-            return True
-        curr = curr.next
-    return False
-
-# Get node at index
-def get_node_at(head, index):
-    curr = head
-    for i in range(index):
-        if not curr:
-            return None
-        curr = curr.next
-    return curr
-
-# ===== TRAVERSAL =====
-# Print list
-def print_list(head):
-    curr = head
-    result = []
-    while curr:
-        result.append(str(curr.val))
-        curr = curr.next
-    print(" -> ".join(result) + " -> None")
-
-# Get length
-def get_length(head):
-    length = 0
-    curr = head
-    while curr:
-        length += 1
-        curr = curr.next
-    return length
-
-# ===== REVERSE OPERATIONS =====
-# Reverse entire list (iterative)
-def reverse_list(head):
-    prev = None
-    curr = head
-    while curr:
-        next_node = curr.next  # Save next
-        curr.next = prev       # Reverse link
-        prev = curr            # Move prev forward
-        curr = next_node       # Move curr forward
-    return prev  # New head
-
-# Reverse entire list (recursive)
-def reverse_list_recursive(head):
-    if not head or not head.next:
-        return head
-    new_head = reverse_list_recursive(head.next)
-    head.next.next = head
-    head.next = None
-    return new_head
-
-# ===== DUMMY NODE PATTERN =====
-# Remove duplicates using dummy node
-def remove_duplicates(head):
-    dummy = ListNode(0, head)
-    curr = dummy
-    
-    while curr.next and curr.next.next:
-        if curr.next.val == curr.next.next.val:
-            val = curr.next.val
-            while curr.next and curr.next.val == val:
-                curr.next = curr.next.next
-        else:
-            curr = curr.next
-    
-    return dummy.next
-
-# ===== TWO POINTERS PATTERN =====
-# Find middle node
-def find_middle(head):
+# Cycle detection
+def has_cycle(head):
     slow = fast = head
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-    return slow
-
-# Find kth from end
-def find_kth_from_end(head, k):
-    fast = head
-    for _ in range(k):
-        if not fast:
-            return None  # k > length
-        fast = fast.next
-    
-    slow = head
-    while fast:
-        slow = slow.next
-        fast = fast.next
-    return slow
-
-# Key insights:
-# 1. Always save next pointer before modifying
-# 2. Use dummy node to simplify edge cases
-# 3. Two pointers (fast/slow) for cycle detection and finding middle
-# 4. Check for empty list before operations
-# 5. Linked lists are O(1) for insert/delete at known position, O(n) for search`,
+        if slow == fast:
+            return True
+    return False`,
 				},
 				{
 					Title: "Reverse Operations",
-					Content: `Reversing linked lists is a fundamental operation that appears in many problems. There are multiple ways to reverse: iterative, recursive, and partial reversals.
+					Content: `Reversing a linked list is a classic interview question because it tests your ability to manipulate pointers without losing data.
 
-**Types of Reversals:**
+**The Strategy: Three Pointers**
+To reverse a list iteratively, you need to keep track of three nodes:
+1.  'prev': The node before the current one (initially null).
+2.  'curr': The current node you are reversing.
+3.  'next': The next node in the original list (so you don't lose it).
 
-**1. Reverse Entire List:**
-- Reverse all nodes from head to tail
-- Iterative: Use three pointers (prev, curr, next)
-- Recursive: Reverse rest, then connect head
+**The Algorithm Loop:**
+1.  Save 'next = curr.Next'
+2.  Reverse pointer 'curr.Next = prev'
+3.  Move prev 'prev = curr'
+4.  Move curr 'curr = next'
 
-**2. Reverse in Groups:**
-- Reverse k nodes at a time
-- Example: Reverse nodes in groups of 2: 1->2->3->4 becomes 2->1->4->3
-- Requires careful pointer management
+**Recursive Approach:**
+Think of it like this: "Reverse the rest of the list, then make the next node point back to me."
+'head.Next.Next = head'
+'head.Next = nil'
 
-**3. Reverse Between Positions:**
-- Reverse nodes from position m to n
-- Keep nodes before m and after n unchanged
-- Requires finding start position and reconnecting
-
-**4. Reverse in Pairs:**
-- Swap every two adjacent nodes
-- Example: 1->2->3->4 becomes 2->1->4->3
-- Can be done iteratively or recursively
-
-**Key Techniques:**
-- **Three Pointer Technique**: prev, curr, next for iterative reversal
-- **Dummy Node**: Simplify edge cases (empty list, single node)
-- **Recursive Approach**: Reverse rest, then connect current node
-- **Group Reversal**: Reverse k nodes, then recursively reverse rest
-
-**Common Patterns:**
-- Save next pointer before modifying
-- Update pointers in correct order
-- Handle edge cases: empty list, single node, k > list length
-- Return new head after reversal`,
-					CodeExamples: `// Go: Reverse entire list (iterative)
+**Partial Reversal:**
+Sometimes you only want to reverse from index M to N.
+1.  Move a pointer to M-1.
+2.  Reverse the sublist from M to N using the standard reversal logic.
+3.  Reconnect the ends.`,
+					CodeExamples: `// Go: Reverse Linked List (Iterative)
+// O(n) time, O(1) space
 func reverseList(head *ListNode) *ListNode {
     var prev *ListNode
     curr := head
-    
     for curr != nil {
-        next := curr.Next  // Save next
-        curr.Next = prev   // Reverse link
-        prev = curr        // Move prev forward
-        curr = next        // Move curr forward
+        next := curr.Next // Save the next node
+        curr.Next = prev  // Point current node backwards
+        prev = curr       // Move prev forward
+        curr = next       // Move curr forward
     }
-    
-    return prev  // New head
+    return prev // New head
 }
 
-// Go: Reverse entire list (recursive)
+// Go: Reverse Linked List (Recursive)
+// O(n) time, O(n) space (stack)
 func reverseListRecursive(head *ListNode) *ListNode {
+    // Base case: 0 or 1 node
     if head == nil || head.Next == nil {
         return head
     }
-    
+    // Reverse the rest of the list
     newHead := reverseListRecursive(head.Next)
-    head.Next.Next = head  // Reverse link
-    head.Next = nil        // Set tail to nil
+    
+    // Make the next node point to current node
+    head.Next.Next = head
+    // Break the original link
+    head.Next = nil
     
     return newHead
 }
 
-// Go: Reverse in groups of k
-func reverseKGroup(head *ListNode, k int) *ListNode {
-    curr := head
-    count := 0
-    
-    // Check if k nodes exist
-    for curr != nil && count < k {
-        curr = curr.Next
-        count++
-    }
-    
-    if count == k {
-        // Reverse remaining groups first
-        curr = reverseKGroup(curr, k)
-        
-        // Reverse current k nodes
-        for count > 0 {
-            next := head.Next
-            head.Next = curr
-            curr = head
-            head = next
-            count--
-        }
-        head = curr
-    }
-    
-    return head
-}
-
-# Python: Reverse entire list (iterative)
+// Python: Reverse List
 def reverse_list(head):
-    prev = None
-    curr = head
-    
+    prev, curr = None, head
     while curr:
-        next_node = curr.next
-        curr.next = prev
-        prev = curr
-        curr = next_node
-    
-    return prev
-
-# Python: Reverse in groups of k
-def reverse_k_group(head, k):
-    curr = head
-    count = 0
-    
-    while curr and count < k:
-        curr = curr.next
-        count += 1
-    
-    if count == k:
-        curr = reverse_k_group(curr, k)
-        
-        while count > 0:
-            next_node = head.next
-            head.next = curr
-            curr = head
-            head = next_node
-            count -= 1
-        head = curr
-    
-    return head`,
+        curr.next, prev, curr = prev, curr, curr.next
+    return prev`,
 				},
 				{
 					Title: "Merge K Sorted Lists",

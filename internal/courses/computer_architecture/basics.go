@@ -12,39 +12,18 @@ func init() {
 			Lessons: []problems.Lesson{
 				{
 					Title: "What is Computer Architecture?",
-					Content: `Computer architecture is the design and organization of computer systems, including the structure and behavior of hardware components and how they interact.
+					Content: `Computer Architecture is the blueprint for how hardware and software work together. It’s the "contract" that ensures your code actually runs on the physical transistors.
 
-**Key Concepts:**
+**Why does it matter?**
+*   **Performance:** Write code that leverages the hardware.
+*   **Efficiency:** Understand why certain algorithms are slow (e.g., cache misses).
+*   **Specialization:** Why do we need GPUs for AI but CPUs for general tasks?
 
-**Architecture vs. Organization:**
-- **Architecture**: The attributes visible to the programmer (instruction set, data types, addressing modes)
-- **Organization**: The operational units and their interconnections (hardware implementation details)
-
-**Levels of Abstraction:**
-- **Application Level**: High-level programs
-- **System Software Level**: Operating systems, compilers
-- **Instruction Set Architecture (ISA)**: Machine instructions
-- **Microarchitecture**: CPU implementation details
-- **Logic Level**: Gates and circuits
-- **Device Level**: Transistors and physical components
-
-**Why Study Computer Architecture?**
-- Understand how computers work at a fundamental level
-- Write more efficient code
-- Design better systems
-- Debug hardware-related issues
-- Optimize performance
-
-**Historical Context:**
-- **1940s**: First electronic computers (ENIAC)
-- **1950s**: Stored-program concept (von Neumann architecture)
-- **1960s**: Integrated circuits, minicomputers
-- **1970s**: Microprocessors (Intel 4004, 8080)
-- **1980s**: RISC architecture, personal computers
-- **1990s**: Superscalar processors, pipelining
-- **2000s**: Multi-core processors
-- **2010s**: GPUs, specialized accelerators
-- **2020s**: AI accelerators, quantum computing`,
+**Historical Evolution:**
+1.  **1945:** Von Neumann Architecture (The stored-program concept).
+2.  **1970s:** First single-chip microprocessors (Intel 4004).
+3.  **1990s:** Pipelining and Superscalar CPUs (Doing multiple things at once).
+4.  **2010s:** The "End of Moore's Law" shift to Multi-core and Accelerators (GPUs, TPUs).`,
 					CodeExamples: `// Example: Understanding instruction execution
 // High-level code:
 int sum = a + b;
@@ -67,330 +46,132 @@ mov [sum], eax    // Store result in sum
 // 5. Store result`,
 				},
 				{
-					Title: "CPU Architecture Basics",
-					Content: `The Central Processing Unit (CPU) is the brain of the computer, executing instructions and performing calculations.
+					Title: "CPU Architecture & The von Neumann Model",
+					Content: `The CPU is the "brain" of the computer. Most modern computers follow the **von Neumann Architecture**, where both data and instructions are stored in the same memory.
 
-**CPU Components:**
+**1. The von Neumann Diagram:**
+` + "```" + `
+   [ Control Unit ] <───> [ Arithmetic Logic Unit ]
+          │                          │
+          └───────────┬──────────────┘
+                      ▼
+               [ Registers / Cache ]
+                      ▲
+          ┌───────────┴───────────┐
+          ▼                       ▼
+    [ Main Memory ] <───> [ Input / Output ]
+` + "```" + `
 
-**1. Control Unit (CU):**
-- Fetches instructions from memory
-- Decodes instructions
-- Coordinates execution
-- Manages data flow
+**2. Key CPU Components:**
+*   **Control Unit (CU):** The conductor. It fetches and decodes instructions.
+*   **ALU:** The calculator. It performs math (ADD, SUB) and logic (AND, XOR).
+*   **Registers:** Tiny, ultra-fast storage inside the CPU (e.g., RAX, RIP).
+*   **Program Counter (PC):** A special register that holds the address of the *next* instruction.
 
-**2. Arithmetic Logic Unit (ALU):**
-- Performs arithmetic operations (add, subtract, multiply, divide)
-- Performs logical operations (AND, OR, XOR, NOT)
-- Compares values
-- Shifts and rotates bits
+**3. The Fetch-Decode-Execute Cycle:**
+1.  **Fetch:** Load the next instruction from memory (using the PC).
+2.  **Decode:** Translate binary code into signals for the ALU/CU.
+3.  **Execute:** Perform the math or move data.
+4.  **Writeback:** Save the result back to memory or a register.`,
+					CodeExamples: `// x86-64 Register Example:
+mov rax, 10      // Store 10 in register RAX
+add rax, 20      // Add 20 to RAX (RAX is now 30)
 
-**3. Registers:**
-- **General Purpose Registers**: Store data and addresses
-- **Program Counter (PC)**: Points to next instruction
-- **Instruction Register (IR)**: Holds current instruction
-- **Status Register**: Contains flags (zero, carry, overflow, sign)
-- **Stack Pointer (SP)**: Points to top of stack
-- **Base Pointer (BP)**: Points to base of current frame
-
-**4. Cache:**
-- Fast memory close to CPU
-- Stores frequently accessed data
-- Reduces memory access time
-
-**CPU Operation Cycle (Fetch-Decode-Execute):**
-
-1. **Fetch**: Get instruction from memory at address in PC
-2. **Decode**: Determine what operation to perform
-3. **Execute**: Perform the operation
-4. **Store**: Save results to registers or memory
-5. **Update PC**: Move to next instruction
-
-**Instruction Types:**
-- **Data Transfer**: MOV, LOAD, STORE
-- **Arithmetic**: ADD, SUB, MUL, DIV
-- **Logical**: AND, OR, XOR, NOT
-- **Control Flow**: JMP, CALL, RET, BRANCH
-- **Comparison**: CMP, TEST`,
-					CodeExamples: `// Example: CPU register usage
-// x86-64 registers:
-// General purpose: RAX, RBX, RCX, RDX, RSI, RDI, RBP, RSP
-// Instruction pointer: RIP
-// Flags: RFLAGS
-
-// Example: Adding two numbers
-mov rax, 10      // Load 10 into RAX
-mov rbx, 20      // Load 20 into RBX
-add rax, rbx     // Add RBX to RAX (result: 30)
-
-// Example: Conditional jump based on flags
-cmp rax, 0       // Compare RAX with 0
-je zero_label    // Jump if equal (zero flag set)
-jne non_zero_label // Jump if not equal
-
-// Example: Function call
-call my_function // Push return address, jump to function
-ret              // Pop return address, jump back
-
-// Example: Stack operations
-push rax         // Push RAX onto stack (decrement RSP)
-pop rbx          // Pop from stack into RBX (increment RSP)`,
+// Controlling flow:
+cmp rax, 30      // Compare RAX to 30
+je  is_thirty    // Jump to 'is_thirty' if equal`,
 				},
 				{
-					Title: "Memory Organization",
-					Content: `Memory is organized hierarchically to balance speed, capacity, and cost.
+					Title: "Memory Hierarchy & Organization",
+					Content: `Memory is a trade-off between **Speed** and **Cost**. Modern systems use a hierarchy to give you the illusion of a massive, super-fast memory.
 
-**Memory Hierarchy (Fastest to Slowest):**
+**1. The Memory Pyramid (Fastest to Slowest):**
+` + "```" + `
+      /  CPU Registers  \      <--  Fastest ($$$)
+     /      L1 Cache      \
+    /       L2 Cache       \
+   /        L3 Cache        \
+  /       Main Memory (RAM)  \
+ /   Secondary Storage (SSD/HDD) \  <--  Slowest ($)
+` + "```" + `
 
-1. **CPU Registers**: Fastest, smallest (kilobytes), most expensive
-2. **L1 Cache**: Very fast, small (tens of KB), expensive
-3. **L2 Cache**: Fast, medium (hundreds of KB to MB), moderate cost
-4. **L3 Cache**: Moderate speed, larger (MB), moderate cost
-5. **Main Memory (RAM)**: Slower, large (GB), cheaper
-6. **Secondary Storage**: Slowest, largest (TB), cheapest
+**2. Key Characteristics:**
+*   **Locality of Reference:** Why hierarchies work.
+    *   *Temporal Locality:* If you use data once, you'll likely use it again soon.
+    *   *Spatial Locality:* If you use data, you'll likely use the data next to it (e.g., in an array).
+*   **Volatile Memory:** Loses data without power (Registers, Cache, RAM).
+*   **Non-Volatile Memory:** Persistent storage (SSD, HDD).
 
-**Memory Characteristics:**
+**3. Memory Layout of a Program:**
+*   **Stack:** Function parameters and local variables.
+*   **Heap:** Dynamic memory (managed by 'malloc' or the Go runtime).
+*   **Code/Data:** The compiled binary and static variables.`,
+					CodeExamples: `// C-style memory example:
+int* ptr = malloc(sizeof(int)); // Memory from Heap
+int value = 10;                 // Memory from Stack
 
-**Volatile vs. Non-Volatile:**
-- **Volatile**: Loses data when power is off (RAM, cache)
-- **Non-Volatile**: Retains data when power is off (ROM, disk, flash)
-
-**Random Access vs. Sequential:**
-- **Random Access**: Any location accessible in same time (RAM)
-- **Sequential**: Must access in order (tape)
-
-**Memory Addressing:**
-
-**Byte Addressing:**
-- Each byte has unique address
-- Addresses are sequential integers
-- Common in modern systems
-
-**Word Addressing:**
-- Each word (multiple bytes) has unique address
-- Used in some older systems
-- More efficient for word-sized operations
-
-**Memory Layout:**
-- **Code Segment**: Program instructions
-- **Data Segment**: Global/static variables
-- **Stack**: Function calls, local variables
-- **Heap**: Dynamically allocated memory
-
-**Endianness:**
-- **Big-Endian**: Most significant byte at lowest address
-- **Little-Endian**: Least significant byte at lowest address
-- x86 uses little-endian
-- Network byte order is big-endian`,
-					CodeExamples: `// Example: Memory layout
-// Stack grows downward (high to low addresses)
-// Heap grows upward (low to high addresses)
-
-// Stack frame layout (x86-64):
-// [High Address]
-//   Previous frame pointer
-//   Return address
-//   Local variables
-//   Function arguments
-// [Low Address]
-
-// Example: Memory access patterns
-int array[100];
-for (int i = 0; i < 100; i++) {
-    array[i] = i;  // Sequential access (cache-friendly)
-}
-
-// Example: Endianness
-uint32_t value = 0x12345678;
-// Little-endian memory layout:
-// Address: 0x1000: 0x78
-// Address: 0x1001: 0x56
-// Address: 0x1002: 0x34
-// Address: 0x1003: 0x12
-
-// Big-endian memory layout:
-// Address: 0x1000: 0x12
-// Address: 0x1001: 0x34
-// Address: 0x1002: 0x56
-// Address: 0x1003: 0x78`,
+// Why sequential access is faster:
+int arr[1000];
+for (int i=0; i<1000; i++) sum += arr[i]; // Spatial Locality!`,
 				},
 				{
 					Title: "Instruction Set Architecture (ISA)",
-					Content: `The Instruction Set Architecture defines the interface between software and hardware, specifying what instructions the processor can execute.
+					Content: `The ISA is the "language" the CPU speaks. It defines the available instructions, registers, and memory addressing modes.
 
-**ISA Types:**
+**1. CISC vs. RISC:**
+*   **CISC (Complex Instruction Set Computer):**
+    *   *Goal:* Do more in a single instruction (minimize code size).
+    *   *Example:* x86 (Intel/AMD).
+    *   *Pros:* Versatile, legacy support.
+*   **RISC (Reduced Instruction Set Computer):**
+    *   *Goal:* Simple, fast instructions that take exactly one cycle.
+    *   *Example:* ARM (Apple M1, Smartphones), RISC-V.
+    *   *Pros:* Energy efficient, easier to pipeline.
 
-**1. CISC (Complex Instruction Set Computer):**
-- Many complex instructions
-- Variable-length instructions
-- Instructions can perform multiple operations
-- Examples: x86, x86-64
-- Advantages: Compact code, powerful instructions
-- Disadvantages: Complex hardware, harder to optimize
+**2. Addressing Modes (How to find data):**
+*   **Immediate:** Data is in the instruction ('MOV R1, #10').
+*   **Direct:** Address is in the instruction ('LOAD R1, [0x1000]').
+*   **Indirect:** Register points to the address ('LOAD R1, [R2]').
+*   **Register:** Data is in a register ('ADD R1, R2').
 
-**2. RISC (Reduced Instruction Set Computer):**
-- Fewer, simpler instructions
-- Fixed-length instructions
-- Load-store architecture (only LOAD/STORE access memory)
-- Examples: ARM, MIPS, RISC-V
-- Advantages: Simple hardware, easier to pipeline, faster execution
-- Disadvantages: More instructions needed, larger code size
+**Modern Trend:** Most modern CISC processors (like Intel Core) actually translate complex instructions into "u-ops" (micro-operations) that look like RISC under the hood!`,
+					CodeExamples: `// CISC Example (x86 - Variable length)
+add eax, [ebx + ecx*4 + 12] // Complex! Multiplies, adds, loads, and adds.
 
-**3. VLIW (Very Long Instruction Word):**
-- Multiple operations per instruction
-- Compiler schedules operations
-- Examples: Itanium, some DSPs
-- Advantages: Explicit parallelism
-- Disadvantages: Complex compiler, less flexible
-
-**Instruction Format:**
-
-**Typical RISC Instruction:**
-- **Opcode**: Operation to perform (6 bits)
-- **Register Source 1**: First source register (5 bits)
-- **Register Source 2**: Second source register (5 bits)
-- **Register Destination**: Destination register (5 bits)
-- **Function Code**: Additional operation info (11 bits)
-- Total: 32 bits
-
-**Addressing Modes:**
-
-1. **Immediate**: Operand is in instruction
-   - Example: ADD R1, R2, #5 (add 5 to R2)
-
-2. **Register**: Operand is in register
-   - Example: ADD R1, R2, R3 (add R2 and R3)
-
-3. **Direct**: Address is in instruction
-   - Example: LOAD R1, [0x1000] (load from address 0x1000)
-
-4. **Indirect**: Register contains address
-   - Example: LOAD R1, [R2] (load from address in R2)
-
-5. **Indexed**: Address = base + offset
-   - Example: LOAD R1, [R2 + #4] (load from R2 + 4)
-
-6. **Relative**: Address = PC + offset
-   - Example: JMP #100 (jump to PC + 100)`,
-					CodeExamples: `// Example: RISC instruction format
-// ADD R1, R2, R3
-// Opcode: ADD (000000)
-// R1: destination (00001)
-// R2: source 1 (00010)
-// R3: source 2 (00011)
-// Function: ADD (100000)
-// Binary: 000000 00001 00010 00011 00000 100000
-
-// Example: CISC instruction (x86)
-// ADD EAX, [EBX + ECX*4 + 10]
-// Single instruction does:
-// 1. Calculate address: EBX + ECX*4 + 10
-// 2. Load value from memory
-// 3. Add to EAX
-// 4. Store result in EAX
-
-// Example: Addressing modes
-// Immediate
-MOV R1, #42        // R1 = 42
-
-// Register
-ADD R1, R2, R3     // R1 = R2 + R3
-
-// Direct
-LOAD R1, [0x1000]  // R1 = memory[0x1000]
-
-// Indirect
-LOAD R1, [R2]      // R1 = memory[R2]
-
-// Indexed
-LOAD R1, [R2 + #4] // R1 = memory[R2 + 4]
-
-// Relative
-JMP #100           // PC = PC + 100`,
+// RISC Example (ARM - Fixed length)
+lsr r2, r1, #2              // Logical shift right
+ldr r0, [r1, r2]            // Load from memory
+add r0, r0, r3              // Add registers`,
 				},
 				{
 					Title: "Data Representation",
-					Content: `Computers represent all data as binary digits (bits). Understanding how different data types are represented is crucial.
+					Content: `Computers only understand **Binary** (0 and 1). Every piece of data—text, numbers, videos—is just a sequence of bits.
 
-**Number Systems:**
+**1. Integers & Two's Complement:**
+To represent negative numbers, we use Two's Complement.
+*   **Positive (5):** '00000101'
+*   **Step 1 (Invert):** '11111010'
+*   **Step 2 (Add 1):** '11111011' (This is -5).
+*   *Benefit:* Hardware can use the same circuit for both addition and subtraction.
 
-**Binary (Base 2):**
-- Uses digits 0 and 1
-- Each position represents power of 2
-- Example: 1011₂ = 1×2³ + 0×2² + 1×2¹ + 1×2⁰ = 11₁₀
+**2. Floating Point (IEEE 754):**
+Used for decimals. It works like scientific notation: '1.23 x 10^4'.
+*   **Sign:** 1 bit (0 for +, 1 for -).
+*   **Exponent:** Where the decimal point is.
+*   **Mantissa:** The actual digits.
 
-**Hexadecimal (Base 16):**
-- Uses digits 0-9 and A-F
-- Each position represents power of 16
-- Convenient for representing binary (4 bits per hex digit)
-- Example: 0x2F = 2×16¹ + 15×16⁰ = 47₁₀
+**3. Character Encoding:**
+*   **ASCII:** 7-bit (128 characters). Basic English.
+*   **Unicode (UTF-8):** Variable length. Supports every language and Emoji! 🚀`,
+					CodeExamples: `// Bitwise Operations:
+byte a = 0b1010; // 10
+byte b = 0b1100; // 12
 
-**Integer Representation:**
+byte res = a & b; // AND: 0b1000 (8)
+byte res2 = a | b; // OR: 0b1110 (14)
 
-**Unsigned Integers:**
-- All bits represent magnitude
-- Range: 0 to 2ⁿ - 1 for n bits
-- Example: 8-bit unsigned: 0 to 255
-
-**Signed Integers (Two's Complement):**
-- Most significant bit is sign bit
-- Negative numbers: invert bits and add 1
-- Range: -2ⁿ⁻¹ to 2ⁿ⁻¹ - 1 for n bits
-- Example: 8-bit signed: -128 to 127
-- Advantage: Single representation for zero, easy arithmetic
-
-**Floating Point (IEEE 754):**
-- **Single Precision (32-bit)**: 1 sign bit, 8 exponent bits, 23 mantissa bits
-- **Double Precision (64-bit)**: 1 sign bit, 11 exponent bits, 52 mantissa bits
-- Format: (-1)ˢ × (1 + mantissa) × 2^(exponent - bias)
-- Special values: ±0, ±∞, NaN (Not a Number)
-
-**Character Representation:**
-
-**ASCII:**
-- 7-bit encoding (128 characters)
-- Extended ASCII: 8-bit (256 characters)
-- Example: 'A' = 65₁₀ = 0x41
-
-**Unicode:**
-- Universal character encoding
-- UTF-8: Variable-length (1-4 bytes)
-- UTF-16: Variable-length (2 or 4 bytes)
-- UTF-32: Fixed-length (4 bytes)`,
-					CodeExamples: `// Example: Binary to decimal
-// 1011₂ = 1×8 + 0×4 + 1×2 + 1×1 = 11₁₀
-
-// Example: Hexadecimal
-// 0x2F = 2×16 + 15 = 47₁₀
-// 0xFF = 255₁₀
-
-// Example: Two's complement
-// Positive: 5₁₀ = 00000101₂
-// Negative: -5₁₀
-//   1. Invert: 11111010₂
-//   2. Add 1:  11111011₂
-
-// Example: Floating point (simplified)
-// 3.14159 ≈ 0x40490FDB (single precision)
-// Sign: 0 (positive)
-// Exponent: 10000000₂ = 128₁₀, bias = 127, so 2¹
-// Mantissa: 1.10010010000111111011011₂
-// Result: 1.5708... × 2¹ ≈ 3.14159
-
-// Example: Character encoding
-// ASCII: 'A' = 65₁₀ = 0x41
-// ASCII: 'a' = 97₁₀ = 0x61
-// UTF-8: '€' = 0xE2 0x82 0xAC (3 bytes)
-
-// Example: Bitwise operations
-uint8_t a = 0b10101010;  // 170
-uint8_t b = 0b11110000;  // 240
-
-a & b;  // AND:  0b10100000 (160)
-a | b;  // OR:   0b11111010 (250)
-a ^ b;  // XOR:  0b01011010 (90)
-~a;     // NOT:  0b01010101 (85)
-a << 2; // Left shift:  0b1010101000 (680, but truncated to 8 bits)
-a >> 2; // Right shift: 0b00101010 (42)`,
+// Character vs Code Point:
+// 'A' is 65 in decimal, 0x41 in Hex.`,
 				},
 			},
 			ProblemIDs: []int{},

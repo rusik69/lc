@@ -11,90 +11,41 @@ func init() {
 			Order:       2,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Superscalar Processors",
-					Content: `Superscalar processors can execute multiple instructions per cycle by having multiple execution units.
+					Title: "Superscalar & Out-of-Order Execution",
+					Content: `Superscalar processors attempt to execute multiple instructions in a single clock cycle by having redundant hardware units (ALUs).
 
-**Superscalar Concepts:**
+**1. The Out-of-Order (OoO) Flow:**
+Modern CPUs don't just follow your code line-by-line; they look ahead to find instructions that are ready to run.
 
-**Instruction-Level Parallelism (ILP):**
-- Multiple instructions can execute simultaneously if independent
-- Limited by data dependencies and control dependencies
+` + "```" + `
+[ Instruction Fetch ] ──▶ [ Register Renaming ] ──┐
+                                                 │
+      ┌──────────────────────────────────────────┘
+      ▼
+[ Issue Queue ] ──▶ [ Execution Units (ALU/FPU) ] ──┐
+      ▲                                           │
+      └──────────(Data Ready?)────────────────────┘
+                                                 ▼
+[ Reorder Buffer ] ◀─────────────────────────────┘
+      │
+      └─▶ [ Commit in Program Order ]
+` + "```" + `
 
-**Execution Units:**
-- **Integer ALU**: Arithmetic and logic operations
-- **Floating-Point Unit (FPU)**: Floating-point operations
-- **Load/Store Unit**: Memory operations
-- **Branch Unit**: Control flow operations
+**2. Key Technologies:**
+*   **Instruction-Level Parallelism (ILP):** Finding independent instructions to run at once.
+*   **Register Renaming:** Using extra physical registers to resolve "false" dependencies (WAR/WAW).
+*   **Speculation:** Guessing the result of a branch and executing ahead. If wrong, the CPU "flushes" and restarts.
 
-**Superscalar Pipeline:**
-- Fetch multiple instructions per cycle
-- Decode and dispatch to appropriate execution units
-- Execute in parallel (if no dependencies)
-- Commit results in order (or out-of-order)
+**3. The Reorder Buffer (ROB):**
+Instructions finish whenever they can (Out-of-Order), but the ROB ensures they are **committed** (results written) in the exact order you wrote them.`,
+					CodeExamples: `// Register Renaming Example:
+// Original:
+add r1, r2, r3  // Writes r1
+sub r1, r4, r5  // Overwrites r1 (WAW Hazard)
 
-**Dependency Detection:**
-
-**Data Dependencies:**
-- **RAW (Read After Write)**: True dependency, must wait
-- **WAR (Write After Read)**: Anti-dependency, can be handled with renaming
-- **WAW (Write After Write)**: Output dependency, can be handled with renaming
-
-**Control Dependencies:**
-- Instructions after branch depend on branch outcome
-- Handled with branch prediction and speculation
-
-**Register Renaming:**
-- Map architectural registers to physical registers
-- Eliminates WAR and WAW dependencies
-- Allows more parallelism
-
-**Issue Policies:**
-
-**In-Order Issue:**
-- Instructions issued in program order
-- Simpler but less efficient
-
-**Out-of-Order Issue:**
-- Instructions issued as soon as operands ready
-- More complex but better performance
-- Requires instruction window and reorder buffer`,
-					CodeExamples: `// Example: Superscalar execution
-// Processor: 2 integer ALUs, 1 FPU, 1 load/store unit
-// Instructions:
-// I1: ADD R1, R2, R3    (Integer ALU 1)
-// I2: SUB R4, R5, R6    (Integer ALU 2) - parallel with I1
-// I3: FADD F1, F2, F3   (FPU) - parallel with I1, I2
-// I4: LOAD R7, [R8]    (Load/Store) - parallel with others
-// I5: ADD R1, R1, R4    (Integer ALU) - depends on I1, I2
-
-// Cycle 1: Issue I1, I2, I3, I4 (all independent)
-// Cycle 2: Execute I1, I2, I3, I4 (in parallel)
-// Cycle 3: Issue I5 (operands ready), Execute I5
-
-// Example: Register renaming
-// Original code:
-ADD R1, R2, R3    // R1 = R2 + R3
-SUB R4, R1, R5    // R4 = R1 - R5 (depends on R1)
-ADD R1, R6, R7    // R1 = R6 + R7 (WAR hazard)
-
-// After renaming:
-ADD P1, P2, P3    // P1 = P2 + P3 (R1 → P1)
-SUB P4, P1, P5    // P4 = P1 - P5 (R4 → P4, uses P1)
-ADD P8, P6, P7    // P8 = P6 + P7 (R1 → P8, no conflict)
-
-// Example: Out-of-order execution
-// Instructions:
-// I1: LOAD R1, [A]      // Memory access (slow)
-// I2: ADD R2, R3, R4    // Independent, fast
-// I3: SUB R5, R1, R6    // Depends on I1
-
-// In-order: I1 → I2 → I3 (wait for I1)
-// Out-of-order: I1 starts, I2 executes immediately, I3 waits for I1
-
-// Example: Reorder buffer
-// Maintains instruction order for commit
-// Instructions execute out-of-order but commit in-order
-// Ensures precise exceptions`,
+// Renamed (Physical Registers p1, p2...):
+add p10, r2, r3 // Maps r1 -> p10
+sub p11, r4, r5 // Maps r1 -> p11 (No conflict!)`,
 				},
 				{
 					Title: "Branch Prediction",
@@ -189,125 +140,36 @@ void function_b() {
 // 10× improvement`,
 				},
 				{
-					Title: "Multi-Core and Parallel Processing",
-					Content: `Modern processors use multiple cores to achieve higher performance through parallel execution.
+					Title: "Multi-Core & Cache Coherence",
+					Content: `Modern CPUs have multiple cores, each with its own local cache (L1/L2). Keeping these caches consistent is the job of **Cache Coherence Protocols**.
 
-**Multi-Core Architecture:**
+**1. The MESI Protocol (State Machine):**
+Each cache line is in one of these four states:
 
-**Symmetric Multiprocessing (SMP):**
-- Multiple identical cores
-- Shared memory (UMA - Uniform Memory Access)
-- All cores equal, any core can run any task
+` + "```" + `
+[ M ] Modified:  I have the latest info; RAM is old.
+[ E ] Exclusive: I'm the only one with this; it matches RAM.
+[ S ] Shared:    Others have this too; it matches RAM.
+[ I ] Invalid:   My copy is old/garbage; don't use it.
+` + "```" + `
 
-**Non-Uniform Memory Access (NUMA):**
-- Cores have local memory
-- Accessing remote memory slower
-- Better scalability
+**2. State Transitions:**
+*   If Core 1 writes to a **Shared** line, it must send an "Invalidate" signal to all other cores.
+*   The line in Core 1 moves to **Modified**, and all others move to **Invalid**.
 
-**Cache Coherence:**
+**3. Parallelism Strategies:**
+*   **Task Parallelism:** Different cores run different functions (e.g., UI vs. Network).
+*   **Data Parallelism (SIMD):** All cores/units run the SAME math on different data (e.g., Image Processing).
+*   **False Sharing:** A performance bug where two cores fight over different variables that happen to be on the *same cache line*.`,
+					CodeExamples: `// SIMD (Single Instruction Multiple Data) Example:
+// Instead of adding 4 numbers one-by-one:
+float a[4], b[4], c[4];
+for(int i=0; i<4; i++) c[i] = a[i] + b[i];
 
-**Problem:**
-- Multiple cores have separate caches
-- Same memory location cached in multiple caches
-- Need to maintain consistency
-
-**Coherence Protocols:**
-
-**1. MESI Protocol:**
-- **Modified**: Cache has exclusive write access, data modified
-- **Exclusive**: Cache has exclusive access, data unmodified
-- **Shared**: Multiple caches have read-only copy
-- **Invalid**: Cache line invalid or not present
-
-**2. MOESI Protocol:**
-- Adds **Owned** state
-- Owned cache responsible for supplying data to other caches
-
-**Synchronization:**
-
-**Locks:**
-- Mutual exclusion for critical sections
-- Hardware support: test-and-set, compare-and-swap
-- Software: mutexes, semaphores
-
-**Memory Barriers:**
-- Ensure memory operations complete in order
-- Prevents reordering optimizations
-- Critical for multi-threaded correctness
-
-**Parallel Programming Models:**
-
-**1. Shared Memory:**
-- Threads share address space
-- Communication via shared variables
-- Synchronization needed
-
-**2. Message Passing:**
-- Processes have separate memory
-- Communication via messages
-- No shared state
-
-**3. Data Parallelism:**
-- Same operation on different data
-- SIMD (Single Instruction, Multiple Data)
-- Vector processors, GPUs`,
-					CodeExamples: `// Example: Cache coherence scenario
-// Core 1: Read X (loads into cache, state: Shared)
-// Core 2: Read X (loads into cache, state: Shared)
-// Core 1: Write X (invalidates Core 2's cache, state: Modified)
-// Core 2: Read X (must get from Core 1, state: Shared)
-
-// Example: MESI state transitions
-// Core 1: Read X
-//   → Cache miss, request from memory
-//   → State: Exclusive (only Core 1 has it)
-
-// Core 2: Read X
-//   → Cache miss, request from memory
-//   → Memory controller: Core 1 has it, change to Shared
-//   → Core 1: State → Shared, send data to Core 2
-//   → Core 2: State → Shared
-
-// Core 1: Write X
-//   → Invalidate other caches (Core 2)
-//   → Core 1: State → Modified
-//   → Core 2: State → Invalid
-
-// Example: False sharing
-// Core 1: Frequently writes to cache line containing X
-// Core 2: Frequently writes to cache line containing Y
-// Problem: X and Y in same cache line
-// Solution: Padding to separate into different cache lines
-
-struct {
-    int x;           // Core 1 writes
-    char padding[60]; // Padding to next cache line
-    int y;           // Core 2 writes
-} data;
-
-// Example: Memory barrier
-// Without barrier:
-// Thread 1:        Thread 2:
-// x = 1;           while (flag == 0);
-// flag = 1;        print(x);  // May print 0!
-
-// With barrier:
-// Thread 1:        Thread 2:
-// x = 1;           while (flag == 0);
-// memory_barrier(); memory_barrier();
-// flag = 1;        print(x);  // Always prints 1
-
-// Example: SIMD (Single Instruction, Multiple Data)
-// Scalar:
-for (int i = 0; i < 4; i++) {
-    c[i] = a[i] + b[i];
-}
-
-// SIMD (4 elements at once):
+// SIMD does it in ONE instruction:
 __m128 va = _mm_load_ps(a);
 __m128 vb = _mm_load_ps(b);
-__m128 vc = _mm_add_ps(va, vb);
-_mm_store_ps(c, vc);`,
+__m128 vc = _mm_add_ps(va, vb); // Parallel hardware add`,
 				},
 				{
 					Title: "Performance Optimization and Measurement",

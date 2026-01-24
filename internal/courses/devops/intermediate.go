@@ -11,76 +11,44 @@ func init() {
 			Order:       10,
 			Lessons: []problems.Lesson{
 				{
-					Title: "Docker Optimization and Best Practices",
-					Content: `Optimize Docker images and containers for production.
+					Title: "Docker Optimization & Patterns",
+					Content: `Production-grade Docker images must be small, secure, and fast to build.
 
-**Image Optimization:**
-- Use minimal base images (Alpine)
-- Multi-stage builds
-- Layer caching
-- .dockerignore files
-- Combine RUN commands
-- Remove unnecessary files
+**1. Multi-Stage Builds (The "Builder" Pattern)**
+Keep only the necessary binaries in your final image to reduce size and attack surface.
 
-**Security Best Practices:**
-- Don't run as root
-- Scan images for vulnerabilities
-- Use specific image tags
-- Keep images updated
-- Minimal attack surface
-- Secrets management
+` + "```" + `
+[ Developer Machine ]
+      │ (Source Code)
+      ▼
+[ Stage 1: Builder ]  -->  Compiles Code (Node/Go/Java)
+      │ (Artifacts Only)
+      ▼
+[ Stage 2: Final ]    -->  Small Base Image (Alpine/Scratch)
+` + "```" + `
 
-**Performance:**
-- Reduce image size
-- Optimize layer order
-- Use build cache
-- Parallel builds
-- Health checks
+**2. Image Optimization Checklist:**
+*   **Base Image:** Use 'alpine' or 'distroless' instead of full OS images (e.g., 'ubuntu').
+*   **Layers:** Combine 'RUN' commands where possible to reduce layer count.
+*   **Order:** Place commands that rarely change (like 'npm install') ABOVE source code copies.
 
-**Common Patterns:**
-- Builder pattern
-- Multi-stage builds
-- Volume mounts
-- Network isolation`,
-					CodeExamples: `# Optimized Dockerfile
-FROM node:18-alpine AS builder
+**3. Security Best Practices:**
+*   **Non-Root:** Always use the 'USER' instruction. Never run as root.
+*   **Secrets:** Never use 'ENV' for passwords (use BuildKit secrets or '.dockerignore').
+*   **Scanning:** Use 'docker scan' or 'trivy' before pushing.`,
+					CodeExamples: `# Optimized Multi-Stage Dockerfile (Go Example)
+FROM golang:1.21-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production && \
-    npm cache clean --force
+COPY go.mod go.sum ./
+RUN go mod download
 COPY . .
-RUN npm run build
+RUN go build -o main .
 
-FROM node:18-alpine
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-WORKDIR /app
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --chown=nodejs:nodejs package*.json ./
-USER nodejs
-EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=3s \
-    CMD node healthcheck.js
-CMD ["node", "dist/server.js"]
-
-# .dockerignore
-node_modules
-.git
-.env
-*.log
-dist
-coverage
-.DS_Store
-
-# Security scan
-docker scan myimage:latest
-
-# Build with build args
-docker build --build-arg NODE_ENV=production -t myapp .
-
-# Multi-platform build
-docker buildx build --platform linux/amd64,linux/arm64 -t myapp .`,
+FROM alpine:latest
+WORKDIR /root/
+COPY --from=builder /app/main .
+USER 1001
+CMD ["./main"]`,
 				},
 				{
 					Title: "Docker Networking and Volumes",
@@ -150,84 +118,58 @@ networks:
 			Lessons: []problems.Lesson{
 				{
 					Title: "Kubernetes Architecture",
-					Content: `Understanding Kubernetes cluster architecture and components.
+					Content: `Kubernetes (K8s) is an orchestrator that manages a cluster of nodes.
 
-**Control Plane Components:**
-- **API Server**: Entry point for all operations
-- **etcd**: Distributed key-value store
-- **Scheduler**: Assigns pods to nodes
-- **Controller Manager**: Runs controllers
+**1. The Cluster Layout**
+` + "```" + `
+[ Control Plane ] <───(API)───> [ Worker Node ]
+  ├── API Server                  ├── Kubelet
+  ├── etcd (State Store)          ├── Kube-Proxy
+  ├── Scheduler                   └── Runtime (Docker/CRI-O)
+  └── Controller Mgr
+` + "```" + `
 
-**Node Components:**
-- **kubelet**: Agent on each node
-- **kube-proxy**: Network proxy
-- **Container Runtime**: Runs containers
+**2. Core Components**
+*   **Control Plane:** The "Brain". Manages scheduling, state, and API requests.
+*   **Worker Node:** The "Body". Where your applications (Pods) actually run.
+*   **Kubelet:** The "Captain" on each node that ensures containers are running.
 
-**Key Concepts:**
-- **Pod**: Smallest deployable unit
-- **Service**: Stable network endpoint
-- **Deployment**: Manages pod replicas
-- **Namespace**: Virtual cluster
-- **ConfigMap**: Configuration data
-- **Secret**: Sensitive data
-
-**Kubernetes Objects:**
-- Declarative configuration
-- YAML manifests
-- Desired state management
-- Self-healing`,
-					CodeExamples: `# Pod definition
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx-pod
-spec:
-  containers:
-  - name: nginx
-    image: nginx:1.21
-    ports:
-    - containerPort: 80
-
-# Deployment
+**3. The Object Hierarchy**
+1.  **Pod:** The smallest unit. A wrapper around one or more containers.
+2.  **Deployment:** Manages the desired number of Pods (Replicas).
+3.  **Service:** A stable IP/DNS entry to access your Pods.
+4.  **Ingress:** External access (HTTP/HTTPS) to services.`,
+					CodeExamples: `# 1. Deploy 3 replicas of Nginx
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: web
   template:
     metadata:
       labels:
-        app: nginx
+        app: web
     spec:
       containers:
       - name: nginx
-        image: nginx:1.21
-        ports:
-        - containerPort: 80
+        image: nginx:alpine
 
-# Service
+# 2. Expose it internally
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: nginx-svc
 spec:
   selector:
-    app: nginx
+    app: web
   ports:
-  - port: 80
-    targetPort: 80
-  type: LoadBalancer
-
-# Apply resources
-kubectl apply -f deployment.yaml
-kubectl get pods
-kubectl get services
-kubectl describe pod <pod-name>`,
+    - port: 80`,
 				},
+
 				{
 					Title: "Kubernetes Objects and Resources",
 					Content: `Understanding Kubernetes object model and resource management.
