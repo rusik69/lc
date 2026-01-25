@@ -1,0 +1,4 @@
+Building application...
+# github.com/rusik69/lc/internal/courses/linux
+internal/courses/linux/basics.go:160:36: syntax error: unexpected name apt in composite literal; possibly missing comma or }
+make: *** [Makefile:8: build] Error 1

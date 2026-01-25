@@ -1,9 +1,9 @@
-{{define "title"}}{{.Module.Title}} - DevOps - LeetCode Clone{{end}}
+{{define "title"}}{{.Module.Title}} - Math Course - LeetCode Clone{{end}}
 {{define "content"}}
 <div class="container">
     <div class="module-header">
         <div>
-            <a href="/devops" class="back-link">← Back to DevOps Course</a>
+            <a href="/math" class="back-link">← Back to Math Course</a>
             <h2 class="module-header-title">{{.Module.Title}}</h2>
             <p class="module-description">{{.Module.Description}}</p>
         </div>
@@ -22,7 +22,7 @@
                     <div class="lesson-text">{{markdown $lesson.Content}}</div>
                     {{if $lesson.CodeExamples}}
                     <div class="lesson-code">
-                        <pre><code class="language-bash">{{$lesson.CodeExamples}}</code></pre>
+                        <pre><code class="language-python">{{$lesson.CodeExamples}}</code></pre>
                     </div>
                     {{end}}
                 </div>
@@ -176,7 +176,7 @@ function toggleLesson(index) {
         toggle.textContent = '▲';
         // Highlight code when lesson is opened
         setTimeout(function() {
-            highlightDevOpsCode();
+            highlightMathCode();
             if (window.highlightCode) {
                 window.highlightCode();
             }
@@ -188,22 +188,20 @@ function toggleLesson(index) {
 }
 
 // Highlight code blocks on page load and when lessons are toggled
-function highlightDevOpsCode() {
+function highlightMathCode() {
     if (typeof CodeMirror !== 'undefined' && CodeMirror.runMode) {
         var codeBlocks = document.querySelectorAll('.lesson-code code');
         codeBlocks.forEach(function(block) {
             if (!block.hasAttribute('data-highlighted')) {
                 var text = block.textContent;
-                var lang = 'shell'; // Default for DevOps course
+                var lang = 'python'; // Default for Math course (Python examples)
                 
                 // Check if code block has language class
                 if (block.className && block.className.includes('language-')) {
-                    if (block.className.includes('language-bash')) {
-                        lang = 'shell';
-                    } else if (block.className.includes('language-shell')) {
-                        lang = 'shell';
-                    } else if (block.className.includes('language-yaml')) {
-                        lang = 'yaml';
+                    if (block.className.includes('language-python')) {
+                        lang = 'python';
+                    } else if (block.className.includes('language-go')) {
+                        lang = 'go';
                     }
                 }
                 
@@ -220,7 +218,7 @@ function highlightDevOpsCode() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', highlightDevOpsCode);
+document.addEventListener('DOMContentLoaded', highlightMathCode);
 // Also highlight when global highlightCode is called
 if (window.highlightCode) {
     window.highlightCode();

@@ -20,6 +20,7 @@ import (
 	_ "github.com/rusik69/lc/internal/courses/aws"
 	_ "github.com/rusik69/lc/internal/courses/computer_architecture"
 	_ "github.com/rusik69/lc/internal/courses/azure"
+	_ "github.com/rusik69/lc/internal/courses/math"
 	"github.com/rusik69/lc/internal/handlers"
 )
 
@@ -70,6 +71,8 @@ func main() {
 	mux.HandleFunc("/azure/", handlers.HandleAzureModule)
 	mux.HandleFunc("/computer-architecture", handlers.HandleComputerArchitectureCourse)
 	mux.HandleFunc("/computer-architecture/", handlers.HandleComputerArchitectureModule)
+	mux.HandleFunc("/math", handlers.HandleMathCourse)
+	mux.HandleFunc("/math/", handlers.HandleMathModule)
 	mux.HandleFunc("/problem/", handlers.HandleProblem)
 	mux.HandleFunc("/run/", handlers.HandleRun)
 	mux.HandleFunc("/solution/", handlers.HandleSolution)

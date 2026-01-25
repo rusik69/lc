@@ -157,8 +157,8 @@ A package is a compressed archive ('.deb' or '.rpm') containing:
 
 **How Repositories Work:**
 Repositories are central servers hosting thousands of packages.
-1. **Index Update**: When you run `apt update`, you download a list of available packages and versions.
-2. **Dependency Resolution**: When installing `vlc`, the manager checks if `libavcodec` is installed. If not, it fetches it automatically.
+1. **Index Update**: When you run 'apt update', you download a list of available packages and versions.
+2. **Dependency Resolution**: When installing 'vlc', the manager checks if 'libavcodec' is installed. If not, it fetches it automatically.
 3. **Verification**: Packages are digitally signed. Your system checks the signature against a trusted public key to ensure the software hasn't been tampered with.
 
 **Universal Package Formats:**
@@ -571,7 +571,6 @@ function mkcd() {
 export PATH=$PATH:/home/user/my_custom_tools
 # Now you can run tools in that folder just by name!`,
 				},
-
 			},
 			ProblemIDs: []int{},
 		},

@@ -73,6 +73,8 @@ var (
 	computerArchitectureMu         sync.RWMutex
 	allAzureModules                []CourseModule
 	azureMu                        sync.RWMutex
+	allMathModules                 []CourseModule
+	mathMu                         sync.RWMutex
 )
 
 func init() {
@@ -542,6 +544,27 @@ func GetAzureModuleByID(id int) *CourseModule {
 	for i := range allAzureModules {
 		if allAzureModules[i].ID == id {
 			return &allAzureModules[i]
+		}
+	}
+	return nil
+}
+
+// GetMathModules returns all math course modules
+func GetMathModules() []CourseModule {
+	mathMu.RLock()
+	defer mathMu.RUnlock()
+	result := make([]CourseModule, len(allMathModules))
+	copy(result, allMathModules)
+	return result
+}
+
+// GetMathModuleByID returns a math module by its ID
+func GetMathModuleByID(id int) *CourseModule {
+	mathMu.RLock()
+	defer mathMu.RUnlock()
+	for i := range allMathModules {
+		if allMathModules[i].ID == id {
+			return &allMathModules[i]
 		}
 	}
 	return nil

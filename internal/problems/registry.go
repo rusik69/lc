@@ -99,3 +99,10 @@ func RegisterAzureModules(modules []CourseModule) {
 	defer azureMu.Unlock()
 	allAzureModules = append(allAzureModules, modules...)
 }
+
+// RegisterMathModules registers math course modules
+func RegisterMathModules(modules []CourseModule) {
+	mathMu.Lock()
+	defer mathMu.Unlock()
+	allMathModules = append(allMathModules, modules...)
+}
