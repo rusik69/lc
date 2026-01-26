@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"sort"
 	"strconv"
@@ -364,6 +365,10 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRun(w http.ResponseWriter, r *http.Request) {
+	requestID := fmt.Sprintf("%d", time.Now().UnixNano())
+	log.Printf("[REQ-%s] HandleRun called - Method: %s, Path: %s, RemoteAddr: %s", 
+		requestID, r.Method, r.URL.Path, getClientIP(r))
+	
 	// Set CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -371,48 +376,61 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 	
 	// Handle preflight requests
 	if r.Method == http.MethodOptions {
+		log.Printf("[REQ-%s] Handling OPTIONS preflight request", requestID)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 	
 	if r.Method != http.MethodPost {
+		log.Printf("[REQ-%s] ERROR: Invalid method: %s", requestID, r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	// Rate limiting
-	if !limiter.allow(getClientIP(r)) {
+	clientIP := getClientIP(r)
+	if !limiter.allow(clientIP) {
+		log.Printf("[REQ-%s] ERROR: Rate limit exceeded for IP: %s", requestID, clientIP)
 		http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
 		return
 	}
 
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
+		log.Printf("[REQ-%s] ERROR: Invalid path format: %s", requestID, r.URL.Path)
 		http.NotFound(w, r)
 		return
 	}
 
 	id, err := strconv.Atoi(parts[2])
 	if err != nil {
+		log.Printf("[REQ-%s] ERROR: Invalid problem ID: %s, error: %v", requestID, parts[2], err)
 		http.NotFound(w, r)
 		return
 	}
 
+	log.Printf("[REQ-%s] Parsed problem ID: %d", requestID, id)
 	problem := problems.GetProblem(id)
 	if problem == nil {
+		log.Printf("[REQ-%s] ERROR: Problem not found: %d", requestID, id)
 		http.NotFound(w, r)
 		return
 	}
 
 	// Check if streaming is requested (before parsing form)
 	streamRequested := r.URL.Query().Get("stream") == "true"
+	log.Printf("[REQ-%s] Stream requested: %v", requestID, streamRequested)
 
 	// Parse form with size limit
 	// For multipart/form-data (FormData from fetch), use ParseMultipartForm
 	contentType := r.Header.Get("Content-Type")
+	log.Printf("[REQ-%s] Content-Type: %s", requestID, contentType)
+	
 	if strings.Contains(contentType, "multipart/form-data") {
+		log.Printf("[REQ-%s] Parsing multipart form", requestID)
 		if err := r.ParseMultipartForm(maxRequestSize); err != nil {
 			errMsg := err.Error()
+			log.Printf("[REQ-%s] ERROR: Failed to parse multipart form: %v", requestID, err)
 			if strings.Contains(errMsg, "request body too large") || strings.Contains(errMsg, "http: request body too large") {
 				http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
 				return
@@ -420,14 +438,17 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid request: "+err.Error(), http.StatusBadRequest)
 			return
 		}
+		log.Printf("[REQ-%s] Multipart form parsed successfully", requestID)
 	} else {
 		// For application/x-www-form-urlencoded, limit body size first
+		log.Printf("[REQ-%s] Parsing URL-encoded form", requestID)
 		if !streamRequested {
 			r.Body = http.MaxBytesReader(w, r.Body, maxRequestSize)
 			defer r.Body.Close()
 		}
 		if err := r.ParseForm(); err != nil {
 			errMsg := err.Error()
+			log.Printf("[REQ-%s] ERROR: Failed to parse form: %v", requestID, err)
 			if strings.Contains(errMsg, "request body too large") || strings.Contains(errMsg, "http: request body too large") {
 				http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
 				return
@@ -435,35 +456,46 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid request: "+err.Error(), http.StatusBadRequest)
 			return
 		}
+		log.Printf("[REQ-%s] Form parsed successfully", requestID)
 	}
 
 	userCode := r.FormValue("code")
 	if userCode == "" {
+		log.Printf("[REQ-%s] ERROR: Code is empty", requestID)
 		http.Error(w, "Code is required", http.StatusBadRequest)
 		return
 	}
+	log.Printf("[REQ-%s] Code received, length: %d bytes", requestID, len(userCode))
 
 	language := r.FormValue("language")
 	if language == "" {
 		language = "go" // Default to Go
+		log.Printf("[REQ-%s] No language specified, defaulting to Go", requestID)
+	} else {
+		log.Printf("[REQ-%s] Language specified: %s", requestID, language)
 	}
 
 	// Validate code size
 	if len(userCode) > maxCodeSize {
+		log.Printf("[REQ-%s] ERROR: Code too large: %d bytes (max: %d)", requestID, len(userCode), maxCodeSize)
 		http.Error(w, fmt.Sprintf("Code too large (max %d bytes)", maxCodeSize), http.StatusBadRequest)
 		return
 	}
 
 	// Basic validation: ensure code doesn't contain dangerous patterns
 	if containsDangerousPatterns(userCode) {
+		log.Printf("[REQ-%s] ERROR: Code contains dangerous patterns", requestID)
 		http.Error(w, "Code contains prohibited patterns", http.StatusBadRequest)
 		return
 	}
+	log.Printf("[REQ-%s] Code validation passed", requestID)
 
 	action := r.FormValue("action")
 	runAllTests := action == "submit"
+	log.Printf("[REQ-%s] Action: %s, RunAllTests: %v", requestID, action, runAllTests)
 
 	if streamRequested && !runAllTests {
+		log.Printf("[REQ-%s] Setting up SSE streaming", requestID)
 		// Stream output for Run button
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")
@@ -472,17 +504,25 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 
 		flusher, ok := w.(http.Flusher)
 		if !ok {
+			log.Printf("[REQ-%s] ERROR: Streaming not supported (no Flusher)", requestID)
 			http.Error(w, "Streaming not supported", http.StatusInternalServerError)
 			return
 		}
 
 		// Send initial comment to establish connection
-		fmt.Fprintf(w, ": connection established\n\n")
+		log.Printf("[REQ-%s] Sending initial SSE connection message", requestID)
+		_, err := fmt.Fprintf(w, ": connection established\n\n")
+		if err != nil {
+			log.Printf("[REQ-%s] ERROR: Failed to write initial SSE message: %v", requestID, err)
+			return
+		}
 		flusher.Flush()
+		log.Printf("[REQ-%s] Initial SSE message flushed", requestID)
 
 		// Ensure we always send the done event, even on panic
 		defer func() {
 			if r := recover(); r != nil {
+				log.Printf("[REQ-%s] PANIC in streaming handler: %v", requestID, r)
 				// Write error to stream before sending done event
 				fmt.Fprintf(w, "data: %s\n\n", "[ERROR] Internal server error: "+fmt.Sprintf("%v", r))
 				flusher.Flush()
@@ -495,6 +535,7 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
+					log.Printf("[REQ-%s] PANIC during execution: %v", requestID, r)
 					// Write panic error to stream
 					fmt.Fprintf(w, "data: %s\n\n", "[ERROR] Execution panic: "+fmt.Sprintf("%v", r))
 					flusher.Flush()
@@ -505,11 +546,14 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}()
+			log.Printf("[REQ-%s] Calling ExecuteCodeStreamWithLanguage", requestID)
 			result = executor.ExecuteCodeStreamWithLanguage(problem, userCode, runAllTests, w, language)
+			log.Printf("[REQ-%s] ExecuteCodeStreamWithLanguage returned, success: %v", requestID, result != nil && result.Success)
 		}()
 
 		// Ensure result is not nil
 		if result == nil {
+			log.Printf("[REQ-%s] ERROR: Execution returned nil result", requestID)
 			result = &executor.ExecutionResult{
 				Success: false,
 				Error:   "Execution returned nil result",
@@ -523,22 +567,35 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 				passed++
 			}
 		}
+		log.Printf("[REQ-%s] Test results: %d passed out of %d total, success: %v", requestID, passed, len(result.Results), result.Success)
 
 		// Always send done event, even if there were errors
 		// Check if connection is still open before writing
 		doneMsg := fmt.Sprintf("event: done\ndata: {\"success\":%t,\"passed\":%d,\"total\":%d}\n\n", result.Success, passed, len(result.Results))
+		log.Printf("[REQ-%s] Sending done event", requestID)
+		
+		// Try to write done event - handle timeout/connection errors gracefully
 		if _, err := fmt.Fprintf(w, doneMsg); err != nil {
+			// Check if it's a timeout error specifically
+			if strings.Contains(err.Error(), "timeout") || strings.Contains(err.Error(), "i/o timeout") {
+				log.Printf("[REQ-%s] WARNING: Write timeout when sending done event (client may have disconnected or network issue): %v", requestID, err)
+			} else {
+				log.Printf("[REQ-%s] ERROR: Failed to write done event (connection closed?): %v", requestID, err)
+			}
 			// Connection closed or timed out - log but don't fail
-			// This is expected if client disconnects
+			// This is expected if client disconnects or network issues occur
 			return
 		}
 		// Only flush if write succeeded
 		flusher.Flush()
+		log.Printf("[REQ-%s] Streaming request completed successfully", requestID)
 		return
 	}
 
 	// Non-streaming execution (for Submit button)
+	log.Printf("[REQ-%s] Executing non-streaming code execution", requestID)
 	result := executor.ExecuteCodeWithLanguage(problem, userCode, runAllTests, language)
+	log.Printf("[REQ-%s] Non-streaming execution completed, success: %v, results: %d", requestID, result.Success, len(result.Results))
 	passed := 0
 	for _, r := range result.Results {
 		if r.Passed {
@@ -566,9 +623,13 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 		Total:   len(result.Results),
 	}
 
+	log.Printf("[REQ-%s] Rendering result template", requestID)
 	if err := templates.ExecuteTemplate(w, "result.html", data); err != nil {
+		log.Printf("[REQ-%s] ERROR: Failed to render result template: %v", requestID, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	log.Printf("[REQ-%s] Request completed successfully", requestID)
 }
 
 func HandleSolution(w http.ResponseWriter, r *http.Request) {

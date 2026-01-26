@@ -85,8 +85,8 @@ func main() {
 		Addr:           ":8080",
 		Handler:        handler,
 		ReadTimeout:    15 * time.Second,
-		WriteTimeout:   15 * time.Second,
-		IdleTimeout:    60 * time.Second,
+		WriteTimeout:   60 * time.Second, // Increased for SSE streaming (code execution can take up to 25s + overhead)
+		IdleTimeout:    120 * time.Second, // Increased for long-lived SSE connections
 		MaxHeaderBytes: 1 << 20, // 1MB
 	}
 

@@ -22,7 +22,7 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 	sb.WriteString("\t\"sort\"\n")
 	sb.WriteString("\t\"math\"\n")
 	sb.WriteString(")\n\n")
-	
+
 	// Add blank identifier to avoid unused import errors
 	sb.WriteString("var _ = strings.Contains\n")
 	sb.WriteString("var _ = strconv.Itoa\n")
@@ -35,13 +35,13 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 	sb.WriteString("\tVal  int\n")
 	sb.WriteString("\tNext *ListNode\n")
 	sb.WriteString("}\n\n")
-	
+
 	sb.WriteString("type TreeNode struct {\n")
 	sb.WriteString("\tVal   int\n")
 	sb.WriteString("\tLeft  *TreeNode\n")
 	sb.WriteString("\tRight *TreeNode\n")
 	sb.WriteString("}\n\n")
-	
+
 	// Helper functions
 	sb.WriteString("func createList(vals []int) *ListNode {\n")
 	sb.WriteString("\tif len(vals) == 0 { return nil }\n")
@@ -53,7 +53,7 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 	sb.WriteString("\t}\n")
 	sb.WriteString("\treturn head\n")
 	sb.WriteString("}\n\n")
-	
+
 	sb.WriteString("func listToArray(head *ListNode) []int {\n")
 	sb.WriteString("\tresult := []int{}\n")
 	sb.WriteString("\tfor head != nil {\n")
@@ -62,12 +62,12 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 	sb.WriteString("\t}\n")
 	sb.WriteString("\treturn result\n")
 	sb.WriteString("}\n\n")
-	
+
 	sb.WriteString("func max(a, b int) int {\n")
 	sb.WriteString("\tif a > b { return a }\n")
 	sb.WriteString("\treturn b\n")
 	sb.WriteString("}\n\n")
-	
+
 	sb.WriteString("func min(a, b int) int {\n")
 	sb.WriteString("\tif a < b { return a }\n")
 	sb.WriteString("\treturn b\n")
@@ -1203,20 +1203,20 @@ func GeneratePythonTestCode(problem *problems.Problem, userCode string, runAllTe
 	sb.WriteString("    s = re.sub(r'\\s+', ' ', s)\n")
 	sb.WriteString("    # Remove leading/trailing spaces\n")
 	sb.WriteString("    return s.strip()\n\n")
-	
+
 	// Helper classes
 	sb.WriteString("# Helper classes\n")
 	sb.WriteString("class ListNode:\n")
 	sb.WriteString("    def __init__(self, val=0, next=None):\n")
 	sb.WriteString("        self.val = val\n")
 	sb.WriteString("        self.next = next\n\n")
-	
+
 	sb.WriteString("class TreeNode:\n")
 	sb.WriteString("    def __init__(self, val=0, left=None, right=None):\n")
 	sb.WriteString("        self.val = val\n")
 	sb.WriteString("        self.left = left\n")
 	sb.WriteString("        self.right = right\n\n")
-	
+
 	// Helper functions
 	sb.WriteString("def create_list(vals):\n")
 	sb.WriteString("    if not vals:\n")
@@ -1227,7 +1227,7 @@ func GeneratePythonTestCode(problem *problems.Problem, userCode string, runAllTe
 	sb.WriteString("        curr.next = ListNode(val)\n")
 	sb.WriteString("        curr = curr.next\n")
 	sb.WriteString("    return head\n\n")
-	
+
 	sb.WriteString("def list_to_array(head):\n")
 	sb.WriteString("    result = []\n")
 	sb.WriteString("    while head:\n")
@@ -2507,23 +2507,24 @@ func ExecuteCodeWithLanguage(problem *problems.Problem, userCode string, runAllT
 		execCmd = "go run"
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	// Context timeout: 40 seconds (allows 35s execution + 5s overhead)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	// Generate unique filename to avoid conflicts
 	uniqueID := GenerateUniqueID()
 	filename := fmt.Sprintf("/tmp/code_%s.%s", uniqueID, fileExt)
-	
+
 	// Get sandbox container name
 	container := GetSandboxContainer()
 
 	// Write code to sandbox container
-	writeCmd := exec.CommandContext(ctx, "docker", "exec", "-i", container, 
+	writeCmd := exec.CommandContext(ctx, "docker", "exec", "-i", container,
 		"sh", "-c", fmt.Sprintf("cat > %s", filename))
 	writeCmd.Stdin = strings.NewReader(testCode)
 	var writeErr bytes.Buffer
 	writeCmd.Stderr = &writeErr
-	
+
 	if err := writeCmd.Run(); err != nil {
 		return &ExecutionResult{
 			Success: false,
@@ -2532,26 +2533,28 @@ func ExecuteCodeWithLanguage(problem *problems.Problem, userCode string, runAllT
 	}
 
 	// Execute code in sandbox container
+	// Timeout: 35 seconds (allows for compilation + execution + overhead)
+	// Go compilation can take a few seconds, so we need extra time
 	var execDockerCmd *exec.Cmd
 	if language == "python" {
 		// For Python, use python3 directly (timeout handled by context)
 		execDockerCmd = exec.CommandContext(ctx, "docker", "exec", container,
-			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 25 python3 %s 2>&1", filename))
+			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 35 python3 %s 2>&1", filename))
 	} else {
 		execDockerCmd = exec.CommandContext(ctx, "docker", "exec", container,
-			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 25 %s %s", execCmd, filename))
+			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 35 %s %s", execCmd, filename))
 	}
-	
+
 	var stdout, stderr bytes.Buffer
 	execDockerCmd.Stdout = &stdout
 	execDockerCmd.Stderr = &stderr
 
 	err := execDockerCmd.Run()
-	
+
 	// Clean up temp file
 	cleanCmd := exec.Command("docker", "exec", container, "rm", "-f", filename)
 	cleanCmd.Run() // Ignore errors on cleanup
-	
+
 	timeTaken := time.Since(start).String()
 
 	output := stdout.String()
@@ -2567,19 +2570,27 @@ func ExecuteCodeWithLanguage(problem *problems.Problem, userCode string, runAllT
 
 	if err != nil {
 		var errorMsg strings.Builder
-		errorMsg.WriteString("Execution failed: " + err.Error())
-		
+
+		// Check for timeout (exit status 124 from timeout command)
+		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() == 124 {
+			errorMsg.WriteString("Execution timed out after 35 seconds. ")
+			errorMsg.WriteString("Your code may be taking too long to execute or may have an infinite loop. ")
+			errorMsg.WriteString("Please optimize your code or check for infinite loops.")
+		} else {
+			errorMsg.WriteString("Execution failed: " + err.Error())
+		}
+
 		if errorOutput != "" {
-			errorMsg.WriteString("\n" + errorOutput)
+			errorMsg.WriteString("\n\nStderr: " + errorOutput)
 		}
-		
+
 		if output != "" {
-			errorMsg.WriteString("\n" + output)
+			errorMsg.WriteString("\n\nOutput: " + output)
 		}
-		
+
 		result.Error = errorMsg.String()
 		result.Success = false
-		
+
 		// Still try to parse test results if any exist
 		if output != "" {
 			testNum := 1
@@ -2609,7 +2620,7 @@ func ExecuteCodeWithLanguage(problem *problems.Problem, userCode string, runAllT
 				}
 			}
 		}
-		
+
 		return result
 	}
 
