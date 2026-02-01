@@ -1370,6 +1370,319 @@ Example 4: Cache Sizing
 - Memory needed: 2 GB × 3 replicas = 6 GB
 - Can fit in 3 servers with 8 GB RAM each`,
 				},
+				{
+					Title: "System Design Interview Tips & Best Practices",
+					Content: `System design interviews test your ability to design scalable, reliable systems under time constraints. Here's how to excel:
+
+**Interview Structure (45-60 minutes):**
+- **5-10 min**: Requirements clarification
+- **10-15 min**: Capacity estimation
+- **15-20 min**: High-level design
+- **10-15 min**: Detailed design
+- **5-10 min**: Trade-offs and follow-ups
+
+**1. How to Start (Don't Jump to Solutions):**
+
+**Common Mistake**: Immediately proposing technologies or drawing boxes
+**Correct Approach**: 
+- Understand the problem deeply first
+- Ask clarifying questions
+- State your assumptions explicitly
+- Think out loud - show your reasoning
+
+**Example Good Start:**
+"I'd like to clarify a few things before designing. What's the expected scale? Are we talking millions or billions of users? What's the read/write ratio? Do we need real-time updates or is eventual consistency acceptable?"
+
+**2. Communication Strategies:**
+
+**Think Out Loud:**
+- Explain your thought process
+- "I'm considering two approaches here..."
+- "The trade-off here is between X and Y..."
+- "Let me think about the bottlenecks..."
+
+**Use the RESHADED Framework:**
+- Requirements: Clarify functional and non-functional requirements
+- Estimate: Do back-of-envelope calculations
+- System Interface: Design APIs
+- High-Level Design: Draw architecture
+- Algorithm/Data Structure: Choose core algorithms
+- Detailed Design: Deep dive into components
+- Evaluation: Identify bottlenecks
+- Discussion: Trade-offs, scaling, reliability
+
+**3. Time Management:**
+
+**45-Minute Interview Breakdown:**
+- 0-5 min: Requirements clarification
+- 5-10 min: Capacity estimation
+- 10-25 min: High-level design (draw boxes and arrows)
+- 25-35 min: Detailed design (database schema, APIs, algorithms)
+- 35-45 min: Trade-offs, scaling, follow-ups
+
+**60-Minute Interview Breakdown:**
+- 0-10 min: Requirements clarification
+- 10-20 min: Capacity estimation
+- 20-40 min: High-level design
+- 40-55 min: Detailed design
+- 55-60 min: Trade-offs and follow-ups
+
+**Key**: Don't spend too much time on any single step. Keep moving forward.
+
+**4. Common Mistakes to Avoid:**
+
+**Mistake 1: Over-engineering**
+- Don't add microservices, Kafka, Redis for a simple system
+- Start simple, scale when needed
+- "We can start with a monolith and evolve to microservices if needed"
+
+**Mistake 2: Under-engineering**
+- Don't ignore scalability
+- Plan for reasonable growth
+- "Assuming 10x growth in 2 years, we'd need..."
+
+**Mistake 3: Not asking clarifying questions**
+- Don't assume requirements
+- Ask about scale, consistency, availability needs
+- "What's the expected number of users?"
+
+**Mistake 4: Jumping to technologies**
+- Don't say "We'll use Redis" without explaining why
+- Explain the problem first, then the solution
+- "We need fast lookups, so a cache like Redis would help..."
+
+**Mistake 5: Ignoring trade-offs**
+- Every decision has trade-offs
+- Explicitly discuss them
+- "Using SQL gives us consistency but limits horizontal scaling..."
+
+**Mistake 6: Not doing capacity estimation**
+- Always estimate scale
+- Shows you think about real-world constraints
+- "100M URLs/day = ~1,200 writes/sec, with 100:1 read ratio = 120K reads/sec"
+
+**Mistake 7: Single point of failure**
+- Always consider redundancy
+- "We'll have multiple app servers behind a load balancer..."
+
+**5. How to Handle Ambiguity:**
+
+**When Requirements Are Unclear:**
+- Make reasonable assumptions
+- State them explicitly
+- "I'll assume we need to support 100M users and 99.9% availability"
+
+**When You Don't Know Something:**
+- Admit it honestly
+- Show how you'd find out
+- "I'm not certain about the exact throughput of this database, but I'd look at benchmarks or consult the documentation"
+
+**When Interviewer Challenges Your Design:**
+- Listen carefully
+- Don't be defensive
+- Consider their feedback
+- "That's a good point. Let me reconsider..."
+
+**6. When to Ask Clarifying Questions:**
+
+**Always Ask About:**
+- Scale: Users, requests, data volume
+- Functional requirements: What features are must-have vs nice-to-have
+- Non-functional requirements: Latency, availability, consistency needs
+- Constraints: Budget, timeline, team size
+- Use cases: Primary use cases and edge cases
+
+**Example Questions:**
+- "What's the expected number of users?"
+- "What's the read/write ratio?"
+- "Do we need real-time updates or is eventual consistency OK?"
+- "What's the acceptable latency?"
+- "Do we need to support custom URLs?"
+- "Are there any compliance requirements?"
+
+**7. How to Present Your Design:**
+
+**Start with High-Level:**
+- Draw boxes for major components
+- Show data flow
+- "Here's the high-level architecture: Client → Load Balancer → API Servers → Database"
+
+**Then Go Deeper:**
+- Database schema
+- API endpoints
+- Key algorithms
+- "For the database, we'll have a URLs table with short_code as the primary key..."
+
+**Use Visual Aids:**
+- Draw diagrams (even if simple)
+- Show data flow with arrows
+- "Requests flow like this: [draw]"
+
+**8. How to Handle Feedback and Iterate:**
+
+**When Interviewer Suggests Changes:**
+- Acknowledge the feedback
+- Incorporate it into your design
+- "Good point. If we add caching here, we can reduce database load..."
+
+**Show Flexibility:**
+- Be willing to change your design
+- "Actually, you're right. A message queue would be better here..."
+
+**Iterate on Your Design:**
+- Start simple, then optimize
+- "We can start with this, and if we need more scale, we can add sharding..."
+
+**9. Key Things to Demonstrate:**
+
+**Scalability Thinking:**
+- Horizontal vs vertical scaling
+- Database sharding strategies
+- Caching strategies
+- Load balancing
+
+**Reliability Thinking:**
+- Redundancy
+- Failover mechanisms
+- Error handling
+- Graceful degradation
+
+**Performance Thinking:**
+- Bottleneck identification
+- Optimization strategies
+- Caching
+- CDN usage
+
+**Trade-off Awareness:**
+- Consistency vs Availability
+- Latency vs Throughput
+- Cost vs Performance
+- Simplicity vs Features
+
+**10. Common Follow-up Questions:**
+
+**Scaling Questions:**
+- "How would you scale this to 10x?"
+- "What if we need to support global users?"
+- "How would you handle a traffic spike?"
+
+**Reliability Questions:**
+- "What happens if the database fails?"
+- "How do you ensure data consistency?"
+- "How would you handle network partitions?"
+
+**Performance Questions:**
+- "What are the bottlenecks?"
+- "How would you optimize this?"
+- "What's the latency of this operation?"
+
+**Design Questions:**
+- "Why did you choose this approach?"
+- "What are the trade-offs?"
+- "How would you improve this design?"
+
+**Best Practices Summary:**
+1. Start with requirements clarification
+2. Think out loud - show your reasoning
+3. Use the RESHADED framework
+4. Do capacity estimation
+5. Start simple, then optimize
+6. Discuss trade-offs explicitly
+7. Consider scalability, reliability, performance
+8. Handle feedback gracefully
+9. Ask clarifying questions when needed
+10. Stay calm and communicate clearly`,
+					CodeExamples: `Interview Dialogue Example:
+
+Interviewer: "Design a URL shortener like TinyURL"
+
+Good Response:
+"Great! Before I start designing, let me clarify a few requirements:
+1. What's the expected scale? How many URLs per day?
+2. What's the read/write ratio? I assume it's read-heavy?
+3. Do we need custom URLs or just auto-generated?
+4. Do URLs expire or are they permanent?
+5. Do we need analytics?
+
+[After clarification]
+Based on your answers, I'll assume:
+- 100M URLs/day
+- 100:1 read/write ratio
+- Auto-generated short URLs (7 characters)
+- URLs don't expire
+- No analytics initially
+
+Let me start with capacity estimation:
+- 100M URLs/day = ~1,200 writes/sec average
+- Peak (10x) = ~12,000 writes/sec
+- Reads: 1,200 × 100 = 120,000 reads/sec
+- Storage: 100M × 500 bytes = 50 GB/year
+
+Now for the high-level design..."
+
+Bad Response:
+"We'll use Redis for caching, MySQL for storage, and a load balancer. The short URL will be generated using base62 encoding..."
+
+[Too fast, no clarification, jumps to technologies]
+
+Common Pitfalls to Avoid:
+
+1. Over-engineering:
+   Bad: "We'll use microservices, Kafka for messaging, Redis cluster, and sharded MySQL..."
+   Good: "We'll start with a simple architecture: Load balancer → API servers → Database. We can add caching and sharding as we scale."
+
+2. Not estimating:
+   Bad: "We'll need some servers and a database..."
+   Good: "With 100M URLs/day, we need ~1,200 writes/sec. A single database can handle this, but we'll need read replicas for the 120K reads/sec."
+
+3. Ignoring trade-offs:
+   Bad: "We'll use NoSQL for better scalability..."
+   Good: "We could use NoSQL for better horizontal scaling, but SQL gives us ACID guarantees. Given our requirements, SQL with read replicas should work, and we can shard later if needed."
+
+4. Single point of failure:
+   Bad: "We'll have one database server..."
+   Good: "We'll have a master database with read replicas, and multiple app servers behind a load balancer for redundancy."
+
+5. Not thinking out loud:
+   Bad: [Draws diagram silently]
+   Good: "I'm thinking about the data flow. When a user shortens a URL, the request goes through the load balancer to an API server. The server generates a unique ID, encodes it to base62, stores it in the database, and returns the short URL. For redirects, we check cache first, then database..."
+
+Time Management Example:
+
+45-minute interview:
+- 0-5 min: "Let me clarify requirements..." [Ask questions]
+- 5-10 min: "Capacity estimation: 100M URLs/day = 1,200 writes/sec..." [Calculate]
+- 10-25 min: "High-level design: Client → LB → API → DB" [Draw architecture]
+- 25-35 min: "Database schema: urls table with short_code, original_url..." [Detail]
+- 35-45 min: "Trade-offs: SQL vs NoSQL, caching strategy..." [Discuss]
+
+Handling Ambiguity:
+
+Interviewer: "Design a social media feed"
+You: "I'll assume we're designing something like Twitter. Let me clarify:
+- Do we need real-time updates or eventual consistency?
+- What's the expected number of users and posts?
+- Do we need to support both user timelines and trending feeds?"
+
+[Make reasonable assumptions if unclear]
+"If the requirements aren't fully specified, I'll assume:
+- 100M users, 500M posts/day
+- Real-time updates preferred but eventual consistency acceptable
+- Both user timelines and trending feeds"
+
+Handling Feedback:
+
+Interviewer: "What if the database becomes a bottleneck?"
+Good Response: "Good point. We can add:
+1. Read replicas for read scaling
+2. Caching layer (Redis) for hot data
+3. Database sharding if needed
+4. CDN for static content
+
+Let me update the design to include these..."
+
+[Shows flexibility and iteration]`,
+				},
 			},
 			ProblemIDs: []int{},
 		},
@@ -2509,4 +2822,3 @@ Key Components:
 		},
 	})
 }
-
