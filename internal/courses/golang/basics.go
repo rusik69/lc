@@ -362,19 +362,23 @@ require (
 				},
 				{
 					Title: "Basic Program Structure",
-					Content: `**Package Declaration:**
-Every Go file starts with a package declaration. The main package is special - it creates an executable.
+					Content: `Every Go source file follows a strict organizational structure that the compiler enforces. Understanding this structure is essential because Go is unusually opinionated about code organization — and that opinionation is a feature, not a bug. It eliminates entire categories of debates and makes every Go project look familiar, whether it was written by a solo developer or a thousand-person team.
 
-**Import Statement:**
-Import packages you need. Standard library packages don't need a path prefix.
+**1. The Package Declaration: Identity and Scope**
 
-**Main Function:**
-The main() function is the entry point for executable programs.
+The very first line of every Go file must be a package declaration. This is not just a label — it defines the compilation unit and the namespace for all symbols in the file. The special package name ` + "`" + `main` + "`" + ` tells the Go toolchain to produce an executable binary rather than a library. Any other package name (e.g., ` + "`" + `package http` + "`" + `, ` + "`" + `package utils` + "`" + `) creates a reusable library that other packages can import. A critical rule: all files in the same directory must declare the same package name (with the exception of ` + "`" + `_test.go` + "`" + ` files, which may use a ` + "`" + `_test` + "`" + ` suffix for black-box testing). This one-directory-one-package rule prevents the tangled dependency graphs common in other languages.
 
-**File Organization:**
-- One package per directory
-- Multiple files can belong to the same package
-- Package name matches directory name (except main)`,
+**2. The Import Block: Declaring Dependencies**
+
+Immediately after the package declaration comes the import block. Go requires you to explicitly declare every external package you use, and — critically — the compiler refuses to compile if you import a package you do not use. This strictness might feel annoying at first, but it guarantees that every import in a file is meaningful, keeping builds fast and dependency trees clean. Standard library packages use short paths (` + "`" + `"fmt"` + "`" + `, ` + "`" + `"net/http"` + "`" + `), while third-party packages use full module paths (` + "`" + `"github.com/gorilla/mux"` + "`" + `). By convention, imports are grouped: standard library first, then third-party, then internal packages, separated by blank lines. Tools like ` + "`" + `goimports` + "`" + ` handle this formatting automatically.
+
+**3. The main() Function: Where Execution Begins**
+
+In the ` + "`" + `main` + "`" + ` package, the ` + "`" + `main()` + "`" + ` function serves as the entry point — it is what gets called when you run the binary. It takes no arguments and returns no values. Command-line arguments are accessed via ` + "`" + `os.Args` + "`" + ` or the ` + "`" + `flag` + "`" + ` package instead. If your ` + "`" + `main()` + "`" + ` function returns, the program exits with code 0. To exit with a non-zero code, call ` + "`" + `os.Exit(code)` + "`" + `. This simplicity is intentional — Go programs are meant to be straightforward about their lifecycle.
+
+**4. File Organization: Composition, Not Hierarchy**
+
+Go projects follow a flat, composition-based structure rather than deep inheritance hierarchies. One package per directory. Multiple ` + "`" + `.go` + "`" + ` files can belong to the same package — the compiler treats them as one unit, so you can split a large package across files by topic (e.g., ` + "`" + `user.go` + "`" + `, ` + "`" + `user_test.go` + "`" + `, ` + "`" + `admin.go` + "`" + `). The convention is that the package name matches the directory name (except for ` + "`" + `main` + "`" + `). Exported symbols (functions, types, constants) start with an uppercase letter; unexported ones start lowercase. There are no access modifiers like ` + "`" + `public` + "`" + ` or ` + "`" + `private` + "`" + ` — the case of the first letter is the access control, which is remarkably elegant once you get used to it.`,
 					CodeExamples: `package main
 
 import (

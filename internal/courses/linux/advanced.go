@@ -711,15 +711,23 @@ find / -type f -size +100M 2>/dev/null`,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Monitoring Tools",
-					Content: `Monitoring system performance helps identify bottlenecks and issues.
+					Content: `Monitoring is the practice of continuously observing system behavior to detect anomalies, identify bottlenecks, and plan capacity before problems escalate into outages. Think of it like the instrument panel in a car — without gauges for speed, fuel, and engine temperature, you are driving blind. In Linux, a rich ecosystem of command-line monitoring tools gives you real-time visibility into CPU, memory, disk I/O, and network activity, each offering a different lens on system health.
 
-**Monitoring Commands:**
-- top/htop: Process monitor
-- iotop: I/O monitoring
-- nethogs: Network usage by process
-- free: Memory usage
-- vmstat: Virtual memory statistics
-- iostat: I/O statistics`,
+**1. Process Monitoring: top and htop**
+
+The ` + "`" + `top` + "`" + ` command provides a real-time, continuously updating view of running processes sorted by CPU or memory usage. It shows system-wide metrics (load average, uptime, total memory) alongside per-process details (PID, user, CPU%, memory%, command). Its interactive successor, ` + "`" + `htop` + "`" + `, adds color-coded CPU and memory bars, mouse support, tree-view of process hierarchies, and the ability to search, filter, and kill processes without memorizing PID numbers. In practice, ` + "`" + `htop` + "`" + ` is what most administrators reach for first during an incident — it immediately shows whether the problem is CPU-bound, memory-bound, or caused by a specific runaway process.
+
+**2. I/O Monitoring: iotop and iostat**
+
+When a system feels sluggish but CPU and memory look fine, the bottleneck is often disk I/O. The ` + "`" + `iotop` + "`" + ` command shows I/O usage per process in real time — which process is reading or writing to disk and how much. The ` + "`" + `iostat` + "`" + ` command provides device-level statistics: reads/writes per second, average queue length, and utilization percentage for each disk. The extended mode (` + "`" + `iostat -x` + "`" + `) reveals whether a disk is saturated (look for ` + "`" + `%util` + "`" + ` near 100%) or if requests are queuing up (high ` + "`" + `avgqu-sz` + "`" + `). Together, these tools help you pinpoint whether a slow application is waiting on disk.
+
+**3. Memory and Virtual Memory: free and vmstat**
+
+The ` + "`" + `free -h` + "`" + ` command gives a snapshot of total, used, and available memory in human-readable format. Understanding the "available" column is critical — it accounts for reclaimable cache and buffers, which the kernel uses to speed up disk access. The ` + "`" + `vmstat` + "`" + ` command provides a broader view: it shows memory, swap, I/O, and CPU statistics at configurable intervals. A high ` + "`" + `si` + "`" + `/` + "`" + `so` + "`" + ` (swap in/out) value means the system is actively swapping to disk, which devastates performance. A sustained high value in the ` + "`" + `wa` + "`" + ` (I/O wait) column means processes are blocked waiting for disk operations.
+
+**4. Network Monitoring: nethogs**
+
+While ` + "`" + `iftop` + "`" + ` shows bandwidth by connection, ` + "`" + `nethogs` + "`" + ` groups network traffic by process — showing exactly which program is consuming your bandwidth. This is invaluable for debugging situations where network throughput unexpectedly drops or an unknown process is saturating the link. Combined with ` + "`" + `ss` + "`" + ` (socket statistics) for connection-level detail, these tools give complete visibility into network behavior.`,
 					CodeExamples: `# Memory usage
 free -h
 
@@ -740,13 +748,23 @@ iostat -d 1`,
 				},
 				{
 					Title: "Resource Limits",
-					Content: `ulimit controls resource limits for processes.
+					Content: `Resource limits are the guardrails that prevent a single misbehaving process from consuming all system resources and crashing the entire machine. Imagine a shared office building where one tenant could use all the electricity, water, and parking spaces — without limits, one bad actor takes everyone down. In Linux, the ` + "`" + `ulimit` + "`" + ` command and the ` + "`" + `/etc/security/limits.conf` + "`" + ` file control per-process and per-user resource caps, forming a critical defense layer in production systems.
 
-**Common Limits:**
-- ulimit -a: Show all limits
-- ulimit -n: File descriptors
-- ulimit -u: Processes
-- ulimit -v: Virtual memory`,
+**1. Understanding Soft vs. Hard Limits**
+
+Every resource limit has two values: a soft limit and a hard limit. The soft limit is the currently enforced ceiling — a process can raise its own soft limit up to the hard limit without requiring root privileges. The hard limit is the absolute maximum, and only root can increase it. This two-tier system allows applications to self-tune (e.g., a database raising its file descriptor limit on startup) while still preventing unprivileged users from consuming unlimited resources. Running ` + "`" + `ulimit -a` + "`" + ` shows all current soft limits; ` + "`" + `ulimit -aH` + "`" + ` shows the hard limits.
+
+**2. File Descriptors (` + "`" + `ulimit -n` + "`" + `): The Most Common Bottleneck**
+
+Every open file, socket, and pipe consumes a file descriptor. The default limit (often 1024) is far too low for servers handling thousands of concurrent connections. A web server hitting this limit will suddenly refuse new connections with "too many open files" errors. Database servers, load balancers, and message brokers all need this limit raised — often to 65536 or higher. This is the single most common resource limit problem in production deployments.
+
+**3. Process Limits (` + "`" + `ulimit -u` + "`" + `) and Memory Limits (` + "`" + `ulimit -v` + "`" + `)**
+
+The process limit caps how many processes a user can spawn, preventing fork bombs (a malicious or buggy program that recursively spawns processes until the system crashes). Virtual memory limits cap how much address space a process can request. In containerized environments, these limits are often supplemented by cgroups, which provide more granular control over CPU, memory, and I/O at the container or process-group level.
+
+**4. Making Limits Persistent**
+
+The ` + "`" + `ulimit` + "`" + ` command only affects the current shell session. To make limits survive reboots, you edit ` + "`" + `/etc/security/limits.conf` + "`" + ` (for PAM-based systems) or create a file in ` + "`" + `/etc/security/limits.d/` + "`" + `. For systemd services, limits are set in the service unit file using directives like ` + "`" + `LimitNOFILE=65536` + "`" + `. Getting this right is a rite of passage for every production systems engineer.`,
 					CodeExamples: `# Show limits
 ulimit -a
 
@@ -988,14 +1006,23 @@ sudo echo 3 > /proc/sys/vm/drop_caches
 			Lessons: []problems.Lesson{
 				{
 					Title: "SSH Hardening",
-					Content: `Hardening SSH improves security significantly.
+					Content: `SSH (Secure Shell) is the front door to virtually every Linux server on the internet. Because it provides remote command-line access, it is also the number one target for automated attacks — botnets scan the entire IPv4 address space trying default passwords against SSH on port 22. Hardening SSH is not optional; it is the single most impactful security measure you can take on any Linux server. Think of it as upgrading your front door from a screen door to a steel vault.
 
-**SSH Hardening Steps:**
-- Disable root login
-- Use key-based authentication
-- Change default port
-- Disable password authentication
-- Use fail2ban`,
+**1. Disable Root Login and Password Authentication**
+
+The most critical hardening step is disabling direct root login (` + "`" + `PermitRootLogin no` + "`" + ` in ` + "`" + `sshd_config` + "`" + `) and switching to key-based authentication exclusively (` + "`" + `PasswordAuthentication no` + "`" + `). Root login gives an attacker immediate superuser access if they guess the password. Password authentication is inherently vulnerable to brute-force attacks — no matter how strong your password is, an attacker can try millions of combinations. SSH keys use asymmetric cryptography (typically RSA-4096 or Ed25519), making brute force computationally impossible. With keys, even if an attacker knows your username, they cannot authenticate without your private key file.
+
+**2. Change the Default Port and Limit Access**
+
+Moving SSH to a non-standard port (e.g., 2222 instead of 22) does not provide real security against a determined attacker, but it eliminates the vast majority of automated scans. Combined with ` + "`" + `AllowUsers` + "`" + ` or ` + "`" + `AllowGroups` + "`" + ` directives (which whitelist specific users/groups), you dramatically reduce the attack surface. For even stronger protection, use ` + "`" + `ListenAddress` + "`" + ` to bind SSH to a specific network interface (e.g., a management VLAN) rather than all interfaces.
+
+**3. fail2ban: Automated Intrusion Prevention**
+
+Even with key-only authentication, brute-force attempts consume resources and clutter logs. ` + "`" + `fail2ban` + "`" + ` monitors log files for repeated failed login attempts and automatically adds firewall rules to block the offending IP addresses. It is like a bouncer that throws out anyone who tries the wrong key too many times. The default configuration bans an IP after 5 failed attempts for 10 minutes, but production servers often use stricter settings (3 attempts, 1-hour ban). fail2ban is not limited to SSH — it can protect any service that logs authentication failures.
+
+**4. Additional Hardening: Timeouts, Ciphers, and Two-Factor**
+
+Set ` + "`" + `ClientAliveInterval` + "`" + ` and ` + "`" + `ClientAliveCountMax` + "`" + ` to drop idle sessions. Restrict allowed ciphers and key exchange algorithms to modern, secure options (disable anything with CBC mode or SHA-1). For maximum security, enable two-factor authentication (2FA) using PAM modules like Google Authenticator, requiring both a key and a time-based one-time password. Each layer makes the attacker's job exponentially harder.`,
 					CodeExamples: `# Edit SSH config
 sudo nano /etc/ssh/sshd_config
 
@@ -1010,13 +1037,19 @@ sudo systemctl restart sshd`,
 				},
 				{
 					Title: "Firewall Configuration",
-					Content: `Firewalls control network traffic. iptables and firewalld are common tools.
+					Content: `A firewall is the gatekeeper between your server and the outside world, deciding which network packets are allowed in, out, or forwarded based on rules you define. Without a properly configured firewall, every listening service on your server is exposed to the internet — and attackers will find them. Linux has two main firewall management tools: ` + "`" + `iptables` + "`" + ` (the traditional, low-level tool) and ` + "`" + `firewalld` + "`" + ` (the modern, zone-based frontend). Both ultimately configure the kernel's Netfilter framework.
 
-**firewalld (Red Hat/Fedora):**
-- firewall-cmd: Configure firewall
-- firewall-cmd --list-all: Show rules
-- firewall-cmd --add-service: Add service
-- firewall-cmd --reload: Reload rules`,
+**1. iptables: The Low-Level Powerhouse**
+
+` + "`" + `iptables` + "`" + ` works by defining chains of rules organized into tables. The most commonly used table is ` + "`" + `filter` + "`" + `, which has three built-in chains: ` + "`" + `INPUT` + "`" + ` (packets destined for the local machine), ` + "`" + `OUTPUT` + "`" + ` (packets originating from the local machine), and ` + "`" + `FORWARD` + "`" + ` (packets being routed through the machine). Each rule specifies match criteria (source IP, destination port, protocol) and an action (ACCEPT, DROP, REJECT, LOG). Rules are evaluated in order — the first match wins. A best practice is to set the default policy to DROP and then explicitly allow only the traffic you need (a "whitelist" approach).
+
+**2. firewalld: Zone-Based Management**
+
+` + "`" + `firewalld` + "`" + ` provides a higher-level abstraction using zones and services. A zone (like ` + "`" + `public` + "`" + `, ` + "`" + `trusted` + "`" + `, ` + "`" + `dmz` + "`" + `) is a set of rules applied to a network interface. Services (like ` + "`" + `http` + "`" + `, ` + "`" + `ssh` + "`" + `, ` + "`" + `dns` + "`" + `) are predefined port/protocol combinations. Instead of memorizing port numbers, you can say ` + "`" + `firewall-cmd --add-service=http` + "`" + `. The ` + "`" + `--permanent` + "`" + ` flag persists rules across reboots, while rules without it are temporary (useful for testing). The ` + "`" + `--reload` + "`" + ` command applies permanent changes without dropping existing connections.
+
+**3. Best Practices for Production Firewalls**
+
+Start with a deny-all default policy and explicitly open only the ports your services need. Log dropped packets (at least initially) to understand what traffic is being blocked. Use connection tracking (` + "`" + `-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT` + "`" + `) to allow return traffic for established connections without opening ports permanently. Separate management traffic (SSH) from application traffic using different interfaces or zones. Always test firewall changes on a non-production system first — a misconfigured rule can lock you out of your own server.`,
 					CodeExamples: `# List rules
 sudo firewall-cmd --list-all
 
@@ -1040,14 +1073,23 @@ sudo firewall-cmd --reload`,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Advanced Bash Features",
-					Content: `Advanced bash features make scripts more powerful and efficient.
+					Content: `Beyond basic loops and conditionals, Bash offers a set of advanced features that transform it from a simple command runner into a genuinely powerful scripting language. These features — parameter expansion, process substitution, here documents, and advanced redirection — are what separate quick-and-dirty scripts from robust, production-quality automation. Mastering them lets you write scripts that are shorter, faster, and more readable.
 
-**Features:**
-- Parameter expansion
-- Process substitution
-- Here documents
-- Regular expressions
-- Advanced I/O redirection`,
+**1. Parameter Expansion: String Manipulation Without External Tools**
+
+Parameter expansion lets you manipulate variable values directly in Bash without calling external programs like ` + "`" + `sed` + "`" + ` or ` + "`" + `awk` + "`" + `. The syntax ` + "`" + `${VAR:-default}` + "`" + ` provides a fallback value if the variable is unset (perfect for configuration defaults). ` + "`" + `${VAR:=default}` + "`" + ` goes further — it actually sets the variable to the default. ` + "`" + `${VAR:+alternate}` + "`" + ` returns the alternate value only if VAR is already set (useful for conditional flags). You can also extract substrings (` + "`" + `${VAR:offset:length}` + "`" + `), replace patterns (` + "`" + `${VAR/pattern/replacement}` + "`" + `), and strip prefixes or suffixes (` + "`" + `${VAR%.ext}` + "`" + ` removes the extension from a filename). These operations run in the shell itself, making them dramatically faster than piping to external commands in tight loops.
+
+**2. Process Substitution: Treating Command Output as Files**
+
+Process substitution (` + "`" + `<(command)` + "`" + ` and ` + "`" + `>(command)` + "`" + `) creates a temporary file-like object that contains the output of a command. This is incredibly useful when a program requires file arguments but you want to feed it dynamic data. The classic example is ` + "`" + `diff <(command1) <(command2)` + "`" + `, which compares the output of two commands without creating temporary files. Another common use is ` + "`" + `while read line; do ...; done < <(find . -name "*.log")` + "`" + `, which avoids the subshell problem that occurs with piping into ` + "`" + `while` + "`" + `.
+
+**3. Here Documents and Here Strings**
+
+A here document (` + "`" + `<<EOF ... EOF` + "`" + `) lets you embed multi-line input directly in a script, which is far more readable than chaining ` + "`" + `echo` + "`" + ` statements. It is commonly used to generate configuration files, SQL queries, or email bodies inline. Using ` + "`" + `<<-EOF` + "`" + ` allows indentation with tabs (keeping the script visually clean), and quoting the delimiter (` + "`" + `<<'EOF'` + "`" + `) prevents variable expansion inside the block. Here strings (` + "`" + `<<<` + "`" + `) provide a one-line version for feeding a single string to a command's stdin.
+
+**4. Advanced I/O Redirection**
+
+Beyond basic ` + "`" + `>` + "`" + ` and ` + "`" + `>>` + "`" + `, Bash supports redirecting specific file descriptors (` + "`" + `2>errors.log` + "`" + ` for stderr), combining streams (` + "`" + `2>&1` + "`" + ` merges stderr into stdout), and opening custom file descriptors (` + "`" + `exec 3>logfile` + "`" + `). The pattern ` + "`" + `command > /dev/null 2>&1` + "`" + ` silences all output and is one of the most commonly used idioms in cron jobs and background services.`,
 					CodeExamples: `# Parameter expansion
 ${VAR:-default}  # Use default if VAR unset
 ${VAR:=default}  # Set and use default
@@ -1387,14 +1429,23 @@ done`,
 			Lessons: []problems.Lesson{
 				{
 					Title: "System Calls Overview",
-					Content: `System calls are interfaces between user programs and the kernel.
+					Content: `System calls are the fundamental interface between user-space programs and the Linux kernel. Every time your program opens a file, creates a process, sends data over a network, or allocates memory, it ultimately makes a system call — a controlled entry point into kernel code that executes with elevated privileges. Think of system calls as the API of the operating system itself. Without them, user programs would have no way to interact with hardware, the filesystem, or other processes. Understanding system calls is what separates someone who uses Linux from someone who truly understands it.
 
-**Common System Calls:**
-- open, read, write, close: File operations
-- fork, exec: Process creation
-- wait: Wait for child process
-- kill: Send signal
-- pipe: Create pipe`,
+**1. How System Calls Work: The User-Kernel Boundary**
+
+When a program calls a function like ` + "`" + `open()` + "`" + ` from the C standard library, the library translates this into a system call by placing the system call number in a CPU register and triggering a software interrupt (on x86-64, this is the ` + "`" + `syscall` + "`" + ` instruction). The CPU switches from user mode to kernel mode, the kernel looks up the system call number in a dispatch table, executes the corresponding kernel function, and returns the result back to user space. This mode switch is relatively expensive (hundreds of nanoseconds), which is why high-performance applications try to minimize system call frequency through techniques like buffered I/O and memory-mapped files.
+
+**2. File Operations: open, read, write, close**
+
+These four system calls form the foundation of all I/O in Linux. ` + "`" + `open()` + "`" + ` returns a file descriptor — a small integer that serves as a handle to the opened file. ` + "`" + `read()` + "`" + ` and ` + "`" + `write()` + "`" + ` transfer data between user-space buffers and the kernel. ` + "`" + `close()` + "`" + ` releases the file descriptor. The beauty of the Unix philosophy is that this same interface works for regular files, pipes, sockets, and device files — everything is a file descriptor.
+
+**3. Process Management: fork, exec, wait**
+
+` + "`" + `fork()` + "`" + ` creates a new process by duplicating the calling process. The child gets an exact copy of the parent's memory space (using copy-on-write for efficiency). ` + "`" + `exec()` + "`" + ` replaces the current process image with a new program — this is how shells launch commands. The combination of fork-then-exec is the standard Unix process creation pattern: the parent forks, the child calls exec to become a new program, and the parent calls ` + "`" + `wait()` + "`" + ` to collect the child's exit status. ` + "`" + `pipe()` + "`" + ` creates a unidirectional data channel between related processes, forming the backbone of shell pipelines (` + "`" + `ls | grep | sort` + "`" + `).
+
+**4. Tracing System Calls: strace**
+
+The ` + "`" + `strace` + "`" + ` tool lets you observe every system call a program makes in real time. This is arguably the most powerful debugging tool in Linux — when a program fails mysteriously, ` + "`" + `strace` + "`" + ` reveals exactly which system call failed and why (e.g., "file not found," "permission denied," "connection refused"). Running ` + "`" + `strace -e trace=open,read,write ./myprogram` + "`" + ` filters to just I/O-related calls, making the output manageable.`,
 					CodeExamples: `# C example (conceptual)
 #include <unistd.h>
 #include <sys/types.h>
@@ -1677,13 +1728,23 @@ cat < mypipe
 			Lessons: []problems.Lesson{
 				{
 					Title: "Kernel Modules",
-					Content: `Kernel modules extend kernel functionality without rebooting.
+					Content: `Kernel modules are pieces of code that can be loaded into and unloaded from the Linux kernel at runtime, extending its functionality without requiring a reboot or recompilation. They are the reason Linux can support an enormous range of hardware and filesystems without having a monstrously large kernel binary. Think of modules as plugins for the operating system: when you plug in a USB device, the kernel automatically loads the appropriate driver module; when you mount an NFS filesystem, the NFS module gets loaded on demand.
 
-**Module Commands:**
-- lsmod: List loaded modules
-- modinfo: Show module info
-- modprobe: Load/unload modules
-- insmod/rmmod: Low-level module operations`,
+**1. Why Modules Exist: Monolithic vs. Modular Kernels**
+
+Linux uses a monolithic kernel architecture (all kernel code runs in the same address space for performance), but with a modular twist. Instead of compiling every possible driver and feature into the kernel, most are built as loadable modules (` + "`" + `.ko` + "`" + ` files stored in ` + "`" + `/lib/modules/` + "`" + `). This keeps the base kernel small and fast while allowing virtually unlimited extensibility. The kernel can load modules on demand (triggered by hardware events or manual commands) and unload them when no longer needed, freeing memory.
+
+**2. Module Management Commands**
+
+` + "`" + `lsmod` + "`" + ` lists all currently loaded modules along with their sizes and dependency counts. ` + "`" + `modinfo module_name` + "`" + ` reveals detailed information about a module: its description, author, license, parameters it accepts, and what hardware it supports. ` + "`" + `modprobe` + "`" + ` is the smart module loader — it automatically resolves and loads dependencies. For example, loading a WiFi driver that depends on the ` + "`" + `cfg80211` + "`" + ` module will cause ` + "`" + `modprobe` + "`" + ` to load ` + "`" + `cfg80211` + "`" + ` first. ` + "`" + `modprobe -r` + "`" + ` safely removes a module and its unused dependencies. The lower-level ` + "`" + `insmod` + "`" + ` and ` + "`" + `rmmod` + "`" + ` commands load/unload modules without dependency resolution — use them only when ` + "`" + `modprobe` + "`" + ` is not available.
+
+**3. Blacklisting and Persistent Configuration**
+
+Sometimes you need to prevent a module from loading — for example, to disable a problematic driver or to force a specific driver when two modules compete for the same hardware. Adding ` + "`" + `blacklist module_name` + "`" + ` to a file in ` + "`" + `/etc/modprobe.d/` + "`" + ` prevents automatic loading. Module parameters can be made persistent in the same directory (e.g., ` + "`" + `options snd_hda_intel power_save=1` + "`" + `). For modules that must load at boot, list them in ` + "`" + `/etc/modules` + "`" + ` or create a ` + "`" + `.conf` + "`" + ` file in ` + "`" + `/etc/modules-load.d/` + "`" + `.
+
+**4. Security Implications**
+
+Kernel modules run with full kernel privileges — a malicious module can do anything: install rootkits, intercept system calls, exfiltrate data. This is why production systems often use Secure Boot and module signing to ensure only trusted modules can load. The ` + "`" + `CONFIG_MODULE_SIG_FORCE` + "`" + ` kernel option rejects unsigned modules entirely.`,
 					CodeExamples: `# List modules
 lsmod
 
@@ -1736,15 +1797,23 @@ ls /sys/class/`,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Git Basics",
-					Content: `Git is essential for version control and DevOps workflows.
+					Content: `Git is the universal version control system that underpins virtually all modern software development and DevOps workflows. Created by Linus Torvalds in 2005 to manage the Linux kernel source code, Git tracks every change to every file in a repository, allowing teams to collaborate without overwriting each other's work, roll back to any previous state, and maintain parallel branches of development. For a Linux system administrator, Git is not optional — it is how you version infrastructure code, configuration files, automation scripts, and documentation.
 
-**Basic Git Commands:**
-- git init: Initialize repository
-- git add: Stage changes
-- git commit: Commit changes
-- git status: Show status
-- git log: Show history
-- git clone: Clone repository`,
+**1. The Core Mental Model: Snapshots, Not Diffs**
+
+Unlike older version control systems that store differences between file versions, Git stores complete snapshots of your project at each commit. When a file has not changed, Git stores a reference to the previous identical file rather than a duplicate. This design makes branching and merging extremely fast — switching branches is essentially just swapping pointers. Every commit has a unique SHA-1 hash that serves as both its identifier and its integrity check. If even one bit changes in the repository history, the hashes change, making tampering detectable.
+
+**2. The Three Stages: Working Directory, Staging Area, Repository**
+
+Understanding Git's three-stage workflow is essential. Your working directory contains the actual files you edit. The staging area (also called the index) is a holding area where you prepare the next commit — you choose exactly which changes to include by running ` + "`" + `git add` + "`" + `. The repository (` + "`" + `.git` + "`" + ` directory) stores the committed history. This three-stage design gives you precise control: you can modify ten files but commit only three of them, keeping unrelated changes separate. ` + "`" + `git status` + "`" + ` shows exactly where every change sits in this pipeline.
+
+**3. Branching and Collaboration**
+
+Branches in Git are lightweight — they are just pointers to commits, not copies of files. Creating a branch (` + "`" + `git checkout -b feature-x` + "`" + `) is instant. This encourages the practice of creating a branch for every feature or fix, keeping the main branch stable. ` + "`" + `git clone` + "`" + ` downloads a complete copy of a remote repository, including all history and branches. ` + "`" + `git pull` + "`" + ` fetches remote changes and merges them, while ` + "`" + `git push` + "`" + ` uploads your local commits. For infrastructure teams, this workflow enables code review for configuration changes, audit trails for compliance, and reproducible environments through version-controlled Infrastructure as Code.
+
+**4. Git for System Administration**
+
+Beyond code, Git is invaluable for tracking ` + "`" + `/etc` + "`" + ` configuration files (tools like ` + "`" + `etckeeper` + "`" + ` automate this), maintaining Ansible playbooks and Terraform modules, documenting runbooks, and managing Dockerfiles and Kubernetes manifests. The ability to ` + "`" + `git blame` + "`" + ` a configuration file to see who changed what and when has saved countless hours of incident investigation.`,
 					CodeExamples: `# Initialize repo
 git init
 
@@ -1766,14 +1835,23 @@ git clone https://github.com/user/repo.git`,
 				},
 				{
 					Title: "Docker Basics",
-					Content: `Docker containers package applications with dependencies.
+					Content: `Docker revolutionized software deployment by solving the "it works on my machine" problem. A Docker container packages an application together with all its dependencies — libraries, runtime, configuration files, even the operating system's user-space tools — into a single, portable unit that runs identically on a developer's laptop, a CI server, and a production cluster. For Linux administrators, Docker has become as fundamental as package management: it is how modern applications are built, shipped, and run.
 
-**Docker Commands:**
-- docker run: Run container
-- docker ps: List containers
-- docker images: List images
-- docker build: Build image
-- docker exec: Execute in container`,
+**1. The Container Mental Model: Lightweight Isolation**
+
+A container is not a virtual machine. It does not run its own kernel or emulate hardware. Instead, it uses Linux kernel features — namespaces for isolation (each container has its own view of the filesystem, network, and process tree) and cgroups for resource limits (CPU, memory, I/O). This makes containers extremely lightweight: they start in milliseconds (not minutes like VMs), use minimal memory overhead, and can run hundreds of instances on a single host. Think of containers as isolated apartments in a building (the host) — they share the building's foundation (the kernel) but have their own walls, plumbing, and addresses.
+
+**2. Images vs. Containers: The Blueprint and the Instance**
+
+A Docker image is a read-only template — a layered filesystem built from a Dockerfile. Each instruction in the Dockerfile (` + "`" + `FROM` + "`" + `, ` + "`" + `RUN` + "`" + `, ` + "`" + `COPY` + "`" + `) creates a new layer that is cached and reused. A container is a running instance of an image with a thin read-write layer on top. You can create many containers from the same image, just like printing many documents from the same template. ` + "`" + `docker images` + "`" + ` lists your local images, ` + "`" + `docker ps` + "`" + ` lists running containers (add ` + "`" + `-a` + "`" + ` to include stopped ones), and ` + "`" + `docker build -t myapp .` + "`" + ` builds an image from the Dockerfile in the current directory.
+
+**3. Essential Docker Commands for Daily Work**
+
+` + "`" + `docker run` + "`" + ` creates and starts a container. The ` + "`" + `-d` + "`" + ` flag runs it in the background (detached), ` + "`" + `-p 8080:80` + "`" + ` maps a host port to a container port, ` + "`" + `-v /host/path:/container/path` + "`" + ` mounts a volume, and ` + "`" + `--name` + "`" + ` gives it a human-readable name. ` + "`" + `docker exec -it container_name bash` + "`" + ` opens an interactive shell inside a running container — indispensable for debugging. ` + "`" + `docker logs container_name` + "`" + ` shows stdout/stderr output. ` + "`" + `docker stop` + "`" + ` gracefully stops a container (sends SIGTERM), while ` + "`" + `docker rm` + "`" + ` removes a stopped container.
+
+**4. Docker in Production: Compose and Beyond**
+
+For multi-container applications, Docker Compose lets you define services, networks, and volumes in a single YAML file and manage them with ` + "`" + `docker compose up` + "`" + `. In production, containers are typically orchestrated by Kubernetes or Docker Swarm, which handle scaling, load balancing, rolling updates, and self-healing across clusters of machines. Understanding Docker fundamentals is the prerequisite for all of these.`,
 					CodeExamples: `# Run container
 docker run -d nginx
 
@@ -2046,14 +2124,23 @@ retry apt-get update`,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Network Troubleshooting",
-					Content: `Advanced network troubleshooting skills are essential for system administrators.
+					Content: `When a service goes down or network performance degrades, the ability to systematically diagnose network problems is what separates a capable system administrator from someone who restarts services and hopes for the best. Network troubleshooting is detective work: you start with symptoms (timeouts, packet loss, connection refused), form hypotheses, and use specialized tools to gather evidence at every layer of the network stack. The tools described here are your magnifying glass, fingerprint kit, and forensic lab.
 
-**Troubleshooting Tools:**
-- tcpdump: Packet capture
-- wireshark: GUI packet analyzer
-- netstat/ss: Connection info
-- traceroute: Trace network path
-- mtr: Network diagnostic tool`,
+**1. tcpdump: The Packet-Level Microscope**
+
+` + "`" + `tcpdump` + "`" + ` captures network packets in real time, letting you see exactly what is happening on the wire. It is the single most powerful network debugging tool — if a packet reaches the machine, ` + "`" + `tcpdump` + "`" + ` will show it. Common usage patterns include filtering by host (` + "`" + `tcpdump host 10.0.0.1` + "`" + `), port (` + "`" + `tcpdump port 443` + "`" + `), or protocol (` + "`" + `tcpdump tcp` + "`" + `). The ` + "`" + `-w file.pcap` + "`" + ` flag writes captures to a file for later analysis in Wireshark (a GUI tool that provides protocol-level dissection, color-coded streams, and statistical analysis). When debugging "the application cannot connect to the database," ` + "`" + `tcpdump` + "`" + ` on the database server immediately reveals whether packets are arriving, whether the TCP handshake completes, or whether the connection is being reset.
+
+**2. ss and netstat: Connection State at a Glance**
+
+` + "`" + `ss` + "`" + ` (socket statistics, the modern replacement for ` + "`" + `netstat` + "`" + `) shows all active network connections, listening ports, and socket states. Running ` + "`" + `ss -tuln` + "`" + ` quickly answers the question "which ports are open on this machine?" — the ` + "`" + `-t` + "`" + ` flag shows TCP, ` + "`" + `-u` + "`" + ` shows UDP, ` + "`" + `-l` + "`" + ` shows only listening sockets, and ` + "`" + `-n` + "`" + ` shows numeric ports instead of names. Adding ` + "`" + `-p` + "`" + ` reveals which process owns each socket. This is your first diagnostic step for "why can I not connect to port 8080?" — either the port is not listening, or it is bound to localhost instead of all interfaces.
+
+**3. traceroute and mtr: Path Analysis**
+
+` + "`" + `traceroute` + "`" + ` maps the network path from your machine to a destination by sending packets with incrementally increasing TTL values and recording which routers respond. This reveals where packets are being dropped or delayed along the route. ` + "`" + `mtr` + "`" + ` (My Traceroute) combines traceroute and ping into a continuously updating display that shows packet loss and latency at every hop. It is the go-to tool for diagnosing intermittent connectivity issues — a high packet-loss percentage at a specific hop points to the problematic link or router.
+
+**4. A Systematic Troubleshooting Methodology**
+
+Start from the bottom of the OSI model and work up: (1) Physical/Link layer — is the interface up? (` + "`" + `ip link show` + "`" + `). (2) Network layer — do you have an IP address? Can you ping the gateway? (3) Transport layer — is the port listening? Can you connect with ` + "`" + `nc` + "`" + ` or ` + "`" + `telnet` + "`" + `? (4) Application layer — does the service respond correctly? Each layer builds on the previous one, so testing in order quickly isolates where the problem lies.`,
 					CodeExamples: `# Packet capture
 sudo tcpdump -i eth0
 
@@ -2370,16 +2457,27 @@ tar -czf $BACKUP_DIR/backup-$DATE.tar.gz $SOURCE_DIR`,
 				},
 				{
 					Title: "Production Best Practices",
-					Content: `Production systems require careful planning and maintenance.
+					Content: `Running Linux in production is fundamentally different from running it in development or on your personal laptop. Production systems serve real users, handle real money, and any downtime has real consequences — lost revenue, broken trust, and sometimes regulatory penalties. The best practices for production are not about any single tool; they are about building a culture and a system of habits that prevent failures and enable rapid recovery when failures inevitably occur.
 
-**Best Practices:**
-- Regular updates and patches
-- Monitoring and alerting
-- Log management
-- Security hardening
-- Documentation
-- Disaster recovery plan
-- Change management`,
+**1. Patch Management: The Foundation of Security**
+
+Unpatched software is the number one cause of security breaches. Establish a regular patching cadence — weekly for non-critical systems, immediately for critical security vulnerabilities (CVEs). Use tools like ` + "`" + `unattended-upgrades` + "`" + ` (Debian/Ubuntu) or ` + "`" + `dnf-automatic` + "`" + ` (RHEL/Fedora) to automate security updates. Always test patches in staging before applying to production. Maintain an inventory of all software versions so you can quickly assess exposure when a new vulnerability is announced. The goal is not zero risk — it is rapid, controlled response.
+
+**2. Monitoring, Alerting, and Log Management**
+
+You cannot fix what you cannot see. Every production system needs three layers of observability: metrics (CPU, memory, disk, network — collected by Prometheus or similar), logs (centralized with the ELK stack or Loki, not scattered across individual servers), and traces (for understanding request flow through microservices). Alerting should be actionable — every alert should require human response. If you are ignoring alerts, they are too noisy and need tuning. Use ` + "`" + `journalctl` + "`" + ` for local log investigation, but always ship logs to a central system where they survive server failures and can be searched across the fleet.
+
+**3. Change Management and Documentation**
+
+In production, every change is a potential incident. Implement a change management process: document what you are changing, why, what the rollback plan is, and who approved it. Use Git to version all infrastructure code and configuration. Maintain runbooks — step-by-step guides for common operations and incident response. Document the "why" behind every non-obvious configuration choice. Future-you (or the on-call engineer at 3 AM) will be grateful for a comment explaining why ` + "`" + `net.core.somaxconn` + "`" + ` was set to 65535.
+
+**4. Disaster Recovery and Backup Verification**
+
+Having backups is not enough — you must regularly test restoring from them. A backup that cannot be restored is not a backup; it is a false sense of security. Document your Recovery Time Objective (RTO: how long can you be down?) and Recovery Point Objective (RPO: how much data can you afford to lose?). Practice disaster recovery scenarios: what happens if the database server dies? What if the entire data center is unavailable? The organizations that recover fastest are the ones that practiced failure before it happened.
+
+**5. Security Hardening as a Continuous Process**
+
+Harden every system at deployment: disable unnecessary services, configure firewalls, enforce key-based SSH authentication, implement least-privilege access. Run periodic security audits with tools like ` + "`" + `lynis` + "`" + ` or ` + "`" + `oscap` + "`" + `. Enable audit logging (` + "`" + `auditd` + "`" + `) to track privileged operations. Security is not a one-time checklist — it is an ongoing practice of reducing attack surface, detecting anomalies, and responding to threats.`,
 					CodeExamples: `# System updates
 sudo apt update && sudo apt upgrade
 
