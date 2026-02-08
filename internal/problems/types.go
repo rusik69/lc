@@ -42,39 +42,78 @@ type CourseModule struct {
 	ProblemIDs  []int // IDs of problems related to this module
 }
 
+// Question represents a multiple-choice test question
+type Question struct {
+	ID            int
+	Text          string
+	Options       [4]string
+	CorrectAnswer int    // 0-3 index into Options
+	Explanation   string // Explanation of the correct answer
+}
+
 var (
-	allProblems                    []Problem
-	problemsMu                     sync.RWMutex
-	allModules                     []CourseModule
-	modulesMu                      sync.RWMutex
-	allSystemsDesignModules        []CourseModule
-	systemsDesignMu                sync.RWMutex
-	allGolangModules               []CourseModule
-	golangMu                       sync.RWMutex
-	allPythonModules               []CourseModule
-	pythonMu                       sync.RWMutex
-	allKubernetesModules           []CourseModule
-	kubernetesMu                   sync.RWMutex
-	allMachineLearningModules      []CourseModule
-	machineLearningMu              sync.RWMutex
-	allLinuxModules                []CourseModule
-	linuxMu                        sync.RWMutex
-	allNetworkingModules           []CourseModule
-	networkingMu                   sync.RWMutex
-	allFrontendModules             []CourseModule
-	frontendMu                     sync.RWMutex
-	allDevOpsModules               []CourseModule
-	devopsMu                       sync.RWMutex
-	allSoftwareArchitectureModules []CourseModule
-	softwareArchitectureMu         sync.RWMutex
-	allAWSModules                  []CourseModule
-	awsMu                          sync.RWMutex
-	allComputerArchitectureModules []CourseModule
-	computerArchitectureMu         sync.RWMutex
-	allAzureModules                []CourseModule
-	azureMu                        sync.RWMutex
-	allMathModules                 []CourseModule
-	mathMu                         sync.RWMutex
+	allProblems                      []Problem
+	problemsMu                       sync.RWMutex
+	allModules                       []CourseModule
+	modulesMu                        sync.RWMutex
+	allSystemsDesignModules          []CourseModule
+	systemsDesignMu                  sync.RWMutex
+	allGolangModules                 []CourseModule
+	golangMu                         sync.RWMutex
+	allPythonModules                 []CourseModule
+	pythonMu                         sync.RWMutex
+	allKubernetesModules             []CourseModule
+	kubernetesMu                     sync.RWMutex
+	allMachineLearningModules        []CourseModule
+	machineLearningMu                sync.RWMutex
+	allLinuxModules                  []CourseModule
+	linuxMu                          sync.RWMutex
+	allNetworkingModules             []CourseModule
+	networkingMu                     sync.RWMutex
+	allFrontendModules               []CourseModule
+	frontendMu                       sync.RWMutex
+	allDevOpsModules                 []CourseModule
+	devopsMu                         sync.RWMutex
+	allSoftwareArchitectureModules   []CourseModule
+	softwareArchitectureMu           sync.RWMutex
+	allAWSModules                    []CourseModule
+	awsMu                            sync.RWMutex
+	allComputerArchitectureModules   []CourseModule
+	computerArchitectureMu           sync.RWMutex
+	allAzureModules                  []CourseModule
+	azureMu                          sync.RWMutex
+	allMathModules                   []CourseModule
+	mathMu                           sync.RWMutex
+	allGolangQuestions               []Question
+	golangQuestionsMu                sync.RWMutex
+	allPythonQuestions               []Question
+	pythonQuestionsMu                sync.RWMutex
+	allAlgorithmsQuestions           []Question
+	algorithmsQuestionsMu            sync.RWMutex
+	allKubernetesQuestions           []Question
+	kubernetesQuestionsMu            sync.RWMutex
+	allLinuxQuestions                []Question
+	linuxQuestionsMu                 sync.RWMutex
+	allAWSQuestions                  []Question
+	awsQuestionsMu                   sync.RWMutex
+	allAzureQuestions                []Question
+	azureQuestionsMu                 sync.RWMutex
+	allDevOpsQuestions               []Question
+	devopsQuestionsMu                sync.RWMutex
+	allFrontendQuestions             []Question
+	frontendQuestionsMu              sync.RWMutex
+	allNetworkingQuestions           []Question
+	networkingQuestionsMu            sync.RWMutex
+	allSystemsDesignQuestions        []Question
+	systemsDesignQuestionsMu         sync.RWMutex
+	allSoftwareArchitectureQuestions []Question
+	softwareArchitectureQuestionsMu  sync.RWMutex
+	allMachineLearningQuestions      []Question
+	machineLearningQuestionsMu       sync.RWMutex
+	allComputerArchitectureQuestions []Question
+	computerArchitectureQuestionsMu  sync.RWMutex
+	allMathQuestions                 []Question
+	mathQuestionsMu                  sync.RWMutex
 )
 
 func init() {
@@ -568,4 +607,139 @@ func GetMathModuleByID(id int) *CourseModule {
 		}
 	}
 	return nil
+}
+
+// GetGolangQuestions returns all Golang test questions
+func GetGolangQuestions() []Question {
+	golangQuestionsMu.RLock()
+	defer golangQuestionsMu.RUnlock()
+	result := make([]Question, len(allGolangQuestions))
+	copy(result, allGolangQuestions)
+	return result
+}
+
+// GetPythonQuestions returns all Python test questions
+func GetPythonQuestions() []Question {
+	pythonQuestionsMu.RLock()
+	defer pythonQuestionsMu.RUnlock()
+	result := make([]Question, len(allPythonQuestions))
+	copy(result, allPythonQuestions)
+	return result
+}
+
+// GetAlgorithmsQuestions returns all algorithms test questions
+func GetAlgorithmsQuestions() []Question {
+	algorithmsQuestionsMu.RLock()
+	defer algorithmsQuestionsMu.RUnlock()
+	result := make([]Question, len(allAlgorithmsQuestions))
+	copy(result, allAlgorithmsQuestions)
+	return result
+}
+
+// GetKubernetesQuestions returns all Kubernetes test questions
+func GetKubernetesQuestions() []Question {
+	kubernetesQuestionsMu.RLock()
+	defer kubernetesQuestionsMu.RUnlock()
+	result := make([]Question, len(allKubernetesQuestions))
+	copy(result, allKubernetesQuestions)
+	return result
+}
+
+// GetLinuxQuestions returns all Linux test questions
+func GetLinuxQuestions() []Question {
+	linuxQuestionsMu.RLock()
+	defer linuxQuestionsMu.RUnlock()
+	result := make([]Question, len(allLinuxQuestions))
+	copy(result, allLinuxQuestions)
+	return result
+}
+
+// GetAWSQuestions returns all AWS test questions
+func GetAWSQuestions() []Question {
+	awsQuestionsMu.RLock()
+	defer awsQuestionsMu.RUnlock()
+	result := make([]Question, len(allAWSQuestions))
+	copy(result, allAWSQuestions)
+	return result
+}
+
+// GetAzureQuestions returns all Azure test questions
+func GetAzureQuestions() []Question {
+	azureQuestionsMu.RLock()
+	defer azureQuestionsMu.RUnlock()
+	result := make([]Question, len(allAzureQuestions))
+	copy(result, allAzureQuestions)
+	return result
+}
+
+// GetDevOpsQuestions returns all DevOps test questions
+func GetDevOpsQuestions() []Question {
+	devopsQuestionsMu.RLock()
+	defer devopsQuestionsMu.RUnlock()
+	result := make([]Question, len(allDevOpsQuestions))
+	copy(result, allDevOpsQuestions)
+	return result
+}
+
+// GetFrontendQuestions returns all frontend test questions
+func GetFrontendQuestions() []Question {
+	frontendQuestionsMu.RLock()
+	defer frontendQuestionsMu.RUnlock()
+	result := make([]Question, len(allFrontendQuestions))
+	copy(result, allFrontendQuestions)
+	return result
+}
+
+// GetNetworkingQuestions returns all networking test questions
+func GetNetworkingQuestions() []Question {
+	networkingQuestionsMu.RLock()
+	defer networkingQuestionsMu.RUnlock()
+	result := make([]Question, len(allNetworkingQuestions))
+	copy(result, allNetworkingQuestions)
+	return result
+}
+
+// GetSystemsDesignQuestions returns all systems design test questions
+func GetSystemsDesignQuestions() []Question {
+	systemsDesignQuestionsMu.RLock()
+	defer systemsDesignQuestionsMu.RUnlock()
+	result := make([]Question, len(allSystemsDesignQuestions))
+	copy(result, allSystemsDesignQuestions)
+	return result
+}
+
+// GetSoftwareArchitectureQuestions returns all software architecture test questions
+func GetSoftwareArchitectureQuestions() []Question {
+	softwareArchitectureQuestionsMu.RLock()
+	defer softwareArchitectureQuestionsMu.RUnlock()
+	result := make([]Question, len(allSoftwareArchitectureQuestions))
+	copy(result, allSoftwareArchitectureQuestions)
+	return result
+}
+
+// GetMachineLearningQuestions returns all machine learning test questions
+func GetMachineLearningQuestions() []Question {
+	machineLearningQuestionsMu.RLock()
+	defer machineLearningQuestionsMu.RUnlock()
+	result := make([]Question, len(allMachineLearningQuestions))
+	copy(result, allMachineLearningQuestions)
+	return result
+}
+
+// GetComputerArchitectureQuestions returns all computer architecture test questions
+func GetComputerArchitectureQuestions() []Question {
+	computerArchitectureQuestionsMu.RLock()
+	defer computerArchitectureQuestionsMu.RUnlock()
+	result := make([]Question, len(allComputerArchitectureQuestions))
+	copy(result, allComputerArchitectureQuestions)
+	return result
+}
+
+// GetMathQuestions returns all math test questions
+func GetMathQuestions() []Question {
+	mathQuestionsMu.RLock()
+	defer mathQuestionsMu.RUnlock()
+	result := make([]Question, len(allMathQuestions))
+	copy(result, allMathQuestions)
+	return result
 }

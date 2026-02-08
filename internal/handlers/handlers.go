@@ -18,39 +18,41 @@ import (
 )
 
 var (
-	templates                *template.Template
-	indexTemplate            *template.Template
-	problemTemplate          *template.Template
-	algorithmsTemplate       *template.Template
-	algorithmsModuleTemplate *template.Template
-	systemsDesignTemplate    *template.Template
-	systemsDesignModuleTemplate *template.Template
-	golangTemplate           *template.Template
-	golangModuleTemplate     *template.Template
-	pythonTemplate           *template.Template
-	pythonModuleTemplate     *template.Template
-	kubernetesTemplate       *template.Template
-	kubernetesModuleTemplate *template.Template
-	machineLearningTemplate  *template.Template
-	machineLearningModuleTemplate *template.Template
-	linuxTemplate            *template.Template
-	linuxModuleTemplate      *template.Template
-	networkingTemplate       *template.Template
-	networkingModuleTemplate *template.Template
-	frontendTemplate         *template.Template
-	frontendModuleTemplate   *template.Template
-	devopsTemplate           *template.Template
-	devopsModuleTemplate     *template.Template
-	softwareArchitectureTemplate *template.Template
+	templates                          *template.Template
+	indexTemplate                      *template.Template
+	problemTemplate                    *template.Template
+	algorithmsTemplate                 *template.Template
+	algorithmsModuleTemplate           *template.Template
+	systemsDesignTemplate              *template.Template
+	systemsDesignModuleTemplate        *template.Template
+	golangTemplate                     *template.Template
+	golangModuleTemplate               *template.Template
+	pythonTemplate                     *template.Template
+	pythonModuleTemplate               *template.Template
+	kubernetesTemplate                 *template.Template
+	kubernetesModuleTemplate           *template.Template
+	machineLearningTemplate            *template.Template
+	machineLearningModuleTemplate      *template.Template
+	linuxTemplate                      *template.Template
+	linuxModuleTemplate                *template.Template
+	networkingTemplate                 *template.Template
+	networkingModuleTemplate           *template.Template
+	frontendTemplate                   *template.Template
+	frontendModuleTemplate             *template.Template
+	devopsTemplate                     *template.Template
+	devopsModuleTemplate               *template.Template
+	softwareArchitectureTemplate       *template.Template
 	softwareArchitectureModuleTemplate *template.Template
-	awsTemplate                  *template.Template
-	awsModuleTemplate           *template.Template
-	computerArchitectureTemplate *template.Template
+	awsTemplate                        *template.Template
+	awsModuleTemplate                  *template.Template
+	computerArchitectureTemplate       *template.Template
 	computerArchitectureModuleTemplate *template.Template
-	azureTemplate               *template.Template
-	azureModuleTemplate         *template.Template
-	mathTemplate                *template.Template
-	mathModuleTemplate          *template.Template
+	azureTemplate                      *template.Template
+	azureModuleTemplate                *template.Template
+	mathTemplate                       *template.Template
+	mathModuleTemplate                 *template.Template
+	courseTestTemplate                 *template.Template
+	courseTestResultTemplate           *template.Template
 )
 
 const (
@@ -63,15 +65,15 @@ func markdownToHTML(md string) template.HTML {
 	// Create markdown parser
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
-	
+
 	// Parse markdown
 	doc := p.Parse([]byte(md))
-	
+
 	// Create HTML renderer
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
-	
+
 	// Render to HTML
 	htmlBytes := markdown.Render(doc, renderer)
 	return template.HTML(htmlBytes)
@@ -82,8 +84,11 @@ func InitTemplates(templateDir string) error {
 	// Create template function map
 	funcMap := template.FuncMap{
 		"markdown": markdownToHTML,
+		"add1": func(n int) int {
+			return n + 1
+		},
 	}
-	
+
 	var err error
 	templates, err = template.New("").Funcs(funcMap).ParseGlob(templateDir + "/*.html")
 	if err != nil {
@@ -282,6 +287,18 @@ func InitTemplates(templateDir string) error {
 		return err
 	}
 
+	// Parse course test template
+	courseTestTemplate, err = template.New("course_test").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/course_test.html")
+	if err != nil {
+		return err
+	}
+
+	// Parse course test result template
+	courseTestResultTemplate, err = template.New("course_test_result").Funcs(funcMap).ParseFiles(templateDir+"/layout.html", templateDir+"/course_test_result.html")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -366,21 +383,21 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 
 func HandleRun(w http.ResponseWriter, r *http.Request) {
 	requestID := fmt.Sprintf("%d", time.Now().UnixNano())
-	log.Printf("[REQ-%s] HandleRun called - Method: %s, Path: %s, RemoteAddr: %s", 
+	log.Printf("[REQ-%s] HandleRun called - Method: %s, Path: %s, RemoteAddr: %s",
 		requestID, r.Method, r.URL.Path, getClientIP(r))
-	
+
 	// Set CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	
+
 	// Handle preflight requests
 	if r.Method == http.MethodOptions {
 		log.Printf("[REQ-%s] Handling OPTIONS preflight request", requestID)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	
+
 	if r.Method != http.MethodPost {
 		log.Printf("[REQ-%s] ERROR: Invalid method: %s", requestID, r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -425,7 +442,7 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 	// For multipart/form-data (FormData from fetch), use ParseMultipartForm
 	contentType := r.Header.Get("Content-Type")
 	log.Printf("[REQ-%s] Content-Type: %s", requestID, contentType)
-	
+
 	if strings.Contains(contentType, "multipart/form-data") {
 		log.Printf("[REQ-%s] Parsing multipart form", requestID)
 		if err := r.ParseMultipartForm(maxRequestSize); err != nil {
@@ -573,7 +590,7 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 		// Check if connection is still open before writing
 		doneMsg := fmt.Sprintf("event: done\ndata: {\"success\":%t,\"passed\":%d,\"total\":%d}\n\n", result.Success, passed, len(result.Results))
 		log.Printf("[REQ-%s] Sending done event", requestID)
-		
+
 		// Try to write done event - handle timeout/connection errors gracefully
 		if _, err := fmt.Fprintf(w, doneMsg); err != nil {
 			// Check if it's a timeout error specifically
@@ -637,13 +654,13 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	
+
 	// Handle preflight requests
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	
+
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
 		http.NotFound(w, r)
@@ -678,7 +695,7 @@ func HandleSolution(w http.ResponseWriter, r *http.Request) {
 	if problem.Explanation != "" {
 		explanationHTML = `<div class="explanation"><h4>Explanation</h4><p>` + template.HTMLEscapeString(problem.Explanation) + `</p></div>`
 	}
-	
+
 	// Add language selector
 	goSelected := ""
 	pythonSelected := ""
@@ -1700,6 +1717,170 @@ func HandleMathModule(w http.ResponseWriter, r *http.Request) {
 
 	if err := mathModuleTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// courseTestConfig maps URL slugs to course test configuration
+var courseTestConfig = map[string]struct {
+	Name         string
+	BackURL      string
+	GetQuestions func() []problems.Question
+}{
+	"golang":                {"Golang", "/golang", problems.GetGolangQuestions},
+	"python":                {"Python", "/python", problems.GetPythonQuestions},
+	"algorithms":            {"Algorithms", "/algorithms", problems.GetAlgorithmsQuestions},
+	"kubernetes":            {"Kubernetes", "/kubernetes", problems.GetKubernetesQuestions},
+	"linux":                 {"Linux", "/linux", problems.GetLinuxQuestions},
+	"aws":                   {"AWS", "/aws", problems.GetAWSQuestions},
+	"azure":                 {"Azure", "/azure", problems.GetAzureQuestions},
+	"devops":                {"DevOps", "/devops", problems.GetDevOpsQuestions},
+	"frontend":              {"Frontend", "/frontend", problems.GetFrontendQuestions},
+	"networking":            {"Networking", "/networking", problems.GetNetworkingQuestions},
+	"systems-design":        {"Systems Design", "/systems-design", problems.GetSystemsDesignQuestions},
+	"software-architecture": {"Software Architecture", "/software-architecture", problems.GetSoftwareArchitectureQuestions},
+	"machine-learning":      {"Machine Learning", "/machine-learning", problems.GetMachineLearningQuestions},
+	"computer-architecture": {"Computer Architecture", "/computer-architecture", problems.GetComputerArchitectureQuestions},
+	"math":                  {"Math", "/math", problems.GetMathQuestions},
+}
+
+// HandleCourseTest handles question-by-question test flow with immediate feedback
+func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
+	// Extract course slug from URL: /golang/test -> "golang"
+	path := r.URL.Path
+	parts := strings.Split(strings.Trim(path, "/"), "/")
+	if len(parts) < 2 || parts[1] != "test" {
+		http.NotFound(w, r)
+		return
+	}
+
+	courseSlug := parts[0]
+	config, ok := courseTestConfig[courseSlug]
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	questions := config.GetQuestions()
+	if len(questions) == 0 {
+		http.Error(w, "No questions available for this course", http.StatusNotFound)
+		return
+	}
+
+	totalQuestions := len(questions)
+	testURL := fmt.Sprintf("%s/test", config.BackURL)
+
+	// Get question number from query parameter (1-based)
+	questionNum := 1
+	if qParam := r.URL.Query().Get("q"); qParam != "" {
+		if qn, err := strconv.Atoi(qParam); err == nil && qn >= 1 && qn <= totalQuestions {
+			questionNum = qn
+		}
+	}
+
+	// Convert to 0-based index
+	questionIndex := questionNum - 1
+
+	if r.Method == http.MethodGet {
+		// If no query parameter, redirect to first question
+		if r.URL.Query().Get("q") == "" {
+			http.Redirect(w, r, fmt.Sprintf("%s?q=1", testURL), http.StatusFound)
+			return
+		}
+
+		// Display single question
+		currentQuestion := questions[questionIndex]
+		prevQuestionNum := questionNum - 1
+		nextQuestionNum := questionNum + 1
+
+		data := struct {
+			CourseName      string
+			BackURL         string
+			TestURL         string
+			Question        problems.Question
+			QuestionNum     int
+			TotalQuestions  int
+			PrevQuestionNum int
+			NextQuestionNum int
+			HasPrev         bool
+			HasNext         bool
+			ShowResult      bool
+			UserAnswer      int
+			IsCorrect       bool
+			Explanation     string
+		}{
+			CourseName:      config.Name,
+			BackURL:         config.BackURL,
+			TestURL:         testURL,
+			Question:        currentQuestion,
+			QuestionNum:     questionNum,
+			TotalQuestions:  totalQuestions,
+			PrevQuestionNum: prevQuestionNum,
+			NextQuestionNum: nextQuestionNum,
+			HasPrev:         questionNum > 1,
+			HasNext:         questionNum < totalQuestions,
+			ShowResult:      false,
+		}
+
+		if err := courseTestTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else if r.Method == http.MethodPost {
+		// Process answer submission
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
+		}
+
+		currentQuestion := questions[questionIndex]
+		answerStr := r.FormValue("answer")
+		userAnswer := -1
+		if answerStr != "" {
+			if ans, err := strconv.Atoi(answerStr); err == nil && ans >= 0 && ans < 4 {
+				userAnswer = ans
+			}
+		}
+
+		isCorrect := userAnswer == currentQuestion.CorrectAnswer
+		prevQuestionNum := questionNum - 1
+		nextQuestionNum := questionNum + 1
+
+		data := struct {
+			CourseName      string
+			BackURL         string
+			TestURL         string
+			Question        problems.Question
+			QuestionNum     int
+			TotalQuestions  int
+			PrevQuestionNum int
+			NextQuestionNum int
+			HasPrev         bool
+			HasNext         bool
+			ShowResult      bool
+			UserAnswer      int
+			IsCorrect       bool
+			Explanation     string
+		}{
+			CourseName:      config.Name,
+			BackURL:         config.BackURL,
+			TestURL:         testURL,
+			Question:        currentQuestion,
+			QuestionNum:     questionNum,
+			TotalQuestions:  totalQuestions,
+			PrevQuestionNum: prevQuestionNum,
+			NextQuestionNum: nextQuestionNum,
+			HasPrev:         questionNum > 1,
+			HasNext:         questionNum < totalQuestions,
+			ShowResult:      true,
+			UserAnswer:      userAnswer,
+			IsCorrect:       isCorrect,
+			Explanation:     currentQuestion.Explanation,
+		}
+
+		if err := courseTestTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
