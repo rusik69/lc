@@ -1,0 +1,423 @@
+{{define "title"}}{{.CourseName}} Test - Question {{.QuestionNum}} of {{.TotalQuestions}}{{end}}
+{{define "content"}}
+<div class="container">
+    <div class="test-header">
+        <a href="{{.BackURL}}" class="back-link">← Back to {{.CourseName}} Course</a>
+        <h2>{{.CourseName}} Test</h2>
+        <p class="question-counter">Question {{.QuestionNum}} of {{.TotalQuestions}}</p>
+    </div>
+
+    <div class="question-container">
+        <div class="question-card {{if .ShowResult}}answered{{end}}">
+            <div class="question-header">
+                <span class="question-number">Question {{.QuestionNum}}</span>
+            </div>
+            <p class="question-text">{{.Question.Text}}</p>
+            
+            {{if not .ShowResult}}
+            <form method="POST" action="{{.TestURL}}?q={{.QuestionNum}}" class="question-form">
+                <div class="options-container">
+                    {{range $optIndex, $option := .Question.Options}}
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="{{$optIndex}}" required>
+                        <span class="option-letter">{{if eq $optIndex 0}}A{{else if eq $optIndex 1}}B{{else if eq $optIndex 2}}C{{else}}D{{end}}</span>
+                        <span class="option-text">{{$option}}</span>
+                    </label>
+                    {{end}}
+                </div>
+                <div class="submit-container">
+                    <button type="submit" class="submit-button">Submit Answer</button>
+                </div>
+            </form>
+            {{else}}
+            <div class="options-container answered-options">
+                {{range $optIndex, $option := .Question.Options}}
+                <div class="option-result {{if eq $optIndex $.UserAnswer}}user-selected{{end}} {{if eq $optIndex $.Question.CorrectAnswer}}correct-answer{{end}}">
+                    <span class="option-letter">{{if eq $optIndex 0}}A{{else if eq $optIndex 1}}B{{else if eq $optIndex 2}}C{{else}}D{{end}}</span>
+                    <span class="option-text">{{$option}}</span>
+                    {{if eq $optIndex $.UserAnswer}}
+                    <span class="answer-label user-answer-label">Your Answer</span>
+                    {{end}}
+                    {{if eq $optIndex $.Question.CorrectAnswer}}
+                    <span class="answer-label correct-answer-label">Correct Answer</span>
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+            
+            <div class="feedback-section {{if .IsCorrect}}correct{{else}}incorrect{{end}}">
+                <div class="feedback-header">
+                    {{if .IsCorrect}}
+                    <span class="feedback-icon correct-icon">✓</span>
+                    <span class="feedback-text">Correct!</span>
+                    {{else}}
+                    <span class="feedback-icon incorrect-icon">✗</span>
+                    <span class="feedback-text">Incorrect</span>
+                    {{end}}
+                </div>
+                <div class="explanation-box">
+                    <h4>Explanation</h4>
+                    <p>{{.Explanation}}</p>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="navigation-container">
+        <a href="{{.TestURL}}?q={{.PrevQuestionNum}}" class="nav-button prev-button {{if not .HasPrev}}disabled{{end}}" {{if not .HasPrev}}onclick="return false;"{{end}}>
+            ← Previous Question
+        </a>
+        <div class="question-jump">
+            <label for="jump-input">Go to:</label>
+            <input type="number" id="jump-input" min="1" max="{{.TotalQuestions}}" value="{{.QuestionNum}}" class="jump-input">
+            <button onclick="jumpToQuestion()" class="jump-button">Go</button>
+        </div>
+        {{if .ShowResult}}
+        <a href="{{.TestURL}}?q={{.NextQuestionNum}}" class="nav-button next-button {{if not .HasNext}}disabled{{end}}" {{if not .HasNext}}onclick="return false;"{{end}}>
+            Next Question →
+        </a>
+        {{else}}
+        <span class="nav-button next-button disabled">Next Question →</span>
+        {{end}}
+    </div>
+</div>
+
+<script>
+function jumpToQuestion() {
+    const input = document.getElementById('jump-input');
+    const questionNum = parseInt(input.value);
+    const maxQuestions = {{.TotalQuestions}};
+    if (questionNum >= 1 && questionNum <= maxQuestions) {
+        window.location.href = '{{.TestURL}}?q=' + questionNum;
+    } else {
+        alert('Please enter a number between 1 and ' + maxQuestions);
+    }
+}
+
+document.getElementById('jump-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        jumpToQuestion();
+    }
+});
+</script>
+
+<style>
+.test-header {
+    margin-bottom: 30px;
+}
+
+.test-header h2 {
+    margin: 10px 0;
+    color: var(--text-primary);
+}
+
+.question-counter {
+    color: var(--text-secondary);
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+.question-container {
+    max-width: 900px;
+    margin: 0 auto 30px;
+}
+
+.question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    transition: border-color 0.2s;
+}
+
+.question-card.answered {
+    border-color: var(--border-color);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.question-number {
+    font-weight: bold;
+    color: var(--accent-color);
+    font-size: 0.9em;
+}
+
+.question-text {
+    color: var(--text-primary);
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.question-form {
+    margin-top: 20px;
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-label:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-color);
+}
+
+.option-label input[type="radio"] {
+    margin-right: 12px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-color);
+}
+
+.option-letter {
+    font-weight: bold;
+    color: var(--accent-color);
+    min-width: 25px;
+    margin-right: 10px;
+}
+
+.option-text {
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.option-label:has(input[type="radio"]:checked) {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-color);
+}
+
+.option-label:has(input[type="radio"]:checked) .option-text {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.answered-options .option-result {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.answered-options .option-result.user-selected {
+    border-color: var(--accent-color);
+    background: var(--bg-tertiary);
+}
+
+.answered-options .option-result.correct-answer {
+    border-color: var(--success-border);
+    background: var(--success-bg);
+}
+
+.answered-options .option-result.user-selected.correct-answer {
+    border-color: var(--success-border);
+    background: var(--success-bg);
+}
+
+.answer-label {
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.user-answer-label {
+    background: var(--accent-color);
+    color: white;
+}
+
+.correct-answer-label {
+    background: var(--success-text);
+    color: var(--success-bg);
+}
+
+.submit-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.submit-button {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-button:hover {
+    background: var(--accent-hover);
+}
+
+.submit-button:active {
+    background: var(--accent-active);
+}
+
+.feedback-section {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.feedback-section.correct {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+}
+
+.feedback-section.incorrect {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+}
+
+.feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.feedback-icon {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.correct-icon {
+    color: var(--success-text);
+}
+
+.incorrect-icon {
+    color: var(--error-text);
+}
+
+.feedback-text {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.feedback-section.correct .feedback-text {
+    color: var(--success-text);
+}
+
+.feedback-section.incorrect .feedback-text {
+    color: var(--error-text);
+}
+
+.explanation-box {
+    background: var(--bg-card);
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.explanation-box h4 {
+    margin: 0 0 10px 0;
+    color: var(--text-primary);
+    font-size: 1em;
+}
+
+.explanation-box p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.navigation-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 2px solid var(--border-color);
+}
+
+.nav-button {
+    padding: 10px 20px;
+    background: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.nav-button:hover:not(.disabled) {
+    background: var(--accent-hover);
+}
+
+.nav-button.disabled {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.question-jump {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.question-jump label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.jump-input {
+    width: 60px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.jump-button {
+    padding: 6px 15px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.jump-button:hover {
+    background: var(--accent-hover);
+}
+</style>
+
+{{end}}
