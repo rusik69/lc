@@ -15,6 +15,7 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/rusik69/lc/internal/executor"
 	"github.com/rusik69/lc/internal/problems"
+	"math/rand"
 )
 
 var (
@@ -1766,12 +1767,53 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Handle seed for randomization
+	query := r.URL.Query()
+	seedStr := query.Get("seed")
+	var seed int64
+	shouldRedirect := false
+
+	if seedStr == "" {
+		seed = time.Now().UnixNano()
+		query.Set("seed", fmt.Sprintf("%d", seed))
+		shouldRedirect = true
+	} else {
+		var err error
+		seed, err = strconv.ParseInt(seedStr, 10, 64)
+		if err != nil {
+			seed = time.Now().UnixNano()
+			query.Set("seed", fmt.Sprintf("%d", seed))
+			shouldRedirect = true
+		}
+	}
+
+	if query.Get("q") == "" {
+		query.Set("q", "1")
+		shouldRedirect = true
+	}
+
+	// Only redirect on GET requests to establish the session
+	if shouldRedirect && r.Method == http.MethodGet {
+		r.URL.RawQuery = query.Encode()
+		http.Redirect(w, r, r.URL.String(), http.StatusFound)
+		return
+	}
+
+	// Shuffle questions based on seed
+	questionsCopy := make([]problems.Question, len(questions))
+	copy(questionsCopy, questions)
+	rng := rand.New(rand.NewSource(seed))
+	rng.Shuffle(len(questionsCopy), func(i, j int) {
+		questionsCopy[i], questionsCopy[j] = questionsCopy[j], questionsCopy[i]
+	})
+	questions = questionsCopy
+
 	totalQuestions := len(questions)
 	testURL := fmt.Sprintf("%s/test", config.BackURL)
 
 	// Get question number from query parameter (1-based)
 	questionNum := 1
-	if qParam := r.URL.Query().Get("q"); qParam != "" {
+	if qParam := query.Get("q"); qParam != "" {
 		if qn, err := strconv.Atoi(qParam); err == nil && qn >= 1 && qn <= totalQuestions {
 			questionNum = qn
 		}
@@ -1781,12 +1823,6 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 	questionIndex := questionNum - 1
 
 	if r.Method == http.MethodGet {
-		// If no query parameter, redirect to first question
-		if r.URL.Query().Get("q") == "" {
-			http.Redirect(w, r, fmt.Sprintf("%s?q=1", testURL), http.StatusFound)
-			return
-		}
-
 		// Display single question
 		currentQuestion := questions[questionIndex]
 		prevQuestionNum := questionNum - 1
@@ -1807,6 +1843,7 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 			UserAnswer      int
 			IsCorrect       bool
 			Explanation     string
+			Seed            int64
 		}{
 			CourseName:      config.Name,
 			BackURL:         config.BackURL,
@@ -1819,6 +1856,7 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 			HasPrev:         questionNum > 1,
 			HasNext:         questionNum < totalQuestions,
 			ShowResult:      false,
+			Seed:            seed,
 		}
 
 		if err := courseTestTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
@@ -1859,6 +1897,7 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 			UserAnswer      int
 			IsCorrect       bool
 			Explanation     string
+			Seed            int64
 		}{
 			CourseName:      config.Name,
 			BackURL:         config.BackURL,
@@ -1874,6 +1913,7 @@ func HandleCourseTest(w http.ResponseWriter, r *http.Request) {
 			UserAnswer:      userAnswer,
 			IsCorrect:       isCorrect,
 			Explanation:     currentQuestion.Explanation,
+			Seed:            seed,
 		}
 
 		if err := courseTestTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {

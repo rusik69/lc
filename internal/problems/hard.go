@@ -457,7 +457,7 @@ Think of this as finding the largest rectangle you can form by stacking blocks: 
 		Difficulty:  "Hard",
 		Signature:   "func maximalRectangle(matrix [][]byte) int",
 		TestCases: []TestCase{
-			{Input: "matrix = [[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"]]", Expected: "6"},
+			{Input: "matrix = [[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"]]", Expected: "3"},
 		},
 		Solution: `func maximalRectangle(matrix [][]byte) int {
 	if len(matrix) == 0 {
@@ -477,6 +477,31 @@ Think of this as finding the largest rectangle you can form by stacking blocks: 
 		if area > maxArea {
 			maxArea = area
 		}
+	}
+	return maxArea
+}
+
+func largestRectangleArea(heights []int) int {
+	stack := []int{}
+	maxArea := 0
+	for i := 0; i <= len(heights); i++ {
+		h := 0
+		if i < len(heights) {
+			h = heights[i]
+		}
+		for len(stack) > 0 && h < heights[stack[len(stack)-1]] {
+			height := heights[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+			width := i
+			if len(stack) > 0 {
+				width = i - stack[len(stack)-1] - 1
+			}
+			area := height * width
+			if area > maxArea {
+				maxArea = area
+			}
+		}
+		stack = append(stack, i)
 	}
 	return maxArea
 }`,
@@ -744,16 +769,67 @@ Think of this as finding the shortest path in a word network: you start from one
 		},
 		Solution: `func findLadders(beginWord string, endWord string, wordList []string) [][]string {
 	wordSet := make(map[string]bool)
-	for _, word := range wordList {
-		wordSet[word] = true
+	for _, w := range wordList {
+		wordSet[w] = true
 	}
 	if !wordSet[endWord] {
 		return [][]string{}
 	}
-	// BFS to build graph, DFS to find all paths
-	// Implementation simplified for demonstration
-	result := [][]string{}
-	return result
+	
+	layer := make(map[string]bool)
+	layer[beginWord] = true
+	parents := make(map[string][]string)
+	found := false
+	
+	for len(layer) > 0 && !found {
+		nextLayer := make(map[string]bool)
+		for w := range layer {
+			delete(wordSet, w)
+		}
+		for w := range layer {
+			bytes := []byte(w)
+			for i := 0; i < len(bytes); i++ {
+				old := bytes[i]
+				for c := byte('a'); c <= 'z'; c++ {
+					if c == old { continue }
+					bytes[i] = c
+					next := string(bytes)
+					if wordSet[next] {
+						nextLayer[next] = true
+						parents[next] = append(parents[next], w)
+						if next == endWord {
+							found = true
+						}
+					}
+				}
+				bytes[i] = old
+			}
+		}
+		layer = nextLayer
+	}
+	
+	if !found {
+		return [][]string{}
+	}
+	
+	var res [][]string
+	var path []string
+	dfsLadders(endWord, beginWord, parents, &path, &res)
+	return res
+}
+
+func dfsLadders(node, beginWord string, parents map[string][]string, path *[]string, res *[][]string) {
+	*path = append([]string{node}, *path...)
+	if node == beginWord {
+		tmp := make([]string, len(*path))
+		copy(tmp, *path)
+		*res = append(*res, tmp)
+	} else {
+		for _, p := range parents[node] {
+			dfsLadders(p, beginWord, parents, path, res)
+		}
+	}
+	*path = (*path)[1:]
 }`,
 		PythonSolution: `def findLadders(beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
     from collections import deque, defaultdict
@@ -1512,12 +1588,7 @@ Think of this as a tournament bracket: you pair up lists and merge them, then pa
 			{Input: "root = [1]", Expected: "[1]"},
 			{Input: "root = [1,2]", Expected: "[1 2]"},
 		},
-		Solution: `import (
-	"strconv"
-	"strings"
-)
-
-type Codec struct{}
+		Solution: `type Codec struct{}
 
 func Constructor() Codec {
 	return Codec{}
@@ -1686,9 +1757,7 @@ Think of this as finding the shortest path in a word network: you start from one
 			{Input: "MedianFinder, addNum(1), addNum(2), addNum(3), addNum(4), findMedian()", Expected: "2.5"},
 			{Input: "MedianFinder, addNum(5), findMedian()", Expected: "5.0"},
 		},
-		Solution: `import "container/heap"
-
-type IntHeap []int
+		Solution: `type IntHeap []int
 
 func (h IntHeap) Len() int           { return len(h) }
 func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
@@ -1736,9 +1805,7 @@ func (this *MedianFinder) FindMedian() float64 {
 	}
 	return float64(-(*this.small)[0]+(*this.large)[0]) / 2.0
 }`,
-		PythonSolution: `import heapq
-
-class MedianFinder:
+		PythonSolution: `class MedianFinder:
     def __init__(self):
         self.small = []  # max heap (negate values)
         self.large = []  # min heap
@@ -1868,7 +1935,7 @@ Think of this as solving a puzzle: you place pieces one by one, and if placing a
 		Topic:       "Backtracking",
 		Signature:   "func solveSudoku(board [][]byte)",
 		TestCases: []TestCase{
-			{Input: "board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]", Expected: "Solved board"},
+			{Input: "board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]", Expected: "[[\"5\",\"3\",\"4\",\"6\",\"7\",\"8\",\"9\",\"1\",\"2\"],[\"6\",\"7\",\"2\",\"1\",\"9\",\"5\",\"3\",\"4\",\"8\"],[\"1\",\"9\",\"8\",\"3\",\"4\",\"2\",\"5\",\"6\",\"7\"],[\"8\",\"5\",\"9\",\"7\",\"6\",\"1\",\"4\",\"2\",\"3\"],[\"4\",\"2\",\"6\",\"8\",\"5\",\"3\",\"7\",\"9\",\"1\"],[\"7\",\"1\",\"3\",\"9\",\"2\",\"4\",\"8\",\"5\",\"6\"],[\"9\",\"6\",\"1\",\"5\",\"3\",\"7\",\"2\",\"8\",\"4\"],[\"2\",\"8\",\"7\",\"4\",\"1\",\"9\",\"6\",\"3\",\"5\"],[\"3\",\"4\",\"5\",\"2\",\"8\",\"6\",\"1\",\"7\",\"9\"]]"},
 		},
 		Solution: `func solveSudoku(board [][]byte) {
 	solve(board)
@@ -2228,20 +2295,6 @@ func isOutOfOrder(i int, num int, array []int) bool {
 		return num < array[i-1]
 	}
 	return num > array[i+1] || num < array[i-1]
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def subarraySort(array: List[int]) -> List[int]:
     min_out_of_order = float('inf')
@@ -2388,13 +2441,6 @@ Think of this as finding the longest chain: you look for unvisited starting poin
 		sum += reward
 	}
 	return sum
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def minRewards(scores: List[int]) -> int:
     rewards = [1] * len(scores)
@@ -2817,9 +2863,10 @@ Think of this as checking family relationships in a family tree: you verify that
 			{Input: "tree = [5, 7, 9, 1, 2, 8, 10, 0, -1, 15, 12]", Expected: "Repaired BST"},
 		},
 		Solution: `func repairBst(tree *TreeNode) *TreeNode {
-	nodeOne := &TreeNode{}
-	nodeTwo := &TreeNode{}
-	inOrderTraverse(tree, &nodeOne, &nodeTwo, nil)
+	var nodeOne *TreeNode
+	var nodeTwo *TreeNode
+	var previous *TreeNode
+	inOrderTraverse(tree, &nodeOne, &nodeTwo, &previous)
 	nodeOne.Val, nodeTwo.Val = nodeTwo.Val, nodeOne.Val
 	return tree
 }
@@ -2960,13 +3007,6 @@ func findMaxSum(tree *TreeNode) (int, int) {
 	maxSumAsRootNode := max(leftMaxSumAsBranch+value+rightMaxSumAsBranch, maxSumAsBranch)
 	maxPathSum := max(leftMaxPathSum, max(rightMaxPathSum, maxSumAsRootNode))
 	return maxSumAsBranch, maxPathSum
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maxPathSum(tree: Optional[TreeNode]) -> int:
     _, max_sum = find_max_sum(tree)
@@ -3097,7 +3137,7 @@ Think of this as finding all places exactly k steps away: you can go k steps in 
 		Topic:       "Dynamic Programming",
 		Signature:   "func maxSumIncreasingSubsequence(array []int) (int, []int)",
 		TestCases: []TestCase{
-			{Input: "array = [10, 70, 20, 30, 50, 11, 30]", Expected: "sum: 110, sequence: [10, 20, 30, 50]"},
+			{Input: "array = [10, 70, 20, 30, 50, 11, 30]", Expected: "[110, [10, 20, 30, 50]]"},
 		},
 		Solution: `func maxSumIncreasingSubsequence(array []int) (int, []int) {
 	sums := make([]int, len(array))
@@ -3245,13 +3285,6 @@ Think of this as finding the longest matching pattern: you build up matches char
 		}
 	}
 	return jumps + 1
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def minNumberOfJumps(array: List[int]) -> int:
     if len(array) == 1:
@@ -3309,13 +3342,6 @@ Think of this as crossing stepping stones: you look ahead to see how far you can
 		}
 	}
 	return surfaceArea
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def waterArea(heights: List[int]) -> int:
     if len(heights) == 0:
@@ -3355,7 +3381,7 @@ Think of this as filling a container: the water level at any point is determined
 		Topic:       "Dynamic Programming",
 		Signature:   "func knapsackProblem(items [][]int, capacity int) (int, []int)",
 		TestCases: []TestCase{
-			{Input: "items = [[1, 2], [4, 3], [5, 6], [6, 7]], capacity = 10", Expected: "value: 10, indices: [1, 3]"},
+			{Input: "items = [[1, 2], [4, 3], [5, 6], [6, 7]], capacity = 10", Expected: "[10, [1, 3]]"},
 		},
 		Solution: `func knapsackProblem(items [][]int, capacity int) (int, []int) {
 	knapsackValues := make([][]int, len(items)+1)
@@ -3393,13 +3419,6 @@ func getKnapsackItems(knapsackValues [][]int, items [][]int) []int {
 		}
 	}
 	return sequence
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def knapsackProblem(items: List[List[int]], capacity: int) -> Tuple[int, List[int]]:
     knapsack_values = [[0 for _ in range(capacity + 1)] for _ in range(len(items) + 1)]
@@ -3449,9 +3468,7 @@ Think of this as packing a suitcase: for each item, you decide whether to take i
 		TestCases: []TestCase{
 			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[2, 1, 2], [3, 2, 3], [4, 4, 5]]"},
 		},
-		Solution: `import "sort"
-
-func diskStacking(disks [][]int) [][]int {
+		Solution: `func diskStacking(disks [][]int) [][]int {
 	sort.Slice(disks, func(i, j int) bool {
 		return disks[i][2] < disks[j][2]
 	})
@@ -3570,13 +3587,6 @@ func getMinSpaces(pi string, numbersTable map[string]bool, cache map[int]int, id
 	}
 	cache[idx] = minSpaces
 	return minSpaces
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def numbersInPi(pi: str, numbers: List[str]) -> int:
     numbers_table = {number: True for number in numbers}
@@ -3661,13 +3671,6 @@ func createSumMatrix(matrix [][]int) [][]int {
 		}
 	}
 	return sums
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maximumSumSubmatrix(matrix: List[List[int]], size: int) -> int:
     sums = create_sum_matrix(matrix)
@@ -3745,13 +3748,6 @@ Think of this as creating a running total map: you precompute sums from the orig
 		maxOfAMinusBPlusCMinusD[i] = max(maxOfAMinusBPlusCMinusD[i-1], maxOfAMinusBPlusC[i-1]-array[i])
 	}
 	return maxOfAMinusBPlusCMinusD[len(array)-1]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maximizeExpression(array: List[int]) -> int:
     if len(array) < 4:
@@ -3867,13 +3863,6 @@ Think of this as counting paths: for each die roll, you branch into all possible
 		}
 	}
 	return maxProfit[totalFruits]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def juiceBottling(prices: List[int], totalFruits: int) -> int:
     max_profit = [0] * (totalFruits + 1)
@@ -3899,11 +3888,11 @@ Think of this as finding the best way to package items: for each quantity, you t
 		Description: "You're given an integer start and a list edges of pairs of integers representing the edges of a weighted, directed graph. Write a function that returns the shortest distance from the start vertex to all other vertices in the graph.",
 		Difficulty:  "Hard",
 		Topic:       "Graphs",
-		Signature:   "func dijkstrasAlgorithm(start int, edges [][]int) []int",
+		Signature:   "func dijkstrasAlgorithm(start int, edges [][][]int) []int",
 		TestCases: []TestCase{
 			{Input: "start = 0, edges = [[[1, 7]], [[2, 6], [3, 20], [4, 3]], [[3, 14]], [[4, 2]], [], []]", Expected: "[0, 7, 13, 27, 10, -1]"},
 		},
-		Solution: `func dijkstrasAlgorithm(start int, edges [][]int) []int {
+		Solution: `func dijkstrasAlgorithm(start int, edges [][][]int) []int {
 	numberOfVertices := len(edges)
 	minDistances := make([]int, numberOfVertices)
 	for i := range minDistances {
@@ -4161,9 +4150,7 @@ Think of this as course prerequisites: you can only take a course after completi
 		TestCases: []TestCase{
 			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "Minimum spanning tree edges"},
 		},
-		Solution: `import "sort"
-
-func kruskalsAlgorithm(edges [][]int) [][]int {
+		Solution: `func kruskalsAlgorithm(edges [][]int) [][]int {
 	sort.Slice(edges, func(i, j int) bool {
 		return edges[i][2] < edges[j][2]
 	})
@@ -4258,9 +4245,7 @@ Think of this as building the cheapest network: you sort all possible connection
 		TestCases: []TestCase{
 			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "Minimum spanning tree edges"},
 		},
-		Solution: `import "container/heap"
-
-type Edge struct {
+		Solution: `type Edge struct {
 	node1   int
 	node2   int
 	weight  int
@@ -4314,9 +4299,7 @@ func primsAlgorithm(edges [][]int) [][]int {
 	}
 	return mst
 }`,
-		PythonSolution: `import heapq
-
-def primsAlgorithm(edges: List[List[int]]) -> List[List[int]]:
+		PythonSolution: `def primsAlgorithm(edges: List[List[int]]) -> List[List[int]]:
     adj_list = {}
     all_nodes = set()
     for edge in edges:
@@ -4590,20 +4573,6 @@ func distanceBetween(a int, b int) int {
 		return a - b
 	}
 	return b - a
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def apartmentHunting(blocks: List[dict], reqs: List[str]) -> int:
     min_distances_from_blocks = [get_min_distances(blocks, req) for req in reqs]
@@ -4752,13 +4721,6 @@ func minutesToTime(minutes int) string {
 	hours := minutes / 60
 	mins := minutes % 60
 	return fmt.Sprintf("%d:%02d", hours, mins)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def calendarMatching(calendar1: List[List[str]], dailyBounds1: List[str], calendar2: List[List[str]], dailyBounds2: List[str], meetingDuration: int) -> List[List[str]]:
     updated_calendar1 = update_calendar(calendar1, dailyBounds1)
@@ -4987,13 +4949,6 @@ func abs(x int) int {
 		return -x
 	}
 	return x
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def minimumAreaRectangle(points: List[List[int]]) -> int:
     point_set = {f"{point[0]},{point[1]}" for point in points}
@@ -5103,13 +5058,6 @@ func maxValueIn(slopes map[string]int) int {
 		currentMax = max(currentMax, value)
 	}
 	return currentMax
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def lineThroughPoints(points: List[List[int]]) -> int:
     max_number_of_points_on_line = 1
@@ -5504,13 +5452,6 @@ Think of this as connecting siblings at each level: you process the tree recursi
 		return evenProfits[len(prices)-1]
 	}
 	return oddProfits[len(prices)-1]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maxProfitWithKTransactions(prices: List[int], k: int) -> int:
     if len(prices) == 0:
@@ -5860,9 +5801,7 @@ Think of this as finding picture frames: you first mark how many zeros extend in
 		TestCases: []TestCase{
 			{Input: "startRow = 0, startCol = 1, endRow = 4, endCol = 3, graph = [[0, 0, 0, 0, 0], [0, 1, 1, 1, 0], [0, 0, 0, 0, 0], [1, 0, 1, 1, 1], [0, 0, 0, 0, 0]]", Expected: "Shortest path"},
 		},
-		Solution: `import "container/heap"
-
-type Node struct {
+		Solution: `type Node struct {
 	row    int
 	col    int
 	g      int
@@ -5981,9 +5920,7 @@ func abs(x int) int {
 	}
 	return x
 }`,
-		PythonSolution: `import heapq
-
-def aStarAlgorithm(startRow: int, startCol: int, endRow: int, endCol: int, graph: List[List[int]]) -> List[List[int]]:
+		PythonSolution: `def aStarAlgorithm(startRow: int, startCol: int, endRow: int, endCol: int, graph: List[List[int]]) -> List[List[int]]:
     nodes = initialize_nodes(graph)
     start_node = nodes[startRow][startCol]
     end_node = nodes[endRow][endCol]
@@ -6459,6 +6396,12 @@ func createAirportGraph(airports []string, routes [][]string) map[string]*Airpor
 	}
 	for _, route := range routes {
 		airport, connection := route[0], route[1]
+		if _, ok := airportGraph[airport]; !ok {
+			airportGraph[airport] = &AirportNode{Airport: airport, Connections: []string{}, IsReachable: true}
+		}
+		if _, ok := airportGraph[connection]; !ok {
+			airportGraph[connection] = &AirportNode{Airport: connection, Connections: []string{}, IsReachable: true}
+		}
 		airportGraph[airport].Connections = append(airportGraph[airport].Connections, connection)
 	}
 	return airportGraph
@@ -6628,11 +6571,17 @@ Think of this as connecting isolated islands: you find which islands can reach o
 			{Input: "head = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], loop starts at node 4", Expected: "Node 4"},
 		},
 		Solution: `func findLoop(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return nil
+	}
 	first := head.Next
 	second := head.Next.Next
-	for first != second {
+	for second != nil && second.Next != nil && first != second {
 		first = first.Next
 		second = second.Next.Next
+	}
+	if second == nil || second.Next == nil {
+		return nil
 	}
 	first = head
 	for first != second {
@@ -6948,9 +6897,7 @@ Think of this as swapping neighbors in a line: you work through pairs, swapping 
 		TestCases: []TestCase{
 			{Input: "Insert: 5, 10, 100, 200, 6, 13, 14", Expected: "Median: 10, 7.5, 10, 55, 10, 11.5, 13"},
 		},
-		Solution: `import "container/heap"
-
-type ContinuousMedianHandler struct {
+		Solution: `type ContinuousMedianHandler struct {
 	lowerNumbers  *MaxHeap
 	higherNumbers *MinHeap
 	median        float64
@@ -7024,9 +6971,7 @@ func (h *MinHeap) Pop() interface{} {
 	return x
 }
 func (h *MinHeap) Peek() int { return (*h)[0] }`,
-		PythonSolution: `import heapq
-
-class ContinuousMedianHandler:
+		PythonSolution: `class ContinuousMedianHandler:
     def __init__(self):
         self.lower_numbers = []
         self.higher_numbers = []
@@ -7078,9 +7023,7 @@ Think of this as maintaining two balanced groups: you keep the smaller half in o
 		TestCases: []TestCase{
 			{Input: "array = [3, 2, 1, 5, 4, 7, 6, 5], k = 3", Expected: "[1, 2, 3, 4, 5, 5, 6, 7]"},
 		},
-		Solution: `import "container/heap"
-
-type IntHeap []int
+		Solution: `type IntHeap []int
 
 func (h IntHeap) Len() int           { return len(h) }
 func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
@@ -7117,9 +7060,7 @@ func sortKSortedArray(array []int, k int) []int {
 	}
 	return array
 }`,
-		PythonSolution: `import heapq
-
-def sortKSortedArray(array: List[int], k: int) -> List[int]:
+		PythonSolution: `def sortKSortedArray(array: List[int], k: int) -> List[int]:
     if len(array) == 0:
         return array
     min_heap_with_k_elements = []
@@ -7449,13 +7390,6 @@ func findMaxSum(tree *TreeNode) (int, int) {
 	maxSumAsRootNode := max(leftMaxSumAsBranch+value+rightMaxSumAsBranch, maxSumAsBranch)
 	maxPathSum := max(leftMaxPathSum, max(rightMaxPathSum, maxSumAsRootNode))
 	return maxSumAsBranch, maxPathSum
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maxPathSum(tree: Optional[TreeNode]) -> int:
     _, max_sum = find_max_sum(tree)
@@ -7492,7 +7426,7 @@ Think of this as finding the best route through a network: at each junction (nod
 		Topic:       "Dynamic Programming",
 		Signature:   "func maxSumIncreasingSubsequence(array []int) (int, []int)",
 		TestCases: []TestCase{
-			{Input: "array = [10, 70, 20, 30, 50, 11, 30]", Expected: "sum: 110, sequence: [10, 20, 30, 50]"},
+			{Input: "array = [10, 70, 20, 30, 50, 11, 30]", Expected: "[110, [10, 20, 30, 50]]"},
 		},
 		Solution: `func maxSumIncreasingSubsequence(array []int) (int, []int) {
 	sums := make([]int, len(array))
@@ -7639,13 +7573,6 @@ Think of this as finding the longest matching pattern: you compare characters on
 		}
 	}
 	return jumps + 1
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def minNumberOfJumps(array: List[int]) -> int:
     if len(array) == 1:
@@ -7703,13 +7630,6 @@ Think of this as crossing stepping stones: you look ahead to see how far you can
 		}
 	}
 	return surfaceArea
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def waterArea(heights: List[int]) -> int:
     if len(heights) == 0:
@@ -7749,7 +7669,7 @@ Think of this as filling a container: you work from both ends, always processing
 		Topic:       "Dynamic Programming",
 		Signature:   "func knapsackProblem(items [][]int, capacity int) (int, []int)",
 		TestCases: []TestCase{
-			{Input: "items = [[1, 2], [4, 3], [5, 6], [6, 7]], capacity = 10", Expected: "value: 10, indices: [1, 3]"},
+			{Input: "items = [[1, 2], [4, 3], [5, 6], [6, 7]], capacity = 10", Expected: "[10, [1, 3]]"},
 		},
 		Solution: `func knapsackProblem(items [][]int, capacity int) (int, []int) {
 	knapsackValues := make([][]int, len(items)+1)
@@ -7787,13 +7707,6 @@ func getKnapsackItems(knapsackValues [][]int, items [][]int) []int {
 		}
 	}
 	return sequence
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def knapsackProblem(items: List[List[int]], capacity: int) -> Tuple[int, List[int]]:
     knapsack_values = [[0 for _ in range(capacity + 1)] for _ in range(len(items) + 1)]
@@ -7843,9 +7756,7 @@ Think of this as packing a bag optimally: for each item and each possible weight
 		TestCases: []TestCase{
 			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[2, 1, 2], [3, 2, 3], [4, 4, 5]]"},
 		},
-		Solution: `import "sort"
-
-func diskStacking(disks [][]int) [][]int {
+		Solution: `func diskStacking(disks [][]int) [][]int {
 	sort.Slice(disks, func(i, j int) bool {
 		return disks[i][2] < disks[j][2]
 	})
@@ -7964,13 +7875,6 @@ func getMinSpaces(pi string, numbersTable map[string]bool, cache map[int]int, id
 	}
 	cache[idx] = minSpaces
 	return minSpaces
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def numbersInPi(pi: str, numbers: List[str]) -> int:
     numbers_table = {number: True for number in numbers}
@@ -8055,13 +7959,6 @@ func createSumMatrix(matrix [][]int) [][]int {
 		}
 	}
 	return sums
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maximumSumSubmatrix(matrix: List[List[int]], size: int) -> int:
     sums = create_sum_matrix(matrix)
@@ -8139,13 +8036,6 @@ Think of this as creating a running total map: you precompute sums from the orig
 		maxOfAMinusBPlusCMinusD[i] = max(maxOfAMinusBPlusCMinusD[i-1], maxOfAMinusBPlusC[i-1]-array[i])
 	}
 	return maxOfAMinusBPlusCMinusD[len(array)-1]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maximizeExpression(array: List[int]) -> int:
     if len(array) < 4:

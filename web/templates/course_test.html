@@ -15,18 +15,15 @@
             <p class="question-text">{{.Question.Text}}</p>
             
             {{if not .ShowResult}}
-            <form method="POST" action="{{.TestURL}}?q={{.QuestionNum}}" class="question-form">
+            <form method="POST" action="{{.TestURL}}?q={{.QuestionNum}}&seed={{.Seed}}" class="question-form" id="answer-form">
                 <div class="options-container">
                     {{range $optIndex, $option := .Question.Options}}
                     <label class="option-label">
-                        <input type="radio" name="answer" value="{{$optIndex}}" required>
+                        <input type="radio" name="answer" value="{{$optIndex}}" onclick="submitAnswer()">
                         <span class="option-letter">{{if eq $optIndex 0}}A{{else if eq $optIndex 1}}B{{else if eq $optIndex 2}}C{{else}}D{{end}}</span>
                         <span class="option-text">{{$option}}</span>
                     </label>
                     {{end}}
-                </div>
-                <div class="submit-container">
-                    <button type="submit" class="submit-button">Submit Answer</button>
                 </div>
             </form>
             {{else}}
@@ -65,7 +62,7 @@
     </div>
 
     <div class="navigation-container">
-        <a href="{{.TestURL}}?q={{.PrevQuestionNum}}" class="nav-button prev-button {{if not .HasPrev}}disabled{{end}}" {{if not .HasPrev}}onclick="return false;"{{end}}>
+        <a href="{{.TestURL}}?q={{.PrevQuestionNum}}&seed={{.Seed}}" class="nav-button prev-button {{if not .HasPrev}}disabled{{end}}" {{if not .HasPrev}}onclick="return false;"{{end}}>
             ← Previous Question
         </a>
         <div class="question-jump">
@@ -74,7 +71,7 @@
             <button onclick="jumpToQuestion()" class="jump-button">Go</button>
         </div>
         {{if .ShowResult}}
-        <a href="{{.TestURL}}?q={{.NextQuestionNum}}" class="nav-button next-button {{if not .HasNext}}disabled{{end}}" {{if not .HasNext}}onclick="return false;"{{end}}>
+        <a href="{{.TestURL}}?q={{.NextQuestionNum}}&seed={{.Seed}}" class="nav-button next-button {{if not .HasNext}}disabled{{end}}" {{if not .HasNext}}onclick="return false;"{{end}}>
             Next Question →
         </a>
         {{else}}
@@ -84,12 +81,20 @@
 </div>
 
 <script>
+function submitAnswer() {
+    // Auto-submit the form when an answer is selected
+    const form = document.getElementById('answer-form');
+    if (form) {
+        form.submit();
+    }
+}
+
 function jumpToQuestion() {
     const input = document.getElementById('jump-input');
     const questionNum = parseInt(input.value);
     const maxQuestions = {{.TotalQuestions}};
     if (questionNum >= 1 && questionNum <= maxQuestions) {
-        window.location.href = '{{.TestURL}}?q=' + questionNum;
+        window.location.href = '{{.TestURL}}?q=' + questionNum + '&seed={{.Seed}}';
     } else {
         alert('Please enter a number between 1 and ' + maxQuestions);
     }
@@ -254,31 +259,6 @@ document.getElementById('jump-input').addEventListener('keypress', function(e) {
 .correct-answer-label {
     background: var(--success-text);
     color: var(--success-bg);
-}
-
-.submit-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.submit-button {
-    background: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    font-size: 1em;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.submit-button:hover {
-    background: var(--accent-hover);
-}
-
-.submit-button:active {
-    background: var(--accent-active);
 }
 
 .feedback-section {

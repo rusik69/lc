@@ -119,7 +119,7 @@ Think of this as organizing items by how often they appear: you put each item in
 			{Input: "nums = []int{1,2,3,4}", Expected: "[24 12 8 6]"},
 			{Input: "nums = []int{-1,1,0,-3,3}", Expected: "[0 0 9 0 0]"},
 			{Input: "nums = []int{2,3,4,5}", Expected: "[60 40 30 24]"},
-			{Input: "nums = []int{-1,-1,1,-1,-1}", Expected: "[-1 -1 -1 -1 -1]"},
+			{Input: "nums = []int{-1,-1,1,-1,-1}", Expected: "[-1 -1 1 -1 -1]"},
 			{Input: "nums = []int{1,0}", Expected: "[0 1]"},
 		},
 		Solution: `func productExceptSelf(nums []int) []int {
@@ -220,12 +220,12 @@ Think of this as finding the longest chain: you only start counting from the beg
 		Topic:       "Hash Tables",
 		Description: "Determine if a 9 x 9 Sudoku board is valid. Only the filled cells need to be validated.",
 		Difficulty:  "Medium",
-		Signature:   "func isValidSudoku(board [][]byte) bool",
+		Signature:   "func isValidSudoku(board [][]string) bool",
 		TestCases: []TestCase{
-			{Input: "board = valid sudoku", Expected: "true"},
-			{Input: "board = invalid sudoku", Expected: "false"},
+			{Input: `board = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]`, Expected: "true"},
+			{Input: `board = [["8","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]`, Expected: "false"},
 		},
-		Solution: `func isValidSudoku(board [][]byte) bool {
+		Solution: `func isValidSudoku(board [][]string) bool {
 	rows := make([]map[byte]bool, 9)
 	cols := make([]map[byte]bool, 9)
 	boxes := make([]map[byte]bool, 9)
@@ -236,10 +236,10 @@ Think of this as finding the longest chain: you only start counting from the beg
 	}
 	for i := 0; i < 9; i++ {
 		for j := 0; j < 9; j++ {
-			if board[i][j] == '.' {
+			if board[i][j] == "." {
 				continue
 			}
-			num := board[i][j]
+			num := board[i][j][0]
 			boxIndex := (i/3)*3 + j/3
 			if rows[i][num] || cols[j][num] || boxes[boxIndex][num] {
 				return false
@@ -287,7 +287,7 @@ Think of this as having three separate checklists for each constraint: as you fi
 		Difficulty:  "Medium",
 		Signature:   "func encode(strs []string) string",
 		TestCases: []TestCase{
-			{Input: "strs = []string{\"hello\",\"world\"}", Expected: "encoded string"},
+			{Input: "strs = []string{\"hello\",\"world\"}", Expected: "5#hello5#world"},
 		},
 		Solution: `func encode(strs []string) string {
 	var result strings.Builder
@@ -1332,13 +1332,6 @@ Think of this as maintaining a window of unique characters: when you try to add 
 		}
 	}
 	return maxArea
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maxArea(height: List[int]) -> int:
     left, right = 0, len(height) - 1
@@ -1379,9 +1372,7 @@ Think of this as having two walls and trying to maximize the water between them:
 			{Input: "nums = []int{-1,0,1}", Expected: "[[-1 0 1]]"},
 			{Input: "nums = []int{}", Expected: "[]"},
 		},
-		Solution: `import "sort"
-
-func threeSum(nums []int) [][]int {
+		Solution: `func threeSum(nums []int) [][]int {
 	sort.Ints(nums)
 	result := [][]int{}
 	for i := 0; i < len(nums)-2; i++ {
@@ -1765,13 +1756,6 @@ Think of this as a word search puzzle: you start from a cell, try moving in each
 		prev2, prev1 = prev1, curr
 	}
 	return prev1
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def rob(nums: List[int]) -> int:
     if not nums:
@@ -1827,13 +1811,6 @@ Think of this as making decisions at each house: you can either take the money f
 		return -1
 	}
 	return dp[amount]
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def coinChange(coins: List[int], amount: int) -> int:
     dp = [amount + 1] * (amount + 1)
@@ -1895,9 +1872,7 @@ func binarySearch(tails []int, target int) int {
 	}
 	return left
 }`,
-		PythonSolution: `import bisect
-
-def lengthOfLIS(nums: List[int]) -> int:
+		PythonSolution: `def lengthOfLIS(nums: List[int]) -> int:
     tails = []
     for num in nums:
         pos = bisect.bisect_left(tails, num)
@@ -1931,9 +1906,7 @@ Think of this as building card piles: you place each card on the leftmost pile w
 			{Input: "array = []int{1, 2, 3}, targetSum = 7", Expected: "[]"},
 			{Input: "array = []int{8, 10, -2, 49, 14}, targetSum = 57", Expected: "[[-2 10 49]]"},
 		},
-		Solution: `import "sort"
-
-func threeNumberSum(array []int, targetSum int) [][]int {
+		Solution: `func threeNumberSum(array []int, targetSum int) [][]int {
 	sort.Ints(array)
 	triplets := [][]int{}
 	for i := 0; i < len(array)-2; i++ {
@@ -2078,9 +2051,7 @@ Think of this as peeling an onion layer by layer: you go around the outer edge i
 			{Input: "intervals = [[1, 10], [10, 20], [20, 30], [30, 40], [40, 50], [1, 100]]", Expected: "[[1 100]]"},
 			{Input: "intervals = [[1, 10], [11, 20], [21, 30]]", Expected: "[[1 10] [11 20] [21 30]]"},
 		},
-		Solution: `import "sort"
-
-func mergeOverlappingIntervals(intervals [][]int) [][]int {
+		Solution: `func mergeOverlappingIntervals(intervals [][]int) [][]int {
 	sort.Slice(intervals, func(i, j int) bool {
 		return intervals[i][0] < intervals[j][0]
 	})
@@ -2098,13 +2069,6 @@ func mergeOverlappingIntervals(intervals [][]int) [][]int {
 		}
 	}
 	return mergedIntervals
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def mergeOverlappingIntervals(intervals: List[List[int]]) -> List[List[int]]:
     intervals.sort(key=lambda x: x[0])
@@ -2145,12 +2109,7 @@ Think of this as consolidating meeting times: you sort them by start time, then 
 			{Input: "arrayOne = []int{10, 0, 20, 25}, arrayTwo = []int{1005, 1006, 1014, 1032, 1031}", Expected: "[25 1005]"},
 			{Input: "arrayOne = []int{10, 0, 20, 25, 2200}, arrayTwo = []int{1005, 1006, 1014, 1032, 1031}", Expected: "[25 1005]"},
 		},
-		Solution: `import (
-	"math"
-	"sort"
-)
-
-func smallestDifference(arrayOne []int, arrayTwo []int) []int {
+		Solution: `func smallestDifference(arrayOne []int, arrayTwo []int) []int {
 	sort.Ints(arrayOne)
 	sort.Ints(arrayTwo)
 	idxOne, idxTwo := 0, 0
@@ -2774,9 +2733,9 @@ Think of this as checking if each node is within an allowed range that gets narr
 		Description: "Write three functions that take in a Binary Search Tree (BST) and an empty array, traverse the BST, add its nodes' values to the input array, and return that array. The three functions should traverse the BST using the in-order, pre-order, and post-order tree-traversal techniques, respectively.",
 		Difficulty:  "Medium",
 		Topic:       "Binary Search Trees",
-		Signature:   "func inOrderTraverse(tree *TreeNode, array []int) []int\nfunc preOrderTraverse(tree *TreeNode, array []int) []int\nfunc postOrderTraverse(tree *TreeNode, array []int) []int",
+		Signature:   "func inOrderTraverse(tree *TreeNode, array []int) []int",
 		TestCases: []TestCase{
-			{Input: "tree = [10, 5, 15, 2, 5, 13, 22, 1, null, null, null, null, 14]", Expected: "In-order: [1, 2, 5, 5, 10, 13, 14, 15, 22]"},
+			{Input: "tree = [10, 5, 15, 2, 5, 13, 22, 1, null, null, null, null, 14]", Expected: "[1, 2, 5, 5, 10, 13, 14, 15, 22]"},
 		},
 		Solution: `func inOrderTraverse(tree *TreeNode, array []int) []int {
 	if tree != nil {
@@ -3074,13 +3033,6 @@ func getTreeInfo(tree *TreeNode) TreeInfo {
 	currentDiameter := max(longestPathThroughRoot, maxDiameterSoFar)
 	currentHeight := 1 + max(leftTreeInfo.Height, rightTreeInfo.Height)
 	return TreeInfo{Height: currentHeight, Diameter: currentDiameter}
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def binaryTreeDiameter(tree: Optional[TreeNode]) -> int:
     return get_tree_info(tree).diameter
@@ -3199,13 +3151,6 @@ func abs(x int) int {
 		return -x
 	}
 	return x
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def heightBalancedBinaryTree(tree: Optional[TreeNode]) -> bool:
     tree_info = get_tree_info(tree)
@@ -3265,13 +3210,6 @@ Think of this as checking if a tree is "well-proportioned": at each node, you ch
 		first = current
 	}
 	return first
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def maxSubsetSumNoAdjacent(array: List[int]) -> int:
     if len(array) == 0:
@@ -3370,13 +3308,6 @@ Think of this as building up possibilities: to make amount X, you can take any c
 		return numOfCoins[n]
 	}
 	return -1
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def minNumberOfCoinsForChange(n: int, denoms: List[int]) -> int:
     num_of_coins = [n + 1] * (n + 1)
@@ -3431,13 +3362,6 @@ Think of this as finding the shortest path to an amount: at each amount, you try
 		}
 	}
 	return edits[len(str2)][len(str1)]
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def levenshteinDistance(str1: str, str2: str) -> int:
     edits = [[j for j in range(len(str1) + 1)] for i in range(len(str2) + 1)]
@@ -4238,9 +4162,7 @@ Think of this as trying to color a map with two colors: if you can color it such
 		TestCases: []TestCase{
 			{Input: "k = 3, tasks = [1, 3, 5, 3, 1, 4]", Expected: "[[4, 2], [0, 5], [3, 1]]"},
 		},
-		Solution: `import "sort"
-
-type Task struct {
+		Solution: `type Task struct {
 	Duration int
 	Index    int
 }
@@ -5284,13 +5206,6 @@ func canMeasureInRange(measuringCups [][]int, low int, high int, memoize map[str
 
 func createHashableKey(low int, high int) string {
 	return string(rune(low)) + ":" + string(rune(high))
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def ambiguousMeasurements(measuringCups: List[List[int]], low: int, high: int) -> bool:
     memoize = {}
@@ -5916,9 +5831,7 @@ Think of this as sorting a deck of cards by first sorting by suit, then by rank 
 			{Input: "path = \"/foo/../test/../test/../foo//bar/./baz\"", Expected: "\"/foo/bar/baz\""},
 			{Input: "path = \"/foo/bar/baz\"", Expected: "\"/foo/bar/baz\""},
 		},
-		Solution: `import "strings"
-
-func shortenPath(path string) string {
+		Solution: `func shortenPath(path string) string {
 	startsWithSlash := path[0] == '/'
 	tokens := filter(strings.Split(path, "/"), func(s string) bool {
 		return len(s) > 0 && s != "."
@@ -6012,13 +5925,6 @@ Think of this as navigating a file system: "." means stay here (ignore), ".." me
 		pillarIndices = append(pillarIndices, idx)
 	}
 	return maxArea
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def largestRectangleUnderSkyline(buildings: List[int]) -> int:
     pillar_indices = []
@@ -6068,13 +5974,6 @@ Think of this as finding the largest rectangle you can form by stacking blocks: 
 		lastSeen[char] = i
 	}
 	return str[longest[0]:longest[1]]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def longestSubstringWithoutDuplication(string: str) -> str:
     last_seen = {}
@@ -6258,7 +6157,7 @@ Think of this as highlighting text: you find all places where the text appears, 
 		return []string{}
 	}
 	newPattern := getNewPattern(pattern)
-	didSwitch := newPattern[0] != rune(pattern[0])
+	didSwitch := newPattern[0] != pattern[0]
 	counts := map[rune]int{'x': 0, 'y': 0}
 	firstYPos := getCountsAndFirstYPos(newPattern, counts)
 	if counts['y'] != 0 {
@@ -6429,10 +6328,10 @@ func findSmallStringsIn(str string, startIdx int, trie *Trie, containedStrings m
 	currentNode := trie.root
 	for i := startIdx; i < len(str); i++ {
 		char := str[i]
-		if _, found := currentNode.children[char]; !found {
+		if _, found := currentNode.children[rune(char)]; !found {
 			break
 		}
-		currentNode = currentNode.children[char]
+		currentNode = currentNode.children[rune(char)]
 		if currentNode.endWord != "" {
 			containedStrings[currentNode.endWord] = true
 		}
@@ -6559,20 +6458,6 @@ func (stack *MinMaxStack) GetMin() int {
 
 func (stack *MinMaxStack) GetMax() int {
 	return stack.minMaxStack[len(stack.minMaxStack)-1]["max"]
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `class MinMaxStack:
     def __init__(self):
@@ -6687,7 +6572,7 @@ Think of this as matching parentheses in math: you open a parenthesis, and it mu
 	candidateBuildings := []int{}
 	startIdx := len(buildings) - 1
 	step := -1
-	if direction == "WEST" {
+	if direction == "EAST" {
 		startIdx = 0
 		step = 1
 	}
@@ -6700,7 +6585,7 @@ Think of this as matching parentheses in math: you open a parenthesis, and it mu
 		candidateBuildings = append(candidateBuildings, idx)
 		idx += step
 	}
-	if direction == "EAST" {
+	if direction == "WEST" {
 		reverse(candidateBuildings)
 	}
 	return candidateBuildings
@@ -6749,7 +6634,7 @@ Think of this as looking at a skyline: buildings block the view of shorter build
 		Signature:   "func bestDigits(number string, numDigits int) string",
 		TestCases: []TestCase{
 			{Input: "number = \"462839\", numDigits = 2", Expected: "\"6839\""},
-			{Input: "number = \"1432219\", numDigits = 3", Expected: "\"3219\""},
+			{Input: "number = \"1432219\", numDigits = 3", Expected: "\"4329\""},
 		},
 		Solution: `func bestDigits(number string, numDigits int) string {
 	stack := []rune{}
@@ -6909,9 +6794,7 @@ Think of this as finding the next taller person in a circle: you go around the c
 			{Input: "tokens = [\"3\", \"2\", \"+\", \"7\", \"*\"]", Expected: "35"},
 			{Input: "tokens = [\"3\", \"2\", \"+\", \"7\", \"*\", \"2\", \"-\"]", Expected: "33"},
 		},
-		Solution: `import "strconv"
-
-func reversePolishNotation(tokens []string) int {
+		Solution: `func reversePolishNotation(tokens []string) int {
 	stack := []int{}
 	for _, token := range tokens {
 		if token == "+" || token == "-" || token == "*" || token == "/" {
@@ -7105,9 +6988,7 @@ Think of this as looking for symmetry: for each point in the string, you check h
 		TestCases: []TestCase{
 			{Input: "words = [\"yo\", \"act\", \"flop\", \"tac\", \"foo\", \"cat\", \"oy\", \"olfp\"]", Expected: "[[\"yo\", \"oy\"], [\"act\", \"tac\", \"cat\"], [\"flop\", \"olfp\"], [\"foo\"]]"},
 		},
-		Solution: `import "sort"
-
-func groupAnagrams(words []string) [][]string {
+		Solution: `func groupAnagrams(words []string) [][]string {
 	anagrams := make(map[string][]string)
 	for _, word := range words {
 		sortedWord := sortString(word)
@@ -7155,7 +7036,7 @@ Think of this as organizing words by their "fingerprint": you rearrange the lett
 		Topic:       "Strings",
 		Signature:   "func validIPAddresses(str string) []string",
 		TestCases: []TestCase{
-			{Input: "str = \"1921680\"", Expected: "[\"1.9.2.1680\", \"1.9.21.680\", \"1.9.216.80\", \"1.92.1.680\", \"1.92.16.80\", \"1.92.168.0\", \"19.2.1.680\", \"19.2.16.80\", \"19.2.168.0\", \"19.21.6.80\", \"19.21.68.0\", \"19.216.8.0\", \"192.1.6.80\", \"192.1.68.0\", \"192.16.8.0\"]"},
+			{Input: "str = \"1921680\"", Expected: "[\"1.9.216.80\", \"1.92.16.80\", \"1.92.168.0\", \"19.2.16.80\", \"19.2.168.0\", \"19.21.6.80\", \"19.21.68.0\", \"19.216.8.0\", \"192.1.6.80\", \"192.1.68.0\", \"192.16.8.0\"]"},
 		},
 		Solution: `func validIPAddresses(str string) []string {
 	ipAddressesFound := []string{}
@@ -7195,13 +7076,6 @@ func isValidPart(str string) bool {
 		num = num*10 + digit
 	}
 	return num <= 255
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def validIPAddresses(string: str) -> List[str]:
     ip_addresses_found = []

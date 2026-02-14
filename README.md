@@ -1,4 +1,4 @@
-# LeetCode Clone
+rm fi   # LeetCode Clone
 
 A secure, local LeetCode-style coding challenge platform built with Go. Features 60 curated problems (20 Easy, 20 Medium, 20 Hard) with sandboxed code execution.
 

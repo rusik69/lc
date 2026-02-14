@@ -1675,9 +1675,7 @@ Think of this as a tournament scoreboard: as each match finishes, you update the
 			{Input: "coins = []int{6, 4, 5, 1, 1, 8, 9}", Expected: "3"},
 			{Input: "coins = []int{1}", Expected: "2"},
 		},
-		Solution: `import "sort"
-
-func nonConstructibleChange(coins []int) int {
+		Solution: `func nonConstructibleChange(coins []int) int {
 	sort.Ints(coins)
 	changeCreated := 0
 	for _, coin := range coins {
@@ -1921,7 +1919,7 @@ Think of this as measuring the distance from the root to each node and adding up
 		Topic:       "Binary Trees",
 		Signature:   "func evaluateExpressionTree(tree *TreeNode) int",
 		TestCases: []TestCase{
-			{Input: "tree = [-1, -2, -3, -4, 2, 8, 3, 2]", Expected: "6"},
+			{Input: "tree = [-1, -2, -3, -4, 2, 8, 3, 2, 3]", Expected: "6"},
 			{Input: "tree = [-2, 3, 2]", Expected: "5"},
 			{Input: "tree = [-4, 2, 3]", Expected: "6"},
 			{Input: "tree = [2]", Expected: "2"},
@@ -1933,10 +1931,10 @@ Think of this as measuring the distance from the root to each node and adding up
 	leftVal := evaluateExpressionTree(tree.Left)
 	rightVal := evaluateExpressionTree(tree.Right)
 	switch tree.Val {
-	case -1: // addition
-		return leftVal + rightVal
-	case -2: // subtraction
+	case -1: // subtraction
 		return leftVal - rightVal
+	case -2: // addition
+		return leftVal + rightVal
 	case -3: // division
 		return leftVal / rightVal
 	case -4: // multiplication
@@ -2030,9 +2028,7 @@ Think of this as exploring a maze: you mark your current location, then try each
 			{Input: "queries = []int{25, 30, 2, 1}", Expected: "32"},
 			{Input: "queries = []int{1}", Expected: "0"},
 		},
-		Solution: `import "sort"
-
-func minimumWaitingTime(queries []int) int {
+		Solution: `func minimumWaitingTime(queries []int) int {
 	sort.Ints(queries)
 	totalWaitingTime := 0
 	for i, duration := range queries {
@@ -2073,9 +2069,7 @@ Think of this as a queue at a service counter: if you serve the quickest custome
 			{Input: "redShirtHeights = []int{5, 8, 1, 3, 4}, blueShirtHeights = []int{5, 8, 1, 3, 4}", Expected: "false"},
 			{Input: "redShirtHeights = []int{6}, blueShirtHeights = []int{6}", Expected: "false"},
 		},
-		Solution: `import "sort"
-
-func classPhotos(redShirtHeights []int, blueShirtHeights []int) bool {
+		Solution: `func classPhotos(redShirtHeights []int, blueShirtHeights []int) bool {
 	sort.Sort(sort.Reverse(sort.IntSlice(redShirtHeights)))
 	sort.Sort(sort.Reverse(sort.IntSlice(blueShirtHeights)))
 	shirtColorInFirstRow := "BLUE"
@@ -2138,9 +2132,7 @@ Think of this as lining up two teams by height: you want the back team to be tal
 			{Input: "redShirtSpeeds = []int{1, 2, 1, 9, 12, 3}, blueShirtSpeeds = []int{3, 3, 4, 6, 1, 2}, fastest = false", Expected: "30"},
 			{Input: "redShirtSpeeds = []int{1, 2, 1, 9, 12, 3}, blueShirtSpeeds = []int{3, 3, 4, 6, 1, 2}, fastest = true", Expected: "37"},
 		},
-		Solution: `import "sort"
-
-func tandemBicycle(redShirtSpeeds []int, blueShirtSpeeds []int, fastest bool) int {
+		Solution: `func tandemBicycle(redShirtSpeeds []int, blueShirtSpeeds []int, fastest bool) int {
 	sort.Ints(redShirtSpeeds)
 	sort.Ints(blueShirtSpeeds)
 	totalSpeed := 0
@@ -2154,13 +2146,6 @@ func tandemBicycle(redShirtSpeeds []int, blueShirtSpeeds []int, fastest bool) in
 		}
 	}
 	return totalSpeed
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }`,
 		PythonSolution: `def tandemBicycle(redShirtSpeeds: List[int], blueShirtSpeeds: List[int], fastest: bool) -> int:
     redShirtSpeeds.sort()
@@ -2197,11 +2182,9 @@ Think of this as matching partners for a race: to maximize total speed, pair the
 		TestCases: []TestCase{
 			{Input: "jobs = [{\"deadline\": 1, \"payment\": 1}, {\"deadline\": 2, \"payment\": 2}, {\"deadline\": 2, \"payment\": 1}]", Expected: "3"},
 			{Input: "jobs = [{\"deadline\": 2, \"payment\": 1}, {\"deadline\": 2, \"payment\": 2}, {\"deadline\": 2, \"payment\": 3}]", Expected: "5"},
-			{Input: "jobs = [{\"deadline\": 1, \"payment\": 1}, {\"deadline\": 2, \"payment\": 2}, {\"deadline\": 3, \"payment\": 3}, {\"deadline\": 4, \"payment\": 4}, {\"deadline\": 5, \"payment\": 5}, {\"deadline\": 6, \"payment\": 6}, {\"deadline\": 7, \"payment\": 7}, {\"deadline\": 1, \"payment\": 8}]", Expected: "33"},
+			{Input: "jobs = [{\"deadline\": 1, \"payment\": 1}, {\"deadline\": 2, \"payment\": 2}, {\"deadline\": 3, \"payment\": 3}, {\"deadline\": 4, \"payment\": 4}, {\"deadline\": 5, \"payment\": 5}, {\"deadline\": 6, \"payment\": 6}, {\"deadline\": 7, \"payment\": 7}, {\"deadline\": 1, \"payment\": 8}]", Expected: "35"},
 		},
-		Solution: `import "sort"
-
-type Job struct {
+		Solution: `type Job struct {
 	Deadline int
 	Payment  int
 }
@@ -2306,18 +2289,20 @@ Think of this as two people walking: one walks at normal speed, the other runs a
 		Topic:       "Recursion",
 		Signature:   "func productSum(array []interface{}, multiplier int) int",
 		TestCases: []TestCase{
-			{Input: "array = [5, 2, [7, -1], 3, [6, [-13, 8], 4]]", Expected: "12"},
-			{Input: "array = [1, 2, 3, 4, 5]", Expected: "15"},
-			{Input: "array = [1, 2, [3], 4, 5]", Expected: "18"},
-			{Input: "array = [[1, 2], 3, [4, 5]]", Expected: "27"},
+			{Input: "array = [5, 2, [7, -1], 3, [6, [-13, 8], 4]], multiplier = 1", Expected: "12"},
+			{Input: "array = [1, 2, 3, 4, 5], multiplier = 1", Expected: "15"},
+			{Input: "array = [1, 2, [3], 4, 5], multiplier = 1", Expected: "18"},
+			{Input: "array = [[1, 2], 3, [4, 5]], multiplier = 1", Expected: "27"},
 		},
 		Solution: `func productSum(array []interface{}, multiplier int) int {
 	sum := 0
 	for _, element := range array {
 		if num, ok := element.(int); ok {
 			sum += num
+		} else if num, ok := element.(float64); ok {
+			sum += int(num)
 		} else if subArray, ok := element.([]interface{}); ok {
-			sum += productSum(subArray, multiplier+1) * (multiplier + 1)
+			sum += productSum(subArray, multiplier+1)
 		}
 	}
 	return sum * multiplier
