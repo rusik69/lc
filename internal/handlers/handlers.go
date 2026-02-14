@@ -10,12 +10,13 @@ import (
 	"strings"
 	"time"
 
+	"math/rand"
+
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/rusik69/lc/internal/executor"
 	"github.com/rusik69/lc/internal/problems"
-	"math/rand"
 )
 
 var (
