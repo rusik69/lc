@@ -15,6 +15,8 @@ var MediumProblems = []Problem{
 			{Input: "strs = []string{\"a\"}", Expected: "[[a]]"},
 			{Input: "strs = []string{\"abc\",\"bca\",\"cab\"}", Expected: "[[abc bca cab]]"},
 			{Input: "strs = []string{\"listen\",\"silent\",\"enlist\"}", Expected: "[[listen silent enlist]]"},
+			{Input: "strs = []string{\"bob\", \"boo\"}", Expected: "[[bob] [boo]]"},
+			{Input: "strs = []string{\"tea\", \"and\", \"ace\", \"ad\", \"eat\", \"dan\"}", Expected: "[[tea eat] [and dan] [ace] [ad]]"},
 		},
 		Solution: `func groupAnagrams(strs []string) [][]string {
 	groups := make(map[[26]int][]string)
@@ -67,6 +69,8 @@ Think of this as creating a "fingerprint" for each string based on its letter co
 			{Input: "nums = []int{1,2}, k = 2", Expected: "[1 2]"},
 			{Input: "nums = []int{4,1,-1,2,-1,2,3}, k = 2", Expected: "[-1 2]"},
 			{Input: "nums = []int{1,1,1,2,2,3,3,3}, k = 2", Expected: "[1 3]"},
+			{Input: "nums = []int{100, 100, 200}, k = 2", Expected: "[100 200]"},
+			{Input: "nums = []int{1, 2, 3}, k = 3", Expected: "[1 2 3]"},
 		},
 		Solution: `func topKFrequent(nums []int, k int) []int {
 	freq := make(map[int]int)
@@ -121,6 +125,8 @@ Think of this as organizing items by how often they appear: you put each item in
 			{Input: "nums = []int{2,3,4,5}", Expected: "[60 40 30 24]"},
 			{Input: "nums = []int{-1,-1,1,-1,-1}", Expected: "[-1 -1 1 -1 -1]"},
 			{Input: "nums = []int{1,0}", Expected: "[0 1]"},
+			{Input: "nums = []int{0, 0}", Expected: "[0 0]"},
+			{Input: "nums = []int{0, 4, 0}", Expected: "[0 0 0]"},
 		},
 		Solution: `func productExceptSelf(nums []int) []int {
 	n := len(nums)
@@ -172,6 +178,9 @@ Think of this as calculating "what would the product be if I removed this elemen
 			{Input: "nums = []int{1}", Expected: "1"},
 			{Input: "nums = []int{1,3,5,7,9}", Expected: "1"},
 			{Input: "nums = []int{1,2,3,4,5}", Expected: "5"},
+			{Input: "nums = []int{-1, -2, -3}", Expected: "3"},
+			{Input: "nums = []int{1, 0, -1}", Expected: "3"},
+			{Input: "nums = []int{1, 2, 0, 1}", Expected: "3"},
 		},
 		Solution: `func longestConsecutive(nums []int) int {
 	numSet := make(map[int]bool)
@@ -288,6 +297,11 @@ Think of this as having three separate checklists for each constraint: as you fi
 		Signature:   "func encode(strs []string) string",
 		TestCases: []TestCase{
 			{Input: "strs = []string{\"hello\",\"world\"}", Expected: "5#hello5#world"},
+			{Input: "strs = []string{}", Expected: ""},
+			{Input: "strs = []string{\"\"}", Expected: "0#"},
+			{Input: "strs = []string{\"a\", \"b\"}", Expected: "1#a1#b"},
+			{Input: "strs = []string{\"#\"}", Expected: "1##"},
+			{Input: "strs = []string{\"Code\", \"is\", \"fun\"}", Expected: "4#Code2#is3#fun"},
 		},
 		Solution: `func encode(strs []string) string {
 	var result strings.Builder
@@ -359,6 +373,9 @@ Think of this as writing a recipe: you first write how many ingredients you need
 			{Input: "s = \"a\"", Expected: "1"},
 			{Input: "s = \"abcdef\"", Expected: "6"},
 			{Input: "s = \"dvdf\"", Expected: "3"},
+			{Input: "s = \" \"", Expected: "1"},
+			{Input: "s = \"au\"", Expected: "2"},
+			{Input: "s = \"tmmzuxt\"", Expected: "5"},
 		},
 		Solution: `func lengthOfLongestSubstring(s string) int {
 	charIndex := make(map[byte]int)
@@ -2472,10 +2489,10 @@ Think of this as using the array as a checklist: when you see a number, you chec
 		Signature:   "func missingNumbers(nums []int) []int",
 		TestCases: []TestCase{
 			{Input: "nums = []int{4, 5, 1, 3}", Expected: "[2]"},
-			{Input: "nums = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100}", Expected: "[]"},
+			{Input: "nums = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100}", Expected: "[101]"},
 		},
 		Solution: `func missingNumbers(nums []int) []int {
-	n := len(nums) + 2
+	n := len(nums) + 1
 	missing := []int{}
 	present := make(map[int]bool)
 	for _, num := range nums {
@@ -2803,7 +2820,7 @@ Think of tree traversal as visiting a house: pre-order is like entering a room, 
 		Topic:       "Binary Search Trees",
 		Signature:   "func minHeightBst(array []int) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "array = [1, 2, 5, 7, 10, 13, 14, 15, 22]", Expected: "BST with min height"},
+			{Input: "array = [1, 2, 5, 7, 10, 13, 14, 15, 22]", Expected: "[10, 2, 14, 1, 5, 13, 15, null, null, null, 7, null, null, null, 22]"},
 		},
 		Solution: `func minHeightBst(array []int) *TreeNode {
 	return constructMinHeightBst(array, 0, len(array)-1)
@@ -2913,7 +2930,7 @@ Think of this as reading a sorted list backwards: you start from the rightmost (
 		Topic:       "Binary Search Trees",
 		Signature:   "func reconstructBst(preOrderTraversalValues []int) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "preOrderTraversalValues = [10, 4, 2, 1, 5, 17, 19, 18]", Expected: "Valid BST"},
+			{Input: "preOrderTraversalValues = [10, 4, 2, 1, 5, 17, 19, 18]", Expected: "[10, 4, 17, 2, 5, null, 19, 1, null, null, null, 18]"},
 		},
 		Solution: `type TreeInfo struct {
 	RootIdx int
@@ -2975,7 +2992,7 @@ Think of this as building a tree by reading values in pre-order: you know the fi
 		Topic:       "Binary Trees",
 		Signature:   "func invertBinaryTree(tree *TreeNode)",
 		TestCases: []TestCase{
-			{Input: "tree = [1, 2, 3, 4, 5, 6, 7, 8, 9]", Expected: "Inverted tree"},
+			{Input: "tree = [1, 2, 3, 4, 5, 6, 7, 8, 9]", Expected: "[1, 3, 2, 7, 6, 5, 4, null, null, null, null, null, null, 9, 8]"},
 		},
 		Solution: `func invertBinaryTree(tree *TreeNode) {
 	if tree == nil {
@@ -3072,7 +3089,7 @@ Think of this as finding the longest "chain" in the tree: at each node, you chec
 		Topic:       "Binary Search Trees",
 		Signature:   "func findSuccessor(tree *TreeNode, target int) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "tree = [10, 5, 15, 2, 5, 13, 22, 1, null, null, null, null, 14], target = 12", Expected: "13"},
+			{Input: "tree = [10, 5, 15, 2, 5, 13, 22, 1, null, null, null, null, 14], target = 12", Expected: "[13, null, 14]"},
 		},
 		Solution: `func findSuccessor(tree *TreeNode, target int) *TreeNode {
 	if tree == nil {
@@ -3122,7 +3139,7 @@ Think of this as finding the next number in a sorted list: if the current number
 		Topic:       "Binary Trees",
 		Signature:   "func heightBalancedBinaryTree(tree *TreeNode) bool",
 		TestCases: []TestCase{
-			{Input: "tree = [1, 2, 3, 4, 5, null, 6, 7, 8]", Expected: "false"},
+			{Input: "tree = [1, 2, 3, 4, 5, null, 6, 7, 8]", Expected: "true"},
 			{Input: "tree = [1, 2, 3, 4, 5]", Expected: "true"},
 		},
 		Solution: `type TreeInfo struct {
@@ -3652,7 +3669,7 @@ Think of this as finding islands of 1s in a sea of 0s: you explore each island c
 		Description: "You're given three inputs, all of which are instances of an AncestralTree class that have an ancestor property pointing to their youngest ancestor. The first input is the top ancestor in an ancestral tree (i.e., the only instance that has no ancestor--its ancestor property points to None / null), and the other two inputs are descendants in the ancestral tree. Write a function that returns the youngest common ancestor to the two descendants.",
 		Difficulty:  "Medium",
 		Topic:       "Graphs",
-		Signature:   "func getYoungestCommonAncestor(topAncestor *AncestralTree, descendantOne *AncestralTree, descendantTwo *AncestralTree) *AncestralTree",
+		Signature:   "type AncestralTree struct { Name string; Ancestor *AncestralTree }\nfunc getYoungestCommonAncestor(topAncestor *AncestralTree, descendantOne *AncestralTree, descendantTwo *AncestralTree) *AncestralTree",
 		TestCases: []TestCase{
 			{Input: "Tree structure", Expected: "Youngest common ancestor"},
 		},
@@ -3737,7 +3754,7 @@ Think of this as finding where two paths up a family tree meet: you first bring 
 		Topic:       "Graphs",
 		Signature:   "func removeIslands(matrix [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "matrix = [[1, 0, 0, 0, 0, 0], [0, 1, 0, 1, 1, 1], [0, 0, 1, 0, 1, 0], [1, 1, 0, 0, 1, 0], [1, 0, 1, 1, 0, 0], [1, 0, 0, 0, 0, 1]]", Expected: "Matrix with islands removed"},
+			{Input: "matrix = [[1, 0, 0, 0, 0, 0], [0, 1, 0, 1, 1, 1], [0, 0, 1, 0, 1, 0], [1, 1, 0, 0, 1, 0], [1, 0, 1, 1, 0, 0], [1, 0, 0, 0, 0, 1]]", Expected: "[[1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 1, 0], [1, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1]]"},
 		},
 		Solution: `func removeIslands(matrix [][]int) [][]int {
 	for row := 0; row < len(matrix); row++ {
@@ -4895,7 +4912,7 @@ Think of this as rotating a circular list: you find where to "cut" the circle (a
 		Topic:       "Dynamic Programming",
 		Signature:   "func interweavingStrings(one string, two string, three string) bool",
 		TestCases: []TestCase{
-			{Input: "one = \"algoexpert\", two = \"your-dream-job\", three = \"your-algodream-expertjob\"", Expected: "false"},
+			{Input: "one = \"algoexpert\", two = \"your-dream-job\", three = \"your-algodream-expertjob\"", Expected: "true"},
 			{Input: "one = \"aabcc\", two = \"dbbca\", three = \"aadbbcbcac\"", Expected: "true"},
 		},
 		Solution: `func interweavingStrings(one string, two string, three string) bool {
@@ -4970,7 +4987,7 @@ Think of this as trying to form a word by alternately taking letters from two wo
 		Topic:       "Backtracking",
 		Signature:   "func solveSudoku(board [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "board = [[7, 8, 0, 4, 0, 0, 1, 2, 0], [6, 0, 0, 0, 7, 5, 0, 0, 9], [0, 0, 0, 6, 0, 1, 0, 7, 8], [0, 0, 7, 0, 4, 0, 2, 6, 0], [0, 0, 1, 0, 5, 0, 9, 3, 0], [9, 0, 4, 0, 6, 0, 0, 0, 5], [0, 7, 0, 3, 0, 0, 0, 1, 2], [1, 2, 0, 0, 0, 7, 4, 0, 0], [0, 4, 9, 2, 0, 6, 0, 0, 7]]", Expected: "Solved board"},
+			{Input: "board = [[7, 8, 0, 4, 0, 0, 1, 2, 0], [6, 0, 0, 0, 7, 5, 0, 0, 9], [0, 0, 0, 6, 0, 1, 0, 7, 8], [0, 0, 7, 0, 4, 0, 2, 6, 0], [0, 0, 1, 0, 5, 0, 9, 3, 0], [9, 0, 4, 0, 6, 0, 0, 0, 5], [0, 7, 0, 3, 0, 0, 0, 1, 2], [1, 2, 0, 0, 0, 7, 4, 0, 0], [0, 4, 9, 2, 0, 6, 0, 0, 7]]", Expected: "[[7, 8, 5, 4, 3, 9, 1, 2, 6], [6, 1, 2, 8, 7, 5, 3, 4, 9], [4, 9, 3, 6, 2, 1, 5, 7, 8], [8, 5, 7, 9, 4, 3, 2, 6, 1], [2, 6, 1, 7, 5, 8, 9, 3, 4], [9, 3, 4, 1, 6, 2, 7, 8, 5], [5, 7, 8, 3, 9, 4, 6, 1, 2], [1, 2, 6, 5, 8, 7, 4, 9, 3], [3, 4, 9, 2, 1, 6, 8, 5, 7]]"},
 		},
 		Solution: `func solveSudoku(board [][]int) [][]int {
 	solvePartialSudoku(0, 0, board)
@@ -5205,7 +5222,7 @@ func canMeasureInRange(measuringCups [][]int, low int, high int, memoize map[str
 }
 
 func createHashableKey(low int, high int) string {
-	return string(rune(low)) + ":" + string(rune(high))
+	return fmt.Sprintf("%d:%d", low, high)
 }`,
 		PythonSolution: `def ambiguousMeasurements(measuringCups: List[List[int]], low: int, high: int) -> bool:
     memoize = {}

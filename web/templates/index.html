@@ -2,17 +2,23 @@
 {{define "content"}}
 <div class="container">
     <h2>Problems</h2>
-    <ul class="problem-list">
-        {{range .}}
-        <li>
-            <a href="/problem/{{.ID}}">
-                <span class="problem-id">#{{.ID}}</span>
-                <span class="problem-title">{{.Title}}</span>
+    <div class="problem-list">
+        {{$solved := .Solved}}
+        {{range .Problems}}
+        <div class="problem-item {{if index $solved .ID}}solved{{end}}">
+            <a href="/problem/{{.ID}}" class="problem-link">
+                <div class="problem-info">
+                    <span class="problem-status">
+                        {{if index $solved .ID}}✓{{end}}
+                    </span>
+                    <span class="problem-id">{{.ID}}.</span>
+                    <span class="problem-title">{{.Title}}</span>
+                </div>
                 <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span>
             </a>
-        </li>
+        </div>
         {{end}}
-    </ul>
+    </div>
 </div>
 {{end}}
 {{template "layout.html" .}}

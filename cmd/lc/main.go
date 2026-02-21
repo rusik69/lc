@@ -21,6 +21,7 @@ import (
 	_ "github.com/rusik69/lc/internal/courses/python"
 	_ "github.com/rusik69/lc/internal/courses/software_architecture"
 	_ "github.com/rusik69/lc/internal/courses/systems_design"
+	"github.com/rusik69/lc/internal/db"
 	"github.com/rusik69/lc/internal/handlers"
 )
 
@@ -28,6 +29,11 @@ func main() {
 	// Initialize auth
 	if err := auth.InitAuth(); err != nil {
 		log.Fatalf("Failed to initialize auth: %v", err)
+	}
+
+	// Initialize database
+	if err := db.InitDB(); err != nil {
+		log.Printf("Failed to initialize database (continuing without DB features): %v", err)
 	}
 
 	// Initialize templates

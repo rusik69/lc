@@ -2,8 +2,17 @@
 {{define "problem-content"}}
 <div class="container">
     <div class="problem-header">
-        <h2>{{.Title}} <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span></h2>
-        <a href="/">← Back to Problems</a>
+        <h2>
+            {{.Title}} 
+            <span class="difficulty difficulty-{{.Difficulty}}">{{.Difficulty}}</span>
+            {{if .IsSolved}}<span class="solved-badge">✓ Solved</span>{{end}}
+        </h2>
+        <div>
+            <a href="/">← Back to Problems</a>
+            {{if .NextID}}
+            <a href="/problem/{{.NextID}}" class="next-problem-btn">Next Problem →</a>
+            {{end}}
+        </div>
     </div>
     
     <div class="problem-content">
@@ -32,9 +41,7 @@
                         <option value="python">Python 3</option>
                     </select>
                 </div>
-                <textarea id="code-editor" name="code" class="code-editor" placeholder="// Write your solution here&#10;{{.Signature}} {&#10;    &#10;}" required>{{.Signature}} {
-    
-}</textarea>
+                <textarea id="code-editor" name="code" class="code-editor" placeholder="// Write your solution here&#10;{{.Signature}} {&#10;    &#10;}" required>{{.UserCode}}</textarea>
                 <div class="button-group">
                     <button type="button" id="run-btn" name="action" value="test">Run</button>
                     <button type="submit" name="action" value="submit">Submit</button>

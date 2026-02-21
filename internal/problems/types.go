@@ -135,6 +135,21 @@ func GetProblem(id int) *Problem {
 	return nil
 }
 
+// GetNextProblemID returns the ID of the next problem after the given ID
+func GetNextProblemID(id int) int {
+	problemsMu.RLock()
+	defer problemsMu.RUnlock()
+	for i := range allProblems {
+		if allProblems[i].ID == id {
+			if i+1 < len(allProblems) {
+				return allProblems[i+1].ID
+			}
+			return 0 // No next problem
+		}
+	}
+	return 0 // Problem not found
+}
+
 // GetAllProblems returns all problems
 func GetAllProblems() []Problem {
 	problemsMu.RLock()

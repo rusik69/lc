@@ -267,7 +267,7 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 			sb.WriteString(fmt.Sprintf("\t\texpected := %s\n", tc.Expected))
 			sb.WriteString("\t\tif result == expected {\n")
 			sb.WriteString("\t\t\tpassed++\n")
-			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\", %d)\n", i+1, i+1))
+			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\")\n", i+1))
 			sb.WriteString("\t\t} else {\n")
 			sb.WriteString("\t\t\tfailed++\n")
 			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"FAIL Test %d: got %%d, expected %%d\\n\", result, expected)\n", i+1))
@@ -294,7 +294,7 @@ func GenerateTestCode(problem *problems.Problem, userCode string, runAllTests bo
 			sb.WriteString("\t\texpected := \"Node 4\"\n")
 			sb.WriteString("\t\tif got == expected {\n")
 			sb.WriteString("\t\t\tpassed++\n")
-			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\", %d)\n", i+1, i+1))
+			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\")\n", i+1))
 			sb.WriteString("\t\t} else {\n")
 			sb.WriteString("\t\t\tfailed++\n")
 			sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"FAIL Test %d: got %%s, expected %%s\\n\", got, expected)\n", i+1))
@@ -1641,42 +1641,24 @@ func ExecuteCodeWithLanguage(problem *problems.Problem, userCode string, runAllT
 	// Get sandbox container name
 	container := GetSandboxContainer()
 
-	// Write code to sandbox container
-	writeCmd := exec.CommandContext(ctx, "docker", "exec", "-i", container,
-		"sh", "-c", fmt.Sprintf("cat > %s", filename))
-	writeCmd.Stdin = strings.NewReader(testCode)
-	var writeErr bytes.Buffer
-	writeCmd.Stderr = &writeErr
-
-	if err := writeCmd.Run(); err != nil {
-		return &ExecutionResult{
-			Success: false,
-			Error:   fmt.Sprintf("Failed to write code to container: %v\n%s", err, writeErr.String()),
-		}
-	}
-
-	// Execute code in sandbox container
+	// Execute code in sandbox container - combined write, execute, and cleanup to reduce overhead
 	// Timeout: 35 seconds (allows for compilation + execution + overhead)
-	// Go compilation can take a few seconds, so we need extra time
 	var execDockerCmd *exec.Cmd
+	// Use trap or exit code capture to ensure we return the correct exit code even after cleanup
+	cmdStr := fmt.Sprintf("cat > %s && cd /tmp && timeout 35 %s %s; ret=$?; rm -f %s; exit $ret", filename, execCmd, filename, filename)
+
 	if language == "python" {
-		// For Python, use python3 directly (timeout handled by context)
-		execDockerCmd = exec.CommandContext(ctx, "docker", "exec", container,
-			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 35 python3 %s 2>&1", filename))
-	} else {
-		execDockerCmd = exec.CommandContext(ctx, "docker", "exec", container,
-			"sh", "-c", fmt.Sprintf("cd /tmp && timeout 35 %s %s", execCmd, filename))
+		cmdStr = fmt.Sprintf("cat > %s && cd /tmp && timeout 35 python3 %s 2>&1; ret=$?; rm -f %s; exit $ret", filename, filename, filename)
 	}
+
+	execDockerCmd = exec.CommandContext(ctx, "docker", "exec", "-i", container, "sh", "-c", cmdStr)
+	execDockerCmd.Stdin = strings.NewReader(testCode)
 
 	var stdout, stderr bytes.Buffer
 	execDockerCmd.Stdout = &stdout
 	execDockerCmd.Stderr = &stderr
 
 	err := execDockerCmd.Run()
-
-	// Clean up temp file
-	cleanCmd := exec.Command("docker", "exec", container, "rm", "-f", filename)
-	cleanCmd.Run() // Ignore errors on cleanup
 
 	timeTaken := time.Since(start).String()
 
@@ -1809,7 +1791,7 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 	if strings.Contains(p.Signature, "Constructor") || !strings.HasPrefix(p.Signature, "func ") {
 		sb.WriteString(fmt.Sprintf("\t\t// Skipping problem: %s\n", p.Title))
 		sb.WriteString("\t\tpassed++\n") // Count as passed
-		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Skipped)\\n\", %d)\n", testNum, testNum))
+		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Skipped)\\n\")\n", testNum))
 		sb.WriteString("\t}\n")
 		return sb.String()
 	}
@@ -1820,7 +1802,7 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 	if len(parts) < 2 {
 		sb.WriteString(fmt.Sprintf("\t\t// Failed to parse signature: %s\n", p.Signature))
 		sb.WriteString("\t\tpassed++\n") // Treat as passed if we can't parse signature or it's a struct def
-		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Signature parse warning)\\n\", %d)\n", testNum, testNum))
+		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Signature parse warning)\\n\")\n", testNum))
 		sb.WriteString("\t}\n")
 		return sb.String()
 	}
@@ -1829,7 +1811,7 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 	if funcName == "" || strings.Contains(funcName, ")") || strings.Contains(funcName, "(") || strings.Contains(funcName, " ") {
 		sb.WriteString("\t\t// Skipping method receiver or complex sig\n")
 		sb.WriteString("\t\tpassed++\n")
-		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Method/Complexity skipped)\\n\", %d)\n", testNum, testNum))
+		sb.WriteString(fmt.Sprintf("\t\tfmt.Printf(\"PASS Test %d (Method/Complexity skipped)\\n\")\n", testNum))
 		sb.WriteString("\t}\n")
 		return sb.String()
 	}
@@ -1994,7 +1976,12 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 		} else if strings.HasPrefix(typ, "[]") || strings.HasPrefix(typ, "map") {
 			sb.WriteString(fmt.Sprintf("\t\t%s := fromJSON[%s](\"%s\")\n", name, typ, valEscaped))
 		} else if typ == "string" {
-			sb.WriteString(fmt.Sprintf("\t\t%s := fromJSON[string](\"%s\")\n", name, valEscaped))
+			// Ensure string is quoted for JSON if not already
+			if !strings.HasPrefix(val, "\"") {
+				sb.WriteString(fmt.Sprintf("\t\t%s := fromJSON[string](\"\\\"%s\\\"\")\n", name, valEscaped))
+			} else {
+				sb.WriteString(fmt.Sprintf("\t\t%s := fromJSON[string](\"%s\")\n", name, valEscaped))
+			}
 		} else {
 			sb.WriteString(fmt.Sprintf("\t\t%s := fromJSON[%s](\"%s\")\n", name, typ, valEscaped))
 		}
@@ -2049,6 +2036,8 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 		sb.WriteString("\t\t\tres_strs = append(res_strs, row_strs)\n")
 		sb.WriteString("\t\t}\n")
 		sb.WriteString("\t\tb_res, _ := json.Marshal(res_strs)\n")
+	} else if retType == "[]byte" {
+		sb.WriteString("\t\tb_res, _ := json.Marshal(string(result))\n")
 	} else {
 		sb.WriteString("\t\tb_res, _ := json.Marshal(result)\n")
 	}
@@ -2056,7 +2045,7 @@ func generateGenericTestCase(p *problems.Problem, tc problems.TestCase, testNum 
 
 	sb.WriteString("\t\tif fuzzyEqual(got, expected) {\n")
 	sb.WriteString("\t\t\tpassed++\n")
-	sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\", %d)\n", testNum, testNum))
+	sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"PASS Test %d\\n\")\n", testNum))
 	sb.WriteString("\t\t} else {\n")
 	sb.WriteString("\t\t\tfailed++\n")
 	sb.WriteString(fmt.Sprintf("\t\t\tfmt.Printf(\"FAIL Test %d: got %%s, expected %%s\\n\", got, expected)\n", testNum))

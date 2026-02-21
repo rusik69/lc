@@ -15,6 +15,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/rusik69/lc/internal/db"
 	"github.com/rusik69/lc/internal/executor"
 	"github.com/rusik69/lc/internal/problems"
 )
@@ -353,8 +354,22 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	problems := problems.GetAllProblems()
-	if err := indexTemplate.ExecuteTemplate(w, "layout.html", problems); err != nil {
+	allProblems := problems.GetAllProblems()
+	solved, err := db.GetSolvedProblems()
+	if err != nil {
+		log.Printf("Failed to get solved problems: %v", err)
+		solved = make(map[int]bool)
+	}
+
+	data := struct {
+		Problems []problems.Problem
+		Solved   map[int]bool
+	}{
+		Problems: allProblems,
+		Solved:   solved,
+	}
+
+	if err := indexTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -378,7 +393,31 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := problemTemplate.ExecuteTemplate(w, "layout.html", problem); err != nil {
+	nextID := problems.GetNextProblemID(id)
+	isSolved, _ := db.IsProblemSolved(id)
+
+	userCode, err := db.GetCode(id)
+	if err != nil {
+		log.Printf("Failed to get saved code for problem %d: %v", id, err)
+		// Not fatal
+	}
+	if userCode == "" {
+		userCode = fmt.Sprintf("%s {\n    \n}", problem.Signature)
+	}
+
+	data := struct {
+		*problems.Problem
+		NextID   int
+		IsSolved bool
+		UserCode string
+	}{
+		Problem:  problem,
+		NextID:   nextID,
+		IsSolved: isSolved,
+		UserCode: userCode,
+	}
+
+	if err := problemTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -509,6 +548,14 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("[REQ-%s] Code validation passed", requestID)
 
+	// Save code to database
+	if err := db.SaveCode(id, userCode); err != nil {
+		log.Printf("[REQ-%s] WARNING: Failed to save code: %v", requestID, err)
+		// We continue even if saving fails
+	} else {
+		log.Printf("[REQ-%s] Code saved for problem %d", requestID, id)
+	}
+
 	action := r.FormValue("action")
 	runAllTests := action == "submit"
 	log.Printf("[REQ-%s] Action: %s, RunAllTests: %v", requestID, action, runAllTests)
@@ -615,6 +662,16 @@ func HandleRun(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[REQ-%s] Executing non-streaming code execution", requestID)
 	result := executor.ExecuteCodeWithLanguage(problem, userCode, runAllTests, language)
 	log.Printf("[REQ-%s] Non-streaming execution completed, success: %v, results: %d", requestID, result.Success, len(result.Results))
+
+	// If successful submission, mark problem as solved
+	if runAllTests && result.Success {
+		if err := db.MarkProblemSolved(problem.ID); err != nil {
+			log.Printf("[REQ-%s] ERROR: Failed to mark problem %d as solved: %v", requestID, problem.ID, err)
+		} else {
+			log.Printf("[REQ-%s] Problem %d marked as solved", requestID, problem.ID)
+		}
+	}
+
 	passed := 0
 	for _, r := range result.Results {
 		if r.Passed {

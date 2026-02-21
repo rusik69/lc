@@ -13,9 +13,11 @@ var EasyProblems = []Problem{
 			{Input: "nums = []int{2, 7, 11, 15}, target = 9", Expected: "[0 1]"},
 			{Input: "nums = []int{3, 2, 4}, target = 6", Expected: "[1 2]"},
 			{Input: "nums = []int{3, 3}, target = 6", Expected: "[0 1]"},
-			{Input: "nums = []int{1, 5, 3, 7}, target = 8", Expected: "[1 3]"},
+			{Input: "nums = []int{1, 5, 9, 7}, target = 8", Expected: "[0 3]"},
 			{Input: "nums = []int{-1, -2, -3, -4, -5}, target = -8", Expected: "[2 4]"},
 			{Input: "nums = []int{0, 4, 3, 0}, target = 0", Expected: "[0 3]"},
+			{Input: "nums = []int{3, 2, 3}, target = 6", Expected: "[0 2]"},
+			{Input: "nums = []int{100, 200, 300}, target = 500", Expected: "[1 2]"},
 		},
 		Solution: `func twoSum(nums []int, target int) []int {
 	m := make(map[int]int)
@@ -60,6 +62,8 @@ Intuitively, think of this as building a "wishlist" as we go: for each number we
 			{Input: "s = []byte{'a','b'}", Expected: "ba"},
 			{Input: "s = []byte{'1','2','3'}", Expected: "321"},
 			{Input: "s = []byte{}", Expected: ""},
+			{Input: "s = []byte{'.',','}", Expected: ",."},
+			{Input: "s = []byte{' ',' '}", Expected: "  "},
 		},
 		Solution: `func reverseString(s []byte) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
@@ -96,6 +100,8 @@ Think of this as two people walking toward each other from opposite ends of a ha
 			{Input: "n = 5", Expected: "[1 2 Fizz 4 Buzz]"},
 			{Input: "n = 15", Expected: "[1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz]"},
 			{Input: "n = 1", Expected: "[1]"},
+			{Input: "n = 6", Expected: "[1 2 Fizz 4 Buzz Fizz]"},
+			{Input: "n = 10", Expected: "[1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz]"},
 			{Input: "n = 30", Expected: "[1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz 16 17 Fizz 19 Buzz Fizz 22 23 Fizz Buzz 26 Fizz 28 29 FizzBuzz]"},
 		},
 		Solution: `func fizzBuzz(n int) []string {
@@ -152,6 +158,8 @@ Think of this as a filtering system: each number passes through increasingly spe
 			{Input: "s = \"\"", Expected: "true"},
 			{Input: "s = \"race a car\"", Expected: "false"},
 			{Input: "s = \"Madam\"", Expected: "true"},
+			{Input: "s = \"0P\"", Expected: "false"},
+			{Input: "s = \".,\"", Expected: "true"},
 		},
 		Solution: `func isPalindrome(s string) bool {
 	cleaned := ""
@@ -204,6 +212,7 @@ Intuitively, imagine reading the string from both ends simultaneously, skipping 
 			{Input: "n = 1", Expected: "1"},
 			{Input: "n = 5", Expected: "5"},
 			{Input: "n = 7", Expected: "13"},
+			{Input: "n = 30", Expected: "832040"},
 		},
 		Solution: `func fib(n int) int {
 	if n < 2 {

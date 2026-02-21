@@ -1,8 +1,29 @@
 
 services:
+  # Database
+  db:
+    image: postgres:15-alpine
+    container_name: lc-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lc_user
+      POSTGRES_PASSWORD: lc_password
+      POSTGRES_DB: lc_db
+    volumes:
+      - lc-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lc_user -d lc_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lc-network
+
   # Main application
   app:
-    image: lc:latest
+    container_name: lc-app
     build: .
     ports:
       - "8080:8080"
@@ -11,8 +32,15 @@ services:
       - ./.prod.env:/app/.prod.env:ro
     environment:
       - SANDBOX_CONTAINER=lc-sandbox
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=lc_user
+      - DB_PASSWORD=lc_password
+      - DB_NAME=lc_db
     depends_on:
       sandbox:
+        condition: service_healthy
+      db:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -67,6 +95,7 @@ services:
 
 volumes:
   go-mod-cache:
+  lc-db-data:
 
 networks:
   lc-network:

@@ -16,6 +16,8 @@ var HardProblems = []Problem{
 			{Input: "nums1 = []int{}, nums2 = []int{1}", Expected: "1.00000"},
 			{Input: "nums1 = []int{2}, nums2 = []int{}", Expected: "2.00000"},
 			{Input: "nums1 = []int{1,3}, nums2 = []int{2,7}", Expected: "2.50000"},
+			{Input: "nums1 = []int{1, 2}, nums2 = []int{-1, 3}", Expected: "1.50000"},
+			{Input: "nums1 = []int{100000}, nums2 = []int{100001}", Expected: "100000.50000"},
 		},
 		Solution: `func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	if len(nums1) > len(nums2) {
@@ -102,6 +104,9 @@ Think of this as finding a cut point in both arrays such that everything to the 
 			{Input: "s = \"()\"", Expected: "2"},
 			{Input: "s = \"()(()\"", Expected: "2"},
 			{Input: "s = \"((()))\"", Expected: "6"},
+			{Input: "s = \"((((((((((\"", Expected: "0"},
+			{Input: "s = \"))))))))))\"", Expected: "0"},
+			{Input: "s = \"()()\"", Expected: "4"},
 		},
 		Solution: `func longestValidParentheses(s string) int {
 	stack := []int{-1}
@@ -161,6 +166,9 @@ Think of this as tracking unmatched opening parentheses: when you see a closing 
 			{Input: "s = \"adceb\", p = \"*a*b\"", Expected: "true"},
 			{Input: "s = \"acdcb\", p = \"a*c?b\"", Expected: "false"},
 			{Input: "s = \"\", p = \"*\"", Expected: "true"},
+			{Input: "s = \"\", p = \"\"", Expected: "true"},
+			{Input: "s = \"a\", p = \"?*\"", Expected: "true"},
+			{Input: "s = \"mississippi\", p = \"m??*ss*?i*pi\"", Expected: "false"},
 		},
 		Solution: `func isMatch(s string, p string) bool {
 	m, n := len(s), len(p)
@@ -286,6 +294,9 @@ Think of this as matching with a constraint: '*' can repeat its preceding charac
 		TestCases: []TestCase{
 			{Input: "lists = [[1,4,5],[1,3,4],[2,6]]", Expected: "[1,1,2,3,4,4,5,6]"},
 			{Input: "lists = []", Expected: "[]"},
+			{Input: "lists = [[], []]", Expected: "[]"},
+			{Input: "lists = [[1], [0]]", Expected: "[0,1]"},
+			{Input: "lists = [[1,2], [3], [0]]", Expected: "[0,1,2,3]"},
 		},
 		Solution: `func mergeKLists(lists []*ListNode) *ListNode {
 	if len(lists) == 0 {
@@ -338,6 +349,10 @@ Think of this as a tournament bracket: you pair up lists and merge them, then pa
 		TestCases: []TestCase{
 			{Input: "head = [1,2,3,4,5], k = 2", Expected: "[2,1,4,3,5]"},
 			{Input: "head = [1,2,3,4,5], k = 3", Expected: "[3,2,1,4,5]"},
+			{Input: "head = [1,2,3,4,5], k = 1", Expected: "[1,2,3,4,5]"},
+			{Input: "head = [1], k = 1", Expected: "[1]"},
+			{Input: "head = [], k = 2", Expected: "[]"},
+			{Input: "head = [1,2], k = 3", Expected: "[1,2]"},
 		},
 		Solution: `func reverseKGroup(head *ListNode, k int) *ListNode {
 	count := 0
@@ -2626,7 +2641,7 @@ Think of this as tracking cumulative totals: you keep a running total, and when 
 		Topic:       "Graphs",
 		Signature:   "func knightConnection(knightA []int, knightB []int) int",
 		TestCases: []TestCase{
-			{Input: "knightA = [0, 0], knightB = [4, 2]", Expected: "1"},
+			{Input: "knightA = [0, 0], knightB = [4, 2]", Expected: "2"},
 			{Input: "knightA = [0, 0], knightB = [1, 1]", Expected: "2"},
 		},
 		Solution: `func knightConnection(knightA []int, knightB []int) int {
@@ -2655,7 +2670,7 @@ Think of this as tracking cumulative totals: you keep a running total, and when 
 }
 
 func getPositionString(row int, col int) string {
-	return string(rune(row)) + "," + string(rune(col))
+	return fmt.Sprintf("%d,%d", row, col)
 }`,
 		PythonSolution: `def knightConnection(knightA: List[int], knightB: List[int]) -> int:
     from collections import deque
@@ -2801,7 +2816,7 @@ Think of this as comparing two recipes: you check if they start with the same in
 		Topic:       "Binary Search Trees",
 		Signature:   "func validateThreeNodes(nodeOne *TreeNode, nodeTwo *TreeNode, nodeThree *TreeNode) bool",
 		TestCases: []TestCase{
-			{Input: "Tree structure", Expected: "Boolean result"},
+			{Input: "nodeOne = [5], nodeTwo = [2], nodeThree = [3]", Expected: "false"},
 		},
 		Solution: `func validateThreeNodes(nodeOne *TreeNode, nodeTwo *TreeNode, nodeThree *TreeNode) bool {
 	if isDescendant(nodeTwo, nodeOne) {
@@ -2860,14 +2875,16 @@ Think of this as checking family relationships in a family tree: you verify that
 		Topic:       "Binary Search Trees",
 		Signature:   "func repairBst(tree *TreeNode) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "tree = [5, 7, 9, 1, 2, 8, 10, 0, -1, 15, 12]", Expected: "Repaired BST"},
+			{Input: "tree = [10, 5, 15, 2, 6, 12, 20]", Expected: "[10, 5, 15, 2, 6, 12, 20]"},
 		},
 		Solution: `func repairBst(tree *TreeNode) *TreeNode {
-	var nodeOne *TreeNode
-	var nodeTwo *TreeNode
-	var previous *TreeNode
+	var nodeOne *TreeNode = nil
+	var nodeTwo *TreeNode = nil
+	var previous *TreeNode = nil
 	inOrderTraverse(tree, &nodeOne, &nodeTwo, &previous)
-	nodeOne.Val, nodeTwo.Val = nodeTwo.Val, nodeOne.Val
+	if nodeOne != nil && nodeTwo != nil {
+		nodeOne.Val, nodeTwo.Val = nodeTwo.Val, nodeOne.Val
+	}
 	return tree
 }
 
@@ -3043,7 +3060,7 @@ Think of this as finding the best route through a network: at each junction (nod
 		Topic:       "Binary Trees",
 		Signature:   "func findNodesDistanceK(tree *TreeNode, target int, k int) []int",
 		TestCases: []TestCase{
-			{Input: "tree = [1, 2, 3, 4, 5, 6, 7, 8, 9], target = 3, k = 2", Expected: "[2, 7, 8]"},
+			{Input: "tree = [1, 2, 3, 4, 5, 6, 7], target = 3, k = 2", Expected: "[2]"},
 		},
 		Solution: `func findNodesDistanceK(tree *TreeNode, target int, k int) []int {
 	nodesDistanceK := []int{}
@@ -3466,7 +3483,7 @@ Think of this as packing a suitcase: for each item, you decide whether to take i
 		Topic:       "Dynamic Programming",
 		Signature:   "func diskStacking(disks [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[2, 1, 2], [3, 2, 3], [4, 4, 5]]"},
+			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[1, 2, 1], [2, 3, 4], [4, 4, 5]]"},
 		},
 		Solution: `func diskStacking(disks [][]int) [][]int {
 	sort.Slice(disks, func(i, j int) bool {
@@ -4148,7 +4165,7 @@ Think of this as course prerequisites: you can only take a course after completi
 		Topic:       "Graphs",
 		Signature:   "func kruskalsAlgorithm(edges [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "Minimum spanning tree edges"},
+			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "[[5, 2, 2], [1, 2, 3], [1, 3, 4], [5, 4, 5]]"},
 		},
 		Solution: `func kruskalsAlgorithm(edges [][]int) [][]int {
 	sort.Slice(edges, func(i, j int) bool {
@@ -4168,11 +4185,12 @@ Think of this as course prerequisites: you can only take a course after completi
 }
 
 func find(node int, parent map[int]int) int {
-	if parent[node] != node {
-		parent[node] = find(parent[node], parent)
-	}
 	if _, found := parent[node]; !found {
 		parent[node] = node
+		return node
+	}
+	if parent[node] != node {
+		parent[node] = find(parent[node], parent)
 	}
 	return parent[node]
 }
@@ -4243,7 +4261,7 @@ Think of this as building the cheapest network: you sort all possible connection
 		Topic:       "Graphs",
 		Signature:   "func primsAlgorithm(edges [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "Minimum spanning tree edges"},
+			{Input: "edges = [[1, 2, 3], [1, 3, 4], [4, 2, 6], [5, 2, 2], [2, 3, 5], [3, 5, 7], [5, 4, 5]]", Expected: "[[1, 2, 3], [5, 2, 2], [1, 3, 4], [5, 4, 5]]"},
 		},
 		Solution: `type Edge struct {
 	node1   int
@@ -4642,9 +4660,9 @@ Think of this as choosing a meeting location: you want a place where the farthes
 
 func updateCalendar(calendar [][]string, dailyBounds []string) [][]int {
 	updated := [][]int{}
-	updated = append(updated, []int{timeToMinutes(dailyBounds[0]), timeToMinutes(dailyBounds[0])})
+	updated = append(updated, []int{0, timeToMinutes(dailyBounds[0])})
 	updated = append(updated, timeToMinutesArray(calendar)...)
-	updated = append(updated, []int{timeToMinutes(dailyBounds[1]), timeToMinutes(dailyBounds[1])})
+	updated = append(updated, []int{timeToMinutes(dailyBounds[1]), 23 * 60 + 59})
 	return updated
 }
 
@@ -4803,14 +4821,13 @@ Think of this as finding when two busy schedules overlap in their free time: you
 		Topic:       "Arrays",
 		Signature:   "func waterfallStreams(array [][]float64, source int) []float64",
 		TestCases: []TestCase{
-			{Input: "array = [[0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]], source = 3", Expected: "[0, 0, 0, 25, 25, 0, 0]"},
+			{Input: "array = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]], source = 3", Expected: "[0, 0, 0, 100, 0, 0, 0]"},
 		},
 		Solution: `func waterfallStreams(array [][]float64, source int) []float64 {
 	rowAbove := make([]float64, len(array[0]))
 	rowAbove[source] = -100
 	for row := 1; row < len(array); row++ {
 		currentRow := make([]float64, len(array[0]))
-		copy(currentRow, rowAbove)
 		for idx := 0; idx < len(rowAbove); idx++ {
 			valueAbove := rowAbove[idx]
 			hasWaterAbove := valueAbove < 0
@@ -4851,7 +4868,11 @@ Think of this as finding when two busy schedules overlap in their free time: you
 	finalPercentages := make([]float64, len(rowAbove))
 	for i := 0; i < len(rowAbove); i++ {
 		num := rowAbove[i]
-		finalPercentages[i] = -num
+		if num == 0 {
+			finalPercentages[i] = 0
+		} else {
+			finalPercentages[i] = -num
+		}
 	}
 	return finalPercentages
 }`,
@@ -5280,7 +5301,7 @@ Think of this as walking through a maze with breadcrumbs: you remember where you
 		Topic:       "Binary Trees",
 		Signature:   "func flattenBinaryTree(root *TreeNode) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "root = [1, 2, 3, 4, 5, 6]", Expected: "Flattened tree"},
+			{Input: "root = [1, 2, 3, 4, 5, 6]", Expected: "[4, null, 2, null, 5, null, 1, null, 6, null, 3]"},
 		},
 		Solution: `func flattenBinaryTree(root *TreeNode) *TreeNode {
 	leftMost, _ := flattenTree(root)
@@ -5353,7 +5374,7 @@ Think of this as converting a tree into a chain: you flatten each branch separat
 		Topic:       "Binary Trees",
 		Signature:   "func rightSiblingTree(root *TreeNode) *TreeNode",
 		TestCases: []TestCase{
-			{Input: "root = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]", Expected: "Right sibling tree"},
+			{Input: "root = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]", Expected: "[1, 2, null, 4, 3, 8, 5, 6, null, null, 9, 10, null, 12, 7, null, null, null, 11, null, 13, 14, null, null, null, null, null, null, 15]"},
 		},
 		Solution: `func rightSiblingTree(root *TreeNode) *TreeNode {
 	mutate(root, nil, false)
@@ -5799,7 +5820,7 @@ Think of this as finding picture frames: you first mark how many zeros extend in
 		Topic:       "Graphs",
 		Signature:   "func aStarAlgorithm(startRow int, startCol int, endRow int, endCol int, graph [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "startRow = 0, startCol = 1, endRow = 4, endCol = 3, graph = [[0, 0, 0, 0, 0], [0, 1, 1, 1, 0], [0, 0, 0, 0, 0], [1, 0, 1, 1, 1], [0, 0, 0, 0, 0]]", Expected: "Shortest path"},
+			{Input: "startRow = 0, startCol = 1, endRow = 4, endCol = 3, graph = [[0, 0, 0, 0, 0], [0, 1, 1, 1, 0], [0, 0, 0, 0, 0], [1, 0, 1, 1, 1], [0, 0, 0, 0, 0]]", Expected: "[[0, 1], [0, 0], [1, 0], [2, 0], [2, 1], [3, 1], [4, 1], [4, 2], [4, 3]]"},
 		},
 		Solution: `type Node struct {
 	row    int
@@ -7754,7 +7775,7 @@ Think of this as packing a bag optimally: for each item and each possible weight
 		Topic:       "Dynamic Programming",
 		Signature:   "func diskStacking(disks [][]int) [][]int",
 		TestCases: []TestCase{
-			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[2, 1, 2], [3, 2, 3], [4, 4, 5]]"},
+			{Input: "disks = [[2, 1, 2], [3, 2, 3], [2, 2, 8], [2, 3, 4], [1, 2, 1], [4, 4, 5]]", Expected: "[[1, 2, 1], [2, 3, 4], [4, 4, 5]]"},
 		},
 		Solution: `func diskStacking(disks [][]int) [][]int {
 	sort.Slice(disks, func(i, j int) bool {
@@ -7771,7 +7792,7 @@ Think of this as packing a bag optimally: for each item and each possible weight
 		currentDisk := disks[i]
 		for j := 0; j < i; j++ {
 			otherDisk := disks[j]
-			if areValidDimensions(otherDisk, currentDisk) {
+			if areValidDimensions255(otherDisk, currentDisk) {
 				if heights[i] <= currentDisk[2]+heights[j] {
 					heights[i] = currentDisk[2] + heights[j]
 					sequences[i] = j
@@ -7782,14 +7803,14 @@ Think of this as packing a bag optimally: for each item and each possible weight
 			maxHeightIdx = i
 		}
 	}
-	return buildSequence(disks, sequences, maxHeightIdx)
+	return buildSequence255(disks, sequences, maxHeightIdx)
 }
 
-func areValidDimensions(o []int, c []int) bool {
+func areValidDimensions255(o []int, c []int) bool {
 	return o[0] < c[0] && o[1] < c[1] && o[2] < c[2]
 }
 
-func buildSequence(array [][]int, sequences []int, currentIdx int) [][]int {
+func buildSequence255(array [][]int, sequences []int, currentIdx int) [][]int {
 	sequence := [][]int{}
 	for currentIdx != -1 {
 		sequence = append([][]int{array[currentIdx]}, sequence...)
