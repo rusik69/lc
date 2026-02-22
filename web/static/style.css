@@ -108,6 +108,31 @@ header h1 {
     min-height: calc(100vh - 80px);
 }
 
+.app-container.sidebar-hidden .sidebar {
+    display: none;
+}
+
+.sidebar-desktop-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-desktop-toggle:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.sidebar-desktop-toggle svg {
+    display: block;
+}
+
 /* Sidebar */
 .sidebar {
     width: 250px;
@@ -499,6 +524,7 @@ h3 {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    min-height: calc(100vh - 220px);
 }
 
 .solution-panel {
@@ -549,6 +575,7 @@ h3 {
 .code-editor {
     width: 100%;
     min-height: 400px;
+    height: 100%;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     padding: 1rem;
@@ -569,10 +596,12 @@ h3 {
 .CodeMirror {
     border: 2px solid var(--border-color);
     border-radius: 4px;
-    height: auto;
-    min-height: 400px;
+    height: 100%;
+    min-height: 500px;
     font-size: 14px;
     transition: border-color 0.3s ease;
+    resize: vertical;
+    overflow: hidden !important;
 }
 
 .CodeMirror:focus {
@@ -581,6 +610,7 @@ h3 {
 
 .CodeMirror-scroll {
     min-height: 400px;
+    height: 100%;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -1083,6 +1113,10 @@ a:hover {
         display: none;
     }
 
+    .sidebar-desktop-toggle {
+        display: none;
+    }
+
     .mobile-menu-toggle {
         display: flex;
     }
@@ -1559,5 +1593,37 @@ label {
 
     .CodeMirror {
         min-height: 200px;
+    }
+}
+
+.sidebar-desktop-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.sidebar-desktop-toggle:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.sidebar-desktop-toggle svg {
+    display: block;
+}
+
+.app-container.sidebar-hidden .sidebar {
+    display: none;
+}
+
+/* Mobile sidebar toggle should be hidden on desktop unless specific breakpoint */
+@media (max-width: 768px) {
+    .sidebar-desktop-toggle {
+        display: none;
     }
 }

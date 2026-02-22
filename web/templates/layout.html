@@ -273,7 +273,16 @@
 <body>
     <header>
         <div>
-            <h1>LeetCode Clone</h1>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button id="sidebar-desktop-toggle" class="sidebar-desktop-toggle" aria-label="Toggle Sidebar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1>LeetCode Clone</h1>
+            </div>
             <div class="header-controls">
                 <div class="theme-switch-container">
                     <span class="theme-switch-label">Theme</span>
@@ -341,5 +350,19 @@
         <a href="/azure" class="nav-link">Azure</a>
         <a href="/computer-architecture" class="nav-link">Computer Architecture</a>
     </nav>
+    <script>
+        (function() {
+            var toggle = document.getElementById('sidebar-desktop-toggle');
+            var appContainer = document.querySelector('.app-container');
+            if (toggle && appContainer) {
+                toggle.addEventListener('click', function() {
+                    appContainer.classList.toggle('sidebar-hidden');
+                    if (typeof editor !== 'undefined' && editor.refresh) {
+                        setTimeout(function() { editor.refresh(); }, 300);
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
