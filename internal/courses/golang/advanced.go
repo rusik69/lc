@@ -8,7 +8,7 @@ func init() {
 			ID:          38,
 			Title:       "Generics (Go 1.18+)",
 			Description: "Learn Go generics: type parameters, constraints, and modern generic programming patterns.",
-			Order:       7,
+			Order:       8,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Introduction to Generics",
@@ -109,7 +109,7 @@ strs := Map(nums, func(n int) string {
 			ID:          39,
 			Title:       "Error Handling",
 			Description: "Learn Go's error handling patterns, custom errors, and panic/recover.",
-			Order:       8,
+			Order:       9,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Error Type",
@@ -224,7 +224,7 @@ func main() {
 			ID:          40,
 			Title:       "Concurrency",
 			Description: "Master goroutines, channels, select, and concurrent programming patterns.",
-			Order:       9,
+			Order:       10,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Goroutines",
@@ -430,7 +430,7 @@ wg.Wait()`,
 			ID:          41,
 			Title:       "Packages & Modules",
 			Description: "Understand package organization, modules, and dependency management.",
-			Order:       10,
+			Order:       11,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Package Organization",
@@ -521,7 +521,7 @@ import "app/internal/db" // COMPILE ERROR`,
 			ID:          42,
 			Title:       "Standard Library",
 			Description: "Explore Go's rich standard library: fmt, strings, io, time, json, http, and more.",
-			Order:       11,
+			Order:       12,
 			Lessons: []problems.Lesson{
 
 				{
@@ -625,7 +625,7 @@ body, _ := io.ReadAll(resp.Body)`,
 			ID:          43,
 			Title:       "Testing & Benchmarking",
 			Description: "Learn to write tests, benchmarks, and measure code performance.",
-			Order:       12,
+			Order:       13,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Advanced Testing Patterns",
@@ -701,7 +701,7 @@ func ExampleReverse() {
 			ID:          44,
 			Title:       "Advanced Topics",
 			Description: "Explore reflection, generics, build tags, profiling, and Go best practices.",
-			Order:       13,
+			Order:       14,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Advanced Reflection",
@@ -786,7 +786,7 @@ go tool trace trace.out`,
 			ID:          48,
 			Title:       "Database Operations",
 			Description: "Connect to databases, execute queries, and work with database/sql package.",
-			Order:       17,
+			Order:       18,
 			Lessons: []problems.Lesson{
 				{
 					Title: "SQL & Connection Pooling",
@@ -829,7 +829,7 @@ func transfer(db *sql.DB, ctx context.Context) error {
 			ID:          49,
 			Title:       "Advanced Concurrency Patterns",
 			Description: "Deep dive into sophisticated concurrency patterns: Fan-out/Fan-in, Pipelines, Context-aware control, and robust Worker Pools.",
-			Order:       18,
+			Order:       19,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Pipelines & Fan-out/Fan-in",
@@ -921,7 +921,7 @@ func operationWithDeadline() {
 			ID:          50,
 			Title:       "Idiomatic Design Patterns",
 			Description: "Learn patterns that are specific to Go's philosophy: Functional Options, Decorators, Registries, and Middleware.",
-			Order:       19,
+			Order:       20,
 			Lessons: []problems.Lesson{
 				{
 					Title: "Functional Options",
