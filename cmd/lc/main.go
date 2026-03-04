@@ -95,6 +95,7 @@ func main() {
 	mux.HandleFunc("/math/test", handlers.HandleCourseTest)
 	mux.HandleFunc("/math/", handlers.HandleMathModule)
 	mux.HandleFunc("/problem/", handlers.HandleProblem)
+	mux.HandleFunc("/code/", handlers.HandleSaveCode)
 	mux.HandleFunc("/run/", handlers.HandleRun)
 	mux.HandleFunc("/solution/", handlers.HandleSolution)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))

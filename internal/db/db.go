@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -10,6 +11,14 @@ import (
 )
 
 var DB *sql.DB
+var ErrDBNotInitialized = errors.New("db not initialized")
+
+func ensureDB() error {
+	if DB == nil {
+		return ErrDBNotInitialized
+	}
+	return nil
+}
 
 // InitDB initializes the database connection
 func InitDB() error {
@@ -61,6 +70,9 @@ func InitDB() error {
 }
 
 func createSchema() error {
+	if err := ensureDB(); err != nil {
+		return err
+	}
 	query := `
 	CREATE TABLE IF NOT EXISTS solved_problems (
 		id SERIAL PRIMARY KEY,
@@ -80,6 +92,9 @@ func createSchema() error {
 
 // MarkProblemSolved marks a problem as solved
 func MarkProblemSolved(problemID int) error {
+	if err := ensureDB(); err != nil {
+		return err
+	}
 	query := `
 	INSERT INTO solved_problems (problem_id) 
 	VALUES ($1) 
@@ -91,6 +106,9 @@ func MarkProblemSolved(problemID int) error {
 
 // IsProblemSolved checks if a problem is solved
 func IsProblemSolved(problemID int) (bool, error) {
+	if err := ensureDB(); err != nil {
+		return false, err
+	}
 	var exists bool
 	query := `SELECT EXISTS(SELECT 1 FROM solved_problems WHERE problem_id = $1)`
 	err := DB.QueryRow(query, problemID).Scan(&exists)
@@ -99,6 +117,9 @@ func IsProblemSolved(problemID int) (bool, error) {
 
 // GetSolvedProblems returns a map of solved problem IDs
 func GetSolvedProblems() (map[int]bool, error) {
+	if err := ensureDB(); err != nil {
+		return nil, err
+	}
 	rows, err := DB.Query("SELECT problem_id FROM solved_problems")
 	if err != nil {
 		return nil, err
@@ -118,9 +139,12 @@ func GetSolvedProblems() (map[int]bool, error) {
 
 // SaveCode saves the code for a problem
 func SaveCode(problemID int, code string) error {
+	if err := ensureDB(); err != nil {
+		return err
+	}
 	query := `
 	INSERT INTO problem_code (problem_id, code, updated_at)
-	VALUES (, , CURRENT_TIMESTAMP)
+	VALUES ($1, $2, CURRENT_TIMESTAMP)
 	ON CONFLICT (problem_id) DO UPDATE
 	SET code = EXCLUDED.code, updated_at = CURRENT_TIMESTAMP
 	`
@@ -130,8 +154,11 @@ func SaveCode(problemID int, code string) error {
 
 // GetCode retrieves the saved code for a problem
 func GetCode(problemID int) (string, error) {
+	if err := ensureDB(); err != nil {
+		return "", err
+	}
 	var code string
-	query := `SELECT code FROM problem_code WHERE problem_id = `
+	query := `SELECT code FROM problem_code WHERE problem_id = $1`
 	err := DB.QueryRow(query, problemID).Scan(&code)
 	if err == sql.ErrNoRows {
 		return "", nil

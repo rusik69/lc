@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -420,6 +421,58 @@ func HandleProblem(w http.ResponseWriter, r *http.Request) {
 	if err := problemTemplate.ExecuteTemplate(w, "layout.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+type saveCodeRequest struct {
+	Code     string `json:"code"`
+	Language string `json:"language"`
+	Reason   string `json:"reason"`
+}
+
+// HandleSaveCode persists editor code without executing it.
+func HandleSaveCode(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 3 {
+		http.NotFound(w, r)
+		return
+	}
+
+	id, err := strconv.Atoi(parts[2])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, maxRequestSize)
+	defer r.Body.Close()
+
+	var req saveCodeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	if req.Code == "" {
+		http.Error(w, "Code is required", http.StatusBadRequest)
+		return
+	}
+	if len(req.Code) > maxCodeSize {
+		http.Error(w, fmt.Sprintf("Code too large (max %d bytes)", maxCodeSize), http.StatusBadRequest)
+		return
+	}
+
+	if err := db.SaveCode(id, req.Code); err != nil {
+		log.Printf("Failed to autosave code for problem %d: %v", id, err)
+		http.Error(w, "Failed to save", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func HandleRun(w http.ResponseWriter, r *http.Request) {

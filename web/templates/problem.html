@@ -160,6 +160,79 @@
                 autofocus: true,
                 viewportMargin: Infinity
             });
+
+            var autosaveDirty = false;
+            var autosaveInFlight = false;
+            var lastSavedCode = editor.getValue();
+            var autosaveIntervalMs = 15000;
+
+            function sendAutosave(reason, useBeacon) {
+                var code = editor.getValue();
+                if (code === lastSavedCode) {
+                    autosaveDirty = false;
+                    return;
+                }
+
+                var payload = {
+                    code: code,
+                    language: document.getElementById('language-select').value,
+                    reason: reason
+                };
+
+                if (useBeacon && navigator.sendBeacon) {
+                    var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                    var ok = navigator.sendBeacon('/code/{{.ID}}', blob);
+                    if (ok) {
+                        lastSavedCode = code;
+                        autosaveDirty = false;
+                    }
+                    return;
+                }
+
+                if (autosaveInFlight) {
+                    return;
+                }
+
+                autosaveInFlight = true;
+                fetch('/code/{{.ID}}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                }).then(function(response) {
+                    if (response.ok) {
+                        lastSavedCode = code;
+                        autosaveDirty = false;
+                    }
+                }).catch(function() {
+                    // Best-effort autosave; keep dirty flag so we retry later.
+                    autosaveDirty = true;
+                }).finally(function() {
+                    autosaveInFlight = false;
+                });
+            }
+
+            editor.on('change', function() {
+                autosaveDirty = true;
+            });
+
+            setInterval(function() {
+                if (autosaveDirty) {
+                    sendAutosave('interval', false);
+                }
+            }, autosaveIntervalMs);
+
+            window.addEventListener('pagehide', function() {
+                if (autosaveDirty) {
+                    sendAutosave('pagehide', true);
+                }
+            });
+
+            window.addEventListener('beforeunload', function() {
+                if (autosaveDirty) {
+                    sendAutosave('beforeunload', true);
+                }
+            });
             
             // Initialize signature highlighting
             if (typeof CodeMirror !== 'undefined') {
