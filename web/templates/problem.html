@@ -383,14 +383,50 @@
             });
             
             document.getElementById('code-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
                 var code = editor.getValue();
-                document.getElementById('code-editor').value = code;
-                // Add language to form
-                var langInput = document.createElement('input');
-                langInput.type = 'hidden';
-                langInput.name = 'language';
-                langInput.value = document.getElementById('language-select').value;
-                this.appendChild(langInput);
+                var problemId = {{.ID}};
+                var resultDiv = document.getElementById('result');
+                var submitBtn = this.querySelector('button[name="action"][value="submit"]');
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitting...';
+                }
+
+                resultDiv.innerHTML = '<div class="result"><div class="streaming-output"><h3>Running All Tests...</h3><pre class="output-log code-output"></pre></div></div>';
+
+                var formData = new FormData();
+                formData.append('code', code);
+                formData.append('action', 'submit');
+                formData.append('language', document.getElementById('language-select').value);
+
+                fetch('/run/' + problemId, {
+                    method: 'POST',
+                    body: formData
+                }).then(function(response) {
+                    if (!response.ok) {
+                        return response.text().then(function(text) {
+                            throw new Error('Request failed: ' + response.status + ' - ' + text);
+                        });
+                    }
+                    return response.text();
+                }).then(function(html) {
+                    resultDiv.innerHTML = html;
+                    if (typeof highlightCode === 'function') {
+                        highlightCode();
+                    }
+                }).catch(function(error) {
+                    resultDiv.innerHTML = '<div class="error"><h3>Error</h3><pre>' + error.message + '</pre></div>';
+                    console.error('Submit error:', error);
+                }).finally(function() {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit';
+                    }
+                });
             });
             
             // Handle Run button with streaming
