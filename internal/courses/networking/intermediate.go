@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterNetworkingModules([]problems.CourseModule{
 		{
-			ID:          210,
+			ID:          2105,
 			Title:       "Routing Fundamentals",
 			Description: "Learn routing concepts: static vs dynamic routing, routing tables, default gateways, and how packets are routed through networks.",
 			Order:       5,
@@ -406,7 +406,7 @@ ping 192.168.1.100
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          211,
+			ID:          2106,
 			Title:       "Switching & VLANs",
 			Description: "Master switching concepts: how switches work, VLANs (Virtual LANs), trunking, and network segmentation.",
 			Order:       6,
@@ -755,7 +755,7 @@ ip addr show type vlan
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          212,
+			ID:          2107,
 			Title:       "NAT & Port Forwarding",
 			Description: "Understand Network Address Translation (NAT): how it works, types of NAT, and port forwarding for services.",
 			Order:       7,
@@ -1149,7 +1149,7 @@ nmap -p 80,443,8080 public-ip
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          213,
+			ID:          2108,
 			Title:       "Firewalls & Security",
 			Description: "Learn firewall concepts: packet filtering, stateful firewalls, security zones, and basic firewall configuration.",
 			Order:       8,
@@ -1518,7 +1518,7 @@ sudo iptables -D INPUT 3
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          214,
+			ID:          2109,
 			Title:       "VPN & Remote Access",
 			Description: "Learn about VPNs: types, protocols (OpenVPN, WireGuard, IPsec), and remote access solutions.",
 			Order:       9,

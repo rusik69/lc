@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterFrontendModules([]problems.CourseModule{
 		{
-			ID:          200,
+			ID:          1500,
 			Title:       "HTML Fundamentals",
 			Description: "Learn the foundation of web development with HTML: structure, semantics, and best practices.",
 			Order:       0,
@@ -691,7 +691,7 @@ Always include descriptive alt text for every informational image -- this is bot
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          201,
+			ID:          1501,
 			Title:       "CSS Fundamentals",
 			Description: "Master CSS styling: selectors, properties, values, and the cascade.",
 			Order:       1,
@@ -1064,7 +1064,7 @@ button {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          202,
+			ID:          1502,
 			Title:       "JavaScript Basics",
 			Description: "Learn JavaScript fundamentals: variables, functions, control flow, and data types.",
 			Order:       2,
@@ -1455,7 +1455,7 @@ function validateEmail(email) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          203,
+			ID:          1503,
 			Title:       "DOM Manipulation",
 			Description: "Learn to interact with HTML elements using JavaScript: selecting, modifying, and event handling.",
 			Order:       3,
@@ -1771,7 +1771,7 @@ walkDOM(document.body, (node) => {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          204,
+			ID:          1504,
 			Title:       "Responsive Design",
 			Description: "Create websites that work on all devices: mobile-first approach, media queries, and flexible layouts.",
 			Order:       4,
@@ -2038,7 +2038,7 @@ h1 {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          205,
+			ID:          1505,
 			Title:       "CSS Flexbox & Grid",
 			Description: "Master modern CSS layout: Flexbox for one-dimensional layouts and Grid for two-dimensional layouts.",
 			Order:       5,
@@ -2221,7 +2221,7 @@ Grid items can be placed automatically (the browser fills cells in order) or exp
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          206,
+			ID:          1506,
 			Title:       "Forms and Validation",
 			Description: "Create interactive forms with proper validation, accessibility, and user experience.",
 			Order:       6,
@@ -2508,7 +2508,7 @@ function uploadWithProgress(file) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          207,
+			ID:          1507,
 			Title:       "Accessibility Basics",
 			Description: "Make websites accessible to all users: semantic HTML, ARIA attributes, and keyboard navigation.",
 			Order:       7,
@@ -2661,7 +2661,7 @@ function closeModal() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          208,
+			ID:          1508,
 			Title:       "Browser APIs",
 			Description: "Explore browser APIs: Local Storage, Fetch API, Geolocation, and more.",
 			Order:       8,
@@ -2886,7 +2886,7 @@ async function copyToClipboard(text) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          209,
+			ID:          1509,
 			Title:       "ES6+ Features",
 			Description: "Modern JavaScript features: let/const, arrow functions, destructuring, modules, and more.",
 			Order:       9,

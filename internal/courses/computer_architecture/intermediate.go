@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterComputerArchitectureModules([]problems.CourseModule{
 		{
-			ID:          201,
+			ID:          1301,
 			Title:       "CPU Pipelining and Performance",
 			Description: "Learn about instruction pipelining, hazards, performance optimization, cache hierarchy, virtual memory, and I/O systems.",
 			Order:       1,

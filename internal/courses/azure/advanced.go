@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAzureModules([]problems.CourseModule{
 		{
-			ID:          420,
+			ID:          1220,
 			Title:       "Azure Kubernetes Service (AKS)",
 			Description: "Learn AKS: managed Kubernetes, clusters, pods, services, and container orchestration.",
 			Order:       20,
@@ -152,7 +152,7 @@ metadata:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          421,
+			ID:          1221,
 			Title:       "Azure DevOps",
 			Description: "Learn Azure DevOps: CI/CD pipelines, repositories, boards, and DevOps practices.",
 			Order:       21,
@@ -279,7 +279,7 @@ npm install --registry https://pkgs.dev.azure.com/myorg/myproject/_packaging/myf
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          422,
+			ID:          1222,
 			Title:       "Advanced Azure Networking",
 			Description: "Learn advanced networking: VNet peering, VPN Gateway, ExpressRoute, and Virtual WAN.",
 			Order:       22,
@@ -409,7 +409,7 @@ az network express-route create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          423,
+			ID:          1223,
 			Title:       "Azure Security Center",
 			Description: "Learn Security Center: threat protection, security recommendations, and compliance management.",
 			Order:       23,
@@ -520,7 +520,7 @@ az security regulatory-compliance-standards list \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          424,
+			ID:          1224,
 			Title:       "Azure Policy",
 			Description: "Learn Azure Policy: governance, compliance, and resource management policies.",
 			Order:       24,
@@ -627,7 +627,7 @@ az policy remediation create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          425,
+			ID:          1225,
 			Title:       "Azure Cost Management",
 			Description: "Learn Cost Management: cost analysis, budgets, alerts, and optimization strategies.",
 			Order:       25,
@@ -749,7 +749,7 @@ az vm auto-shutdown \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          426,
+			ID:          1226,
 			Title:       "Azure Front Door",
 			Description: "Learn Front Door: global load balancing, CDN, WAF, and application acceleration.",
 			Order:       26,
@@ -869,7 +869,7 @@ az afd route create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          427,
+			ID:          1227,
 			Title:       "Azure Logic Apps",
 			Description: "Learn Logic Apps: workflow automation, integrations, and serverless workflows.",
 			Order:       27,
@@ -1027,7 +1027,7 @@ Implement try-catch (Scope + runAfter) blocks around every group of actions that
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          428,
+			ID:          1228,
 			Title:       "Azure API Management",
 			Description: "Learn API Management: API gateway, versioning, rate limiting, and API lifecycle management.",
 			Order:       28,
@@ -1148,7 +1148,7 @@ Set rate limits that balance protection for your backend with a good experience 
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          429,
+			ID:          1229,
 			Title:       "Azure Arc",
 			Description: "Learn Azure Arc: hybrid cloud management, multi-cloud governance, and unified operations.",
 			Order:       29,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterNetworkingModules([]problems.CourseModule{
 		{
-			ID:          200,
+			ID:          2100,
 			Title:       "Introduction to Networking",
 			Description: "Learn the fundamentals of computer networks: what they are, why they matter, and basic networking concepts.",
 			Order:       0,
@@ -1036,7 +1036,7 @@ curl -v http://example.com
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          201,
+			ID:          2101,
 			Title:       "OSI Model & TCP/IP Deep Dive",
 			Description: "Master the OSI 7-layer model and TCP/IP stack: understand each layer's function, protocols, and how data flows through networks.",
 			Order:       1,
@@ -1724,7 +1724,7 @@ ip link show
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          202,
+			ID:          2102,
 			Title:       "IP Addressing & Subnetting",
 			Description: "Master IP addressing: IPv4 and IPv6 addresses, subnetting, CIDR notation, and network calculations.",
 			Order:       2,
@@ -2425,7 +2425,7 @@ ip route show
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          203,
+			ID:          2103,
 			Title:       "DNS & DHCP",
 			Description: "Understand Domain Name System (DNS) and Dynamic Host Configuration Protocol (DHCP): how they work and how to configure them.",
 			Order:       3,
@@ -2953,7 +2953,7 @@ cat /etc/resolv.conf
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          204,
+			ID:          2104,
 			Title:       "Network Devices & Topologies",
 			Description: "Learn about network hardware: hubs, switches, routers, access points, and how they create network topologies.",
 			Order:       4,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAzureModules([]problems.CourseModule{
 		{
-			ID:          400,
+			ID:          1200,
 			Title:       "Azure Fundamentals",
 			Description: "Introduction to Azure: cloud computing basics, Azure global infrastructure, and core services.",
 			Order:       0,
@@ -330,7 +330,7 @@ New-AzResourceGroupDeployment \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          401,
+			ID:          1201,
 			Title:       "Azure Active Directory",
 			Description: "Learn Azure AD: identity management, users, groups, roles, and security best practices.",
 			Order:       1,
@@ -579,7 +579,7 @@ New-MgInvitation -BodyParameter $params
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          402,
+			ID:          1202,
 			Title:       "Azure Virtual Machines",
 			Description: "Master Azure VMs: instances, images, network security groups, and VM management.",
 			Order:       2,
@@ -897,7 +897,7 @@ Enable-AzRecoveryServicesBackupProtection \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          403,
+			ID:          1203,
 			Title:       "Azure Storage",
 			Description: "Learn Azure Storage: Blob Storage, File Storage, Queue Storage, and Table Storage.",
 			Order:       3,
@@ -1236,7 +1236,7 @@ New-AzStorageBlobSASToken \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          404,
+			ID:          1204,
 			Title:       "Azure App Service",
 			Description: "Learn App Service: web apps, API apps, deployment slots, and scaling.",
 			Order:       4,
@@ -1510,7 +1510,7 @@ Set-AzWebApp \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          405,
+			ID:          1205,
 			Title:       "Azure SQL Database",
 			Description: "Learn Azure SQL Database: managed SQL databases, elastic pools, and high availability.",
 			Order:       5,
@@ -1780,7 +1780,7 @@ New-AzSqlDatabaseSecondary \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          406,
+			ID:          1206,
 			Title:       "Azure Virtual Network",
 			Description: "Learn Virtual Networks: subnets, network security groups, and connectivity options.",
 			Order:       6,
@@ -2102,7 +2102,7 @@ Set-AzVirtualNetwork -VirtualNetwork $vnet`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          407,
+			ID:          1207,
 			Title:       "Azure Load Balancer",
 			Description: "Learn Load Balancer: distribution algorithms, health probes, and high availability.",
 			Order:       7,
@@ -2348,7 +2348,7 @@ az network lb rule update \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          408,
+			ID:          1208,
 			Title:       "Azure Key Vault",
 			Description: "Learn Key Vault: secrets, keys, certificates, and secure access management.",
 			Order:       8,
@@ -2604,7 +2604,7 @@ Add-AzKeyVaultCertificate \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          409,
+			ID:          1209,
 			Title:       "Azure CLI and PowerShell",
 			Description: "Learn Azure CLI and PowerShell: command-line tools for Azure management.",
 			Order:       9,

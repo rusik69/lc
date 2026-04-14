@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterComputerArchitectureModules([]problems.CourseModule{
 		{
-			ID:          202,
+			ID:          1302,
 			Title:       "Advanced Processor Design",
 			Description: "Explore superscalar execution, out-of-order processing, branch prediction, and multi-core architectures.",
 			Order:       2,
@@ -308,7 +308,7 @@ struct {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          207,
+			ID:          1303,
 			Title:       "Advanced Memory Systems",
 			Description: "Explore advanced memory technologies: DDR architecture, NVMe SSDs, persistent memory, memory controllers, and error correction codes.",
 			Order:       7,
@@ -561,7 +561,7 @@ void wear_leveling_write(uint64_t lba, void *data) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          203,
+			ID:          1304,
 			Title:       "GPU Architecture and Parallel Computing",
 			Description: "Learn about Graphics Processing Units, parallel computing models, CUDA programming, and how GPUs differ from CPUs in architecture and execution.",
 			Order:       10,
@@ -722,7 +722,7 @@ __global__ void matrix_multiply_shared(float *A, float *B, float *C, int N) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          206,
+			ID:          1305,
 			Title:       "Hardware Security",
 			Description: "Learn about hardware security threats: side-channel attacks, secure enclaves, hardware security modules, and processor vulnerabilities like Meltdown and Spectre.",
 			Order:       11,
@@ -1119,7 +1119,7 @@ retpoline_setup:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          208,
+			ID:          1306,
 			Title:       "System Interconnects",
 			Description: "Learn about system interconnect technologies: PCIe architecture, USB standards, Thunderbolt, Network-on-Chip, and bus arbitration protocols.",
 			Order:       12,
@@ -1257,7 +1257,7 @@ void pcie_memory_read(uint64_t address, uint32_t length) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          205,
+			ID:          1307,
 			Title:       "Quantum Computing Architecture",
 			Description: "Explore quantum computing fundamentals: qubits, quantum gates, error correction, quantum processors, and hybrid quantum-classical systems.",
 			Order:       13,
@@ -1397,7 +1397,7 @@ qc.ccx(0, 1, 2)  # Toffoli: controls=0,1, target=2`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          204,
+			ID:          1308,
 			Title:       "Embedded Systems and Microcontrollers",
 			Description: "Learn about microcontroller architecture, real-time systems, interrupt handling, power management, and peripheral interfaces.",
 			Order:       14,

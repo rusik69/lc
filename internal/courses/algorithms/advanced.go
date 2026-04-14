@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAlgorithmsModules([]problems.CourseModule{
 		{
-			ID:          7,
+			ID:          1009,
 			Title:       "Dynamic Programming",
 			Description: "Master dynamic programming techniques to solve complex optimization problems efficiently.",
 			Order:       7,
@@ -571,7 +571,7 @@ def min_cut(s):
 			ProblemIDs: []int{51, 52, 53, 54, 55, 56, 57, 58, 59, 60},
 		},
 		{
-			ID:          10,
+			ID:          1010,
 			Title:       "Backtracking",
 			Description: "Master backtracking algorithms to solve constraint satisfaction problems and generate all possible solutions.",
 			Order:       10,
@@ -1102,7 +1102,7 @@ def subsets(nums):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          11,
+			ID:          1011,
 			Title:       "Greedy Algorithms",
 			Description: "Learn greedy algorithms that make locally optimal choices to find globally optimal solutions.",
 			Order:       11,
@@ -1522,7 +1522,7 @@ def build_codes(root):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          12,
+			ID:          1012,
 			Title:       "Bit Manipulation",
 			Description: "Master bit manipulation techniques for efficient problem solving.",
 			Order:       12,
@@ -1890,7 +1890,7 @@ def tsp(dist):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          13,
+			ID:          1013,
 			Title:       "Math & Number Theory",
 			Description: "Master mathematical concepts and number theory algorithms essential for competitive programming and problem-solving.",
 			Order:       13,

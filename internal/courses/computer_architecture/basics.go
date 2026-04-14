@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterComputerArchitectureModules([]problems.CourseModule{
 		{
-			ID:          200,
+			ID:          1300,
 			Title:       "Introduction to Computer Architecture",
 			Description: "Learn the fundamentals of computer architecture: CPU design, instruction sets, memory hierarchy, logic gates, number systems, and basic hardware components.",
 			Order:       0,

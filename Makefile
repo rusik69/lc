@@ -236,20 +236,20 @@ deploy:
 		exit 1; \
 	fi
 	@echo "Copying files to server..."
-	@ssh root@msk.govno2.cloud 'mkdir -p /root/lc'
+	@ssh root@msk.rusik69.xyz 'mkdir -p /root/lc'
 	@FILES="Dockerfile docker-compose.yml .prod.env go.mod cmd/ internal/ web/"; \
 	if [ -f go.sum ]; then FILES="$$FILES go.sum"; fi; \
 	tar czf /tmp/lc-deploy.tar.gz $$FILES
-	@scp /tmp/lc-deploy.tar.gz root@msk.govno2.cloud:/root/lc/
-	@ssh root@msk.govno2.cloud 'cd /root/lc && tar xzf lc-deploy.tar.gz && rm lc-deploy.tar.gz'
+	@scp /tmp/lc-deploy.tar.gz root@msk.rusik69.xyz:/root/lc/
+	@ssh root@msk.rusik69.xyz 'cd /root/lc && tar xzf lc-deploy.tar.gz && rm lc-deploy.tar.gz'
 	@rm -f /tmp/lc-deploy.tar.gz
 	@echo "Building and deploying on server..."
-	@ssh root@msk.govno2.cloud 'cd /root/lc && \
+	@ssh root@msk.rusik69.xyz 'cd /root/lc && \
 		echo "Stopping existing containers..." && \
-		if command -v docker-compose > /dev/null 2>&1; then \
-			docker-compose down 2>/dev/null || true; \
-		elif docker compose version > /dev/null 2>&1; then \
+		if docker compose version > /dev/null 2>&1; then \
 			docker compose down 2>/dev/null || true; \
+		elif command -v docker-compose > /dev/null 2>&1; then \
+			docker-compose down 2>/dev/null || true; \
 		fi && \
 		echo "Cleaning up Docker resources..." && \
 		docker container prune -f 2>/dev/null || true && \
@@ -257,22 +257,25 @@ deploy:
 		docker volume prune -f 2>/dev/null || true && \
 		docker system prune -af --volumes 2>/dev/null || true && \
 		docker builder prune -af 2>/dev/null || true && \
-		if command -v docker-compose > /dev/null 2>&1; then \
-			echo "Building Docker image..." && \
-			docker-compose build && \
-			echo "Starting containers..." && \
-			docker-compose up -d; \
-		elif docker compose version > /dev/null 2>&1; then \
+		if docker compose version > /dev/null 2>&1; then \
 			echo "Building Docker image..." && \
 			docker compose build && \
 			echo "Starting containers..." && \
 			docker compose up -d; \
+		elif command -v docker-compose > /dev/null 2>&1; then \
+			echo "Building Docker image..." && \
+			docker-compose build && \
+			echo "Starting containers..." && \
+			docker-compose up -d; \
 		else \
-			echo "Error: docker-compose not found"; \
+			echo "Error: Docker Compose not found (need docker compose plugin or docker-compose)."; \
+			echo "Install: add Docker apt repo (https://docs.docker.com/engine/install/) then apt install docker-compose-plugin"; \
+			echo "Or install plugin binary: mkdir -p /root/.docker/cli-plugins && curl -fsSL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$$(uname -m) -o /root/.docker/cli-plugins/docker-compose && chmod +x /root/.docker/cli-plugins/docker-compose"; \
+			echo "Then verify: docker compose version"; \
 			exit 1; \
 		fi'
 	@echo "✓ Deployment complete!"
-	@echo "Application should be available at http://msk.govno2.cloud:8080"
+	@echo "Application should be available at http://msk.rusik69.xyz:8080"
 
 # Help target
 help:

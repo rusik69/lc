@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterFrontendModules([]problems.CourseModule{
 		{
-			ID:          220,
+			ID:          1520,
 			Title:       "React Advanced Patterns",
 			Description: "Advanced React patterns: render props, HOCs, compound components, and performance optimization.",
 			Order:       20,
@@ -161,7 +161,7 @@ function SearchResults({ query }) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          221,
+			ID:          1521,
 			Title:       "Vue.js Advanced",
 			Description: "Advanced Vue.js: composition API, reactivity system, plugins, and advanced patterns.",
 			Order:       21,
@@ -276,7 +276,7 @@ const AsyncComponent = defineAsyncComponent(() => import('./HeavyComponent.vue')
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          222,
+			ID:          1522,
 			Title:       "Performance Optimization",
 			Description: "Optimize frontend performance: lazy loading, code splitting, caching, and rendering optimization.",
 			Order:       22,
@@ -352,7 +352,7 @@ function useDebounce(value, delay) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          223,
+			ID:          1523,
 			Title:       "Progressive Web Apps (PWA)",
 			Description: "Build Progressive Web Apps: service workers, offline support, and app-like experiences.",
 			Order:       23,
@@ -502,7 +502,7 @@ self.addEventListener('fetch', (event) => {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          224,
+			ID:          1524,
 			Title:       "Server-Side Rendering",
 			Description: "SSR with Next.js and Nuxt.js: SSR benefits, hydration, and SEO optimization.",
 			Order:       24,
@@ -622,7 +622,7 @@ const { user } = Astro.props;
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          225,
+			ID:          1525,
 			Title:       "Micro Frontends",
 			Description: "Architect micro frontends: module federation, independent deployment, and team autonomy.",
 			Order:       25,
@@ -687,7 +687,7 @@ function App() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          226,
+			ID:          1526,
 			Title:       "WebAssembly Basics",
 			Description: "Introduction to WebAssembly: performance-critical code, WASM modules, and integration.",
 			Order:       26,
@@ -745,7 +745,7 @@ run();`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          227,
+			ID:          1527,
 			Title:       "Advanced TypeScript",
 			Description: "Advanced TypeScript: conditional types, mapped types, template literals, and type manipulation.",
 			Order:       27,
@@ -853,7 +853,7 @@ type UserGetters = Getters<User>;
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          228,
+			ID:          1528,
 			Title:       "Design Systems",
 			Description: "Build design systems: component libraries, tokens, documentation, and consistency.",
 			Order:       28,
@@ -996,7 +996,7 @@ export const Clicked = {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          229,
+			ID:          1529,
 			Title:       "Frontend Architecture",
 			Description: "Design scalable frontend architectures: folder structure, state management, and patterns.",
 			Order:       29,

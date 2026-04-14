@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterKubernetesModules([]problems.CourseModule{
 		{
-			ID:          70,
+			ID:          1710,
 			Title:       "RBAC & Security",
 			Description: "Implement role-based access control, authentication, and security best practices.",
 			Order:       10,
@@ -339,7 +339,7 @@ kubectl auth can-i delete deployments --namespace=production --as=system:service
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          71,
+			ID:          1711,
 			Title:       "Monitoring & Observability",
 			Description: "Set up monitoring, logging, and observability for Kubernetes clusters.",
 			Order:       11,
@@ -688,7 +688,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          72,
+			ID:          1712,
 			Title:       "Helm & Package Management",
 			Description: "Use Helm to package, deploy, and manage Kubernetes applications.",
 			Order:       12,
@@ -860,7 +860,7 @@ helm install myapp ./mychart --dry-run --debug`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          73,
+			ID:          1713,
 			Title:       "Advanced Topics",
 			Description: "Explore CRDs, Operators, service mesh, autoscaling, and multi-cluster management.",
 			Order:       13,
@@ -1089,7 +1089,7 @@ kubectl describe hpa app-hpa`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          74,
+			ID:          1714,
 			Title:       "Production Best Practices",
 			Description: "Learn production-ready practices for running Kubernetes in production.",
 			Order:       14,
@@ -1323,7 +1323,7 @@ kubectl top nodes`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          75,
+			ID:          1715,
 			Title:       "CI/CD with Kubernetes",
 			Description: "Integrate Kubernetes with CI/CD pipelines, GitOps, and deployment automation.",
 			Order:       15,

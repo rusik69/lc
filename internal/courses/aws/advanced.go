@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAWSModules([]problems.CourseModule{
 		{
-			ID:          320,
+			ID:          1119,
 			Title:       "Advanced VPC Networking",
 			Description: "Advanced VPC topics: VPC peering, VPN, Direct Connect, Transit Gateway, and network architecture patterns.",
 			Order:       9,
@@ -56,7 +56,7 @@ aws ec2 create-route --route-table-id rtb-1 --destination-cidr-block 10.0.0.0/8 
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          321,
+			ID:          1120,
 			Title:       "AWS Security Best Practices",
 			Description: "Advanced security: encryption, secrets management, WAF, Shield, GuardDuty, and security monitoring.",
 			Order:       10,
@@ -277,7 +277,7 @@ wafv2.create_web_acl(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          322,
+			ID:          1121,
 			Title:       "Cost Optimization",
 			Description: "Learn cost optimization strategies: Reserved Instances, Savings Plans, cost analysis, and best practices.",
 			Order:       11,
@@ -435,7 +435,7 @@ budgets.create_budget(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          323,
+			ID:          1122,
 			Title:       "AWS Organizations",
 			Description: "Learn Organizations: multi-account management, organizational units, service control policies, and account governance.",
 			Order:       12,
@@ -496,7 +496,7 @@ ou = orgs.create_organizational_unit(ParentId='r-1234', Name='Production')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          324,
+			ID:          1123,
 			Title:       "AWS CloudTrail and Config",
 			Description: "Learn CloudTrail and Config: audit logging, compliance monitoring, configuration tracking, and governance.",
 			Order:       13,
@@ -555,7 +555,7 @@ cloudtrail.start_logging(Name='my-trail')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          325,
+			ID:          1124,
 			Title:       "AWS Well-Architected Framework",
 			Description: "Learn the Well-Architected Framework: operational excellence, security, reliability, performance, and cost optimization.",
 			Order:       14,
@@ -593,7 +593,7 @@ cloudtrail.start_logging(Name='my-trail')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          326,
+			ID:          1125,
 			Title:       "Disaster Recovery",
 			Description: "Learn disaster recovery strategies: backup, replication, multi-region deployment, and business continuity.",
 			Order:       15,

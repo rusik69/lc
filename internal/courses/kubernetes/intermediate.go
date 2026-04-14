@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterKubernetesModules([]problems.CourseModule{
 		{
-			ID:          65,
+			ID:          1705,
 			Title:       "ConfigMaps & Secrets",
 			Description: "Manage configuration data and sensitive information in Kubernetes.",
 			Order:       5,
@@ -215,7 +215,7 @@ echo "YWRtaW4=" | base64 -d`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          66,
+			ID:          1706,
 			Title:       "Volumes & Storage",
 			Description: "Understand persistent storage, volume types, and dynamic provisioning.",
 			Order:       6,
@@ -625,7 +625,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          67,
+			ID:          1707,
 			Title:       "StatefulSets & DaemonSets",
 			Description: "Learn specialized workloads for stateful applications and node-level pods.",
 			Order:       7,
@@ -1028,7 +1028,7 @@ kubectl get pods -l app=fluentd`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          68,
+			ID:          1708,
 			Title:       "Jobs & CronJobs",
 			Description: "Run batch jobs and scheduled tasks in Kubernetes.",
 			Order:       8,
@@ -1336,7 +1336,7 @@ kubectl delete jobs --field-selector status.failed=1`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          69,
+			ID:          1709,
 			Title:       "Ingress & Load Balancing",
 			Description: "Expose applications externally with Ingress controllers and advanced routing.",
 			Order:       9,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterKubernetesModules([]problems.CourseModule{
 		{
-			ID:          60,
+			ID:          1700,
 			Title:       "Introduction to Kubernetes",
 			Description: "Learn what Kubernetes is, why it matters, and how to get started with container orchestration.",
 			Order:       0,
@@ -682,7 +682,7 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          61,
+			ID:          1701,
 			Title:       "Kubernetes Architecture",
 			Description: "Understand Kubernetes cluster architecture, control plane components, and node components.",
 			Order:       1,
@@ -922,7 +922,7 @@ kubectl api-versions
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          62,
+			ID:          1702,
 			Title:       "Pods & Containers",
 			Description: "Master the fundamental building blocks: pods, containers, and their lifecycle.",
 			Order:       2,
@@ -1200,7 +1200,7 @@ kubectl logs init-demo -c wait-for-db`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          63,
+			ID:          1703,
 			Title:       "Services & Networking",
 			Description: "Learn how Kubernetes handles networking, service discovery, and exposes applications.",
 			Order:       3,
@@ -1442,7 +1442,7 @@ kubectl get networkpolicies`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          64,
+			ID:          1704,
 			Title:       "Deployments & ReplicaSets",
 			Description: "Master declarative application deployment, scaling, and updates.",
 			Order:       4,

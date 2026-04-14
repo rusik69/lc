@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterLinuxModules([]problems.CourseModule{
 		{
-			ID:          110,
+			ID:          1800,
 			Title:       "Introduction to Linux",
 			Description: "Learn what Linux is, its history, distributions, and why it's essential for modern computing.",
 			Order:       0,
@@ -350,7 +350,7 @@ lsmod | head
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          111,
+			ID:          1801,
 			Title:       "Command Line Fundamentals",
 			Description: "Master essential command line operations: navigation, file operations, and basic commands.",
 			Order:       1,
@@ -575,7 +575,7 @@ export PATH=$PATH:/home/user/my_custom_tools
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          112,
+			ID:          1802,
 			Title:       "File System & Permissions",
 			Description: "Understand Linux file system structure, file types, permissions, ownership, and links.",
 			Order:       2,
@@ -849,7 +849,7 @@ find / -inum $(stat -c %i file.txt) 2>/dev/null`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          113,
+			ID:          1803,
 			Title:       "Text Processing & Filters",
 			Description: "Master text processing tools: cat, grep, sed, awk, sort, and other filters for manipulating text data.",
 			Order:       3,
@@ -1353,7 +1353,7 @@ journalctl -u nginx --since "1 hour ago" | grep -i error | awk '{print $1, $2, $
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          114,
+			ID:          1804,
 			Title:       "Process Management Basics",
 			Description: "Learn to view, control, and manage processes: ps, top, kill, jobs, and process states.",
 			Order:       4,

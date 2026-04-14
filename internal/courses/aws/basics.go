@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAWSModules([]problems.CourseModule{
 		{
-			ID:          300,
+			ID:          1100,
 			Title:       "AWS Fundamentals",
 			Description: "Introduction to AWS: cloud computing basics, AWS global infrastructure, and core services.",
 			Order:       0,
@@ -195,7 +195,7 @@ aws ce get-cost-and-usage \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          301,
+			ID:          1101,
 			Title:       "Identity and Access Management (IAM)",
 			Description: "Learn IAM fundamentals: users, groups, roles, policies, and security best practices.",
 			Order:       1,
@@ -808,7 +808,7 @@ s3 = boto3.client(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          302,
+			ID:          1102,
 			Title:       "Amazon EC2",
 			Description: "Master EC2: instances, AMIs, security groups, key pairs, and instance management.",
 			Order:       2,
@@ -1814,7 +1814,7 @@ ec2.request_spot_fleet(SpotFleetRequestConfig=spot_fleet_config)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          303,
+			ID:          1103,
 			Title:       "Amazon S3",
 			Description: "Learn S3: buckets, objects, storage classes, versioning, lifecycle policies, and security.",
 			Order:       3,
@@ -2707,7 +2707,7 @@ def upload_large_file(bucket, key, filepath):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          304,
+			ID:          1104,
 			Title:       "Amazon VPC Basics",
 			Description: "Introduction to VPC: virtual private clouds, subnets, route tables, internet gateways, and basic networking.",
 			Order:       4,
@@ -3389,7 +3389,7 @@ ec2.delete_flow_logs(FlowLogIds=['fl-1234567890abcdef0'])`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          305,
+			ID:          1105,
 			Title:       "Amazon DynamoDB",
 			Description: "Learn DynamoDB: NoSQL database, tables, items, indexes, streams, and best practices.",
 			Order:       5,
@@ -3636,7 +3636,7 @@ for item in response['Items']:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          306,
+			ID:          1106,
 			Title:       "Amazon CloudWatch",
 			Description: "Learn CloudWatch: monitoring, metrics, alarms, logs, dashboards, and observability.",
 			Order:       6,
@@ -3857,7 +3857,7 @@ for result in result['results']:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          307,
+			ID:          1107,
 			Title:       "Amazon Route 53",
 			Description: "Learn Route 53: DNS service, hosted zones, record types, health checks, and routing policies.",
 			Order:       7,
@@ -3988,7 +3988,7 @@ route53.change_resource_record_sets(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          308,
+			ID:          1108,
 			Title:       "Amazon CloudFront",
 			Description: "Learn CloudFront: CDN, distributions, origins, caching, and content delivery optimization.",
 			Order:       8,
@@ -4094,7 +4094,7 @@ print(f"Distribution ID: {distribution['Distribution']['Id']}")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          309,
+			ID:          1109,
 			Title:       "AWS CLI and SDKs",
 			Description: "Learn AWS CLI and SDKs: command-line interface, SDKs for various languages, and automation.",
 			Order:       9,

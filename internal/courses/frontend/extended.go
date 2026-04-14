@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterFrontendModules([]problems.CourseModule{
 		{
-			ID:          230,
+			ID:          1530,
 			Title:       "Angular Basics",
 			Description: "Introduction to Angular: components, services, dependency injection, and Angular fundamentals.",
 			Order:       30,
@@ -125,7 +125,7 @@ export class UserComponent implements OnInit, OnDestroy {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          231,
+			ID:          1531,
 			Title:       "Svelte and SvelteKit",
 			Description: "Learn Svelte: reactive framework, SvelteKit, and modern web development.",
 			Order:       31,
@@ -191,7 +191,7 @@ SvelteKit is to Svelte what Next.js is to React — a full-stack framework built
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          232,
+			ID:          1532,
 			Title:       "GraphQL and Apollo",
 			Description: "Master GraphQL: queries, mutations, Apollo Client, and modern data fetching.",
 			Order:       32,
@@ -259,7 +259,7 @@ const client = new ApolloClient({
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          233,
+			ID:          1533,
 			Title:       "CSS Preprocessors (SASS/SCSS)",
 			Description: "Master SASS/SCSS: variables, mixins, functions, and advanced CSS preprocessing.",
 			Order:       33,
@@ -334,7 +334,7 @@ $colors: red, blue, green;
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          234,
+			ID:          1534,
 			Title:       "CSS-in-JS Libraries",
 			Description: "Explore CSS-in-JS: styled-components, Emotion, and component-scoped styling.",
 			Order:       34,
@@ -386,7 +386,7 @@ interface Theme {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          235,
+			ID:          1535,
 			Title:       "React Router and Navigation",
 			Description: "Master React Router: routing, navigation, protected routes, and advanced patterns.",
 			Order:       35,
@@ -453,7 +453,7 @@ const UserDetail = lazy(() => import('./UserDetail'));`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          236,
+			ID:          1536,
 			Title:       "Vue Router and Navigation",
 			Description: "Master Vue Router: routing, navigation guards, and advanced Vue navigation patterns.",
 			Order:       36,
@@ -514,7 +514,7 @@ const router = createRouter({
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          237,
+			ID:          1537,
 			Title:       "WebSockets and Real-time",
 			Description: "Build real-time applications: WebSockets, Socket.io, and real-time communication.",
 			Order:       37,
@@ -587,7 +587,7 @@ function useSocket(url) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          238,
+			ID:          1538,
 			Title:       "Internationalization (i18n)",
 			Description: "Implement i18n: multi-language support, locale management, and translation systems.",
 			Order:       38,
@@ -646,7 +646,7 @@ format(new Date(), 'PPP', { locale: es }); // Spanish`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          239,
+			ID:          1539,
 			Title:       "Animation Libraries",
 			Description: "Master animation: Framer Motion, GSAP, and creating smooth animations.",
 			Order:       39,
@@ -711,7 +711,7 @@ tl.to('.element1', { x: 100 })
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          240,
+			ID:          1540,
 			Title:       "Canvas API and Graphics",
 			Description: "Create graphics with Canvas API: drawing, animations, and interactive graphics.",
 			Order:       40,
@@ -781,7 +781,7 @@ animate();`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          241,
+			ID:          1541,
 			Title:       "WebGL and Three.js",
 			Description: "3D graphics with WebGL and Three.js: 3D rendering, scenes, and interactive 3D applications.",
 			Order:       41,
@@ -836,7 +836,7 @@ animate();`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          242,
+			ID:          1542,
 			Title:       "Web Audio API",
 			Description: "Create audio applications: Web Audio API, sound synthesis, and audio processing.",
 			Order:       42,
@@ -892,7 +892,7 @@ async function playAudio(url) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          243,
+			ID:          1543,
 			Title:       "WebRTC",
 			Description: "Real-time communication with WebRTC: peer-to-peer connections, video/audio streaming.",
 			Order:       43,
@@ -954,7 +954,7 @@ await pc.setLocalDescription(offer);
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          244,
+			ID:          1544,
 			Title:       "CI/CD for Frontend",
 			Description: "Implement CI/CD pipelines: GitHub Actions, automated testing, and deployment.",
 			Order:       44,
@@ -1017,7 +1017,7 @@ jobs:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          245,
+			ID:          1545,
 			Title:       "Docker for Frontend",
 			Description: "Containerize frontend applications: Docker, multi-stage builds, and containerization.",
 			Order:       45,
@@ -1071,7 +1071,7 @@ services:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          246,
+			ID:          1546,
 			Title:       "Monitoring and Error Tracking",
 			Description: "Monitor applications: error tracking, performance monitoring, and observability.",
 			Order:       46,
@@ -1134,7 +1134,7 @@ observer.observe({ entryTypes: ['navigation'] });`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          247,
+			ID:          1547,
 			Title:       "Security Best Practices",
 			Description: "Secure frontend applications: XSS prevention, CSRF protection, and security patterns.",
 			Order:       47,
@@ -1187,7 +1187,7 @@ fetch('/api/data', {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          248,
+			ID:          1548,
 			Title:       "SEO for SPAs",
 			Description: "Optimize SPAs for search engines: SSR, meta tags, structured data, and SEO strategies.",
 			Order:       48,
@@ -1249,7 +1249,7 @@ const structuredData = {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          249,
+			ID:          1549,
 			Title:       "Advanced Build Optimization",
 			Description: "Advanced optimization: tree shaking, code splitting, bundle analysis, and performance tuning.",
 			Order:       49,

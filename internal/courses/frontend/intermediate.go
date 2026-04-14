@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterFrontendModules([]problems.CourseModule{
 		{
-			ID:          210,
+			ID:          1510,
 			Title:       "Advanced CSS",
 			Description: "Master advanced CSS: animations, transitions, custom properties, and modern techniques.",
 			Order:       10,
@@ -311,7 +311,7 @@ import { css } from '@emotion/react';
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          211,
+			ID:          1511,
 			Title:       "Advanced JavaScript",
 			Description: "Deep dive into JavaScript: closures, prototypes, async/await, and advanced patterns.",
 			Order:       11,
@@ -572,7 +572,7 @@ function trackError(error, context) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          212,
+			ID:          1512,
 			Title:       "TypeScript Fundamentals",
 			Description: "Learn TypeScript: types, interfaces, generics, and type safety.",
 			Order:       12,
@@ -755,7 +755,7 @@ Geometry.Circle.area(5);`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          213,
+			ID:          1513,
 			Title:       "React Basics",
 			Description: "Introduction to React: components, JSX, props, state, and React fundamentals.",
 			Order:       13,
@@ -1052,7 +1052,7 @@ function ValidatedForm() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          214,
+			ID:          1514,
 			Title:       "React Hooks",
 			Description: "Master React Hooks: useState, useEffect, useContext, and custom hooks.",
 			Order:       14,
@@ -1206,7 +1206,7 @@ function useLocalStorage(key, initialValue) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          215,
+			ID:          1515,
 			Title:       "State Management",
 			Description: "Manage application state: Redux, Context API, Zustand, and state management patterns.",
 			Order:       15,
@@ -1385,7 +1385,7 @@ function Profile() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          216,
+			ID:          1516,
 			Title:       "Vue.js Basics",
 			Description: "Introduction to Vue.js: components, directives, reactivity, and Vue fundamentals.",
 			Order:       16,
@@ -1592,7 +1592,7 @@ export default {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          217,
+			ID:          1517,
 			Title:       "Component Architecture",
 			Description: "Design scalable component architectures: composition, patterns, and best practices.",
 			Order:       17,
@@ -1664,7 +1664,7 @@ function Input({ value, onChange }) {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          218,
+			ID:          1518,
 			Title:       "Build Tools",
 			Description: "Modern build tools: Webpack, Vite, bundling, and optimization.",
 			Order:       18,
@@ -1787,7 +1787,7 @@ export default {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          219,
+			ID:          1519,
 			Title:       "Testing Frontend Code",
 			Description: "Test frontend applications: unit tests, integration tests, and testing tools.",
 			Order:       19,

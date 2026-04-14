@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAzureModules([]problems.CourseModule{
 		{
-			ID:          435,
+			ID:          1235,
 			Title:       "Azure Container Registry & Container Apps",
 			Description: "Master Azure Container Registry for image management and Azure Container Apps for modern serverless container deployments.",
 			Order:       35,
@@ -156,7 +156,7 @@ az containerapp logs show --name myapi --resource-group myRG --follow`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          436,
+			ID:          1236,
 			Title:       "Managed Identities & Zero Trust",
 			Description: "Implement passwordless authentication with Azure Managed Identities and apply Zero Trust security principles across Azure resources.",
 			Order:       36,
@@ -310,7 +310,7 @@ az network bastion create \
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          437,
+			ID:          1237,
 			Title:       "Azure Data & Analytics",
 			Description: "Build data pipelines and analytics solutions with Azure Data Factory, Synapse Analytics, Databricks, and Stream Analytics.",
 			Order:       37,
@@ -539,7 +539,7 @@ az databricks workspace create \
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          438,
+			ID:          1238,
 			Title:       "Infrastructure as Code on Azure",
 			Description: "Deploy and manage Azure infrastructure using Bicep, Terraform, and GitHub Actions for automated, repeatable cloud deployments.",
 			Order:       38,

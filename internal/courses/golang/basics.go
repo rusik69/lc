@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
-			ID:          30,
+			ID:          1600,
 			Title:       "Introduction to Go",
 			Description: "Learn the fundamentals of Go: history, installation, and your first program.",
 			Order:       0,
@@ -394,7 +394,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          31,
+			ID:          1601,
 			Title:       "Basic Syntax & Types",
 			Description: "Master Go's basic types, variables, constants, and type system.",
 			Order:       1,
@@ -948,7 +948,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          32,
+			ID:          1602,
 			Title:       "Control Structures",
 			Description: "Learn if/else, switch, and loops in Go.",
 			Order:       2,
@@ -1449,7 +1449,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          33,
+			ID:          1603,
 			Title:       "Functions",
 			Description: "Master function declaration, multiple returns, variadic functions, and defer.",
 			Order:       3,

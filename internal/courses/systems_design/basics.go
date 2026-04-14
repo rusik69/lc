@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSystemsDesignModules([]problems.CourseModule{
 		{
-			ID:          10,
+			ID:          2400,
 			Title:       "Introduction to Systems Design",
 			Description: "Learn the fundamentals of designing scalable, reliable, and maintainable systems.",
 			Order:       0,
@@ -1687,7 +1687,7 @@ Let me update the design to include these..."
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          11,
+			ID:          2401,
 			Title:       "Load Balancing & High Availability",
 			Description: "Master load balancing strategies and high availability patterns for distributed systems.",
 			Order:       1,
@@ -2114,7 +2114,7 @@ Failover Scenario:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          12,
+			ID:          2402,
 			Title:       "Caching & Performance",
 			Description: "Learn caching techniques including Redis, Memcached, and CDN to improve system performance.",
 			Order:       2,
@@ -2317,7 +2317,7 @@ def warm_cache():
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          13,
+			ID:          2403,
 			Title:       "Database Design",
 			Description: "Understand SQL vs NoSQL, replication, sharding, and database scaling strategies.",
 			Order:       3,
@@ -2599,7 +2599,7 @@ Choose NoSQL when:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          14,
+			ID:          2404,
 			Title:       "Message Queues & Event Streaming",
 			Description: "Learn about message queues, event-driven architecture, and streaming systems like Kafka.",
 			Order:       4,

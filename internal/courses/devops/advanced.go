@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterDevOpsModules([]problems.CourseModule{
 		{
-			ID:          270,
+			ID:          1420,
 			Title:       "Advanced Kubernetes",
 			Description: "Advanced Kubernetes: RBAC, NetworkPolicies, Custom Resources, Operators, and advanced patterns.",
 			Order:       20,
@@ -206,7 +206,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          271,
+			ID:          1421,
 			Title:       "Service Mesh (Istio, Linkerd)",
 			Description: "Service mesh patterns: Istio, Linkerd, traffic management, security, and observability.",
 			Order:       21,
@@ -445,7 +445,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          272,
+			ID:          1422,
 			Title:       "GitOps (ArgoCD, Flux)",
 			Description: "GitOps workflows: ArgoCD, Flux, declarative deployments, and Git-based operations.",
 			Order:       22,
@@ -717,7 +717,7 @@ git push origin main
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          273,
+			ID:          1423,
 			Title:       "Cloud-Native Security",
 			Description: "Security in cloud-native environments: scanning, compliance, secrets management, and security best practices.",
 			Order:       23,
@@ -868,7 +868,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          274,
+			ID:          1424,
 			Title:       "Disaster Recovery and Backup",
 			Description: "Disaster recovery strategies: backups, replication, failover, and business continuity.",
 			Order:       24,
@@ -1023,7 +1023,7 @@ fi`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          275,
+			ID:          1425,
 			Title:       "Multi-Cloud Strategies",
 			Description: "Multi-cloud architectures: vendor lock-in avoidance, hybrid cloud, and cloud-agnostic patterns.",
 			Order:       25,
@@ -1202,7 +1202,7 @@ fi`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          276,
+			ID:          1426,
 			Title:       "Infrastructure Monitoring",
 			Description: "Infrastructure monitoring: Prometheus, Grafana, alerting, and infrastructure observability.",
 			Order:       26,
@@ -1393,7 +1393,7 @@ groups:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          277,
+			ID:          1427,
 			Title:       "Cost Optimization",
 			Description: "Optimize cloud costs: resource rightsizing, reserved instances, spot instances, and cost management.",
 			Order:       27,
@@ -1588,7 +1588,7 @@ kubectl top pods --all-namespaces | awk '$3 < 10 || $4 < 100'`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          278,
+			ID:          1428,
 			Title:       "DevOps Culture and Practices",
 			Description: "DevOps culture: team practices, collaboration, blameless postmortems, and continuous improvement.",
 			Order:       28,
@@ -1777,7 +1777,7 @@ Enable teams to deliver value faster and more reliably
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          279,
+			ID:          1429,
 			Title:       "Site Reliability Engineering (SRE)",
 			Description: "SRE principles: SLIs, SLOs, error budgets, toil reduction, and reliability engineering.",
 			Order:       29,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSystemsDesignModules([]problems.CourseModule{
 		{
-			ID:          20,
+			ID:          2410,
 			Title:       "Real-World System Examples",
 			Description: "Deep dive into how major tech companies built their systems: Twitter, Instagram, YouTube, Netflix, Uber, and Google.",
 			Order:       10,
@@ -347,7 +347,7 @@ Google Zanzibar is a global authorization system used across Google services (Dr
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          21,
+			ID:          2411,
 			Title:       "Security & Authentication",
 			Description: "Learn security best practices, authentication mechanisms, and authorization patterns for secure systems.",
 			Order:       11,
@@ -751,7 +751,7 @@ extract_task >> transform_task >> load_task`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          23,
+			ID:          2412,
 			Title:       "Search Systems",
 			Description: "Learn how to design and implement search systems using Elasticsearch and other search technologies.",
 			Order:       13,
@@ -967,7 +967,7 @@ Learning to Rank:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          24,
+			ID:          2413,
 			Title:       "Distributed Systems Patterns",
 			Description: "Master distributed systems patterns including leader election, distributed locks, and consensus algorithms.",
 			Order:       14,

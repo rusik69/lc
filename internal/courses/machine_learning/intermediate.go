@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterMachineLearningModules([]problems.CourseModule{
 		{
-			ID:          90,
+			ID:          1905,
 			Title:       "Ensemble Methods",
 			Description: "Learn how combining multiple models improves performance: Random Forests, Gradient Boosting, and XGBoost.",
 			Order:       5,
@@ -711,7 +711,7 @@ if XGBOOST_AVAILABLE:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          91,
+			ID:          1906,
 			Title:       "Unsupervised Learning",
 			Description: "Discover patterns in unlabeled data: clustering, dimensionality reduction, and anomaly detection.",
 			Order:       6,
@@ -1137,7 +1137,7 @@ plt.show()`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          92,
+			ID:          1907,
 			Title:       "Neural Networks Fundamentals",
 			Description: "Learn perceptrons, multi-layer perceptrons, activation functions, backpropagation, and gradient descent.",
 			Order:       7,
@@ -1407,7 +1407,7 @@ def gradient_descent_step(weights, gradients, learning_rate):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          93,
+			ID:          1908,
 			Title:       "Deep Learning Introduction",
 			Description: "Explore deep neural networks, vanishing gradients, regularization, and optimizers.",
 			Order:       8,
@@ -1475,7 +1475,7 @@ model = nn.Sequential(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          94,
+			ID:          1909,
 			Title:       "Convolutional Neural Networks (CNNs)",
 			Description: "Learn convolution operations, pooling, CNN architectures, and transfer learning.",
 			Order:       9,
@@ -1529,7 +1529,7 @@ resnet = models.resnet18(pretrained=True)
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          113,
+			ID:          1910,
 			Title:       "Natural Language Processing Basics",
 			Description: "Learn NLP fundamentals: text preprocessing, word embeddings, text classification, sentiment analysis, and NER.",
 			Order:       23,
@@ -2050,7 +2050,7 @@ class BiLSTM_CRF(nn.Module):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          114,
+			ID:          1911,
 			Title:       "Recommendation Systems",
 			Description: "Learn collaborative filtering, matrix factorization, content-based filtering, and hybrid recommendation approaches.",
 			Order:       24,
@@ -2594,7 +2594,7 @@ def diversity(recommended_items, item_features):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          115,
+			ID:          1912,
 			Title:       "Anomaly Detection",
 			Description: "Learn anomaly detection techniques: statistical methods, isolation forest, one-class SVM, and deep learning approaches.",
 			Order:       25,
@@ -3087,7 +3087,7 @@ print(f"LSTM detected {np.sum(anomaly_predictions)} anomalies")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          116,
+			ID:          1913,
 			Title:       "Optimization Algorithms",
 			Description: "Learn gradient descent variants, learning rate scheduling, convex optimization, and optimization techniques for deep learning.",
 			Order:       26,
@@ -3701,7 +3701,7 @@ class Lookahead:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          117,
+			ID:          1914,
 			Title:       "Bayesian Methods",
 			Description: "Learn Bayesian inference, MAP estimation, Bayesian neural networks, Gaussian processes, and MCMC methods.",
 			Order:       27,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterMathModules([]problems.CourseModule{
 		{
-			ID:          500,
+			ID:          2000,
 			Title:       "Introduction to Mathematics",
 			Description: "Learn fundamental mathematical concepts including arithmetic, algebra, and number theory.",
 			Order:       0,
@@ -2022,7 +2022,7 @@ print(f"10^20 in scientific: {large_num:.2e}")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          501,
+			ID:          2001,
 			Title:       "Algebra Fundamentals",
 			Description: "Master variables, equations, and algebraic expressions.",
 			Order:       1,
@@ -3328,7 +3328,7 @@ print(f"\n3x² + 2x + 1 at x=2: {value}")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          502,
+			ID:          2002,
 			Title:       "Geometry Basics",
 			Description: "Learn fundamental geometric concepts including shapes, angles, and formulas.",
 			Order:       2,
@@ -5471,7 +5471,7 @@ for triple in triples:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          503,
+			ID:          2003,
 			Title:       "Number Theory for CS",
 			Description: "Advanced number theory concepts essential for computer science and cryptography.",
 			Order:       3,
@@ -7283,7 +7283,7 @@ for i in range(10):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          504,
+			ID:          2004,
 			Title:       "Combinatorics and Probability",
 			Description: "Learn counting principles, permutations, combinations, and probability fundamentals.",
 			Order:       4,
@@ -8996,7 +8996,7 @@ print("(This is the birthday paradox!)")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          505,
+			ID:          2005,
 			Title:       "Logarithms and Exponentials",
 			Description: "Master logarithmic and exponential functions essential for algorithm analysis.",
 			Order:       5,
@@ -10517,7 +10517,7 @@ print(f"T(n) = T(n/2) + O(1): {master_theorem_category(1, 2, 0)}")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          506,
+			ID:          2006,
 			Title:       "Sequences and Series",
 			Description: "Learn arithmetic and geometric sequences, summation formulas, and their applications.",
 			Order:       6,

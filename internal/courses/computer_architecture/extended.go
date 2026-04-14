@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterComputerArchitectureModules([]problems.CourseModule{
 		{
-			ID:          209,
+			ID:          1309,
 			Title:       "SIMD, Vector Processing, and Modern ISA Extensions",
 			Description: "Learn about SIMD instructions, vector processing units, x86 SSE/AVX, ARM NEON/SVE, and how modern CPUs accelerate data-parallel workloads.",
 			Order:       3,
@@ -166,7 +166,7 @@ __m256i braces = _mm256_cmpeq_epi8(chunk1, _mm256_set1_epi8('{'));
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          210,
+			ID:          1310,
 			Title:       "Memory Ordering and Consistency Models",
 			Description: "Understand memory consistency models, memory barriers, atomic operations, and how they affect multi-threaded programming on different architectures.",
 			Order:       4,
@@ -358,7 +358,7 @@ func increment() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          211,
+			ID:          1311,
 			Title:       "Hardware Virtualization",
 			Description: "Learn how CPUs support virtual machines: VT-x, EPT/NPT, SR-IOV, and how hypervisors leverage hardware assistance for efficient virtualization.",
 			Order:       5,
@@ -553,7 +553,7 @@ struct virtq {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          212,
+			ID:          1312,
 			Title:       "Power Management and Thermal Design",
 			Description: "Understand CPU power states, dynamic voltage and frequency scaling, thermal management, and energy-efficient processor design for mobile and data center.",
 			Order:       6,
@@ -671,7 +671,7 @@ struct virtq {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          213,
+			ID:          1313,
 			Title:       "Modern ARM and RISC-V Architectures",
 			Description: "Deep dive into ARM and RISC-V: Apple Silicon, ARM Cortex series, RISC-V extensions, and how these architectures are reshaping computing.",
 			Order:       8,
@@ -871,7 +871,7 @@ vse32.v v3, (a3)          // Store result to a`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          214,
+			ID:          1314,
 			Title:       "Compiler Optimization and Hardware Interaction",
 			Description: "Learn how compilers optimize code for hardware: instruction scheduling, register allocation, loop transformations, and profile-guided optimization.",
 			Order:       9,

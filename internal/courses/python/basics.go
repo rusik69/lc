@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterPythonModules([]problems.CourseModule{
 		{
-			ID:          44,
+			ID:          2200,
 			Title:       "Introduction to Python",
 			Description: "Learn the fundamentals of Python: history, installation, and your first program.",
 			Order:       0,
@@ -455,7 +455,7 @@ if __name__ == "__main__":
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          45,
+			ID:          2201,
 			Title:       "Basic Syntax & Types",
 			Description: "Master Python's basic types, variables, and type system.",
 			Order:       1,
@@ -2168,7 +2168,7 @@ print(calculate_total.__doc__)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          46,
+			ID:          2202,
 			Title:       "Control Structures",
 			Description: "Learn if/else, loops, and flow control in Python.",
 			Order:       2,
@@ -2912,7 +2912,7 @@ except:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          47,
+			ID:          2203,
 			Title:       "Functions",
 			Description: "Master function definition, parameters, return values, and scope.",
 			Order:       3,

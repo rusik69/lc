@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterLinuxModules([]problems.CourseModule{
 		{
-			ID:          140,
+			ID:          1820,
 			Title:       "Boot Process & System Initialization",
 			Description: "Understand the Linux boot process from BIOS/UEFI through GRUB to systemd, kernel parameters, initramfs, and boot troubleshooting.",
 			Order:       20,
@@ -213,7 +213,7 @@ systemd-analyze critical-chain  # Show critical path`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          141,
+			ID:          1821,
 			Title:       "Log Management & Monitoring",
 			Description: "Master Linux logging with journald, syslog, logrotate, and centralized log collection for production systems.",
 			Order:       21,
@@ -410,7 +410,7 @@ cat /var/lib/logrotate/status`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          142,
+			ID:          1822,
 			Title:       "Memory Management & Performance Tuning",
 			Description: "Understand Linux memory management, swap, the OOM killer, hugepages, and performance tuning with sysctl and kernel parameters.",
 			Order:       22,
@@ -610,7 +610,7 @@ cat /proc/$(pidof nginx)/limits`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          143,
+			ID:          1823,
 			Title:       "Containerization Fundamentals",
 			Description: "Understand Linux kernel features that enable containers: namespaces, cgroups, overlay filesystems, and how container runtimes work.",
 			Order:       23,

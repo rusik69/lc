@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAlgorithmsModules([]problems.CourseModule{
 		{
-			ID:          0,
+			ID:          1000,
 			Title:       "Introduction & Complexity Analysis",
 			Description: "Master the fundamentals: what data structures are, how to analyze algorithms, and understand Big O notation.",
 			Order:       0,
@@ -1567,7 +1567,7 @@ print(f"log₂(1000000) ≈ {math.log2(1000000):.1f}")`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          1,
+			ID:          1001,
 			Title:       "Arrays & Hash Tables",
 			Description: "Learn fundamental data structures: arrays and hash tables. Master techniques for efficient lookups and manipulations.",
 			Order:       1,
@@ -5478,7 +5478,7 @@ if __name__ == "__main__":
 			ProblemIDs: []int{1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
 		},
 		{
-			ID:          2,
+			ID:          1002,
 			Title:       "Two Pointers",
 			Description: "Master the two-pointer technique for solving array and string problems efficiently.",
 			Order:       2,
@@ -7910,7 +7910,7 @@ func merge(nums1 []int, m int, nums2 []int, n int) {
 			ProblemIDs: []int{2, 3, 4, 5, 21, 22, 23, 24, 25},
 		},
 		{
-			ID:          3,
+			ID:          1003,
 			Title:       "Sliding Window",
 			Description: "Learn to solve problems using the sliding window technique for optimal subarray/substring solutions.",
 			Order:       3,
@@ -9589,7 +9589,7 @@ def longest_substring_k_distinct(s, k):
 			ProblemIDs: []int{26, 27, 28, 29, 30},
 		},
 		{
-			ID:          4,
+			ID:          1004,
 			Title:       "Stack & Queue",
 			Description: "Understand stack and queue data structures and their applications in problem-solving.",
 			Order:       4,

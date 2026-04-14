@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterPythonModules([]problems.CourseModule{
 		{
-			ID:          51,
+			ID:          2207,
 			Title:       "Modules & Packages",
 			Description: "Understand Python modules, packages, and dependency management.",
 			Order:       7,
@@ -797,7 +797,7 @@ deactivate`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          52,
+			ID:          2208,
 			Title:       "File I/O & Exception Handling",
 			Description: "Learn file operations, context managers, and error handling.",
 			Order:       8,
@@ -1434,7 +1434,7 @@ if new_path.exists() and new_path.is_file():
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          53,
+			ID:          2209,
 			Title:       "Advanced Features",
 			Description: "Explore decorators, generators, context managers, and advanced Python features.",
 			Order:       9,
@@ -2420,7 +2420,7 @@ async def event_loop_example():
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          54,
+			ID:          2210,
 			Title:       "Standard Library",
 			Description: "Explore Python's rich standard library: os, sys, datetime, collections, and more.",
 			Order:       10,
@@ -3042,7 +3042,7 @@ print(process(5))  # ((5 * 2) + 10) ** 2 = 400`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          55,
+			ID:          2211,
 			Title:       "Testing & Debugging",
 			Description: "Learn unittest, pytest, mocking, and debugging techniques.",
 			Order:       11,
@@ -3187,7 +3187,7 @@ def calculate(x, y):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          56,
+			ID:          2212,
 			Title:       "Web Development Basics",
 			Description: "Introduction to Flask, Django, and web development with Python.",
 			Order:       12,
@@ -3281,7 +3281,7 @@ def user_list(request):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          57,
+			ID:          2213,
 			Title:       "Best Practices & Idioms",
 			Description: "Learn PEP 8, Pythonic code patterns, and common pitfalls.",
 			Order:       13,
@@ -3439,7 +3439,7 @@ result = "".join(words)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          58,
+			ID:          2214,
 			Title:       "Data Science Essentials",
 			Description: "Introduction to NumPy, Pandas, Matplotlib, and data analysis with Python.",
 			Order:       14,

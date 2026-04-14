@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
-			ID:          45,
+			ID:          1618,
 			Title:       "Strings, Runes & Text Processing",
 			Description: "Master Go's string internals, Unicode/UTF-8 handling, rune iteration, string building, and the strings/bytes packages.",
 			Order:       15,
@@ -268,7 +268,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          46,
+			ID:          1619,
 			Title:       "HTTP Servers & Web Development",
 			Description: "Build production-quality HTTP servers in Go: routing, middleware, request handling, templates, REST APIs, and the new ServeMux in Go 1.22+.",
 			Order:       16,
@@ -598,7 +598,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          47,
+			ID:          1620,
 			Title:       "CLI Tools & Project Structure",
 			Description: "Build command-line tools with flag parsing, environment variables, configuration management, and organize Go projects using best practices.",
 			Order:       17,
@@ -1028,7 +1028,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          51,
+			ID:          1621,
 			Title:       "Security, Race Detection & Performance",
 			Description: "Write secure, thread-safe, and high-performance Go code: race detection, sync/atomic, crypto, secure coding, and profiling techniques.",
 			Order:       21,

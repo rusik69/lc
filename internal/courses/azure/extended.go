@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAzureModules([]problems.CourseModule{
 		{
-			ID:          430,
+			ID:          1230,
 			Title:       "Azure Storage Advanced",
 			Description: "Advanced Azure Storage: blob lifecycle management, Azure Files, and Azure Data Lake Storage.",
 			Order:       30,
@@ -144,7 +144,7 @@ az storage fs create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          431,
+			ID:          1231,
 			Title:       "Azure Database Services",
 			Description: "Additional Azure database services: MySQL and Redis Cache.",
 			Order:       31,
@@ -216,7 +216,7 @@ az redis list-keys \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          432,
+			ID:          1232,
 			Title:       "Azure Networking Advanced",
 			Description: "Advanced networking services: Azure Firewall, Network Watcher, and Private Link.",
 			Order:       32,
@@ -332,7 +332,7 @@ az network private-endpoint create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          433,
+			ID:          1233,
 			Title:       "Azure Security Advanced",
 			Description: "Advanced security services: Azure Sentinel, Azure Defender, and Identity Protection.",
 			Order:       33,
@@ -405,7 +405,7 @@ Enable Identity Protection for your entire Azure AD tenant — it works best whe
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          434,
+			ID:          1234,
 			Title:       "Azure AI/ML Services",
 			Description: "Azure AI and Machine Learning services: Machine Learning, Cognitive Services, and Azure OpenAI.",
 			Order:       34,

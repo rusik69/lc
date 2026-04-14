@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSoftwareArchitectureModules([]problems.CourseModule{
 		{
-			ID:          36,
+			ID:          2306,
 			Title:       "Enterprise Integration Patterns",
 			Description: "Learn enterprise integration patterns for connecting systems, including messaging patterns, routing, and transformation.",
 			Order:       6,
@@ -449,7 +449,7 @@ class OrderSaga {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          37,
+			ID:          2307,
 			Title:       "Architecture Decision Records (ADRs)",
 			Description: "Learn how to document architectural decisions using Architecture Decision Records (ADRs).",
 			Order:       7,
@@ -678,7 +678,7 @@ Related ADRs:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          38,
+			ID:          2308,
 			Title:       "Architecture Documentation",
 			Description: "Learn the C4 model and best practices for documenting software architecture.",
 			Order:       8,
@@ -935,7 +935,7 @@ Documentation Structure:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          39,
+			ID:          2309,
 			Title:       "Technology Selection & Trade-offs",
 			Description: "Learn frameworks for evaluating technologies and making informed architectural decisions.",
 			Order:       9,
@@ -1197,7 +1197,7 @@ Mitigation:
 			ProblemIDs: []int{},
 		},
 		{
-			ID: 40,
+			ID:          2310,
 			Title:       "Real-World Architecture Examples",
 			Description: "Explore how major companies and open-source projects apply architectural patterns, design principles, and make architectural decisions in practice.",
 			Order:       10,

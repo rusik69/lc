@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterDevOpsModules([]problems.CourseModule{
 		{
-			ID:          260,
+			ID:          1410,
 			Title:       "Advanced Docker",
 			Description: "Advanced Docker concepts: multi-stage builds, optimization, security, and best practices.",
 			Order:       10,
@@ -122,7 +122,7 @@ networks:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          261,
+			ID:          1411,
 			Title:       "Kubernetes Fundamentals",
 			Description: "Introduction to Kubernetes: architecture, pods, services, and core concepts.",
 			Order:       11,
@@ -414,7 +414,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          262,
+			ID:          1412,
 			Title:       "Kubernetes Deployment and Services",
 			Description: "Deploy applications to Kubernetes: deployments, services, ingress, and scaling.",
 			Order:       12,
@@ -765,7 +765,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          263,
+			ID:          1413,
 			Title:       "Cloud Platforms (AWS/Azure/GCP)",
 			Description: "Cloud platform essentials: compute, storage, networking, and managed services.",
 			Order:       13,
@@ -912,7 +912,7 @@ resources:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          264,
+			ID:          1414,
 			Title:       "Infrastructure as Code (Terraform)",
 			Description: "Master Terraform: infrastructure provisioning, state management, and best practices.",
 			Order:       14,
@@ -1084,7 +1084,7 @@ resource "aws_instance" "web" {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          265,
+			ID:          1415,
 			Title:       "Configuration Management (Ansible)",
 			Description: "Master Ansible: playbooks, roles, inventory management, and automation.",
 			Order:       15,
@@ -1254,7 +1254,7 @@ filters:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          266,
+			ID:          1416,
 			Title:       "CI/CD Pipelines (Jenkins, GitHub Actions)",
 			Description: "Build advanced CI/CD pipelines with Jenkins and GitHub Actions.",
 			Order:       16,
@@ -1464,7 +1464,7 @@ jobs:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          267,
+			ID:          1417,
 			Title:       "Container Orchestration",
 			Description: "Advanced container orchestration: scaling, service discovery, and multi-container patterns.",
 			Order:       17,
@@ -1668,7 +1668,7 @@ signal.signal(signal.SIGTERM, signal_handler)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          268,
+			ID:          1418,
 			Title:       "Logging and Log Aggregation",
 			Description: "Centralized logging: ELK Stack, Loki, Fluentd, and log aggregation strategies.",
 			Order:       18,
@@ -1906,7 +1906,7 @@ sum by (service) (count_over_time({level="ERROR"}[5m]))`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          269,
+			ID:          1419,
 			Title:       "Application Performance Monitoring",
 			Description: "APM tools and practices: New Relic, Datadog, Prometheus, and performance monitoring.",
 			Order:       19,

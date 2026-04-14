@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAlgorithmsModules([]problems.CourseModule{
 		{
-			ID:          5,
+			ID:          1005,
 			Title:       "Linked Lists",
 			Description: "Master linked list operations and common patterns for solving linked list problems.",
 			Order:       5,
@@ -409,7 +409,7 @@ def detect_cycle(head):
 			ProblemIDs: []int{36, 37, 38, 39, 40},
 		},
 		{
-			ID:          6,
+			ID:          1006,
 			Title:       "Trees",
 			Description: "Learn tree data structures, traversal methods, and tree-based algorithms.",
 			Order:       6,
@@ -1065,7 +1065,7 @@ def deserialize(data):
 			ProblemIDs: []int{41, 42, 43, 44, 45, 46, 47, 48, 49, 50},
 		},
 		{
-			ID:          8,
+			ID:          1007,
 			Title:       "Strings",
 			Description: "Master string manipulation techniques, pattern matching, and string algorithms.",
 			Order:       8,
@@ -1809,7 +1809,7 @@ def search_pattern(text, sa, pattern):
 			ProblemIDs: []int{2, 4, 15, 27, 30},
 		},
 		{
-			ID:          9,
+			ID:          1008,
 			Title:       "Graphs",
 			Description: "Learn graph data structures, traversal algorithms, and graph-based problem solving.",
 			Order:       9,

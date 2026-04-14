@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
-			ID:          38,
+			ID:          1608,
 			Title:       "Generics (Go 1.18+)",
 			Description: "Learn Go generics: type parameters, constraints, and modern generic programming patterns.",
 			Order:       8,
@@ -106,7 +106,7 @@ strs := Map(nums, func(n int) string {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          39,
+			ID:          1609,
 			Title:       "Error Handling",
 			Description: "Learn Go's error handling patterns, custom errors, and panic/recover.",
 			Order:       9,
@@ -221,7 +221,7 @@ func main() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          40,
+			ID:          1610,
 			Title:       "Concurrency",
 			Description: "Master goroutines, channels, select, and concurrent programming patterns.",
 			Order:       10,
@@ -427,7 +427,7 @@ wg.Wait()`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          41,
+			ID:          1611,
 			Title:       "Packages & Modules",
 			Description: "Understand package organization, modules, and dependency management.",
 			Order:       11,
@@ -518,7 +518,7 @@ import "app/internal/db" // COMPILE ERROR`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          42,
+			ID:          1612,
 			Title:       "Standard Library",
 			Description: "Explore Go's rich standard library: fmt, strings, io, time, json, http, and more.",
 			Order:       12,
@@ -622,7 +622,7 @@ body, _ := io.ReadAll(resp.Body)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          43,
+			ID:          1613,
 			Title:       "Testing & Benchmarking",
 			Description: "Learn to write tests, benchmarks, and measure code performance.",
 			Order:       13,
@@ -698,7 +698,7 @@ func ExampleReverse() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          44,
+			ID:          1614,
 			Title:       "Advanced Topics",
 			Description: "Explore reflection, generics, build tags, profiling, and Go best practices.",
 			Order:       14,
@@ -783,7 +783,7 @@ go tool trace trace.out`,
 		},
 
 		{
-			ID:          48,
+			ID:          1615,
 			Title:       "Database Operations",
 			Description: "Connect to databases, execute queries, and work with database/sql package.",
 			Order:       18,
@@ -826,7 +826,7 @@ func transfer(db *sql.DB, ctx context.Context) error {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          49,
+			ID:          1616,
 			Title:       "Advanced Concurrency Patterns",
 			Description: "Deep dive into sophisticated concurrency patterns: Fan-out/Fan-in, Pipelines, Context-aware control, and robust Worker Pools.",
 			Order:       19,
@@ -918,7 +918,7 @@ func operationWithDeadline() {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          50,
+			ID:          1617,
 			Title:       "Idiomatic Design Patterns",
 			Description: "Learn patterns that are specific to Go's philosophy: Functional Options, Decorators, Registries, and Middleware.",
 			Order:       20,

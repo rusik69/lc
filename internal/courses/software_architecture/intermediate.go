@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSoftwareArchitectureModules([]problems.CourseModule{
 		{
-			ID:          33,
+			ID:          2303,
 			Title:       "Clean Architecture & Hexagonal Architecture",
 			Description: "Learn Clean Architecture principles, Hexagonal Architecture (Ports and Adapters), and Onion Architecture patterns.",
 			Order:       3,
@@ -657,7 +657,7 @@ Dependency Flow:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          34,
+			ID:          2304,
 			Title:       "Domain-Driven Design (DDD)",
 			Description: "Learn Domain-Driven Design concepts including bounded contexts, ubiquitous language, entities, value objects, aggregates, and domain events.",
 			Order:       4,
@@ -1222,7 +1222,7 @@ Read Side:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          35,
+			ID:          2305,
 			Title:       "Microservices Architecture Patterns",
 			Description: "Learn microservices patterns including service decomposition, API Gateway, service mesh, and distributed data management.",
 			Order:       5,

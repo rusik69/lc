@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterMachineLearningModules([]problems.CourseModule{
 		{
-			ID:          80,
+			ID:          1900,
 			Title:       "Introduction to Machine Learning",
 			Description: "Learn what machine learning is, its types, applications, and how it differs from traditional programming.",
 			Order:       0,
@@ -702,7 +702,7 @@ plt.show()`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          81,
+			ID:          1901,
 			Title:       "Data Preprocessing & Feature Engineering",
 			Description: "Master data cleaning, handling missing values, feature scaling, encoding, and feature selection techniques.",
 			Order:       1,
@@ -1319,7 +1319,7 @@ print(df[['category', 'target', 'category_encoded']])`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          82,
+			ID:          1902,
 			Title:       "Supervised Learning Fundamentals",
 			Description: "Learn linear regression, logistic regression, decision trees, and basic model evaluation.",
 			Order:       2,
@@ -3291,7 +3291,7 @@ print(f"\nNested CV Score: {np.mean(nested_scores):.3f} (+/- {np.std(nested_scor
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          83,
+			ID:          1903,
 			Title:       "Classification Algorithms",
 			Description: "Explore K-Nearest Neighbors, Naive Bayes, Support Vector Machines, and classification evaluation metrics.",
 			Order:       3,
@@ -4192,7 +4192,7 @@ print(classification_report(y_test_multi, y_pred_multi,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          84,
+			ID:          1904,
 			Title:       "Regression & Model Evaluation",
 			Description: "Learn polynomial regression, regularization (Ridge & Lasso), cross-validation, and overfitting concepts.",
 			Order:       4,

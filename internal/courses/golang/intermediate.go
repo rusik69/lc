@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterGolangModules([]problems.CourseModule{
 		{
-			ID:          34,
+			ID:          1604,
 			Title:       "Pointers & Memory",
 			Description: "Understand pointers, memory management, and pass by value vs reference.",
 			Order:       4,
@@ -206,7 +206,7 @@ func increment(n *int) { // Unnecessary pointer!
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          35,
+			ID:          1605,
 			Title:       "Arrays, Slices & Maps",
 			Description: "Master arrays, slices, and maps - Go's collection types.",
 			Order:       5,
@@ -307,7 +307,7 @@ fmt.Println(m2["Missing"]) // Prints 0! Use 'ok' to be sure.`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          36,
+			ID:          1606,
 			Title:       "Structs & Methods",
 			Description: "Learn structs, methods, receivers, and embedded types.",
 			Order:       6,
@@ -436,7 +436,7 @@ type Product struct {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          37,
+			ID:          1607,
 			Title:       "Interfaces",
 			Description: "Master interfaces, type assertions, and polymorphism in Go.",
 			Order:       7,

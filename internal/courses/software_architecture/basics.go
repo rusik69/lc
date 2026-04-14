@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSoftwareArchitectureModules([]problems.CourseModule{
 		{
-			ID:          30,
+			ID:          2300,
 			Title:       "Introduction to Software Architecture",
 			Description: "Learn the fundamentals of software architecture, the role of architects, and key architectural concepts.",
 			Order:       0,
@@ -892,7 +892,7 @@ Example 3: Usability vs Security
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          31,
+			ID:          2301,
 			Title:       "Architectural Patterns",
 			Description: "Explore fundamental architectural patterns including Layered Architecture, MVC, MVP, MVVM, and other structural patterns.",
 			Order:       1,
@@ -1584,7 +1584,7 @@ class AuthenticationPlugin implements Plugin {
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          32,
+			ID:          2302,
 			Title:       "Design Principles",
 			Description: "Master fundamental design principles including SOLID, DRY, KISS, YAGNI, and composition over inheritance.",
 			Order:       2,

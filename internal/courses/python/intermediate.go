@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterPythonModules([]problems.CourseModule{
 		{
-			ID:          48,
+			ID:          2204,
 			Title:       "Data Structures",
 			Description: "Master lists, tuples, sets, dictionaries, and comprehensions.",
 			Order:       4,
@@ -857,7 +857,7 @@ print(tags)  # {"python", "programming"}
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          49,
+			ID:          2205,
 			Title:       "Strings & Text Processing",
 			Description: "Learn string operations, formatting, and regular expressions.",
 			Order:       5,
@@ -1142,7 +1142,7 @@ if match:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          50,
+			ID:          2206,
 			Title:       "Object-Oriented Programming",
 			Description: "Learn classes, objects, inheritance, and OOP concepts in Python.",
 			Order:       6,

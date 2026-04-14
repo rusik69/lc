@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterSystemsDesignModules([]problems.CourseModule{
 		{
-			ID:          15,
+			ID:          2405,
 			Title:       "Microservices Architecture",
 			Description: "Understand microservices patterns, service communication, and distributed system challenges.",
 			Order:       5,
@@ -135,7 +135,7 @@ Service Mesh Components:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          16,
+			ID:          2406,
 			Title:       "API Design & Rate Limiting",
 			Description: "Learn RESTful API design principles, versioning, and rate limiting strategies.",
 			Order:       6,
@@ -720,7 +720,7 @@ Shows where time is spent in distributed request`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          18,
+			ID:          2407,
 			Title:       "Design Patterns",
 			Description: "Learn essential design patterns for distributed systems including Circuit Breaker, Bulkhead, and more.",
 			Order:       8,
@@ -1125,7 +1125,7 @@ state = apply_events(events)  # Rebuild from events`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          19,
+			ID:          2408,
 			Title:       "Real-World System Designs",
 			Description: "Study real-world system designs including URL shorteners, chat systems, and social media platforms.",
 			Order:       9,
@@ -2874,7 +2874,7 @@ Celebrity Handling:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          25,
+			ID:          2409,
 			Title:       "Common System Design Interview Questions",
 			Description: "Practice with frequently asked system design interview questions from top tech companies.",
 			Order:       15,

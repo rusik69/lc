@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterLinuxModules([]problems.CourseModule{
 		{
-			ID:          120,
+			ID:          1805,
 			Title:       "Shell Scripting Fundamentals",
 			Description: "Learn bash scripting basics: variables, conditionals, loops, functions, and script execution.",
 			Order:       5,
@@ -444,7 +444,7 @@ debug "Processing file: $FILE"
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          121,
+			ID:          1806,
 			Title:       "Advanced Shell Scripting",
 			Description: "Master advanced bash features: arrays, string manipulation, file I/O, error handling, and debugging.",
 			Order:       6,
@@ -704,7 +704,7 @@ echo "Hello, $name"`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          122,
+			ID:          1807,
 			Title:       "System Administration",
 			Description: "Learn user management, group management, sudo, system services (systemd), and log management.",
 			Order:       7,
@@ -910,7 +910,7 @@ awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          123,
+			ID:          1808,
 			Title:       "Package Management",
 			Description: "Master package management: apt/yum/dnf, installing software, updating systems, and managing repositories.",
 			Order:       8,
@@ -1073,7 +1073,7 @@ sudo rpm --import http://example.com/RPM-GPG-KEY`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          124,
+			ID:          1809,
 			Title:       "Networking Fundamentals",
 			Description: "Learn network configuration, SSH, file transfer (SCP/rsync), firewall basics, and network troubleshooting.",
 			Order:       9,

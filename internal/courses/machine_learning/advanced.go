@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterMachineLearningModules([]problems.CourseModule{
 		{
-			ID:          100,
+			ID:          1915,
 			Title:       "Recurrent Neural Networks & LSTMs",
 			Description: "Understand RNNs, LSTM architecture, GRUs, and sequence-to-sequence models for sequential data.",
 			Order:       10,
@@ -203,7 +203,7 @@ class LSTMModel(nn.Module):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          101,
+			ID:          1916,
 			Title:       "Transformers Architecture",
 			Description: "Deep dive into attention mechanism, self-attention, multi-head attention, positional encoding, and transformer architecture.",
 			Order:       11,
@@ -539,7 +539,7 @@ class TransformerBlock(nn.Module):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          102,
+			ID:          1917,
 			Title:       "Large Language Models (LLMs) Fundamentals",
 			Description: "Understand what LLMs are, pre-training vs fine-tuning, tokenization, context windows, and major model families.",
 			Order:       12,
@@ -836,7 +836,7 @@ encoded = tokenizer(long_text, max_length=max_length, truncation=True, return_te
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          103,
+			ID:          1918,
 			Title:       "LLM Training & Optimization",
 			Description: "Deep dive into pre-training process, data preparation, training infrastructure, distributed training, model parallelism, and optimization techniques.",
 			Order:       13,
@@ -1008,7 +1008,7 @@ for batch in dataloader:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          104,
+			ID:          1919,
 			Title:       "Fine-tuning LLMs",
 			Description: "Learn fine-tuning strategies, LoRA, QLoRA, parameter-efficient fine-tuning, and fine-tuning datasets.",
 			Order:       14,
@@ -1138,7 +1138,7 @@ model = get_peft_model(model, lora_config)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          105,
+			ID:          1920,
 			Title:       "Prompt Engineering",
 			Description: "Master prompt design principles, few-shot learning, chain-of-thought, prompt templates, and best practices.",
 			Order:       15,
@@ -1258,7 +1258,7 @@ Let's think step by step:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          106,
+			ID:          1921,
 			Title:       "Retrieval-Augmented Generation (RAG)",
 			Description: "Learn RAG architecture, vector databases, embeddings, document chunking, retrieval strategies, and RAG implementation.",
 			Order:       16,
@@ -1370,7 +1370,7 @@ chunks = text_splitter.split_text(long_document)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          107,
+			ID:          1922,
 			Title:       "LLM Deployment & Production",
 			Description: "Learn model serving, quantization, pruning, inference optimization, API design, and monitoring LLM applications.",
 			Order:       17,
@@ -1429,7 +1429,7 @@ model = AutoModelForCausalLM.from_pretrained(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          108,
+			ID:          1923,
 			Title:       "Advanced LLM Topics",
 			Description: "Explore multi-modal models, vision-language models, RLHF, model alignment, safety, and bias.",
 			Order:       18,
@@ -1491,7 +1491,7 @@ policy = fine_tune_with_ppo(model, reward_model)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          109,
+			ID:          1924,
 			Title:       "ML Engineering & MLOps",
 			Description: "Learn model versioning, experiment tracking, model deployment, monitoring, CI/CD for ML, and model governance.",
 			Order:       19,
@@ -1552,7 +1552,7 @@ def predict(text: str):
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          110,
+			ID:          1925,
 			Title:       "Time Series Analysis",
 			Description: "Learn time series fundamentals, ARIMA models, forecasting, and deep learning approaches for sequential data.",
 			Order:       20,
@@ -2064,7 +2064,7 @@ print(feature_importance)`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          111,
+			ID:          1926,
 			Title:       "Reinforcement Learning",
 			Description: "Learn reinforcement learning fundamentals, MDPs, Q-learning, policy gradients, and deep RL algorithms.",
 			Order:       21,
@@ -2701,7 +2701,7 @@ class ActorCritic:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          112,
+			ID:          1927,
 			Title:       "Computer Vision Advanced",
 			Description: "Learn advanced computer vision techniques: object detection, segmentation, transfer learning, and vision transformers.",
 			Order:       22,

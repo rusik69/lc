@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAWSModules([]problems.CourseModule{
 		{
-			ID:          310,
+			ID:          1110,
 			Title:       "Amazon RDS",
 			Description: "Learn RDS: managed relational databases, multi-AZ deployments, read replicas, and backups.",
 			Order:       5,
@@ -615,7 +615,7 @@ for member in members:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          311,
+			ID:          1111,
 			Title:       "AWS Lambda",
 			Description: "Master serverless computing with Lambda: functions, triggers, event sources, and best practices.",
 			Order:       6,
@@ -1413,7 +1413,7 @@ ec2.authorize_security_group_ingress(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          312,
+			ID:          1112,
 			Title:       "CloudFormation",
 			Description: "Learn Infrastructure as Code with CloudFormation: templates, stacks, parameters, and best practices.",
 			Order:       7,
@@ -2293,7 +2293,7 @@ cf.execute_change_set(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          313,
+			ID:          1113,
 			Title:       "Auto Scaling and Load Balancing",
 			Description: "Master Auto Scaling Groups and Elastic Load Balancing: scaling policies, health checks, and high availability.",
 			Order:       8,
@@ -3293,7 +3293,7 @@ for reservation in ec2_instances['Reservations']:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          314,
+			ID:          1114,
 			Title:       "Amazon API Gateway",
 			Description: "Learn API Gateway: REST and HTTP APIs, integration with Lambda, authentication, and API management.",
 			Order:       9,
@@ -3346,7 +3346,7 @@ api = apigw.create_rest_api(name='my-api')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          315,
+			ID:          1115,
 			Title:       "Amazon SNS and SQS",
 			Description: "Learn SNS and SQS: messaging services, pub/sub, queues, and decoupled architectures.",
 			Order:       10,
@@ -3405,7 +3405,7 @@ queue = sqs.create_queue(QueueName='my-queue')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          316,
+			ID:          1116,
 			Title:       "Amazon ECS",
 			Description: "Learn ECS: container orchestration, tasks, services, clusters, and container management.",
 			Order:       11,
@@ -3456,7 +3456,7 @@ cluster = ecs.create_cluster(clusterName='my-cluster')`,
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          317,
+			ID:          1117,
 			Title:       "Amazon EKS",
 			Description: "Learn EKS: managed Kubernetes, clusters, nodes, pods, and Kubernetes on AWS.",
 			Order:       12,
@@ -3500,7 +3500,7 @@ cluster = eks.create_cluster(name='my-cluster', roleArn='arn:aws:iam::1234567890
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          318,
+			ID:          1118,
 			Title:       "AWS Systems Manager",
 			Description: "Learn Systems Manager: parameter store, patch manager, session manager, and operations management.",
 			Order:       13,

@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterNetworkingModules([]problems.CourseModule{
 		{
-			ID:          220,
+			ID:          2110,
 			Title:       "Dynamic Routing Protocols",
 			Description: "Master dynamic routing: OSPF, BGP, EIGRP, and how routers automatically learn and share routes.",
 			Order:       10,
@@ -496,7 +496,7 @@ traceroute destination
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          221,
+			ID:          2111,
 			Title:       "Network Security Advanced",
 			Description: "Advanced security topics: intrusion detection, network monitoring, security protocols, and threat mitigation.",
 			Order:       11,
@@ -1012,7 +1012,7 @@ sudo tcpdump -i eth0 'host 192.168.2.1'
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          222,
+			ID:          2112,
 			Title:       "Network Monitoring & Troubleshooting",
 			Description: "Advanced troubleshooting techniques: packet analysis, network diagnostics, performance tuning, and problem resolution.",
 			Order:       12,
@@ -1583,7 +1583,7 @@ ethtool -S eth0
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          223,
+			ID:          2113,
 			Title:       "Software-Defined Networking (SDN)",
 			Description: "Introduction to SDN: concepts, OpenFlow, network virtualization, and programmable networks.",
 			Order:       13,
@@ -2011,7 +2011,7 @@ curl http://localhost:8080/v1.0/topology/switches
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          224,
+			ID:          2114,
 			Title:       "Network Automation",
 			Description: "Automate network tasks: configuration management, network programmability, APIs, and infrastructure as code.",
 			Order:       14,

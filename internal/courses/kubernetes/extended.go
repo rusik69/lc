@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterKubernetesModules([]problems.CourseModule{
 		{
-			ID:          76,
+			ID:          1716,
 			Title:       "Scheduling & Affinity",
 			Description: "Master advanced pod scheduling: taints, tolerations, node affinity, pod affinity/anti-affinity, topology spread constraints, and priority classes.",
 			Order:       16,
@@ -330,7 +330,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          77,
+			ID:          1717,
 			Title:       "Kustomize & Configuration Management",
 			Description: "Learn Kustomize for template-free Kubernetes configuration management: bases, overlays, patches, generators, and integration with kubectl.",
 			Order:       17,
@@ -540,7 +540,7 @@ generatorOptions:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          78,
+			ID:          1718,
 			Title:       "Service Mesh & Gateway API",
 			Description: "Understand service mesh architecture, Istio/Linkerd basics, the Kubernetes Gateway API, mTLS, traffic management, and observability in mesh architectures.",
 			Order:       18,
@@ -762,7 +762,7 @@ spec:
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          79,
+			ID:          1719,
 			Title:       "Cluster Operations & Lifecycle",
 			Description: "Manage Kubernetes cluster lifecycle: upgrades, etcd backup/restore, node management, debugging, and disaster recovery procedures.",
 			Order:       19,

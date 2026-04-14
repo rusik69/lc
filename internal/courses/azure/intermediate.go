@@ -5,7 +5,7 @@ import "github.com/rusik69/lc/internal/problems"
 func init() {
 	problems.RegisterAzureModules([]problems.CourseModule{
 		{
-			ID:          410,
+			ID:          1210,
 			Title:       "Azure Functions",
 			Description: "Learn Azure Functions: serverless computing, triggers, bindings, and event-driven architecture.",
 			Order:       10,
@@ -206,7 +206,7 @@ az monitor metrics alert create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          411,
+			ID:          1211,
 			Title:       "Azure Cosmos DB",
 			Description: "Learn Cosmos DB: globally distributed NoSQL database, consistency levels, and multi-model support.",
 			Order:       11,
@@ -392,7 +392,7 @@ public static void Run(
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          412,
+			ID:          1212,
 			Title:       "Azure Application Gateway",
 			Description: "Learn Application Gateway: web traffic load balancer, WAF, SSL termination, and URL routing.",
 			Order:       12,
@@ -544,7 +544,7 @@ az network application-gateway ssl-cert create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          413,
+			ID:          1213,
 			Title:       "Azure Container Instances",
 			Description: "Learn Container Instances: serverless containers, quick deployment, and container orchestration basics.",
 			Order:       13,
@@ -660,7 +660,7 @@ az container create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          414,
+			ID:          1214,
 			Title:       "Azure Database for PostgreSQL",
 			Description: "Learn Azure Database for PostgreSQL: managed PostgreSQL, high availability, and scaling.",
 			Order:       14,
@@ -766,7 +766,7 @@ az postgres flexible-server replica create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          415,
+			ID:          1215,
 			Title:       "Azure Service Bus",
 			Description: "Learn Service Bus: messaging service, queues, topics, and pub/sub patterns.",
 			Order:       15,
@@ -871,7 +871,7 @@ az servicebus queue show \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          416,
+			ID:          1216,
 			Title:       "Azure Event Hubs",
 			Description: "Learn Event Hubs: big data streaming, event ingestion, and real-time analytics.",
 			Order:       16,
@@ -977,7 +977,7 @@ az eventhubs eventhub consumer-group create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          417,
+			ID:          1217,
 			Title:       "Azure Monitor",
 			Description: "Learn Azure Monitor: metrics, logs, alerts, and application performance monitoring.",
 			Order:       17,
@@ -1083,7 +1083,7 @@ az monitor metrics alert create \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          418,
+			ID:          1218,
 			Title:       "Azure Resource Manager",
 			Description: "Learn Resource Manager: ARM templates, infrastructure as code, and resource organization.",
 			Order:       18,
@@ -1211,7 +1211,7 @@ az deployment group what-if \\
 			ProblemIDs: []int{},
 		},
 		{
-			ID:          419,
+			ID:          1219,
 			Title:       "Azure Automation",
 			Description: "Learn Azure Automation: runbooks, automation accounts, and infrastructure automation.",
 			Order:       19,
