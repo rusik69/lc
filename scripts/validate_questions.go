@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/rusik69/lc/internal/problems"
@@ -31,6 +32,14 @@ type ValidationError struct {
 	ErrorType  string
 	Message    string
 }
+
+// brokenSplitRe matches the residue of an older splitter that broke
+// explanations on every "." — e.g. "(127. Step 2: 0." or "e. Step 3: g.".
+var brokenSplitRe = regexp.MustCompile(`\b[A-Za-z0-9]\. Step \d+:`)
+
+// stepScaffoldRe matches the "Step N:" scaffolding that predates the
+// switch to flowing-prose explanations.
+var stepScaffoldRe = regexp.MustCompile(`(?i)\bStep \d+:`)
 
 // TopicStats represents statistics for a topic
 type TopicStats struct {
@@ -150,14 +159,57 @@ func validateTopic(topic string) ([]ValidationError, TopicStats) {
 			}
 		}
 
-		// 3. Check for empty explanation
-		if strings.TrimSpace(q.Explanation) == "" {
+		// 3. Check explanation shape
+		expl := strings.TrimSpace(q.Explanation)
+		if expl == "" {
 			errors = append(errors, ValidationError{
 				Topic:      topic,
 				QuestionID: q.ID,
 				ErrorType:  "EMPTY_EXPLANATION",
 				Message:    "Explanation is empty",
 			})
+		} else {
+			// 3a. Minimum length (40 chars) - flags fragmentary explanations
+			if len([]rune(expl)) < 40 {
+				errors = append(errors, ValidationError{
+					Topic:      topic,
+					QuestionID: q.ID,
+					ErrorType:  "SHORT_EXPLANATION",
+					Message:    fmt.Sprintf("Explanation is %d chars (< 40): %q", len([]rune(expl)), expl),
+				})
+			}
+			// 3b. Must end in sentence punctuation
+			last := expl[len(expl)-1]
+			if last != '.' && last != '?' && last != '!' && last != ')' && last != '"' {
+				errors = append(errors, ValidationError{
+					Topic:      topic,
+					QuestionID: q.ID,
+					ErrorType:  "UNPUNCTUATED_EXPLANATION",
+					Message:    fmt.Sprintf("Explanation does not end in sentence punctuation: %q", expl),
+				})
+			}
+			// 3c. Broken decimal / abbreviation pattern introduced by an older
+			// mechanical "Step N" splitter: e.g. "(127. Step 2: 0." or
+			// "e. Step 3: g." — a single alphanumeric followed by ". Step N:".
+			if brokenSplitRe.MatchString(expl) {
+				errors = append(errors, ValidationError{
+					Topic:      topic,
+					QuestionID: q.ID,
+					ErrorType:  "BROKEN_DECIMAL_SPLIT",
+					Message:    fmt.Sprintf("Explanation looks like a broken decimal/abbreviation split: %q", expl),
+				})
+			}
+			// 3d. "Step 1/2/3:" scaffolding is being removed in favour of
+			// flowing prose; flag any remaining occurrences so the rewrite
+			// backlog is visible.
+			if stepScaffoldRe.MatchString(expl) {
+				errors = append(errors, ValidationError{
+					Topic:      topic,
+					QuestionID: q.ID,
+					ErrorType:  "STEP_SCAFFOLD",
+					Message:    "Explanation still uses 'Step N:' scaffolding",
+				})
+			}
 		}
 
 		// 4. Track duplicates
