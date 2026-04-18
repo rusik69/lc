@@ -15,7 +15,6 @@
             }
         })();
     </script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
@@ -93,9 +92,6 @@
             }
         }
         document.addEventListener('DOMContentLoaded', highlightCode);
-        if (document.body) {
-            document.body.addEventListener('htmx:afterSwap', highlightCode);
-        }
         // Also highlight when lessons are toggled
         window.highlightCode = highlightCode;
 

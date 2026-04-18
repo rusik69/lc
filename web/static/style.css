@@ -524,7 +524,8 @@ h3 {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 220px);
+    height: calc(100vh - 120px);
+    min-height: 500px;
 }
 
 .solution-panel {
@@ -570,6 +571,22 @@ h3 {
 .editor-section {
     display: flex;
     flex-direction: column;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+}
+
+#code-form {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+#result {
+    flex: 0 1 auto;
+    max-height: 40%;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .code-editor {
@@ -597,10 +614,9 @@ h3 {
     border: 2px solid var(--border-color);
     border-radius: 4px;
     height: 100%;
-    min-height: 500px;
     font-size: 14px;
     transition: border-color 0.3s ease;
-    resize: vertical;
+    resize: none;
     overflow: hidden !important;
 }
 
@@ -609,8 +625,6 @@ h3 {
 }
 
 .CodeMirror-scroll {
-    min-height: 400px;
-    height: 100%;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -632,7 +646,10 @@ h3 {
 .button-group {
     display: flex;
     gap: 1rem;
-    margin-top: 1rem;
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    padding: 0.75rem 0;
+    margin-top: 2rem;
 }
 
 button {
@@ -677,7 +694,7 @@ button#solution-btn:hover,
 }
 
 .result {
-    margin-top: 2rem;
+    margin-top: 0;
     padding: 1.5rem;
     background: var(--bg-tertiary);
     border-radius: 4px;

@@ -71,7 +71,17 @@ services:
   sandbox:
     image: golang:1.23-alpine
     container_name: lc-sandbox
-    command: sh -c "apk add --no-cache python3 py3-pip coreutils && python3 --version && sleep infinity"
+    # Pre-warm the Go build cache on startup by compiling the stdlib packages
+    # used in every submission. This brings first-run latency from ~17s to ~1s.
+    command:
+      - sh
+      - -c
+      - >-
+        apk add --no-cache python3 py3-pip coreutils &&
+        python3 --version &&
+        go build fmt sort math strings strconv container/heap encoding/json &&
+        echo 'Go build cache warmed up' &&
+        sleep infinity
     mem_limit: 512m
     cpus: '0.5'
     pids_limit: 100
@@ -83,6 +93,8 @@ services:
     tmpfs:
       - /tmp:rw,exec,size=200m
       - /go:rw,exec,size=300m
+    volumes:
+      - sandbox-go-build-cache:/root/.cache/go-build
     restart: unless-stopped
     networks:
       - lc-network
@@ -91,11 +103,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 30s
+      start_period: 60s
 
 volumes:
   go-mod-cache:
   lc-db-data:
+  sandbox-go-build-cache:
 
 networks:
   lc-network:
