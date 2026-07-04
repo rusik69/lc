@@ -247,13 +247,13 @@ func TestDifficultyDistribution(t *testing.T) {
 	problems := problems.GetAllProblems()
 	
 	easy, medium, hard := 0, 0, 0
-	
+
 	for _, problem := range problems {
 		switch problem.Difficulty {
 		case "Easy":
 			easy++
 		case "Medium":
-			hard++
+			medium++
 		case "Hard":
 			hard++
 		}

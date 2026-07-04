@@ -87,6 +87,23 @@ test-unit:
 		docker-compose run --rm --profile test test go test -v -short ./tests/... ./internal/...; \
 	elif docker compose version > /dev/null 2>&1; then \
 		docker compose run --rm --profile test test go test -v -short ./tests/... ./internal/...; \
+
+# Python solution tests
+test-python-syntax:
+	@echo "Running Python solution syntax tests..."
+	@go test -v -run 'TestPythonSolutionsSyntax' ./tests/
+
+test-python-e2e:
+	@echo "Running Python solution E2E tests (requires Docker)..."
+	@go test -v -run 'TestPythonSolutionsE2E' ./tests/
+
+test-python-completeness:
+	@echo "Running Python solution completeness report..."
+	@go test -v -run 'TestPythonSolutionsCompleteness' ./tests/
+
+validate-questions:
+	@echo "Running question validator..."
+	@go run scripts/validate_questions.go
 	else \
 		echo "✗ Error: docker-compose not found"; \
 		exit 1; \
